@@ -1,0 +1,76 @@
+name: CI
+
+# Trigger CI for pull requests to the main branch or when a release is made
+# Do not trigger CI for draft pull request
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:  [opened, synchronize, reopened, ready_for_review]
+
+
+jobs:
+  # Run unit tests
+  test:
+    name: Julia ${{ matrix.version }} - ${{ matrix.os }} - ${{ matrix.arch }} - ${{ github.event_name }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        version:
+          - '1.8'
+        os:
+          - ubuntu-latest
+        arch:
+          - x64
+    if: ${{ github.event_name == "push" || !github.event.pull_request.draft }}
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v2
+
+      - name: Setup Julia
+        uses: julia-actions/setup-julia@v1
+        with:
+          version: ${{ matrix.version }}
+          arch: ${{ matrix.arch }}
+
+      - name: Set up cache # to speed up the workflow
+        uses: julia-actions/cache@v1
+        with:
+          cache-registries: "true"
+
+      - name: Build the Julia package
+        uses: julia-actions/julia-buildpkg@v1
+
+      - name: Run unit tests
+        uses: julia-actions/julia-runtest@v1
+
+      - name: Process the code coverage information
+        uses: julia-actions/julia-processcoverage@v1
+
+      - uses: codecov/codecov-action@v3
+        with:
+          file: lcov.info
+
+  # Build and deploy the documentation
+  docs:
+    name: Documentation
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == "push" || !github.event.pull_request.draft }}
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v2
+
+      - name: Setup Julia
+        uses: julia-actions/setup-julia@v1
+        with:
+          version: '1.8'
+
+      - name: Install dependencies
+        run: |
+          julia --project=docs -e '
+            using Pkg
+            Pkg.develop(PackageSpec(path=pwd()))
+            Pkg.instantiate()'
+
+      - name: Build documentation
+        run: julia --project=docs docs/make.jl
