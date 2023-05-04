@@ -41,7 +41,7 @@ jobs:
       - name: Build the Julia package
         uses: julia-actions/julia-buildpkg@v1
 
-      - name: Run the unit test
+      - name: Run unit tests
         uses: julia-actions/julia-runtest@v1
 
       - name: Process the code coverage information
