@@ -254,8 +254,8 @@ struct BucketParam{T<:Float64}
             throw(DomainError(width, "width should be greater than zero"))
         end
 
-        new{I,T}(
-            o_pos_init, j_pos_init, b_pos_init, t_pos_init, width,
+        new{T}(
+            o_pos_init, j_pos_init, b_pos_init, t_pos_init, width
         )
     end
 end

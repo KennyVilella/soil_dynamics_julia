@@ -16,6 +16,11 @@ grid_half_length_y =  round(Int64, grid_size_y / cell_size_xy)
 grid_half_length_z =  round(Int64, grid_size_z / cell_size_z)
 cell_area = cell_size_xy * cell_size_xy
 cell_volume = cell_area * cell_size_z
+o_pos_init = Vector{Float64}([0.0, 0.0, 0.0])
+j_pos_init = Vector{Float64}([0.0, 0.0, 0.0])
+b_pos_init = Vector{Float64}([0.0, 0.0, -1.0])
+t_pos_init = Vector{Float64}([1.0, 0.0, -1.0])
+bucket_width = 0.5
 
 
 #==========================================================================================#
@@ -85,5 +90,53 @@ cell_volume = cell_area * cell_size_z
         )
     @test_throws ErrorException GridParam(
             grid_size_x, grid_size_y, 0.05, cell_size_xy, cell_size_z
+        )
+end
+
+@testset "BucketParam struct" begin
+    # Creating dummy BucketParam by using the inner constructor
+    bucket = BucketParam(o_pos_init, j_pos_init, b_pos_init, t_pos_init, bucket_width)
+
+    # Testing the type of the struct
+    @test bucket isa BucketParam
+
+    # Testing properties of the struct
+    @test bucket.o_pos_init == o_pos_init
+    @test bucket.j_pos_init == j_pos_init
+    @test bucket.b_pos_init == b_pos_init
+    @test bucket.t_pos_init == t_pos_init
+    @test bucket.width == bucket_width
+
+    # Testing that incorrect vector size throws an error
+    @test_throws DimensionMismatch BucketParam(
+            [1.0, 2.0, 3.1, 531], j_pos_init, b_pos_init, t_pos_init, bucket_width
+        )
+    @test_throws DimensionMismatch BucketParam(
+            o_pos_init, [2.0, 4.5], b_pos_init, t_pos_init, bucket_width
+        )
+    @test_throws DimensionMismatch BucketParam(
+            o_pos_init, j_pos_init, [1.0], t_pos_init, bucket_width
+        )
+    @test_throws DimensionMismatch BucketParam(
+            o_pos_init, j_pos_init, b_pos_init, [1.0, 2.0, 3.0, 4.0], bucket_width
+        )
+
+    # Testing that incorrect bucket geometry throws an error
+    @test_throws ErrorException BucketParam(
+            o_pos_init, j_pos_init, j_pos_init, t_pos_init, bucket_width
+        )
+    @test_throws ErrorException BucketParam(
+            o_pos_init, j_pos_init, b_pos_init, j_pos_init, bucket_width
+        )
+    @test_throws ErrorException BucketParam(
+            o_pos_init, j_pos_init, b_pos_init, b_pos_init, bucket_width
+        )
+
+    # Testing that bucket_width lower than or equal to zero throws an error
+    @test_throws DomainError BucketParam(
+            o_pos_init, j_pos_init, b_pos_init, t_pos_init, 0.0
+        )
+    @test_throws DomainError BucketParam(
+            o_pos_init, j_pos_init, b_pos_init, t_pos_init, -0.1
         )
 end
