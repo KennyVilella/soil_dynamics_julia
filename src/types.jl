@@ -23,13 +23,17 @@ Store all parameters related to the simulation grid.
             E-----------F   C
             |           |  /
             |           | /
-            |           |/ 
+            |           |/
             A-----------B
 
 - The cells have the same size in both lateral direction
-            AB = BC = CD = DA = EF = FG = GH = HE,
+
+    AB = BC = CD = DA = EF = FG = GH = HE,
+
   while their height can potentially be lower
-            AE = BF = CG = DH <= AB.
+
+    AE = BF = CG = DH <= AB.
+
 - The center of each cell (O) is considered to be at the center of the top surface.
 - The considered reference frame follows the right-hand rule,
   with the Z direction pointing upward.
@@ -145,8 +149,8 @@ Store all parameters related to a bucket object.
 - The bucket is approximated as a triangular prism
 
                      A ____________________ D
-                    /.                     /| 
-                   / .                    / |  
+                    /.                     /|
+                   / .                    / |
                   /  .                   /  |
                  /   .                  /   |
                 /    .                 /    |
@@ -159,7 +163,7 @@ Store all parameters related to a bucket object.
          /   .                  /     ̸
         /  .                   /    ̸
        / .                    /   ̸
-      B ____________________ E 
+      B ____________________ E
 
 - The middle of the segment AD is referred to as the bucket "joint".
 - The middle of the segment CF is referred to as the bucket "base".
@@ -170,7 +174,9 @@ Store all parameters related to a bucket object.
 - The surface ABC is a bucket wall and referred to as the bucket "right side".
 - The surface DEF is a bucket wall and referred to as the bucket "left side".
 - The bucket has a constant width, denoted as
-            AD = BE = CF = `width`.
+
+    AD = BE = CF = `width`.
+
 - The center of rotation of the bucket is assumed to be at the bucket "origin" (not shown
   in the figure) and the bucket vertices are given relative to this origin.
 - The provided coordinates are assumed to be the reference pose of the bucket, from which

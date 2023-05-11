@@ -270,20 +270,20 @@ the vectors AB and AD. Let O be the name of a cell, it can then be decomposed as
 
 This decomposition leads to a system of 2 equations with 2 unknowns (c_ab and c_ad)
 
-AO[1] = c_ab * AB[1] + c_ad * AD[1] {1},
-AO[2] = c_ab * AB[2] + c_ad * AD[2] {2}.
+    AO[1] = c_ab * AB[1] + c_ad * AD[1] {1},
+    AO[2] = c_ab * AB[2] + c_ad * AD[2] {2}.
 
 One may note that AB[1] * {2} - AB[2] * {1} implies that
 
-AB[1] * AO[2] - AB[2] * AO[1] = c_ad * AD[2] * AB[1] - c_ad * AD[1] * AB[2]
+    AB[1] * AO[2] - AB[2] * AO[1] = c_ad * AD[2] * AB[1] - c_ad * AD[1] * AB[2]
 
 that can be further rewritten as
 
-c_ad = (AB[1] * AO[2] - AB[2] * AO[1]) / (AD[2] * AB[1] - AD[1] * AB[2]).
+    c_ad = (AB[1] * AO[2] - AB[2] * AO[1]) / (AD[2] * AB[1] - AD[1] * AB[2]).
 
 Similarly, AD[1] * {2} - AD[2] * {1} implies that
 
-c_ab = -(AD[1] * AO[2] - AD[2] * AO[1]) / (AD[2] * AB[1] - AD[1] * AB[2]).
+    c_ab = -(AD[1] * AO[2] - AD[2] * AO[1]) / (AD[2] * AB[1] - AD[1] * AB[2]).
 
 This decomposition allows us to determine whether the cell O is inside the rectangle area,
 since this requires c_ab and c_ad to be between 0 and 1.
@@ -528,20 +528,20 @@ the vectors AB and AC. Let O be the name of a cell, it can then be decomposed as
 
 This decomposition leads to a system of 2 equations with 2 unknowns (c_ab and c_ac)
 
-AO[1] = c_ab * AB[1] + c_ac * AC[1] {1},
-AO[2] = c_ab * AB[2] + c_ac * AC[2] {2}.
+    AO[1] = c_ab * AB[1] + c_ac * AC[1] {1},
+    AO[2] = c_ab * AB[2] + c_ac * AC[2] {2}.
 
 One may note that AB[1] * {2} - AB[2] * {1} implies that
 
-AB[1] * AO[2] - AB[2] * AO[1] = c_ac * AC[2] * AB[1] - c_ac * AC[1] * AB[2]
+    AB[1] * AO[2] - AB[2] * AO[1] = c_ac * AC[2] * AB[1] - c_ac * AC[1] * AB[2]
 
 that can be further rewritten as
 
-c_ac = (AB[1] * AO[2] - AB[2] * AO[1]) / (AC[2] * AB[1] - AC[1] * AB[2]).
+    c_ac = (AB[1] * AO[2] - AB[2] * AO[1]) / (AC[2] * AB[1] - AC[1] * AB[2]).
 
 Similarly, AC[1] * {2} - AC[2] * {1} implies that
 
-c_ab = -(AC[1] * AO[2] - AC[2] * AO[1]) / (AC[2] * AB[1] - AC[1] * AB[2]).
+    c_ab = -(AC[1] * AO[2] - AC[2] * AO[1]) / (AC[2] * AB[1] - AC[1] * AB[2]).
 
 This decomposition allows us to determine whether the cell O is inside the triangle area,
 since this requires c_ab and c_ac to be between 0 and 1, and the sum of c_ab and c_ac to be
@@ -642,12 +642,12 @@ increment `delta`.
 
 The coordinates of each sub-point (ab_i) along the line can then be calculated as
 
-        ab_i = a + ab * i * delta / norm(ab)
+    ab_i = a + ab * i * delta / norm(ab)
 
 where i is the increment number and ab = b - a.
 The Cartesian coordinates can then be converted into indices
 
-        ab_i_ind = ab_i / cell_size + grid_half_length + 1
+    ab_i_ind = ab_i / cell_size + grid_half_length + 1
 
 Finally, the floating-point values are rounded to obtain the cell indices in the X, Y, Z
 directions.
