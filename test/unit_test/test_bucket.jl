@@ -13,6 +13,13 @@ cell_size_xy = 0.1
 cell_size_z = 0.1
 grid = GridParam(grid_size_x, grid_size_y, grid_size_z, cell_size_xy, cell_size_z)
 
+o_pos_init = Vector{Float64}([0.0, 0.0, 0.0])
+j_pos_init = Vector{Float64}([0.0, 0.0, 0.0])
+b_pos_init = Vector{Float64}([0.0, 0.0, -0.5])
+t_pos_init = Vector{Float64}([0.7, 0.0, -0.5])
+bucket_width = 0.5
+bucket = BucketParam(o_pos_init, j_pos_init, b_pos_init, t_pos_init, bucket_width)
+
 
 #==========================================================================================#
 #                                                                                          #
@@ -918,4 +925,83 @@ end
     tri_pos = unique(_calc_triangle_pos(a, b, c, delta, grid))
     @test ([16, 16, 16] in tri_pos)
     @test length(tri_pos) == 1
+end
+
+@testset "_calc_bucket_pos" begin
+    # Setting a dummy bucket geometry in the XZ plane
+    bucket.j_pos_init .= Vector{Float64}([0.0, 0.0, 0.0])
+    bucket.b_pos_init .= Vector{Float64}([0.5, 0.01, 0.0])
+    bucket.t_pos_init .= Vector{Float64}([0.5, 0.0, 0.0])
+    ori = angle_to_quat(0.0, 0.0, 0.0, :ZYX)
+    position = Vector{Float64}([0.0, 0.0, 0.0])
+
+    # Testing for a bucket in the XZ plane
+    bucket_pos  = _calc_bucket_pos(position, ori, grid, bucket)
+    # Checking the bucket position
+    a = [0.5, 0.0, -0.25]
+    b = [0.5, 0.0, 0.25]
+    c = [0.0, 0.0, 0.25]
+    d = [0.0, 0.0, -0.25]
+    bucket_pos_exp = unique(_calc_rectangle_pos(a, b, c, d, 0.01, grid), dims=1)
+    @test all(in.(bucket_pos_exp, Ref(bucket_pos)))
+    @test length(bucket_pos) == length(bucket_pos_exp)
+
+    # Setting a dummy bucket geometry in the XY plane
+    bucket.j_pos_init .= Vector{Float64}([0.0, 0.0, 0.0])
+    bucket.b_pos_init .= Vector{Float64}([0.5, 0.0, -0.01])
+    bucket.t_pos_init .= Vector{Float64}([0.5, 0.0, 0.0])
+    ori = angle_to_quat(0.0, 0.0, 0.0, :ZYX)
+    position = Vector{Float64}([0.0, 0.0, 0.0])
+
+    # Testing for a bucket in the XY plane
+    bucket_pos = _calc_bucket_pos(position, ori, grid, bucket)
+    # Checking the bucket position
+    a = [0.5 - 1e-8, -0.25 + 1e-8, 0.0 - 1e-8]
+    b = [0.5 - 1e-8,  0.25 - 1e-8, 0.0 - 1e-8]
+    c = [0.0 + 1e-8,  0.25 - 1e-8, 0.0 - 1e-8]
+    d = [0.0 + 1e-8, -0.25 + 1e-8, 0.0 - 1e-8]
+    bucket_pos_exp = unique(_calc_rectangle_pos(a, b, c, d, 0.01, grid), dims=1)
+    @test all(in.(bucket_pos_exp, Ref(bucket_pos)))
+    @test length(bucket_pos) == length(bucket_pos_exp)
+
+    # Setting a dummy bucket geometry
+    bucket.j_pos_init .= Vector{Float64}([0.0, 0.0, 0.0])
+    bucket.b_pos_init .= Vector{Float64}([0.0, 0.0, -0.5])
+    bucket.t_pos_init .= Vector{Float64}([0.5, 0.0, -0.5])
+    ori = angle_to_quat(0.0, -pi / 2, 0.0, :ZYX)
+    position = Vector{Float64}([0.0, 0.0, -0.1])
+    j_r_pos = [ 0.0 - 1e-8, -0.25 + 1e-8, -0.1 - 1e-8]
+    j_l_pos = [ 0.0 - 1e-8,  0.25 - 1e-8, -0.1 - 1e-8]
+    b_r_pos = [-0.5 + 1e-8, -0.25 + 1e-8, -0.1 - 1e-8]
+    b_l_pos = [-0.5 + 1e-8,  0.25 - 1e-8, -0.1 - 1e-8]
+    t_r_pos = [-0.5 + 1e-8, -0.25 + 1e-8, -0.6 + 1e-8]
+    t_l_pos = [-0.5 + 1e-8,  0.25 - 1e-8, -0.6 + 1e-8]
+
+    # Testing for a bucket in a dummy position
+    bucket_pos = _calc_bucket_pos(position, ori, grid, bucket)
+    # Checking that the bucket base position is included in the bucket position
+    base_pos_exp = unique(
+        _calc_rectangle_pos(b_l_pos, b_r_pos, t_r_pos, t_l_pos, 0.01, grid), dims=1
+    )
+    @test all(in.(base_pos_exp, Ref(bucket_pos)))
+    # Checking that the bucket back position is included in the bucket position
+    back_pos_exp = unique(
+        _calc_rectangle_pos(j_l_pos, j_r_pos, b_r_pos, b_l_pos, 0.01, grid), dims=1
+   )
+    @test all(in.(back_pos_exp, Ref(bucket_pos)))
+    # Checking that the bucket left side position is included in the bucket position
+    left_side_pos_exp = unique(
+        _calc_triangle_pos(j_l_pos, b_l_pos, t_l_pos, 0.01, grid), dims=1
+    )
+    @test all(in.(left_side_pos_exp, Ref(bucket_pos)))
+    # Checking that the bucket right side position is included in the bucket position
+    right_side_pos_exp = unique(
+        _calc_triangle_pos(j_r_pos, b_r_pos, t_r_pos, 0.01, grid), dims=1
+    )
+    @test all(in.(right_side_pos_exp, Ref(bucket_pos)))
+    # Checking the length of the bucket position
+    bucket_pos_exp = unique(
+        [base_pos_exp; back_pos_exp; right_side_pos_exp; left_side_pos_exp], dims=1
+    )
+    @test length(bucket_pos) == length(bucket_pos_exp)
 end
