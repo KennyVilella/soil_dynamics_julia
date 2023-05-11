@@ -6,7 +6,7 @@ makedocs(
   authors = "Kenny Vilella",
   pages    = [
     "Home" => "index.md",
-    "types.jl" => "types.md"
+    "types.jl" => "types.md",
     "bucket.jl" => "bucket.md",
     "utils.jl" => "utils.md",
 #   "Section 1" => ["Subsection 1" => "subsection1.md",
