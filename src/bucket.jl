@@ -7,6 +7,106 @@ Copyright, 2023,  Vilella Kenny.
 #                                                                                          #
 #==========================================================================================#
 """
+    _calc_bucket_pos(
+        position::Vector{T}, ori::Quaternion{T}, grid::GridParam{I,T},
+        bucket::BucketParam{I,T}, step_bucket_grid::T=0.5, tol::T=1e-8
+    ) where {I<:Int64,T<:Float64}
+
+This function determines all the cells where the bucket is located.
+The bucket position is calculated based on its reference pose stored in the `bucket` struct,
+as well as the provided position and orientation.
+The `position` is used to apply the appropriate translation to the bucket origin.
+The orientation `ori` is used to apply the appropriate rotation to the bucket relative to
+its reference pose. The center of rotation is assumed to be the bucket origin.
+The orientation is provided using the quaternion definition.
+
+Note:
+- This function is intended for internal use only.
+- This function is a work in progress.
+
+# Inputs
+- `position::Vector{T}`: Cartesian coordinates of the bucket origin. [m]
+- `ori::Quaternion{T}`: Orientation of the bucket. [Quaternion]
+- `grid::GridParam{I,T}`: Struct that stores information related to the simulation grid.
+- `bucket::BucketParam{T}`: Struct that stores information related to the bucket object.
+- `step_bucket_grid::T`: Spatial increment used to decompose the edges of the bucket.
+- `tol::T`: Small number used to handle numerical approximation errors.
+
+# Outputs
+- `Vector{Vector{Int64}}`: Collection of cells indices where the bucket is located.
+                           Result is sorted and duplicates have been removed.
+
+# Example
+
+    position = [0.5, 0.3, 0.4]
+    ori = angle_to_quat(0.0, -pi / 2, 0.0, :ZYX)
+    grid = GridParam(4.0, 4.0, 3.0, 0.05, 0.01)
+    o = [0.0, 0.0, 0.0]
+    j = [0.0, 0.0, 0.0]
+    b = [0.0, 0.0, -0.5]
+    t = [1.0, 0.0, -0.5]
+    bucket = BucketParam(o, j, b, t, 0.5)
+
+    _calc_bucket_pos(position, ori, grid, bucket)
+"""
+function _calc_bucket_pos(
+    position::Vector{T},
+    ori::Quaternion{T},
+    grid::GridParam{I,T},
+    bucket::BucketParam{T},
+    step_bucket_grid::T=0.5,
+    tol::T=1e-8
+) where {I<:Int64,T<:Float64}
+
+    # Calculating position of the bucker vertices
+    j_pos = Vector{T}(vect(ori \ bucket.j_pos_init * ori))
+    b_pos = Vector{T}(vect(ori \ bucket.b_pos_init * ori))
+    t_pos = Vector{T}(vect(ori \ bucket.t_pos_init * ori))
+
+    # Adding position of the bucket origin
+    j_pos += position
+    b_pos += position
+    t_pos += position
+
+    # Vector normal to the side of the bucket
+    normal_side = calc_normal(j_pos, b_pos, t_pos)
+
+    # Position of each vertex of the bucket
+    j_r_pos = j_pos + 0.5 * bucket.width * normal_side
+    j_l_pos = j_pos - 0.5 * bucket.width * normal_side
+    b_r_pos = b_pos + 0.5 * bucket.width * normal_side
+    b_l_pos = b_pos - 0.5 * bucket.width * normal_side
+    t_r_pos = t_pos + 0.5 * bucket.width * normal_side
+    t_l_pos = t_pos - 0.5 * bucket.width * normal_side
+
+    # Adding a small increment to all vertices
+    # This is to account for the edge case where one of the vertex is at cell border
+    # In that case, the increment would remove any ambiguity
+    j_r_pos += tol * ((j_l_pos - j_r_pos) + (b_r_pos - j_r_pos) + (t_r_pos - j_r_pos))
+    j_l_pos += tol * ((j_r_pos - j_l_pos) + (b_l_pos - j_l_pos) + (t_l_pos - j_l_pos))
+    b_r_pos += tol * ((b_l_pos - b_r_pos) + (j_r_pos - b_r_pos) + (t_r_pos - b_r_pos))
+    b_l_pos += tol * ((b_r_pos - b_l_pos) + (j_l_pos - b_l_pos) + (t_l_pos - b_l_pos))
+    t_r_pos += tol * ((t_l_pos - t_r_pos) + (j_r_pos - t_r_pos) + (b_r_pos - t_r_pos))
+    t_l_pos += tol * ((t_r_pos - t_l_pos) + (j_l_pos - t_l_pos) + (b_l_pos - t_l_pos))
+
+    # Determining where each surface of the bucket is located
+    base_pos = _calc_rectangle_pos(
+        b_r_pos, b_l_pos, t_l_pos, t_r_pos, step_bucket_grid * grid.cell_size_z, grid, tol
+    )
+    back_pos = _calc_rectangle_pos(
+        b_r_pos, b_l_pos, j_l_pos, j_r_pos, step_bucket_grid * grid.cell_size_z, grid, tol
+    )
+    right_side_pos = _calc_triangle_pos(
+        j_r_pos, b_r_pos, t_r_pos, step_bucket_grid * grid.cell_size_z, grid, tol
+    )
+    left_side_pos = _calc_triangle_pos(
+        j_l_pos, b_l_pos, t_l_pos, step_bucket_grid * grid.cell_size_z, grid, tol
+    )
+
+    return unique([base_pos; back_pos; right_side_pos; left_side_pos], dims=1)
+end
+
+"""
     _calc_rectangle_pos(
         a::Vector{T}, b::Vector{T}, c::Vector{T}, d::Vector{T},
         delta::T, grid::GridParam{I,T}, tol::T=1e-8
@@ -27,7 +127,7 @@ By iterating through all the cells, the function ensures that all the corners of
 are investigated.
 
 However, this approach does not work when the rectangle is perpendicular to the XY plane.
-To handle this case, the function uses the _calc_line_pos function to include the cells
+To handle this case, the function uses the `_calc_line_pos` function to include the cells
 that lie on the four edges of the rectangle.
 
 Note:
@@ -59,6 +159,7 @@ Note:
     b = [0.0, 1.0, 0.7]
     c = [0.0, 1.0, 0.9]
     d = [1.0, 0.0, 0.9]
+
     rect_pos = _calc_rectangle_pos(a, b, c, d, 0.01, grid)
 """
 function _calc_rectangle_pos(
@@ -157,8 +258,8 @@ end
 
 This function performs a vector decomposition on a portion of the horizontal plane where
 a rectangle ABCD is located. The position of the rectangle is defined by its edges AB and AD
-, while the specified area extends over [area_min_x, area_min_x + area_length_x]
-on the X direction and [area_min_y, area_min_y + area_length_y] on the Y direction.
+, while the specified area extends over [`area_min_x`, `area_min_x + area_length_x`]
+on the X direction and [`area_min_y`, `area_min_y + area_length_y`] on the Y direction.
 
 For each cell in the specified area, the function decomposes it into the basis formed by
 the vectors AB and AD. Let O be the name of a cell, it can then be decomposed as
@@ -210,6 +311,7 @@ Note:
     ab_ind = [0, 4, 0]
     ad_ind = [3, 0, 0]
     a_ind = [10, 8, 25]
+
     c_ab, c_ad, in_rectangle, n_cell = _decompose_vector_rectangle(
         ab_ind, ad_ind, a_ind, 15, 12, 8, 7
     )
@@ -287,7 +389,7 @@ By iterating through all the cells, the function ensures that all the corners of
 are investigated.
 
 However, this approach does not work when the triangle is perpendicular to the XY plane.
-To handle this case, the function uses the _calc_line_pos function to include the cells
+To handle this case, the function uses the `_calc_line_pos` function to include the cells
 that lie on the three edges of the triangle.
 
 Note:
@@ -317,6 +419,7 @@ Note:
     a = [1.0, 0.0, 0.7]
     b = [0.0, 1.0, 0.7]
     c = [0.0, 1.0, 0.9]
+
     tri_pos = _calc_triangle_pos(a, b, c, 0.01, grid)
 """
 function _calc_triangle_pos(
@@ -412,8 +515,8 @@ end
 
 This function performs a vector decomposition on a portion of the horizontal plane where
 a triangle ABC is located. The position of the triangle is defined by its edges AB and AC
-, while the specified area extends over [area_min_x, area_min_x + area_length_x]
-on the X direction and [area_min_y, area_min_y + area_length_y] on the Y direction.
+, while the specified area extends over [`area_min_x`, `area_min_x + area_length_x`]
+on the X direction and [`area_min_y`, `area_min_y + area_length_y`] on the Y direction.
 
 For each cell in the specified area, the function decomposes it into the basis formed by
 the vectors AB and AC. Let O be the name of a cell, it can then be decomposed as
@@ -443,6 +546,7 @@ lower than 1.
 
 Note:
 - This function is intended for internal use only.
+- By convention, the decomposition is done at the top right corner of each cell.
 
 # Inputs
 - `ab_ind::Vector{T}`: Indices representing the edge AB of the triangle.
@@ -465,6 +569,7 @@ Note:
     ab_ind = [0, 4, 0]
     ac_ind = [3, 0, 0]
     a_ind = [10, 8, 25]
+
     c_ab, c_ac, in_triangle, n_cell = _decompose_vector_triangle(
         ab_ind, ac_ind, a_ind, 15, 12, 8, 7
     )
@@ -567,6 +672,7 @@ Note:
     grid = GridParam(4.0, 4.0, 3.0, 0.05, 0.01)
     a = [1.0, 0.5, 0.7]
     b = [0.7, 0.8, -0.3]
+
     line_pos = _calc_line_pos(a, b, 0.01, grid)
 """
 function _calc_line_pos(

@@ -159,7 +159,7 @@ Convention:
          /   .                  /     ̸
         /  .                   /    ̸
        / .                    /   ̸
-      B ____________________ E
+      B ____________________ E  ̸
 
 - The middle of the segment AD is referred to as the bucket "joint".
 - The middle of the segment CF is referred to as the bucket "base".
@@ -170,16 +170,14 @@ Convention:
 - The surface ABC is a bucket wall and referred to as the bucket "right side".
 - The surface DEF is a bucket wall and referred to as the bucket "left side".
 - The bucket has a constant width, denoted as
-            AD = BE = CF = width.
+            AD = BE = CF = `width`.
 - The center of rotation of the bucket is assumed to be at the bucket "origin" (not shown
-  in the figure).
+  in the figure) and the bucket vertices are given relative to this origin.
 - The provided coordinates are assumed to the reference pose of the bucket, from which the
   bucket pose is calculated throughout the code.
 
 # Fields
 
-- `o_pos_init::Vector{Float64}`: Cartesian coordinates of the bucket origin in its
-                                 reference pose. [m]
 - `j_pos_init::Vector{Float64}`: Cartesian coordinates of the bucket joint in its
                                  reference pose. [m]
 - `b_pos_init::Vector{Float64}`: Cartesian coordinates of the bucket base in its
@@ -197,6 +195,8 @@ Convention:
 
 Create a new instance of BucketParam using the reference positions of the bucket origin,
 joint, base, and teeth as well as the bucket width.
+The position of the bucket joint, base, and teeth are given relative to the position of the
+bucket origin.
 
 Requirements:
 - All provided Cartesian coordinates should be a vector of size 3.
@@ -209,6 +209,7 @@ Requirements:
     j = [0.0, 0.0, 0.0]
     b = [0.0, 0.0, -0.5]
     t = [1.0, 0.0, -0.5]
+
     bucket = BucketParam(o, j, b, t, 0.5)
 
 This would create a bucket ABCDEF with its center of rotation at the bucket joint and with
@@ -216,7 +217,6 @@ A = [0.0, -0.25, 0.0], B = [1.0, -0.25, -0.5], C = [0.0, -0.25, -0.5]
 D = [0.0, 0.25, 0.0], E = [1.0, 0.25, -0.5], F = [0.0, 0.25, -0.5].
 """
 struct BucketParam{T<:Float64}
-    o_pos_init::Vector{T}
     j_pos_init::Vector{T}
     b_pos_init::Vector{T}
     t_pos_init::Vector{T}
@@ -255,7 +255,8 @@ struct BucketParam{T<:Float64}
         end
 
         new{T}(
-            o_pos_init, j_pos_init, b_pos_init, t_pos_init, width
+            j_pos_init - o_pos_init, b_pos_init - o_pos_init, t_pos_init - o_pos_init,
+            width
         )
     end
 end
