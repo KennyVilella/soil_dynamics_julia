@@ -23,7 +23,7 @@ jobs:
           - ubuntu-latest
         arch:
           - x64
-    if: ${{ github.event_name == "push" || !github.event.pull_request.draft }}
+    if: ${{ github.event_name == 'push' || !github.event.pull_request.draft }}
     steps:
       - name: Checkout the repository
         uses: actions/checkout@v2
