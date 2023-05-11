@@ -27,7 +27,7 @@ origin. The orientation is provided using the quaternion definition.
 - `position::Vector{Float64}`: Cartesian coordinates of the bucket origin. [m]
 - `ori::Quaternion{Float64}`: Orientation of the bucket. [Quaternion]
 - `grid::GridParam{Int64,Float64}`: Struct that stores information related to the
-                                simulation grid.
+                                    simulation grid.
 - `bucket::BucketParam{Float64}`: Struct that stores information related to the
                                   bucket object.
 - `step_bucket_grid::Float64`: Spatial increment used to decompose the edges of the bucket.

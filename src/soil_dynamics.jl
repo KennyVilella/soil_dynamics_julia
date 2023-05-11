@@ -24,7 +24,7 @@ all the cells where the bucket is located.
 - `position::Vector{Float64}`: Cartesian coordinates of the bucket origin. [m]
 - `ori::Quaternion{Float64}`: Orientation of the bucket. [Quaternion]
 - `grid::GridParam{Int64,Float64}`: Struct that stores information related to the
-                                simulation grid.
+                                    simulation grid.
 - `bucket::BucketParam{Float64}`: Struct that stores information related to the
                                   bucket object.
 - `tol::Float64`: Small number used to handle numerical approximation errors.
