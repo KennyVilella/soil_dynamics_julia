@@ -3,6 +3,9 @@ module SoilDynamics
 import LinearAlgebra: cross, norm
 import ReferenceFrameRotations: vect, Quaternion
 
+# soil_dynamics.jl
+export soil_dynamics!
+
 # types.jl
 export GridParam, BucketParam
 
@@ -17,6 +20,7 @@ export calc_normal
 # Files
 include("types.jl")
 include("bucket.jl")
+include("soil_dynamics.jl")
 include("utils.jl")
 
 end
