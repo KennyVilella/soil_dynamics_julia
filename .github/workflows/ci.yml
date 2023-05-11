@@ -4,7 +4,7 @@ name: CI
 # Do not trigger CI for draft pull request
 on:
   push:
-    branches: [main]
+    branches: ["main"]
     tags: ["v*"]
   pull_request:  [opened, synchronize, reopened, ready_for_review]
 
