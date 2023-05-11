@@ -14,23 +14,24 @@ Copyright, 2023,  Vilella Kenny.
 
 This function determines all the cells where the bucket is located.
 The bucket position is calculated based on its reference pose stored in the `bucket` struct,
-as well as the provided position and orientation.
-The `position` is used to apply the appropriate translation to the bucket origin.
-The orientation `ori` is used to apply the appropriate rotation to the bucket relative to
-its reference pose. The center of rotation is assumed to be the bucket origin.
-The orientation is provided using the quaternion definition.
+as well as the provided position (`position`) and orientation (`ori`).
+`position` and `ori` are used to apply the appropriate translation and rotation to the
+bucket relative to its reference pose. The center of rotation is assumed to be the bucket
+origin. The orientation is provided using the quaternion definition.
 
-Note:
+# Note
 - This function is intended for internal use only.
 - This function is a work in progress.
 
 # Inputs
-- `position::Vector{T}`: Cartesian coordinates of the bucket origin. [m]
-- `ori::Quaternion{T}`: Orientation of the bucket. [Quaternion]
-- `grid::GridParam{I,T}`: Struct that stores information related to the simulation grid.
-- `bucket::BucketParam{T}`: Struct that stores information related to the bucket object.
-- `step_bucket_grid::T`: Spatial increment used to decompose the edges of the bucket.
-- `tol::T`: Small number used to handle numerical approximation errors.
+- `position::Vector{Float64}`: Cartesian coordinates of the bucket origin. [m]
+- `ori::Quaternion{Float64}`: Orientation of the bucket. [Quaternion]
+- `grid::GridParam{Int64,Float64}`: Struct that stores information related to the
+                                simulation grid.
+- `bucket::BucketParam{Float64}`: Struct that stores information related to the
+                                  bucket object.
+- `step_bucket_grid::Float64`: Spatial increment used to decompose the edges of the bucket.
+- `tol::Float64`: Small number used to handle numerical approximation errors.
 
 # Outputs
 - `Vector{Vector{Int64}}`: Collection of cells indices where the bucket is located.
@@ -68,7 +69,7 @@ function _calc_bucket_pos(
     b_pos += position
     t_pos += position
 
-    # Vector normal to the side of the bucket
+    # Unit vector normal to the side of the bucket
     normal_side = calc_normal(j_pos, b_pos, t_pos)
 
     # Position of each vertex of the bucket
@@ -130,7 +131,7 @@ However, this approach does not work when the rectangle is perpendicular to the 
 To handle this case, the function uses the `_calc_line_pos` function to include the cells
 that lie on the four edges of the rectangle.
 
-Note:
+# Note
 - This function is intended for internal use only.
 - The iteration is performed over the top right corner of each cell, but any other corner
   could have been chosen without affecting the results.
@@ -140,13 +141,14 @@ Note:
   becomes ambiguous. It is assumed that the caller resolves this ambiguity.
 
 # Inputs
-- `a::Vector{T}`: Cartesian coordinates of one vertex of the rectangle. [m]
-- `b::Vector{T}`: Cartesian coordinates of one vertex of the rectangle. [m]
-- `c::Vector{T}`: Cartesian coordinates of one vertex of the rectangle. [m]
-- `d::Vector{T}`: Cartesian coordinates of one vertex of the rectangle. [m]
-- `delta::T`: Spatial increment used to decompose the edges of the rectangle. [m]
-- `grid::GridParam{I,T}`: Struct that stores information related to the simulation grid.
-- `tol::T`: Small number used to handle numerical approximation errors.
+- `a::Vector{Float64}`: Cartesian coordinates of one vertex of the rectangle. [m]
+- `b::Vector{Float64}`: Cartesian coordinates of one vertex of the rectangle. [m]
+- `c::Vector{Float64}`: Cartesian coordinates of one vertex of the rectangle. [m]
+- `d::Vector{Float64}`: Cartesian coordinates of one vertex of the rectangle. [m]
+- `delta::Float64`: Spatial increment used to decompose the edges of the rectangle. [m]
+- `grid::GridParam{Int64,Float64}`: Struct that stores information related to the
+                                    simulation grid.
+- `tol::Float64`: Small number used to handle numerical approximation errors.
 
 # Outputs
 - `Vector{Vector{Int64}}`: Collection of cells indices where the rectangle is located.
@@ -286,19 +288,19 @@ c_ab = -(AD[1] * AO[2] - AD[2] * AO[1]) / (AD[2] * AB[1] - AD[1] * AB[2]).
 This decomposition allows us to determine whether the cell O is inside the rectangle area,
 since this requires c_ab and c_ad to be between 0 and 1.
 
-Note:
+# Note
 - This function is intended for internal use only.
 - By convention, the decomposition is done at the top right corner of each cell.
 
 # Inputs
-- `ab_ind::Vector{T}`: Indices representing the edge AB of the rectangle.
-- `ad_ind::Vector{T}`: Indices representing the edge AD of the rectangle.
-- `a_ind::Vector{T}`: Indices of the vertex A from which the edges AB and AD start.
-- `area_min_x::I`: Minimum index in the X direction of the specified area.
-- `area_min_y::I`: Minimum index in the Y direction of the specified area.
-- `area_length_x::I`: Number of grid elements in the X direction of the specified area.
-- `area_length_y::I`: Number of grid elements in the Y direction of the specified area.
-- `tol::T`: Small number used to handle numerical approximation errors.
+- `ab_ind::Vector{Float64}`: Indices representing the edge AB of the rectangle.
+- `ad_ind::Vector{Float64}`: Indices representing the edge AD of the rectangle.
+- `a_ind::Vector{Float64}`: Indices of the vertex A from which the edges AB and AD start.
+- `area_min_x::Int64`: Minimum index in the X direction of the specified area.
+- `area_min_y::Int64`: Minimum index in the Y direction of the specified area.
+- `area_length_x::Int64`: Number of grid elements in the X direction of the specified area.
+- `area_length_y::Int64`: Number of grid elements in the Y direction of the specified area.
+- `tol::Float64`: Small number used to handle numerical approximation errors.
 
 # Outputs
 - `c_ab::Matrix{Float64}`: Results of the vector decomposition in terms of the AB component.
@@ -339,7 +341,7 @@ function _decompose_vector_rectangle(
     c_ad_y = ab_ind[1] / (ab_ind[1] * ad_ind[2] - ab_ind[2] * ad_ind[1])
 
     # Preparation for the determination of the rectangle position
-    # Iterating over the top right corner of all cells in the rectangle area
+    # Iterating over the top right corner of all cells in the specified area
     n_cell = 0
     for ii_s in 1:area_length_x
         for jj_s in 1:area_length_y
@@ -392,7 +394,7 @@ However, this approach does not work when the triangle is perpendicular to the X
 To handle this case, the function uses the `_calc_line_pos` function to include the cells
 that lie on the three edges of the triangle.
 
-Note:
+# Note
 - This function is intended for internal use only.
 - The iteration is performed over the top right corner of each cell, but any other corner
   could have been chosen without affecting the results.
@@ -402,12 +404,13 @@ Note:
   becomes ambiguous. It is assumed that the caller resolves this ambiguity.
 
 # Inputs
-- `a::Vector{T}`: Cartesian coordinates of one vertex of the triangle. [m]
-- `b::Vector{T}`: Cartesian coordinates of one vertex of the triangle. [m]
-- `c::Vector{T}`: Cartesian coordinates of one vertex of the triangle. [m]
-- `delta::T`: Spatial increment used to decompose the edges of the triangle. [m]
-- `grid::GridParam{I,T}`: Struct that stores information related to the simulation grid.
-- `tol::T`: Small number used to handle numerical approximation errors.
+- `a::Vector{Float64}`: Cartesian coordinates of one vertex of the triangle. [m]
+- `b::Vector{Float64}`: Cartesian coordinates of one vertex of the triangle. [m]
+- `c::Vector{Float64}`: Cartesian coordinates of one vertex of the triangle. [m]
+- `delta::Float64`: Spatial increment used to decompose the edges of the triangle. [m]
+- `grid::GridParam{Int64,Float64}`: Struct that stores information related to the
+                                    simulation grid.
+- `tol::Float64`: Small number used to handle numerical approximation errors.
 
 # Outputs
 - `Vector{Vector{Int64}}`: Collection of cells indices where the triangle is located.
@@ -544,19 +547,19 @@ This decomposition allows us to determine whether the cell O is inside the trian
 since this requires c_ab and c_ac to be between 0 and 1, and the sum of c_ab and c_ac to be
 lower than 1.
 
-Note:
+# Note
 - This function is intended for internal use only.
 - By convention, the decomposition is done at the top right corner of each cell.
 
 # Inputs
-- `ab_ind::Vector{T}`: Indices representing the edge AB of the triangle.
-- `ac_ind::Vector{T}`: Indices representing the edge AC of the triangle.
-- `a_ind::Vector{T}`: Indices of the vertex A from which the edges AB and AC start.
-- `area_min_x::I`: Minimum index in the X direction of the specified area.
-- `area_min_y::I`: Minimum index in the Y direction of the specified area.
-- `area_length_x::I`: Number of grid elements in the X direction of the specified area.
-- `area_length_y::I`: Number of grid elements in the Y direction of the specified area.
-- `tol::T`: Small number used to handle numerical approximation errors.
+- `ab_ind::Vector{Float64}`: Indices representing the edge AB of the triangle.
+- `ac_ind::Vector{Float64}`: Indices representing the edge AC of the triangle.
+- `a_ind::Vector{Float64}`: Indices of the vertex A from which the edges AB and AC start.
+- `area_min_x::Int64`: Minimum index in the X direction of the specified area.
+- `area_min_y::Int64`: Minimum index in the Y direction of the specified area.
+- `area_length_x::Int64`: Number of grid elements in the X direction of the specified area.
+- `area_length_y::Int64`: Number of grid elements in the Y direction of the specified area.
+- `tol::Float64`: Small number used to handle numerical approximation errors.
 
 # Outputs
 - `c_ab::Matrix{Float64}`: Results of the vector decomposition in terms of the AB component.
@@ -590,14 +593,14 @@ function _decompose_vector_triangle(
     c_ac = Matrix{Float64}(undef, area_length_x, area_length_y)
     in_triangle = Matrix{Bool}(undef, area_length_x, area_length_y)
 
-    # Setting constants for decomposing the cell position into the reference frame
+    # Setting constants for decomposing the cell position into the reference basis
     c_ab_x = ac_ind[2] / (ab_ind[1] * ac_ind[2] - ab_ind[2] * ac_ind[1])
     c_ab_y = ac_ind[1] / (ab_ind[1] * ac_ind[2] - ab_ind[2] * ac_ind[1])
     c_ac_x = ab_ind[2] / (ab_ind[1] * ac_ind[2] - ab_ind[2] * ac_ind[1])
     c_ac_y = ab_ind[1] / (ab_ind[1] * ac_ind[2] - ab_ind[2] * ac_ind[1])
 
     # Preparation for the determination of the triangle position
-    # Iterating over the top right corner of all cells in the triangle area
+    # Iterating over the top right corner of all cells in the specified area
     n_cell = 0
     for ii_s in 1:area_length_x
         for jj_s in 1:area_length_y
@@ -652,16 +655,17 @@ As the center of each cell is considered to be on the center of the top surface,
 `round` should be used for getting the cell indices in the X and Y direction,
 while `ceil` should be used for the Z direction.
 
-Note:
+# Note
 - This function is intended for internal use only.
 - When the line follows a cell border, the exact location of the line becomes ambiguous.
   It is assumed that the caller resolves this ambiguity.
 
 # Inputs
-- `a::Vector{T}`: Cartesian coordinates of the first extremity of the line. [m]
-- `b::Vector{T}`: Cartesian coordinates of the second extremity of the line. [m]
-- `delta::T`: Spatial increment used to decompose the line. [m]
-- `grid::GridParam{I,T}`: Struct that stores information related to the simulation grid.
+- `a::Vector{Float64}`: Cartesian coordinates of the first extremity of the line. [m]
+- `b::Vector{Float64}`: Cartesian coordinates of the second extremity of the line. [m]
+- `delta::Float64`: Spatial increment used to decompose the line. [m]
+- `grid::GridParam{Int64,Float64}`: Struct that stores information related to the
+                                    simulation grid.
 
 # Outputs
 - `line_pos::Vector{Vector{Int64}}`: Collection of cells indices where the line is located.

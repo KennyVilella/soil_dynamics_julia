@@ -11,7 +11,7 @@ Copyright, 2023,  Vilella Kenny.
 
 Store all parameters related to the simulation grid.
 
-Convention:
+# Convention
 - The simulation grid is centred at 0, that is, if the extent of the grid is 10.0,
   the grid would then extend from -5.0 to 5.0, this applies to all direction.
 - The grid is composed of regular 3D cells
@@ -141,7 +141,7 @@ end
 
 Store all parameters related to a bucket object.
 
-Convention:
+# Convention
 - The bucket is approximated as a triangular prism
 
                      A ____________________ D
@@ -159,11 +159,11 @@ Convention:
          /   .                  /     ̸
         /  .                   /    ̸
        / .                    /   ̸
-      B ____________________ E  ̸
+      B ____________________ E 
 
 - The middle of the segment AD is referred to as the bucket "joint".
 - The middle of the segment CF is referred to as the bucket "base".
-- The middle of the segment CF is referred to as the bucket "teeth".
+- The middle of the segment BE is referred to as the bucket "teeth".
 - The surface ABED is open and referred to as the bucket "front".
 - The surface BCFE is a bucket wall and referred to as the bucket "base".
 - The surface ACFD is a bucket wall and referred to as the bucket "back".
@@ -173,8 +173,8 @@ Convention:
             AD = BE = CF = `width`.
 - The center of rotation of the bucket is assumed to be at the bucket "origin" (not shown
   in the figure) and the bucket vertices are given relative to this origin.
-- The provided coordinates are assumed to the reference pose of the bucket, from which the
-  bucket pose is calculated throughout the code.
+- The provided coordinates are assumed to be the reference pose of the bucket, from which
+  the bucket pose is calculated throughout the code.
 
 # Fields
 

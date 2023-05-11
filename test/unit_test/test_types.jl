@@ -83,13 +83,13 @@ bucket_width = 0.5
 
     # Testing that cell size greater than the grid size throws an error
     @test_throws ErrorException GridParam(
-            0.05, grid_size_y, grid_size_z, cell_size_xy, cell_size_z
+            0.5*cell_size_xy, grid_size_y, grid_size_z, cell_size_xy, cell_size_z
         )
     @test_throws ErrorException GridParam(
-            grid_size_x, 0.05, grid_size_z, cell_size_xy, cell_size_z
+            grid_size_x, 0.5*cell_size_xy, grid_size_z, cell_size_xy, cell_size_z
         )
     @test_throws ErrorException GridParam(
-            grid_size_x, grid_size_y, 0.05, cell_size_xy, cell_size_z
+            grid_size_x, grid_size_y, 0.5*cell_size_z, cell_size_xy, cell_size_z
         )
 end
 

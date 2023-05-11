@@ -12,14 +12,14 @@ Copyright, 2023,  Vilella Kenny.
 This function calculates the unit normal vector of a plane formed by three points using
 the right-hand rule.
 
-Note:
+# Note
 - The input order of the points is important as it determines the sign of the unit normal
   vector based on the right-hand rule.
 
 # Inputs
-- `a::Vector{T}`: Cartesian coordinates of the first point of the plane. [m]
-- `b::Vector{T}`: Cartesian coordinates of the second point of the plane. [m]
-- `c::Vector{T}`: Cartesian coordinates of the third point of the plane. [m]
+- `a::Vector{Float64}`: Cartesian coordinates of the first point of the plane. [m]
+- `b::Vector{Float64}`: Cartesian coordinates of the second point of the plane. [m]
+- `c::Vector{Float64}`: Cartesian coordinates of the third point of the plane. [m]
 
 # Outputs
 - `Vector{T}`: Unit normal vector of the provided plane. [m]

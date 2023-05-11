@@ -516,10 +516,6 @@ end
 @testset "_decompose_vector_triangle" begin
     # Note that the function does not account for the case where
     # the triangle follows a cell border.
-    # It is therefore necessary to solve this potential ambiguity
-    # before calling the function. As a result, a small increment (1e-12)
-    # is sometimes added or removed to the input in order to make sure that
-    # the input coordinates do not correspond to a cell border.
 
     # Testing for a simple triangle in the XY plane
     a_ind = [11.0, 11.0, 11.0]

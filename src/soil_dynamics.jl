@@ -16,16 +16,18 @@ This function is the main entry point for the simulator.
 Currently, the function takes the position and orientation of the bucket and calculates
 all the cells where the bucket is located.
 
-Note:
+# Note
 - This function is a work in progress and its current state does not reflect its
   intended use.
 
 # Inputs
-- `position::Vector{T}`: Cartesian coordinates of the bucket origin. [m]
-- `ori::Quaternion{T}`: Orientation of the bucket. [Quaternion]
-- `grid::GridParam{I,T}`: Struct that stores information related to the simulation grid.
-- `bucket::BucketParam{T}`: Struct that stores information related to the bucket object.
-- `tol::T`: Small number used to handle numerical approximation errors.
+- `position::Vector{Float64}`: Cartesian coordinates of the bucket origin. [m]
+- `ori::Quaternion{Float64}`: Orientation of the bucket. [Quaternion]
+- `grid::GridParam{Int64,Float64}`: Struct that stores information related to the
+                                simulation grid.
+- `bucket::BucketParam{Float64}`: Struct that stores information related to the
+                                  bucket object.
+- `tol::Float64`: Small number used to handle numerical approximation errors.
 
 # Outputs
 - None
@@ -47,7 +49,7 @@ function soil_dynamics!(
     position::Vector{T},
     ori::Quaternion{T},
     grid::GridParam{I,T},
-    bucket::BucketParam{I,T},
+    bucket::BucketParam{T},
     tol::T=1e-8
 ) where {I<:Int64,T<:Float64}
 
