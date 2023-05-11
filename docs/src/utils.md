@@ -1,5 +1,6 @@
 # Documentation for utils.jl
 
 ```@autodocs
-Pages   = ["utils.jl"]
+Modules = [SoilDynamics]
+Pages   = ["../../src/utils.jl"]
 ```

@@ -1,5 +1,6 @@
 # Documentation for types.jl
 
 ```@autodocs
-Pages   = ["types.jl"]
+Modules = [SoilDynamics]
+Pages   = ["../../src/types.jl"]
 ```

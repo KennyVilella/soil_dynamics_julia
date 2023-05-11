@@ -1,5 +1,6 @@
 # Documentation for bucket.jl
 
 ```@autodocs
-Pages   = ["bucket.jl"]
+Modules = [SoilDynamics]
+Pages   = ["../../src/bucket.jl"]
 ```
