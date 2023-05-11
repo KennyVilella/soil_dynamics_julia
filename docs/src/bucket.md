@@ -2,5 +2,5 @@
 
 ```@autodocs
 Modules = [SoilDynamics]
-Pages   = ["../../src/bucket.jl"]
+Pages   = ["bucket.jl"]
 ```
