@@ -4,9 +4,10 @@ name: CI
 # Do not trigger CI for draft pull request
 on:
   push:
-    branches: [main]
+    branches: ["main"]
     tags: ["v*"]
-  pull_request:  [opened, synchronize, reopened, ready_for_review]
+  pull_request:  
+    types: [opened, synchronize, reopened, ready_for_review]
 
 
 jobs:
@@ -22,10 +23,10 @@ jobs:
           - ubuntu-latest
         arch:
           - x64
-    if: ${{ github.event_name == "push" || !github.event.pull_request.draft }}
+    if: ${{ github.event_name == 'push' || !github.event.pull_request.draft }}
     steps:
       - name: Checkout the repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Setup Julia
         uses: julia-actions/setup-julia@v1
@@ -55,10 +56,10 @@ jobs:
   docs:
     name: Documentation
     runs-on: ubuntu-latest
-    if: ${{ github.event_name == "push" || !github.event.pull_request.draft }}
+    if: ${{ github.event_name == 'push' || !github.event.pull_request.draft }}
     steps:
       - name: Checkout the repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Setup Julia
         uses: julia-actions/setup-julia@v1
