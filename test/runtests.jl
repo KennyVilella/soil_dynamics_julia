@@ -1,6 +1,7 @@
 using Test
 using SoilDynamics
 import ReferenceFrameRotations: angle_to_quat
+import SparseArrays: SparseMatrixCSC
 
 println("Unit testing")
 @time @testset "types.jl" verbose = true begin

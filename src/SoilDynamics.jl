@@ -2,6 +2,7 @@ module SoilDynamics
 
 import LinearAlgebra: cross, norm
 import ReferenceFrameRotations: vect, Quaternion
+import SparseArrays: SparseMatrixCSC, spzeros
 
 # soil_dynamics.jl
 export soil_dynamics!
