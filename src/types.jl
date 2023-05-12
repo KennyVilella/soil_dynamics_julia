@@ -56,7 +56,7 @@ Store all parameters related to the simulation grid.
         cell_size_z::T=cell_size_xy
     ) where {T<:Float64}
 
-Create a new instance of GridParam using the grid size in [m].
+Create a new instance of `GridParam` using the grid size in [m].
 The actual size of the grid would be:
 - [-grid_size_x, grid_size_x] in the X direction.
 - [-grid_size_y, grid_size_y] in the Y direction.
@@ -199,7 +199,7 @@ Store all parameters related to a bucket object.
         t_pos_init::Vector{T}, width::T
     ) where {T<:Float64}
 
-Create a new instance of BucketParam using the reference positions of the bucket origin,
+Create a new instance of `BucketParam` using the reference positions of the bucket origin,
 joint, base, and teeth as well as the bucket width.
 The position of the bucket joint, base, and teeth are given relative to the position of the
 bucket origin.
@@ -264,5 +264,85 @@ struct BucketParam{T<:Float64}
             j_pos_init - o_pos_init, b_pos_init - o_pos_init, t_pos_init - o_pos_init,
             width
         )
+    end
+end
+
+"""
+    SimOut{I<:Int64,T<:Float64}
+
+Store all outputs of the simulation.
+
+# Convention
+- The `terrain` Matrix stores the height of the terrain at each XY position, see the 
+  `GridParam` struct for more information on the simulation grid.
+- The cells where a bucket wall is located is stored in `body`, which is a vector of sparse
+  Matrices. At each XY position, the first sparse Matrix indicates the lowest height where
+  a bucket wall is located while the second sparse Matrix indicates the maximum height of
+  this bucket wall. If a second bucket wall is located at the same XY position, its
+  minimum and maximum height are indicated in the third and fourth sparse Matrix,
+  respectively.
+- For each bucket, there can be only two distinct bucket walls located at the same
+  XY position. As a result, the number of sparse Matrices in the `body` vector should be
+  equal to four times the number of bucket.
+
+# Note
+- Currently, only one bucket at a time is supported, but this restriction may be
+  removed in the future.
+- Sparse Matrices are used to reduce memory allocation and speed up calculation.
+- An attempt has been made to use Dicts instead of sparse Matrices, however Dicts seem to be
+  prohibitively slow in that context, probably due to the size.
+
+# Fields
+- `terrain::Matrix{Float64}`: Height of the terrain. [m]
+- `body::Vector{SparseMatrixCSC{Float64,Int64}}`: Store the vertical extension of all
+                                                  bucket walls for each XY position. [m]
+
+# Inner constructor
+
+    SimOut(
+        terrain::Matrix{T}, grid::GridParam{I,T}
+    ) where {I<:Int64,T<:Float64}
+
+Create a new instance of `SimOut` using the provided `terrain`.
+
+Requirements:
+- The `terrain` Matrix should be consistent with the grid size.
+
+# Example
+
+    grid = GridParam(4.0, 4.0, 3.0, 0.05, 0.01)
+    terrain = zeros(2 * grid.half_length_x + 1, 2 * grid.half_length_y + 1)
+
+    out = SimOut(terrain, grid)
+
+This would create a flat terrain located at 0 height.
+"""
+struct SimOut{I<:Int64,T<:Float64}
+    terrain::Matrix{T}
+    body::Vector{SparseMatrixCSC{T,I}}
+    function SimOut(
+        terrain::Matrix{T},
+        grid::GridParam{I,T}
+    ) where {I<:Int64,T<:Float64}
+
+        if (size(terrain, 1) != 2 * grid.half_length_x + 1)
+            throw(DimensionMismatch("Dimension of terrain in x ("* string(size(terrain, 1))
+                * ") does not match with the grid size ("
+                * string(2 * grid.half_length_x + 1) * ")"
+            ))
+        end
+        if (size(terrain, 2) != 2 * grid.half_length_y + 1)
+            throw(DimensionMismatch("Dimension of terrain in y ("* string(size(terrain, 2))
+                * ") does not match with the grid size ("
+                * string(2 * grid.half_length_y + 1) * ")"
+            ))
+        end
+
+        body = [spzeros(2*grid.half_length_x+1, 2*grid.half_length_y+1)]
+        for ii in 2:4
+            push!(body, spzeros(2*grid.half_length_x+1, 2*grid.half_length_y+1))
+        end
+
+        new{I,T}(terrain, body)
     end
 end

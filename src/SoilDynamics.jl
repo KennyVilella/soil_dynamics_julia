@@ -7,7 +7,7 @@ import ReferenceFrameRotations: vect, Quaternion
 export soil_dynamics!
 
 # types.jl
-export GridParam, BucketParam
+export GridParam, BucketParam, SimOut
 
 # bucket.jl
 export _calc_bucket_pos
