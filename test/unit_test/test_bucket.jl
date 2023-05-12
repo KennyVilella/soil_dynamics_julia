@@ -6,6 +6,7 @@ Copyright, 2023,  Vilella Kenny.
 #                                Setting dummy properties                                  #
 #                                                                                          #
 #==========================================================================================#
+# Grid properties
 grid_size_x = 1.0
 grid_size_y = 1.0
 grid_size_z = 1.0
@@ -13,12 +14,17 @@ cell_size_xy = 0.1
 cell_size_z = 0.1
 grid = GridParam(grid_size_x, grid_size_y, grid_size_z, cell_size_xy, cell_size_z)
 
+# Bucket properties
 o_pos_init = Vector{Float64}([0.0, 0.0, 0.0])
 j_pos_init = Vector{Float64}([0.0, 0.0, 0.0])
 b_pos_init = Vector{Float64}([0.0, 0.0, -0.5])
 t_pos_init = Vector{Float64}([0.7, 0.0, -0.5])
 bucket_width = 0.5
 bucket = BucketParam(o_pos_init, j_pos_init, b_pos_init, t_pos_init, bucket_width)
+
+# Terrain properties
+terrain = zeros(2 * grid.half_length_x + 1, 2 * grid.half_length_y + 1)
+out = SimOut(terrain, grid)
 
 
 #==========================================================================================#
@@ -923,6 +929,21 @@ end
     @test length(tri_pos) == 1
 end
 
+@testset "_init_body!" begin
+    # Setting dummy values in body
+    out.body[1][5:17, 1:16] .= 1.0
+    out.body[2][5:17, 1:16] .= 2.0
+    out.body[3][4:10, 13:17] .= 0.0
+    out.body[4][4:10, 13:17] .= 2*grid.half_length_z
+
+    # Testing that body is properly reset
+    _init_body!(out, grid)
+    @test isempty(nonzeros(out.body[1]))
+    @test isempty(nonzeros(out.body[2]))
+    @test isempty(nonzeros(out.body[3]))
+    @test isempty(nonzeros(out.body[4]))
+end
+
 @testset "_calc_bucket_pos" begin
     # Setting a dummy bucket geometry in the XZ plane
     bucket.j_pos_init .= Vector{Float64}([0.0, 0.0, 0.0])
@@ -932,7 +953,7 @@ end
     position = Vector{Float64}([0.0, 0.0, 0.0])
 
     # Testing for a bucket in the XZ plane
-    bucket_pos  = _calc_bucket_pos(position, ori, grid, bucket)
+    bucket_pos  = _calc_bucket_pos(out, position, ori, grid, bucket)
     # Checking the bucket position
     a = [0.5, 0.0, -0.25]
     b = [0.5, 0.0, 0.25]
@@ -950,7 +971,7 @@ end
     position = Vector{Float64}([0.0, 0.0, 0.0])
 
     # Testing for a bucket in the XY plane
-    bucket_pos = _calc_bucket_pos(position, ori, grid, bucket)
+    bucket_pos = _calc_bucket_pos(out, position, ori, grid, bucket)
     # Checking the bucket position
     a = [0.5 - 1e-8, -0.25 + 1e-8, 0.0 - 1e-8]
     b = [0.5 - 1e-8,  0.25 - 1e-8, 0.0 - 1e-8]
@@ -974,7 +995,7 @@ end
     t_l_pos = [-0.5 + 1e-8,  0.25 - 1e-8, -0.6 + 1e-8]
 
     # Testing for a bucket in a dummy position
-    bucket_pos = _calc_bucket_pos(position, ori, grid, bucket)
+    bucket_pos = _calc_bucket_pos(out, position, ori, grid, bucket)
     # Checking that the bucket base position is included in the bucket position
     base_pos_exp = unique(
         _calc_rectangle_pos(b_l_pos, b_r_pos, t_r_pos, t_l_pos, 0.01, grid), dims=1
