@@ -8,7 +8,7 @@ Copyright, 2023,  Vilella Kenny.
 #==========================================================================================#
 """
     _calc_bucket_pos(
-        position::Vector{T}, ori::Quaternion{T}, grid::GridParam{I,T},
+        out::SimOut{I,T}, position::Vector{T}, ori::Quaternion{T}, grid::GridParam{I,T},
         bucket::BucketParam{I,T}, step_bucket_grid::T=0.5, tol::T=1e-8
     ) where {I<:Int64,T<:Float64}
 
@@ -24,6 +24,7 @@ origin. The orientation is provided using the quaternion definition.
 - This function is a work in progress.
 
 # Inputs
+- `out::SimOut{Int64,Float64}`: Struct that stores simulation outputs.
 - `position::Vector{Float64}`: Cartesian coordinates of the bucket origin. [m]
 - `ori::Quaternion{Float64}`: Orientation of the bucket. [Quaternion]
 - `grid::GridParam{Int64,Float64}`: Struct that stores information related to the
@@ -47,10 +48,13 @@ origin. The orientation is provided using the quaternion definition.
     b = [0.0, 0.0, -0.5]
     t = [1.0, 0.0, -0.5]
     bucket = BucketParam(o, j, b, t, 0.5)
+    terrain = zeros(2 * grid.half_length_x + 1, 2 * grid.half_length_y + 1)
+    out = SimOut(terrain, grid)
 
-    _calc_bucket_pos(position, ori, grid, bucket)
+    _calc_bucket_pos(out, position, ori, grid, bucket)
 """
 function _calc_bucket_pos(
+    out::SimOut{I,T},
     position::Vector{T},
     ori::Quaternion{T},
     grid::GridParam{I,T},
@@ -103,6 +107,9 @@ function _calc_bucket_pos(
     left_side_pos = _calc_triangle_pos(
         j_l_pos, b_l_pos, t_l_pos, step_bucket_grid * grid.cell_size_z, grid, tol
     )
+
+    # Reinitializing bucket position
+    _init_body!(out, grid)
 
     return unique([base_pos; back_pos; right_side_pos; left_side_pos], dims=1)
 end
@@ -712,4 +719,41 @@ function _calc_line_pos(
     end
 
     return line_pos
+end
+
+"""
+    _init_body!(
+        out::SimOut{I,T},
+        grid::GridParam{I,T}
+    ) where {I<:Int64,T<:Float64}
+
+This function reset `body`.
+
+# Note
+- This function is intended for internal use only.
+
+# Inputs
+- `out::SimOut{Int64,Float64}`: Struct that stores simulation outputs.
+- `grid::GridParam{Int64,Float64}`: Struct that stores information related to the
+                                    simulation grid.
+
+# Outputs
+- None
+
+# Example
+
+    grid = GridParam(4.0, 4.0, 3.0, 0.05, 0.01)
+    terrain = zeros(2 * grid.half_length_x + 1, 2 * grid.half_length_y + 1)
+    out = SimOut(terrain, grid)
+
+    _init_body!(out, grid)
+"""
+function _init_body!(
+    out::SimOut{I,T},
+    grid::GridParam{I,T}
+) where {I<:Int64,T<:Float64}
+
+    for ii in 1:length(out.body)
+        droptol!(out.body[ii], 2*grid.half_length_z+1)
+    end
 end

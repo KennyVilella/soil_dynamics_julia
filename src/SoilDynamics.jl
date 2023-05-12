@@ -2,7 +2,7 @@ module SoilDynamics
 
 import LinearAlgebra: cross, norm
 import ReferenceFrameRotations: vect, Quaternion
-import SparseArrays: SparseMatrixCSC, spzeros
+import SparseArrays: SparseMatrixCSC, spzeros, droptol!
 
 # soil_dynamics.jl
 export soil_dynamics!
@@ -11,7 +11,7 @@ export soil_dynamics!
 export GridParam, BucketParam, SimOut
 
 # bucket.jl
-export _calc_bucket_pos
+export _calc_bucket_pos, _init_body!
 export _calc_rectangle_pos, _calc_triangle_pos, _calc_line_pos
 export _decompose_vector_rectangle, _decompose_vector_triangle
 
