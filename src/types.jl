@@ -48,6 +48,8 @@ Store all parameters related to the simulation grid.
 - `cell_size_z::Float64`: Height of the cells in the Z direction. [m]
 - `cell_area::Float64`: Surface area of one cell in the horizontal plane. [m^2]
 - `cell_volume::Float64`: Volume of one cell. [m^3]
+- `vect_z::StepRangeLen{Float64}`: Vector providing a conversion between cell's index and
+                                   cell's position in the Z direction.
 
 # Inner constructor
 
@@ -82,6 +84,7 @@ struct GridParam{I<:Int64,T<:Float64}
     cell_size_z::T
     cell_area::T
     cell_volume::T
+    vect_z::StepRangeLen{T}
     function GridParam(
         grid_size_x::T,
         grid_size_y::T,
@@ -91,7 +94,7 @@ struct GridParam{I<:Int64,T<:Float64}
     ) where {T<:Float64}
 
         if ((cell_size_z < 0.0) || (cell_size_z ≈ 0.0))
-                throw(DomainError(cell_size_z , "cell_size_z should be greater than zero"))
+            throw(DomainError(cell_size_z , "cell_size_z should be greater than zero"))
         end
         if ((cell_size_xy < 0.0) || ((cell_size_xy ≈ 0.0)))
             throw(DomainError(cell_size_xy, "cell_size_xy should be greater than zero"))
@@ -111,9 +114,9 @@ struct GridParam{I<:Int64,T<:Float64}
             ))
         end
         if (grid_size_x < cell_size_xy)
-                throw(ErrorException(
-                    "cell_size_xy should be lower than or equal to grid_size_x"
-                ))
+            throw(ErrorException(
+                "cell_size_xy should be lower than or equal to grid_size_x"
+            ))
         end
         if (grid_size_y < cell_size_xy)
             throw(ErrorException(
@@ -133,9 +136,11 @@ struct GridParam{I<:Int64,T<:Float64}
         cell_area = cell_size_xy * cell_size_xy
         cell_volume = cell_area * cell_size_z
 
+        vect_z = cell_size_z .* range(-half_length_z, half_length_z, step=1)
+
         new{Int64,T}(
             half_length_x, half_length_y, half_length_z, cell_size_xy, cell_size_z,
-            cell_area, cell_volume,
+            cell_area, cell_volume, vect_z
         )
     end
 end
