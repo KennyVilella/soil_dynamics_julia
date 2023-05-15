@@ -17,6 +17,7 @@ grid_half_length_y =  round(Int64, grid_size_y / cell_size_xy)
 grid_half_length_z =  round(Int64, grid_size_z / cell_size_z)
 cell_area = cell_size_xy * cell_size_xy
 cell_volume = cell_area * cell_size_z
+grid_vect_z = cell_size_z .* range(-grid_half_length_z, grid_half_length_z, step=1)
 
 # Bucket properties
 o_pos_init = Vector{Float64}([0.0, 0.0, 0.5])
@@ -49,6 +50,7 @@ terrain = zeros(2 * grid_half_length_x + 1, 2 * grid_half_length_y + 1)
     @test grid.cell_size_z == cell_size_z
     @test grid.cell_area == cell_area
     @test grid.cell_volume == cell_volume
+    @test grid.vect_z == grid_vect_z
 
     # Testing that cell_size_z greater than cell_size_xy throws an error
     @test_throws ErrorException GridParam(grid_size_x, grid_size_y, grid_size_z, 0.09, 0.1)

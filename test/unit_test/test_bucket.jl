@@ -944,6 +944,183 @@ end
     @test isempty(nonzeros(out.body[4]))
 end
 
+@testset "_include_new_body_pos!" begin
+    # Setting a dummy body
+    _init_body!(out, grid)
+    out.body[1][7, 10] = 1.0
+    out.body[2][7, 10] = 2.0
+    out.body[1][9, 12] = 0.5
+    out.body[2][9, 12] = 0.6
+    out.body[3][9, 12] = 0.8
+    out.body[4][9, 12] = 0.9
+    out.body[3][10, 9] = 1.2
+    out.body[4][10, 9] = 1.4
+
+    # Testing to add a position when there is no existing position
+    _include_new_body_pos!(out, 6, 6, 0.1, 0.2)
+    @test (out.body[1][6, 6] ≈ 0.1) && (out.body[2][6, 6] ≈ 0.2)
+
+    # Testing to add a position distinct from existing positions (1)
+    _include_new_body_pos!(out, 7, 10, 0.1, 0.2)
+    @test (out.body[1][7, 10] ≈ 1.0) && (out.body[2][7, 10] ≈ 2.0)
+    @test (out.body[3][7, 10] ≈ 0.1) && (out.body[4][7, 10] ≈ 0.2)
+
+    # Testing to add a position distinct from existing positions (2)
+    _include_new_body_pos!(out, 10, 9, 1.6, 1.7)
+    @test (out.body[1][10, 9] ≈ 1.6) && (out.body[2][10, 9] ≈ 1.7)
+    @test (out.body[3][10, 9] ≈ 1.2) && (out.body[4][10, 9] ≈ 1.4)
+
+    # Testing to add a position overlapping with an existing position (1)
+    _include_new_body_pos!(out, 7, 10, 0.2, 0.4)
+    @test (out.body[1][7, 10] ≈ 1.0) && (out.body[2][7, 10] ≈ 2.0)
+    @test (out.body[3][7, 10] ≈ 0.1) && (out.body[4][7, 10] ≈ 0.4)
+
+    # Testing to add a position overlapping with an existing position (2)
+    _include_new_body_pos!(out, 7, 10, -0.2, 0.1)
+    @test (out.body[1][7, 10] ≈ 1.0) && (out.body[2][7, 10] ≈ 2.0)
+    @test (out.body[3][7, 10] ≈ -0.2) && (out.body[4][7, 10] ≈ 0.4)
+
+    # Testing to add a position overlapping with an existing position (3)
+    _include_new_body_pos!(out, 7, 10, 2.0, 2.5)
+    @test (out.body[1][7, 10] ≈ 1.0) && (out.body[2][7, 10] ≈ 2.5)
+    @test (out.body[3][7, 10] ≈ -0.2) && (out.body[4][7, 10] ≈ 0.4)
+
+    # Testing to add a position overlapping with an existing position (4)
+    _include_new_body_pos!(out, 7, 10, 0.7, 1.0)
+    @test (out.body[1][7, 10] ≈ 0.7) && (out.body[2][7, 10] ≈ 2.5)
+    @test (out.body[3][7, 10] ≈ -0.2) && (out.body[4][7, 10] ≈ 0.4)
+
+    # Testing to add a position overlapping with an existing position (5)
+    _include_new_body_pos!(out, 7, 10, -0.4, 0.6)
+    @test (out.body[1][7, 10] ≈ 0.7) && (out.body[2][7, 10] ≈ 2.5)
+    @test (out.body[3][7, 10] ≈ -0.4) && (out.body[4][7, 10] ≈ 0.6)
+
+    # Testing to add a position overlapping with the two existing positions
+    _include_new_body_pos!(out, 9, 12, 0.6, 0.8)
+    @test (out.body[1][9, 12] ≈ 0.5) && (out.body[2][9, 12] ≈ 0.9)
+
+    # Testing that incorrect request throws an error
+    @test_throws ErrorException _include_new_body_pos!(out, 7, 10, 3.0, 3.1)
+
+    # Testing that no extra bucket position has been added
+    # Resetting bucket position
+    out.body[1][6, 6] = 0.0
+    out.body[2][6, 6] = 0.0
+    out.body[1][7, 10] = 0.0
+    out.body[2][7, 10] = 0.0
+    out.body[3][7, 10] = 0.0
+    out.body[4][7, 10] = 0.0
+    out.body[1][10, 9] = 0.0
+    out.body[2][10, 9] = 0.0
+    out.body[3][10, 9] = 0.0
+    out.body[4][10, 9] = 0.0
+    out.body[1][9, 12] = 0.0
+    out.body[2][9, 12] = 0.0
+    dropzeros!(out.body[1])
+    dropzeros!(out.body[2])
+    dropzeros!(out.body[3])
+    dropzeros!(out.body[4])
+    @test isempty(nonzeros(out.body[1]))
+    @test isempty(nonzeros(out.body[2]))
+    @test isempty(nonzeros(out.body[3]))
+    @test isempty(nonzeros(out.body[4]))
+end
+
+@testset "_update_body!" begin
+    # Resetting bucket position
+    _init_body!(out, grid)
+
+    # Creating a dummy bucket wall
+    area_pos = Vector{Vector{Int64}}()
+    push!(area_pos, [5, 5, 11])
+    push!(area_pos, [5, 5, 15])
+    push!(area_pos, [6, 6, 17])
+    push!(area_pos, [7, 11, 11])
+    push!(area_pos, [7, 11, 12])
+    push!(area_pos, [7, 12, 12])
+    push!(area_pos, [7, 12, 13])
+    push!(area_pos, [7, 13, 11])
+    push!(area_pos, [10, 10, 11])
+
+    # Testing for a first bucket wall
+    _update_body!(area_pos, out, grid)
+    @test (out.body[1][5, 5] ≈ -0.1) && (out.body[2][5, 5] ≈ 0.4)
+    @test (out.body[1][6, 6] ≈ 0.5) && (out.body[2][6, 6] ≈ 0.6)
+    @test (out.body[1][7, 11] ≈ -0.1) && (out.body[2][7, 11] ≈ 0.1)
+    @test (out.body[1][7, 12] ≈ 0.0) && (out.body[2][7, 12] ≈ 0.2)
+    @test (out.body[1][7, 13] ≈ -0.1) && (out.body[2][7, 13] ≈ 0.0)
+    @test (out.body[1][10, 10] ≈ -0.1) && (out.body[2][10, 10] ≈ 0.0)
+
+    # Creating a dummy bucket wall
+    area_pos = Vector{Vector{Int64}}()
+    push!(area_pos, [4, 4, 11])
+    push!(area_pos, [5, 5, 15])
+    push!(area_pos, [6, 6, 10])
+    push!(area_pos, [7, 11, 12])
+    push!(area_pos, [7, 11, 15])
+    push!(area_pos, [7, 12, 9])
+    push!(area_pos, [7, 12, 12])
+    push!(area_pos, [7, 13, 9])
+    push!(area_pos, [7, 13, 14])
+    push!(area_pos, [10, 10, 13])
+
+    # Testing for a second bucket wall
+    _update_body!(area_pos, out, grid)
+    @test (out.body[1][4, 4] ≈ -0.1) && (out.body[2][4, 4] ≈ 0.0)
+    @test (out.body[1][5, 5] ≈ -0.1) && (out.body[2][5, 5] ≈ 0.4)
+    @test (out.body[1][6, 6] ≈ 0.5) && (out.body[2][6, 6] ≈ 0.6)
+    @test (out.body[3][6, 6] ≈ -0.2) && (out.body[4][6, 6] ≈ -0.1)
+    @test (out.body[1][7, 11] ≈ -0.1) && (out.body[2][7, 11] ≈ 0.4)
+    @test (out.body[1][7, 12] ≈ -0.3) && (out.body[2][7, 12] ≈ 0.2)
+    @test (out.body[1][7, 13] ≈ -0.3) && (out.body[2][7, 13] ≈ 0.3)
+    @test (out.body[1][10, 10] ≈ -0.1) && (out.body[2][10, 10] ≈ 0.0)
+    @test (out.body[3][10, 10] ≈ 0.1) && (out.body[4][10, 10] ≈ 0.2)
+
+    # Creating a dummy bucket wall
+    area_pos = Vector{Vector{Int64}}()
+    push!(area_pos, [6, 6, 8])
+    push!(area_pos, [6, 6, 19])
+
+    # Testing for a third bucket wall
+    _update_body!(area_pos, out, grid)
+    @test (out.body[1][6, 6] ≈ -0.4) && (out.body[2][6, 6] ≈ 0.8)
+    @test (out.body[3][6, 6] ≈ 0.0) && (out.body[4][6, 6] ≈ 0.0)
+
+    # Creating a dummy bucket wall
+    area_pos = Vector{Vector{Int64}}()
+    push!(area_pos, [10, 10, 15])
+
+    # Testing that incorrect request throws an error
+    @test_throws ErrorException _update_body!(area_pos, out, grid)
+
+    # Testing that no extra bucket position has been added
+    # Resetting bucket position
+    out.body[1][4, 4] = 0.0
+    out.body[2][4, 4] = 0.0
+    out.body[1][5, 5] = 0.0
+    out.body[2][5, 5] = 0.0
+    out.body[1][6, 6] = 0.0
+    out.body[2][6, 6] = 0.0
+    out.body[1][7, 11] = 0.0
+    out.body[2][7, 11] = 0.0
+    out.body[1][7, 12] = 0.0
+    out.body[2][7, 12] = 0.0
+    out.body[1][7, 13] = 0.0
+    out.body[2][7, 13] = 0.0
+    out.body[1][10, 10] = 0.0
+    out.body[2][10, 10] = 0.0
+    out.body[3][10, 10] = 0.0
+    out.body[4][10, 10] = 0.0
+    dropzeros!(out.body[1])
+    dropzeros!(out.body[2])
+    dropzeros!(out.body[3])
+    dropzeros!(out.body[4])
+    @test isempty(nonzeros(out.body[1]))
+    @test isempty(nonzeros(out.body[2]))
+    @test isempty(nonzeros(out.body[3]))
+    @test isempty(nonzeros(out.body[4]))
+end
+
 @testset "_calc_bucket_pos" begin
     # Setting a dummy bucket geometry in the XZ plane
     bucket.j_pos_init .= Vector{Float64}([0.0, 0.0, 0.0])
