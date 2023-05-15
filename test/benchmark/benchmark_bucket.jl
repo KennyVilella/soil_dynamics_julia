@@ -38,12 +38,12 @@ BenchmarkTools.DEFAULT_PARAMETERS.evals = 1
 BenchmarkTools.DEFAULT_PARAMETERS.seconds = 60
 BenchmarkTools.DEFAULT_PARAMETERS.samples = 100
 
-# Benchmarking for _calc_bucket_pos function
+# Benchmarking for _calc_bucket_pos! function
 ori = angle_to_quat(0.0, -pi / 2, 0.0, :ZYX)
 position = Vector{Float64}([0.0, 0.0, -0.1])
-println("_calc_bucket_pos")
+println("_calc_bucket_pos!")
 display(
-    @benchmark bucket_pos = _calc_bucket_pos(out, position, ori, grid, bucket)
+    @benchmark _calc_bucket_pos!(out, position, ori, grid, bucket)
 )
 println("")
 

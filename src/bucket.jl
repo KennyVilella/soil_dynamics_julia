@@ -7,7 +7,7 @@ Copyright, 2023,  Vilella Kenny.
 #                                                                                          #
 #==========================================================================================#
 """
-    _calc_bucket_pos(
+    _calc_bucket_pos!(
         out::SimOut{I,T}, position::Vector{T}, ori::Quaternion{T}, grid::GridParam{I,T},
         bucket::BucketParam{I,T}, step_bucket_grid::T=0.5, tol::T=1e-8
     ) where {I<:Int64,T<:Float64}
@@ -35,8 +35,7 @@ origin. The orientation is provided using the quaternion definition.
 - `tol::Float64`: Small number used to handle numerical approximation errors.
 
 # Outputs
-- `Vector{Vector{Int64}}`: Collection of cells indices where the bucket is located.
-                           Result is sorted and duplicates have been removed.
+- None
 
 # Example
 
@@ -51,9 +50,9 @@ origin. The orientation is provided using the quaternion definition.
     terrain = zeros(2 * grid.half_length_x + 1, 2 * grid.half_length_y + 1)
     out = SimOut(terrain, grid)
 
-    _calc_bucket_pos(out, position, ori, grid, bucket)
+    _calc_bucket_pos!(out, position, ori, grid, bucket)
 """
-function _calc_bucket_pos(
+function _calc_bucket_pos!(
     out::SimOut{I,T},
     position::Vector{T},
     ori::Quaternion{T},
@@ -122,8 +121,6 @@ function _calc_bucket_pos(
     _update_body!(back_pos, out, grid)
     _update_body!(right_side_pos, out, grid)
     _update_body!(left_side_pos, out, grid)
-
-    return unique([base_pos; back_pos; right_side_pos; left_side_pos], dims=1)
 end
 
 """
