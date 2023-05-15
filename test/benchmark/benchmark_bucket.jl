@@ -121,3 +121,21 @@ display(
     @benchmark _init_body!(out, grid)
 )
 println("")
+
+# Benchmarking for _update_body! function
+a = [0.0, 0.0, 0.0]
+b = [1.0, 0.0, 0.0]
+c = [1.0, 0.5, 0.0]
+tri_pos = _calc_triangle_pos(a, b, c, 0.01, grid)
+println("_update_body!")
+display(
+    @benchmark _update_body!(tri_pos, out, grid)
+)
+println("")
+
+# Benchmarking for _include_new_body_pos! function
+println("_include_new_body_pos!")
+display(
+    @benchmark _include_new_body_pos!(out, 10, 15, 0.5, 0.6)
+)
+println("")
