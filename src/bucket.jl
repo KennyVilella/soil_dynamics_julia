@@ -116,11 +116,11 @@ function _calc_bucket_pos!(
     # Reinitializing bucket position
     _init_body!(out, grid)
 
-    # Update the bucket position
-    _update_body!(base_pos, out, grid)
-    _update_body!(back_pos, out, grid)
-    _update_body!(right_side_pos, out, grid)
-    _update_body!(left_side_pos, out, grid)
+    # Updating the bucket position
+    _update_body!(base_pos, out, grid, tol)
+    _update_body!(back_pos, out, grid, tol)
+    _update_body!(right_side_pos, out, grid, tol)
+    _update_body!(left_side_pos, out, grid, tol)
 end
 
 """
@@ -736,7 +736,7 @@ end
         grid::GridParam{I,T}
     ) where {I<:Int64,T<:Float64}
 
-This function reset `body`.
+This function reinitializes `body`.
 
 # Note
 - This function is intended for internal use only.
@@ -820,8 +820,8 @@ function _update_body!(
     # Iterating over all cells in area_pos
     for nn in 1:length(area_pos)
         if ((ii != area_pos[nn][1]) || (jj != area_pos[nn][2]))
-            ### New lateral position ###
-            # Updating bucket position for the previous lateral position
+            ### New XY position ###
+            # Updating bucket position for the previous XY position
             _include_new_body_pos!(out, ii, jj, min_h, max_h, tol)
 
             # Initializing new cell position and height
@@ -830,13 +830,13 @@ function _update_body!(
             ii = area_pos[nn][1]
             jj = area_pos[nn][2]
         else
-            ### New height for previous lateral position ###
+            ### New height for the XY position ###
             # Updating maximum height
             max_h = grid.vect_z[area_pos[nn][3]]
         end
     end
 
-    # Updating bucket position for the last lateral position
+    # Updating bucket position for the last XY position
     _include_new_body_pos!(out, ii, jj, min_h, max_h, tol)
 end
 
