@@ -161,6 +161,7 @@ end
     # Testing properties of the struct
     @test out.terrain == terrain
     @test out.body isa Vector{SparseMatrixCSC{Float64,Int64}}
+    @test out.body_soil isa Vector{SparseMatrixCSC{Float64,Int64}}
 
     # Testing that incorrect terrain size throws an error
     @test_throws DimensionMismatch SimOut(zeros(10, 3), grid)
