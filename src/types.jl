@@ -289,6 +289,10 @@ Store all outputs of the simulation.
 - For each bucket, there can be only two distinct bucket walls located at the same
   XY position. As a result, the number of sparse Matrices in the `body` vector should be
   equal to four times the number of bucket.
+- Similarly, `body_soil` stores the location of the soil resting on a bucket wall. The
+  structure of `body_soil` is identical to `body`. An additionnal restriction is that the
+  minimum height of the soil resting on the bucket must correspond to the maximum height of
+  a bucket wall.
 
 # Note
 - Currently, only one bucket at a time is supported, but this restriction may be
@@ -301,6 +305,9 @@ Store all outputs of the simulation.
 - `terrain::Matrix{Float64}`: Height of the terrain. [m]
 - `body::Vector{SparseMatrixCSC{Float64,Int64}}`: Store the vertical extension of all
                                                   bucket walls for each XY position. [m]
+- `body_soil::Vector{SparseMatrixCSC{Float64,Int64}}`: Store the vertical extension of all
+                                                       soil resting on a bucket wall for
+                                                       each XY position. [m]
 
 # Inner constructor
 
@@ -325,6 +332,7 @@ This would create a flat terrain located at 0 height.
 struct SimOut{I<:Int64,T<:Float64}
     terrain::Matrix{T}
     body::Vector{SparseMatrixCSC{T,I}}
+    body_soil::Vector{SparseMatrixCSC{T,I}}
     function SimOut(
         terrain::Matrix{T},
         grid::GridParam{I,T}
@@ -343,11 +351,18 @@ struct SimOut{I<:Int64,T<:Float64}
             ))
         end
 
+        # Initializing the bucket position array
         body = [spzeros(2*grid.half_length_x+1, 2*grid.half_length_y+1)]
         for ii in 2:4
             push!(body, spzeros(2*grid.half_length_x+1, 2*grid.half_length_y+1))
         end
 
-        new{I,T}(terrain, body)
+        # Initializing the bucket soil array
+        body_soil = [spzeros(2*grid.half_length_x+1, 2*grid.half_length_y+1)]
+        for ii in 2:4
+            push!(body_soil, spzeros(2*grid.half_length_x+1, 2*grid.half_length_y+1))
+        end
+
+        new{I,T}(terrain, body, body_soil)
     end
 end
