@@ -6,6 +6,7 @@ Copyright, 2023,  Vilella Kenny.
 #                                Setting dummy properties                                  #
 #                                                                                          #
 #==========================================================================================#
+# Grid properties
 grid_size_x = 4.0
 grid_size_y = 4.0
 grid_size_z = 3.0
@@ -13,12 +14,17 @@ cell_size_xy = 0.05
 cell_size_z = 0.01
 grid = GridParam(grid_size_x, grid_size_y, grid_size_z, cell_size_xy, cell_size_z)
 
+# Bucket properties
 o_pos_init = Vector{Float64}([0.0, 0.0, 0.0])
 j_pos_init = Vector{Float64}([0.0, 0.0, 0.0])
 b_pos_init = Vector{Float64}([0.0, 0.0, -0.5])
 t_pos_init = Vector{Float64}([0.7, 0.0, -0.5])
 bucket_width = 0.5
 bucket = BucketParam(o_pos_init, j_pos_init, b_pos_init, t_pos_init, bucket_width)
+
+# Terrain properties
+terrain = zeros(2 * grid.half_length_x + 1, 2 * grid.half_length_y + 1)
+out = SimOut(terrain, grid)
 
 
 #==========================================================================================#
@@ -32,12 +38,12 @@ BenchmarkTools.DEFAULT_PARAMETERS.evals = 1
 BenchmarkTools.DEFAULT_PARAMETERS.seconds = 60
 BenchmarkTools.DEFAULT_PARAMETERS.samples = 100
 
-# Benchmarking for _calc_bucket_pos function
+# Benchmarking for _calc_bucket_pos! function
 ori = angle_to_quat(0.0, -pi / 2, 0.0, :ZYX)
 position = Vector{Float64}([0.0, 0.0, -0.1])
-println("_calc_bucket_pos")
+println("_calc_bucket_pos!")
 display(
-    @benchmark bucket_pos = _calc_bucket_pos(position, ori, grid, bucket)
+    @benchmark _calc_bucket_pos!(out, position, ori, grid, bucket)
 )
 println("")
 
@@ -103,5 +109,33 @@ delta = 0.01
 println("_calc_line_pos")
 display(
     @benchmark line_pos = _calc_line_pos(a, b, delta, grid)
+)
+println("")
+
+# Benchmarking for _init_body! function
+ori = angle_to_quat(0.0, -pi / 2, 0.0, :ZYX)
+position = Vector{Float64}([0.0, 0.0, -0.1])
+_calc_bucket_pos!(out, position, ori, grid, bucket)
+println("_init_body!")
+display(
+    @benchmark _init_body!(out, grid)
+)
+println("")
+
+# Benchmarking for _update_body! function
+a = [0.0, 0.0, 0.0]
+b = [1.0, 0.0, 0.0]
+c = [1.0, 0.5, 0.0]
+tri_pos = _calc_triangle_pos(a, b, c, 0.01, grid)
+println("_update_body!")
+display(
+    @benchmark _update_body!(tri_pos, out, grid)
+)
+println("")
+
+# Benchmarking for _include_new_body_pos! function
+println("_include_new_body_pos!")
+display(
+    @benchmark _include_new_body_pos!(out, 10, 15, 0.5, 0.6)
 )
 println("")

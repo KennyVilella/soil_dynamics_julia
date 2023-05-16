@@ -57,6 +57,6 @@ function soil_dynamics!(
         throw(DimensionMismatch("position should be a vector of size 3"))
     end
 
-    bucket_pos = _calc_bucket_pos(position, ori, grid, bucket)
+    _calc_bucket_pos!(position, ori, grid, bucket)
 
 end

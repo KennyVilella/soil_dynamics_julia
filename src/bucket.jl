@@ -7,8 +7,8 @@ Copyright, 2023,  Vilella Kenny.
 #                                                                                          #
 #==========================================================================================#
 """
-    _calc_bucket_pos(
-        position::Vector{T}, ori::Quaternion{T}, grid::GridParam{I,T},
+    _calc_bucket_pos!(
+        out::SimOut{I,T}, position::Vector{T}, ori::Quaternion{T}, grid::GridParam{I,T},
         bucket::BucketParam{I,T}, step_bucket_grid::T=0.5, tol::T=1e-8
     ) where {I<:Int64,T<:Float64}
 
@@ -24,6 +24,7 @@ origin. The orientation is provided using the quaternion definition.
 - This function is a work in progress.
 
 # Inputs
+- `out::SimOut{Int64,Float64}`: Struct that stores simulation outputs.
 - `position::Vector{Float64}`: Cartesian coordinates of the bucket origin. [m]
 - `ori::Quaternion{Float64}`: Orientation of the bucket. [Quaternion]
 - `grid::GridParam{Int64,Float64}`: Struct that stores information related to the
@@ -34,8 +35,7 @@ origin. The orientation is provided using the quaternion definition.
 - `tol::Float64`: Small number used to handle numerical approximation errors.
 
 # Outputs
-- `Vector{Vector{Int64}}`: Collection of cells indices where the bucket is located.
-                           Result is sorted and duplicates have been removed.
+- None
 
 # Example
 
@@ -47,10 +47,13 @@ origin. The orientation is provided using the quaternion definition.
     b = [0.0, 0.0, -0.5]
     t = [1.0, 0.0, -0.5]
     bucket = BucketParam(o, j, b, t, 0.5)
+    terrain = zeros(2 * grid.half_length_x + 1, 2 * grid.half_length_y + 1)
+    out = SimOut(terrain, grid)
 
-    _calc_bucket_pos(position, ori, grid, bucket)
+    _calc_bucket_pos!(out, position, ori, grid, bucket)
 """
-function _calc_bucket_pos(
+function _calc_bucket_pos!(
+    out::SimOut{I,T},
     position::Vector{T},
     ori::Quaternion{T},
     grid::GridParam{I,T},
@@ -104,7 +107,20 @@ function _calc_bucket_pos(
         j_l_pos, b_l_pos, t_l_pos, step_bucket_grid * grid.cell_size_z, grid, tol
     )
 
-    return unique([base_pos; back_pos; right_side_pos; left_side_pos], dims=1)
+    # Sorting all list of cells indices where the bucket is located
+    sort!(base_pos)
+    sort!(back_pos)
+    sort!(right_side_pos)
+    sort!(left_side_pos)
+
+    # Reinitializing bucket position
+    _init_body!(out, grid)
+
+    # Updating the bucket position
+    _update_body!(base_pos, out, grid, tol)
+    _update_body!(back_pos, out, grid, tol)
+    _update_body!(right_side_pos, out, grid, tol)
+    _update_body!(left_side_pos, out, grid, tol)
 end
 
 """
@@ -712,4 +728,214 @@ function _calc_line_pos(
     end
 
     return line_pos
+end
+
+"""
+    _init_body!(
+        out::SimOut{I,T},
+        grid::GridParam{I,T}
+    ) where {I<:Int64,T<:Float64}
+
+This function reinitializes `body`.
+
+# Note
+- This function is intended for internal use only.
+
+# Inputs
+- `out::SimOut{Int64,Float64}`: Struct that stores simulation outputs.
+- `grid::GridParam{Int64,Float64}`: Struct that stores information related to the
+                                    simulation grid.
+
+# Outputs
+- None
+
+# Example
+
+    grid = GridParam(4.0, 4.0, 3.0, 0.05, 0.01)
+    terrain = zeros(2 * grid.half_length_x + 1, 2 * grid.half_length_y + 1)
+    out = SimOut(terrain, grid)
+
+    _init_body!(out, grid)
+"""
+function _init_body!(
+    out::SimOut{I,T},
+    grid::GridParam{I,T}
+) where {I<:Int64,T<:Float64}
+
+    for ii in 1:length(out.body)
+        droptol!(out.body[ii], 2*grid.half_length_z+1)
+    end
+end
+
+"""
+    _update_body!(
+        area_pos::Vector{Vector{I}}, out::SimOut{I,T}, grid::GridParam{I,T}, tol::T=1e-8
+    ) where {I<:Int64,T<:Float64}
+
+This function updates the bucket position in `body` following the cells composing
+`area_pos`. For each XY position, the first cell found in `area_pos` corresponds to
+the minimum height of the bucket, while the last one provides the maximum height.
+As a result, this function must be called separately for each bucket wall.
+
+# Note
+- This function is intended for internal use only.
+- `area_pos` must be sorted and not be empty.
+
+# Inputs
+- `area_pos::Vector{Vector{Int64}}`: A collection of cell indices specifying where a bucket
+                                     wall is located.
+- `out::SimOut{Int64,Float64}`: Struct that stores simulation outputs.
+- `grid::GridParam{Int64,Float64}`: Struct that stores information related to the
+                                    simulation grid.
+- `tol::Float64`: Small number used to handle numerical approximation errors.
+
+# Outputs
+- None
+
+# Example
+
+    grid = GridParam(4.0, 4.0, 3.0, 0.05, 0.01)
+    terrain = zeros(2 * grid.half_length_x + 1, 2 * grid.half_length_y + 1)
+    out = SimOut(terrain, grid)
+    a = [1.0, 0.0, 0.7]
+    b = [0.0, 1.0, 0.7]
+    c = [0.0, 1.0, 0.9]
+    tri_pos = _calc_triangle_pos(a, b, c, 0.01, grid)
+
+    _update_body!(tri_pos, out, grid)
+"""
+function _update_body!(
+    area_pos::Vector{Vector{I}},
+    out::SimOut{I,T},
+    grid::GridParam{I,T},
+    tol::T=1e-8
+) where {I<:Int64,T<:Float64}
+
+    # Initializing cell position and height
+    ii = area_pos[1][1]
+    jj = area_pos[1][2]
+    min_h = grid.vect_z[area_pos[1][3]] - grid.cell_size_z
+    max_h = grid.vect_z[area_pos[1][3]]
+
+    # Iterating over all cells in area_pos
+    for nn in 1:length(area_pos)
+        if ((ii != area_pos[nn][1]) || (jj != area_pos[nn][2]))
+            ### New XY position ###
+            # Updating bucket position for the previous XY position
+            _include_new_body_pos!(out, ii, jj, min_h, max_h, tol)
+
+            # Initializing new cell position and height
+            min_h = grid.vect_z[area_pos[nn][3]] - grid.cell_size_z
+            max_h = grid.vect_z[area_pos[nn][3]]
+            ii = area_pos[nn][1]
+            jj = area_pos[nn][2]
+        else
+            ### New height for the XY position ###
+            # Updating maximum height
+            max_h = grid.vect_z[area_pos[nn][3]]
+        end
+    end
+
+    # Updating bucket position for the last XY position
+    _include_new_body_pos!(out, ii, jj, min_h, max_h, tol)
+end
+
+"""
+    _include_new_body_pos!(
+        out::SimOut{I,T}, ii::I, jj::I, min_h::T, max_h::T, tol::T=1e-8
+    ) where {I<:Int64,T<:Float64}
+
+This function updates the bucket position in `body` at the coordinates (`ii`, `jj`).
+The minimum and maximum heights of the bucket at that position are given by `min_h` and
+`max_h`, respectively.
+If the given position overlaps with an existing position, then the existing position is
+updated as the union of the two positions. Otherwise, a new position is added to `body`.
+
+# Note
+- This function is intended for internal use only.
+
+# Inputs
+- `out::SimOut{Int64,Float64}`: Struct that stores simulation outputs.
+- `ii::Int64`: Index of the considered position in the X direction.
+- `jj::Int64`: Index of the considered position in the Y direction.
+- `min_h::Float64`: Minimum height of the bucket. [m]
+- `max_h::Float64`: Maximum height of the bucket. [m]
+- `tol::Float64`: Small number used to handle numerical approximation errors.
+
+# Outputs
+- None
+
+# Example
+
+    grid = GridParam(4.0, 4.0, 3.0, 0.05, 0.01)
+    terrain = zeros(2 * grid.half_length_x + 1, 2 * grid.half_length_y + 1)
+    out = SimOut(terrain, grid)
+
+    _include_new_body_pos!(out, 10, 15, 0.5, 0.6)
+"""
+function _include_new_body_pos!(
+    out::SimOut{I,T},
+    ii::I,
+    jj::I,
+    min_h::T,
+    max_h::T,
+    tol::T=1e-8
+) where {I<:Int64,T<:Float64}
+
+    status = Vector{Int64}()
+    # Iterating over the two bucket layers and storing their status
+    for ind in [1, 3]
+        if (iszero(out.body[ind][ii, jj]) && iszero(out.body[ind+1][ii, jj]))
+            ### No existing position ###
+            push!(status, 0)
+        elseif (
+            (min_h - tol < out.body[ind][ii, jj]) &&
+            (max_h + tol > out.body[ind][ii, jj])
+        )
+            ### New position is overlapping with an existing one ###
+            push!(status, 1)
+        elseif (
+            (min_h - tol < out.body[ind+1][ii, jj]) &&
+            (max_h + tol > out.body[ind+1][ii, jj])
+        )
+            ### New position is overlapping with an existing one ###
+            push!(status, 1)
+        else
+            ### New position is not overlapping with the two existing ones ###
+            push!(status, -1)
+        end
+    end
+
+    # Updating the bucket position
+    if (status == [1, 1])
+        ### New position is overlapping with the two existing ones ###
+        out.body[1][ii, jj] = minimum([out.body[1][ii, jj], out.body[3][ii, jj], min_h])
+        out.body[2][ii, jj] = maximum([out.body[2][ii, jj], out.body[4][ii, jj], max_h])
+
+        # Resetting obsolete bucket position
+        out.body[3][ii, jj] = 0.0
+        out.body[4][ii, jj] = 0.0
+    elseif (status[1] == 1)
+        ### New position is overlapping with an existing one ###
+        out.body[1][ii, jj] = min(out.body[1][ii, jj], min_h)
+        out.body[2][ii, jj] = max(out.body[2][ii, jj], max_h)
+    elseif (status[2] == 1)
+        ### New position is overlapping with an existing one ###
+        out.body[3][ii, jj] = min(out.body[3][ii, jj], min_h)
+        out.body[4][ii, jj] = max(out.body[4][ii, jj], max_h)
+    elseif (status[1] == 0)
+        ### No existing position ###
+        out.body[1][ii, jj] = min_h
+        out.body[2][ii, jj] = max_h
+    elseif (status[2] == 0)
+        ### No existing position ###
+        out.body[3][ii, jj] = min_h
+        out.body[4][ii, jj] = max_h
+    else
+        ### New position is not overlapping with the two existing ones ###
+        # This should not happen and indicates a problem in the workflow
+        throw(ErrorException(
+            "Try to update body, but given position does not overlap with two existing ones"
+        ))
+    end
 end
