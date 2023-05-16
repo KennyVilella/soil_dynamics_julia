@@ -16,12 +16,16 @@ export _init_body!, _update_body!, _include_new_body_pos!
 export _calc_rectangle_pos, _calc_triangle_pos, _calc_line_pos
 export _decompose_vector_rectangle, _decompose_vector_triangle
 
+# soil.jl
+export _body_to_terrain!
+
 # utils.jl
 export calc_normal
 
 # Files
 include("types.jl")
 include("bucket.jl")
+include("soil.jl")
 include("soil_dynamics.jl")
 include("utils.jl")
 
