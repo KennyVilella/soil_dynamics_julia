@@ -1,6 +1,6 @@
 using Test
 using SoilDynamics
-import ReferenceFrameRotations: angle_to_quat
+import ReferenceFrameRotations: angle_to_quat, Quaternion
 import SparseArrays: SparseMatrixCSC, nonzeros, dropzeros!
 
 println("Unit testing")
@@ -10,6 +10,10 @@ end
 println("")
 @time @testset "bucket.jl" verbose = true begin
     include("./unit_test/test_bucket.jl")
+end
+println("")
+@time @testset "soil.jl" verbose = true begin
+    include("./unit_test/test_soil.jl")
 end
 println("")
 @time @testset "utils.jl" verbose = true begin

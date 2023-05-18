@@ -8,24 +8,23 @@ Copyright, 2023,  Vilella Kenny.
 #==========================================================================================#
 """
     _calc_bucket_pos!(
-        out::SimOut{I,T}, position::Vector{T}, ori::Quaternion{T}, grid::GridParam{I,T},
+        out::SimOut{I,T}, pos::Vector{T}, ori::Quaternion{T}, grid::GridParam{I,T},
         bucket::BucketParam{I,T}, step_bucket_grid::T=0.5, tol::T=1e-8
     ) where {I<:Int64,T<:Float64}
 
 This function determines all the cells where the bucket is located.
 The bucket position is calculated based on its reference pose stored in the `bucket` struct,
-as well as the provided position (`position`) and orientation (`ori`).
-`position` and `ori` are used to apply the appropriate translation and rotation to the
+as well as the provided position (`pos`) and orientation (`ori`).
+`pos` and `ori` are used to apply the appropriate translation and rotation to the
 bucket relative to its reference pose. The center of rotation is assumed to be the bucket
 origin. The orientation is provided using the quaternion definition.
 
 # Note
 - This function is intended for internal use only.
-- This function is a work in progress.
 
 # Inputs
 - `out::SimOut{Int64,Float64}`: Struct that stores simulation outputs.
-- `position::Vector{Float64}`: Cartesian coordinates of the bucket origin. [m]
+- `pos::Vector{Float64}`: Cartesian coordinates of the bucket origin. [m]
 - `ori::Quaternion{Float64}`: Orientation of the bucket. [Quaternion]
 - `grid::GridParam{Int64,Float64}`: Struct that stores information related to the
                                     simulation grid.
@@ -39,7 +38,7 @@ origin. The orientation is provided using the quaternion definition.
 
 # Example
 
-    position = [0.5, 0.3, 0.4]
+    pos = [0.5, 0.3, 0.4]
     ori = angle_to_quat(0.0, -pi / 2, 0.0, :ZYX)
     grid = GridParam(4.0, 4.0, 3.0, 0.05, 0.01)
     o = [0.0, 0.0, 0.0]
@@ -50,11 +49,11 @@ origin. The orientation is provided using the quaternion definition.
     terrain = zeros(2 * grid.half_length_x + 1, 2 * grid.half_length_y + 1)
     out = SimOut(terrain, grid)
 
-    _calc_bucket_pos!(out, position, ori, grid, bucket)
+    _calc_bucket_pos!(out, pos, ori, grid, bucket)
 """
 function _calc_bucket_pos!(
     out::SimOut{I,T},
-    position::Vector{T},
+    pos::Vector{T},
     ori::Quaternion{T},
     grid::GridParam{I,T},
     bucket::BucketParam{T},
@@ -68,9 +67,9 @@ function _calc_bucket_pos!(
     t_pos = Vector{T}(vect(ori \ bucket.t_pos_init * ori))
 
     # Adding position of the bucket origin
-    j_pos += position
-    b_pos += position
-    t_pos += position
+    j_pos += pos
+    b_pos += pos
+    t_pos += pos
 
     # Unit vector normal to the side of the bucket
     normal_side = calc_normal(j_pos, b_pos, t_pos)

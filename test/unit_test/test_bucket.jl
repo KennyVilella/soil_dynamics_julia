@@ -1129,10 +1129,10 @@ end
     bucket.b_pos_init .= Vector{Float64}([0.5, 0.01, 0.0])
     bucket.t_pos_init .= Vector{Float64}([0.5, 0.0, 0.0])
     ori = angle_to_quat(0.0, 0.0, 0.0, :ZYX)
-    position = Vector{Float64}([0.0, 0.0, 0.0])
+    pos = Vector{Float64}([0.0, 0.0, 0.0])
 
     # Testing for a bucket in the XZ plane
-    _calc_bucket_pos!(out, position, ori, grid, bucket)
+    _calc_bucket_pos!(out, pos, ori, grid, bucket)
     # Checking the bucket position
     @test (out.body[1][11, 11] ≈ -0.3) && (out.body[2][11, 11] ≈ 0.3)
     @test (out.body[1][12, 11] ≈ -0.3) && (out.body[2][12, 11] ≈ 0.3)
@@ -1156,10 +1156,10 @@ end
     bucket.b_pos_init .= Vector{Float64}([0.5, 0.0, -0.01])
     bucket.t_pos_init .= Vector{Float64}([0.5, 0.0, 0.0])
     ori = angle_to_quat(0.0, 0.0, 0.0, :ZYX)
-    position = Vector{Float64}([0.0, 0.0, 0.0])
+    pos = Vector{Float64}([0.0, 0.0, 0.0])
 
     # Testing for a bucket in the XY plane
-    _calc_bucket_pos!(out, position, ori, grid, bucket)
+    _calc_bucket_pos!(out, pos, ori, grid, bucket)
     # Checking the bucket position
     @test all(out.body[1][11:16, 9:13] .≈ -0.1)
     @test all(out.body[2][11:16, 9:13] .≈ 0.0)
@@ -1178,10 +1178,10 @@ end
     bucket.b_pos_init .= Vector{Float64}([0.0, 0.0, -0.5])
     bucket.t_pos_init .= Vector{Float64}([0.5, 0.0, -0.5])
     ori = angle_to_quat(0.0, -pi / 2, 0.0, :ZYX)
-    position = Vector{Float64}([0.0, 0.0, -0.1])
+    pos = Vector{Float64}([0.0, 0.0, -0.1])
 
     # Testing for a bucket in a dummy position
-    _calc_bucket_pos!(out, position, ori, grid, bucket)
+    _calc_bucket_pos!(out, pos, ori, grid, bucket)
     # Checking the bucket position
     @test all(out.body[1][6, 9:13] .≈ -0.6)
     @test all(out.body[2][6, 9:13] .≈ -0.1)

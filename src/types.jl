@@ -48,6 +48,10 @@ Store all parameters related to the simulation grid.
 - `cell_size_z::Float64`: Height of the cells in the Z direction. [m]
 - `cell_area::Float64`: Surface area of one cell in the horizontal plane. [m^2]
 - `cell_volume::Float64`: Volume of one cell. [m^3]
+- `vect_x::StepRangeLen{Float64}`: Vector providing a conversion between cell's index and
+                                   cell's position in the X direction.
+- `vect_y::StepRangeLen{Float64}`: Vector providing a conversion between cell's index and
+                                   cell's position in the Y direction.
 - `vect_z::StepRangeLen{Float64}`: Vector providing a conversion between cell's index and
                                    cell's position in the Z direction.
 
@@ -84,6 +88,8 @@ struct GridParam{I<:Int64,T<:Float64}
     cell_size_z::T
     cell_area::T
     cell_volume::T
+    vect_x::StepRangeLen{T}
+    vect_y::StepRangeLen{T}
     vect_z::StepRangeLen{T}
     function GridParam(
         grid_size_x::T,
@@ -136,11 +142,13 @@ struct GridParam{I<:Int64,T<:Float64}
         cell_area = cell_size_xy * cell_size_xy
         cell_volume = cell_area * cell_size_z
 
+        vect_x = cell_size_xy .* range(-half_length_x, half_length_x, step=1)
+        vect_y = cell_size_xy .* range(-half_length_y, half_length_y, step=1)
         vect_z = cell_size_z .* range(-half_length_z, half_length_z, step=1)
 
         new{Int64,T}(
             half_length_x, half_length_y, half_length_z, cell_size_xy, cell_size_z,
-            cell_area, cell_volume, vect_z
+            cell_area, cell_volume, vect_x, vect_y, vect_z
         )
     end
 end
@@ -196,6 +204,9 @@ Store all parameters related to a bucket object.
 - `t_pos_init::Vector{Float64}`: Cartesian coordinates of the bucket teeth in its
                                  reference pose. [m]
 - `width::Float64`: Width of the bucket. [m]
+- `pos::Vector{Float64}`: Cartesian coordinates of the bucket origin. [m] 
+- `ori::Vector{Float64}`: Orientation of the bucket. Note that it is stored as a Vector,
+                          since Quaternions are not mutable. [Quaternion]
 
 # Inner constructor
 
@@ -232,6 +243,8 @@ struct BucketParam{T<:Float64}
     b_pos_init::Vector{T}
     t_pos_init::Vector{T}
     width::T
+    pos::Vector{T}
+    ori::Vector{T}
     function BucketParam(
         o_pos_init::Vector{T},
         j_pos_init::Vector{T},
@@ -265,9 +278,12 @@ struct BucketParam{T<:Float64}
             throw(DomainError(width, "width should be greater than zero"))
         end
 
+        pos = [0.0, 0.0, 0.0]
+        ori = [1.0, 0.0, 0.0, 0.0]
+
         new{T}(
             j_pos_init - o_pos_init, b_pos_init - o_pos_init, t_pos_init - o_pos_init,
-            width
+            width, pos, ori
         )
     end
 end
@@ -289,6 +305,10 @@ Store all outputs of the simulation.
 - For each bucket, there can be only two distinct bucket walls located at the same
   XY position. As a result, the number of sparse Matrices in the `body` vector should be
   equal to four times the number of bucket.
+- Similarly, `body_soil` stores the location of the soil resting on a bucket wall. The
+  structure of `body_soil` is identical to `body`. An additionnal restriction is that the
+  minimum height of the soil resting on the bucket must correspond to the maximum height of
+  a bucket wall.
 
 # Note
 - Currently, only one bucket at a time is supported, but this restriction may be
@@ -301,6 +321,9 @@ Store all outputs of the simulation.
 - `terrain::Matrix{Float64}`: Height of the terrain. [m]
 - `body::Vector{SparseMatrixCSC{Float64,Int64}}`: Store the vertical extension of all
                                                   bucket walls for each XY position. [m]
+- `body_soil::Vector{SparseMatrixCSC{Float64,Int64}}`: Store the vertical extension of all
+                                                       soil resting on a bucket wall for
+                                                       each XY position. [m]
 
 # Inner constructor
 
@@ -325,6 +348,7 @@ This would create a flat terrain located at 0 height.
 struct SimOut{I<:Int64,T<:Float64}
     terrain::Matrix{T}
     body::Vector{SparseMatrixCSC{T,I}}
+    body_soil::Vector{SparseMatrixCSC{T,I}}
     function SimOut(
         terrain::Matrix{T},
         grid::GridParam{I,T}
@@ -343,11 +367,18 @@ struct SimOut{I<:Int64,T<:Float64}
             ))
         end
 
+        # Initializing the bucket position array
         body = [spzeros(2*grid.half_length_x+1, 2*grid.half_length_y+1)]
         for ii in 2:4
             push!(body, spzeros(2*grid.half_length_x+1, 2*grid.half_length_y+1))
         end
 
-        new{I,T}(terrain, body)
+        # Initializing the bucket soil array
+        body_soil = [spzeros(2*grid.half_length_x+1, 2*grid.half_length_y+1)]
+        for ii in 2:4
+            push!(body_soil, spzeros(2*grid.half_length_x+1, 2*grid.half_length_y+1))
+        end
+
+        new{I,T}(terrain, body, body_soil)
     end
 end
