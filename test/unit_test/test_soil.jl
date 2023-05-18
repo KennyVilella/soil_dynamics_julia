@@ -26,6 +26,7 @@ bucket = BucketParam(o_pos_init, j_pos_init, b_pos_init, t_pos_init, bucket_widt
 terrain = zeros(2 * grid.half_length_x + 1, 2 * grid.half_length_y + 1)
 out = SimOut(terrain, grid)
 
+
 #==========================================================================================#
 #                                                                                          #
 #                                         Testing                                          #
@@ -104,7 +105,7 @@ out = SimOut(terrain, grid)
     # Resetting terrain
     out.terrain[4, 5] = 0.0
 
-    # Testing for edge case where no soil is present
+    # Testing for the edge case where no soil is present
     _body_to_terrain!(out, 4, 9, 1, 5, 6, grid, 0.0)
     @test (out.body_soil[1][4, 9] == 0.0) && (out.body_soil[2][4, 9] == 0.0)
     @test out.terrain[5, 6] == 0.0

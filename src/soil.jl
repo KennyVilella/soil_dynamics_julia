@@ -6,7 +6,6 @@ Copyright, 2023,  Vilella Kenny.
 #            Starting implementation of functions related to the soil movement             #
 #                                                                                          #
 #==========================================================================================#
-
 """
     _update_body_soil!(
         out::SimOut{I,T},
@@ -68,7 +67,7 @@ function _update_body_soil!(
     # Copying previous body_soil locations
     old_body_soil = deepcopy(out.body_soil)
 
-    # Locating where body_soil is located
+    # Locating body_soil
     body_soil_pos = _locate_body_soil(out)
 
     # Resetting body_soil
@@ -216,7 +215,7 @@ function _locate_body_soil(
     unique!(non_zeros_1)
     unique!(non_zeros_3)
 
-    # Compiling  body_soil position
+    # Compiling body_soil position
     body_soil_pos = [[1; cell] for cell in non_zeros_1]
     append!(body_soil_pos, [[3; cell] for cell in non_zeros_3])
 

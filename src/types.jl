@@ -204,6 +204,9 @@ Store all parameters related to a bucket object.
 - `t_pos_init::Vector{Float64}`: Cartesian coordinates of the bucket teeth in its
                                  reference pose. [m]
 - `width::Float64`: Width of the bucket. [m]
+- `pos::Vector{Float64}`: Cartesian coordinates of the bucket origin. [m] 
+- `ori::Vector{Float64}`: Orientation of the bucket. Note that it is stored as a Vector,
+                          since Quaternions are not mutable. [Quaternion]
 
 # Inner constructor
 
