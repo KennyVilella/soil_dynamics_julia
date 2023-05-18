@@ -1,8 +1,8 @@
 module SoilDynamics
 
 import LinearAlgebra: cross, norm
-import ReferenceFrameRotations: vect, Quaternion
-import SparseArrays: SparseMatrixCSC, spzeros, droptol!
+import ReferenceFrameRotations: vect, Quaternion, inv_rotation
+import SparseArrays: SparseMatrixCSC, spzeros, droptol!, nzrange, rowvals
 
 # soil_dynamics.jl
 export soil_dynamics!
@@ -17,6 +17,7 @@ export _calc_rectangle_pos, _calc_triangle_pos, _calc_line_pos
 export _decompose_vector_rectangle, _decompose_vector_triangle
 
 # soil.jl
+export _update_body_soil!, _init_body_soil!, _locate_body_soil, _locate_non_zeros
 export _body_to_terrain!
 
 # utils.jl

@@ -48,6 +48,10 @@ Store all parameters related to the simulation grid.
 - `cell_size_z::Float64`: Height of the cells in the Z direction. [m]
 - `cell_area::Float64`: Surface area of one cell in the horizontal plane. [m^2]
 - `cell_volume::Float64`: Volume of one cell. [m^3]
+- `vect_x::StepRangeLen{Float64}`: Vector providing a conversion between cell's index and
+                                   cell's position in the X direction.
+- `vect_y::StepRangeLen{Float64}`: Vector providing a conversion between cell's index and
+                                   cell's position in the Y direction.
 - `vect_z::StepRangeLen{Float64}`: Vector providing a conversion between cell's index and
                                    cell's position in the Z direction.
 
@@ -84,6 +88,8 @@ struct GridParam{I<:Int64,T<:Float64}
     cell_size_z::T
     cell_area::T
     cell_volume::T
+    vect_x::StepRangeLen{T}
+    vect_y::StepRangeLen{T}
     vect_z::StepRangeLen{T}
     function GridParam(
         grid_size_x::T,
@@ -136,11 +142,13 @@ struct GridParam{I<:Int64,T<:Float64}
         cell_area = cell_size_xy * cell_size_xy
         cell_volume = cell_area * cell_size_z
 
+        vect_x = cell_size_xy .* range(-half_length_x, half_length_x, step=1)
+        vect_y = cell_size_xy .* range(-half_length_y, half_length_y, step=1)
         vect_z = cell_size_z .* range(-half_length_z, half_length_z, step=1)
 
         new{Int64,T}(
             half_length_x, half_length_y, half_length_z, cell_size_xy, cell_size_z,
-            cell_area, cell_volume, vect_z
+            cell_area, cell_volume, vect_x, vect_y, vect_z
         )
     end
 end
@@ -232,6 +240,8 @@ struct BucketParam{T<:Float64}
     b_pos_init::Vector{T}
     t_pos_init::Vector{T}
     width::T
+    pos::Vector{T}
+    ori::Vector{T}
     function BucketParam(
         o_pos_init::Vector{T},
         j_pos_init::Vector{T},
@@ -265,9 +275,12 @@ struct BucketParam{T<:Float64}
             throw(DomainError(width, "width should be greater than zero"))
         end
 
+        pos = [0.0, 0.0, 0.0]
+        ori = [1.0, 0.0, 0.0, 0.0]
+
         new{T}(
             j_pos_init - o_pos_init, b_pos_init - o_pos_init, t_pos_init - o_pos_init,
-            width
+            width, pos, ori
         )
     end
 end
