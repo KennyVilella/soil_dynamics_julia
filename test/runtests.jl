@@ -1,6 +1,6 @@
 using Test
 using SoilDynamics
-import ReferenceFrameRotations: angle_to_quat
+import ReferenceFrameRotations: angle_to_quat, Quaternion
 import SparseArrays: SparseMatrixCSC, nonzeros, dropzeros!
 
 println("Unit testing")

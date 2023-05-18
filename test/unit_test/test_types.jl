@@ -17,6 +17,8 @@ grid_half_length_y =  round(Int64, grid_size_y / cell_size_xy)
 grid_half_length_z =  round(Int64, grid_size_z / cell_size_z)
 cell_area = cell_size_xy * cell_size_xy
 cell_volume = cell_area * cell_size_z
+grid_vect_x = cell_size_xy .* range(-grid_half_length_x, grid_half_length_x, step=1)
+grid_vect_y = cell_size_xy .* range(-grid_half_length_y, grid_half_length_y, step=1)
 grid_vect_z = cell_size_z .* range(-grid_half_length_z, grid_half_length_z, step=1)
 
 # Bucket properties
@@ -50,6 +52,8 @@ terrain = zeros(2 * grid_half_length_x + 1, 2 * grid_half_length_y + 1)
     @test grid.cell_size_z == cell_size_z
     @test grid.cell_area == cell_area
     @test grid.cell_volume == cell_volume
+    @test grid.vect_x == grid_vect_x
+    @test grid.vect_y == grid_vect_y
     @test grid.vect_z == grid_vect_z
 
     # Testing that cell_size_z greater than cell_size_xy throws an error
@@ -113,6 +117,8 @@ end
     @test bucket.b_pos_init == b_pos_init - o_pos_init
     @test bucket.t_pos_init == t_pos_init - o_pos_init
     @test bucket.width == bucket_width
+    @test bucket.pos == [0.0, 0.0, 0.0]
+    @test bucket.ori == [1.0, 0.0, 0.0, 0.0]
 
     # Testing that incorrect vector size throws an error
     @test_throws DimensionMismatch BucketParam(
