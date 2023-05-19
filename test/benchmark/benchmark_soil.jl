@@ -72,17 +72,6 @@ display(
 )
 println("")
 
-# Benchmarking for _locate_body_soil function
-out.body_soil[1][20:50, 15:75] .= 0.2
-out.body_soil[2][20:50, 15:75] .= 0.5
-out.body_soil[3][40:50, 50:70] .= 0.3
-out.body_soil[4][40:50, 50:70] .= 0.7
-println("_locate_body_soil")
-display(
-    @benchmark body_soil_pos = _locate_body_soil(out)
-)
-println("")
-
 # Benchmarking for _init_body_soil! function
 out.body_soil[1][20:50, 15:75] .= 0.2
 out.body_soil[2][20:50, 15:75] .= 0.5
@@ -91,14 +80,6 @@ out.body_soil[4][40:50, 50:70] .= 0.7
 println("_init_body_soil")
 display(
     @benchmark _init_body_soil!(out, grid)
-)
-println("")
-
-# Benchmarking for _locate_non_zeros function
-out.body_soil[1][20:50, 15:75] .= 0.2
-println("_locate_non_zeros")
-display(
-    @benchmark non_zeros = _locate_non_zeros(out.body_soil[1])
 )
 println("")
 

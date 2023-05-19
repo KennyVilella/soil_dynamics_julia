@@ -68,7 +68,7 @@ function _update_body_soil!(
     old_body_soil = deepcopy(out.body_soil)
 
     # Locating body_soil
-    body_soil_pos = _locate_body_soil(out)
+    body_soil_pos = _locate_all_non_zeros(out, out.body_soil)
 
     # Resetting body_soil
     _init_body_soil!(out, grid)
@@ -169,101 +169,6 @@ function _init_body_soil!(
     for ii in 1:length(out.body_soil)
         droptol!(out.body_soil[ii], 2*grid.half_length_z+1)
     end
-end
-
-"""
-    _locate_body_soil(
-        out::SimOut{I,T}
-    ) where {I<:Int64,T<:Float64}
-
-This function returns the indices of all cells in `body_soil` where soil is present.
-
-# Note
-- This function is intended for internal use only.
-- The first index in the returned vector corresponds to the bucket layer, while the second
-  and third indices are the indices in the X and Y direction, respectively.
-
-# Inputs
-- `out::SimOut{Int64,Float64}`: Struct that stores simulation outputs.
-
-# Outputs
-- `Vector{Vector{Int64}}`:: Collection of cells indices where body soil is present.
-
-# Example
-
-    grid = GridParam(4.0, 4.0, 3.0, 0.05, 0.01)
-    terrain = zeros(2 * grid.half_length_x + 1, 2 * grid.half_length_y + 1)
-    out = SimOut(terrain, grid)
-
-    body_soil_pos = _locate_body_soil(out)
-"""
-function _locate_body_soil(
-    out::SimOut{I,T}
-) where {I<:Int64,T<:Float64}
-
-    # Locating all XY positions where body_soil is nonzero
-    non_zeros_1 = _locate_non_zeros(out.body_soil[1])
-    non_zeros_2 = _locate_non_zeros(out.body_soil[2])
-    non_zeros_3 = _locate_non_zeros(out.body_soil[3])
-    non_zeros_4 = _locate_non_zeros(out.body_soil[4])
-
-    # Aggregating by bucket layer
-    non_zeros_1 = cat(non_zeros_1, non_zeros_2, dims=1)
-    non_zeros_3 = cat(non_zeros_3, non_zeros_4, dims=1)
-
-    # Removing duplicates
-    unique!(non_zeros_1)
-    unique!(non_zeros_3)
-
-    # Compiling body_soil position
-    body_soil_pos = [[1; cell] for cell in non_zeros_1]
-    append!(body_soil_pos, [[3; cell] for cell in non_zeros_3])
-
-    return body_soil_pos
-end
-
-"""
-    _locate_non_zeros(
-        sparse_matrix::SparseMatrixCSC{T,I}
-    ) where {I<:Int64,T<:Float64}
-
-This function returns the indices of all non-zero values in a sparse Matrix.
-
-# Note
-- This function is intended for internal use only.
-- This implementation is faster than a simple loop.
-
-# Inputs
-- `sparse_matrix::SparseMatrixCSC{Float64,Int64}`: Input Matrix for which non-zero values
-                                                   should be located.
-
-# Outputs
-- `Vector{Vector{Int64}}`:: Collection of cells indices where the value of the input Matrix
-                            is non-zero.
-
-# Example
-
-    grid = GridParam(4.0, 4.0, 3.0, 0.05, 0.01)
-    terrain = zeros(2 * grid.half_length_x + 1, 2 * grid.half_length_y + 1)
-    out = SimOut(terrain, grid)
-
-    non_zeros = _locate_non_zeros(out.body[1])
-"""
-function _locate_non_zeros(
-    sparse_matrix::SparseMatrixCSC{T,I}
-) where {I<:Int64,T<:Float64}
-
-    # Intializing
-    non_zeros = Vector{Vector{Int64}}()
-
-    # Locating all XY position where the SparseMatrix is nonzero
-    for col in 1:size(sparse_matrix, 2)
-        for r in nzrange(sparse_matrix, col)
-            push!(non_zeros, [rowvals(sparse_matrix)[r], col])
-        end
-    end
-
-    return non_zeros
 end
 
 """

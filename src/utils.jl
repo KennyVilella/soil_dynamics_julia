@@ -7,6 +7,105 @@ Copyright, 2023,  Vilella Kenny.
 #                                                                                          #
 #==========================================================================================#
 """
+    _locate_all_non_zeros(
+        out::SimOut{I,T},
+        sparse_array::Vector{SparseMatrixCSC{T,I}}
+    ) where {I<:Int64,T<:Float64}
+
+This function returns the indices of all non-zero values in `sparse_array`.
+`sparse_array` is expected to be either `body` or `body_soil`.
+
+# Note
+- This function is intended for internal use only.
+- The first index in the returned vector corresponds to the bucket layer, while the second
+  and third indices are the indices in the X and Y direction, respectively.
+
+# Inputs
+- `out::SimOut{Int64,Float64}`: Struct that stores simulation outputs.
+- `sparse_array::Vector{SparseMatrixCSC{Float64,Int64}}`: Either `body` or `body_soil`.
+
+# Outputs
+- `Vector{Vector{Int64}}`:: Collection of cells indices where `sparse_array` is non-zero.
+
+# Example
+
+    grid = GridParam(4.0, 4.0, 3.0, 0.05, 0.01)
+    terrain = zeros(2 * grid.half_length_x + 1, 2 * grid.half_length_y + 1)
+    out = SimOut(terrain, grid)
+
+    body_soil_pos = _locate_all_non_zeros(out, out.body_soil)
+"""
+function _locate_all_non_zeros(
+    out::SimOut{I,T},
+    sparse_array::Vector{SparseMatrixCSC{T,I}}
+) where {I<:Int64,T<:Float64}
+
+    # Locating all XY positions where sparse_array is nonzero
+    non_zeros_1 = _locate_non_zeros(sparse_array[1])
+    non_zeros_2 = _locate_non_zeros(sparse_array[2])
+    non_zeros_3 = _locate_non_zeros(sparse_array[3])
+    non_zeros_4 = _locate_non_zeros(sparse_array[4])
+
+    # Aggregating by bucket layer
+    non_zeros_1 = cat(non_zeros_1, non_zeros_2, dims=1)
+    non_zeros_3 = cat(non_zeros_3, non_zeros_4, dims=1)
+
+    # Removing duplicates
+    unique!(non_zeros_1)
+    unique!(non_zeros_3)
+
+    # Compiling all positions
+    non_zeros_pos = [[1; cell] for cell in non_zeros_1]
+    append!(non_zeros_pos, [[3; cell] for cell in non_zeros_3])
+
+    return non_zeros_pos
+end
+
+"""
+    _locate_non_zeros(
+        sparse_matrix::SparseMatrixCSC{T,I}
+    ) where {I<:Int64,T<:Float64}
+
+This function returns the indices of all non-zero values in a sparse Matrix.
+
+# Note
+- This function is intended for internal use only.
+- This implementation is faster than a simple loop.
+
+# Inputs
+- `sparse_matrix::SparseMatrixCSC{Float64,Int64}`: Input Matrix for which non-zero values
+                                                   should be located.
+
+# Outputs
+- `Vector{Vector{Int64}}`:: Collection of cells indices where the value of the input Matrix
+                            is non-zero.
+
+# Example
+
+    grid = GridParam(4.0, 4.0, 3.0, 0.05, 0.01)
+    terrain = zeros(2 * grid.half_length_x + 1, 2 * grid.half_length_y + 1)
+    out = SimOut(terrain, grid)
+
+    non_zeros = _locate_non_zeros(out.body[1])
+"""
+function _locate_non_zeros(
+    sparse_matrix::SparseMatrixCSC{T,I}
+) where {I<:Int64,T<:Float64}
+
+    # Intializing
+    non_zeros = Vector{Vector{Int64}}()
+
+    # Locating all XY position where the SparseMatrix is nonzero
+    for col in 1:size(sparse_matrix, 2)
+        for r in nzrange(sparse_matrix, col)
+            push!(non_zeros, [rowvals(sparse_matrix)[r], col])
+        end
+    end
+
+    return non_zeros
+end
+
+"""
     calc_normal(a::Vector{T}, b::Vector{T}, c::Vector{T}) where {T<:Float64}
 
 This function calculates the unit normal vector of a plane formed by three points using
@@ -40,4 +139,3 @@ function calc_normal(
 
     return cross(b - a, c - a) / norm(cross(b - a, c - a))
 end
-

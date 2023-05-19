@@ -17,10 +17,11 @@ export _calc_rectangle_pos, _calc_triangle_pos, _calc_line_pos
 export _decompose_vector_rectangle, _decompose_vector_triangle
 
 # soil.jl
-export _update_body_soil!, _init_body_soil!, _locate_body_soil, _locate_non_zeros
+export _update_body_soil!, _init_body_soil!
 export _body_to_terrain!
 
 # utils.jl
+export _locate_all_non_zeros, _locate_non_zeros
 export calc_normal
 
 # Files
