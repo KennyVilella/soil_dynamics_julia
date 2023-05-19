@@ -174,3 +174,25 @@ function calc_normal(
 
     return cross(b - a, c - a) / norm(cross(b - a, c - a))
 end
+
+"""
+    set_RNG_seed!(seed::I=1234) where {I<:Int64}
+
+This function sets the used RNG seed.
+
+# Inputs
+- `seed::Int64`: Value of the RNG seed.
+
+# Outputs
+- None
+
+# Example
+
+    set_RNG_seed!(1234)
+"""
+function set_RNG_seed!(
+    seed::I=1234
+) where {I<:Int64}
+
+    seed!(seed)
+end
