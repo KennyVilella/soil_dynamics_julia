@@ -134,21 +134,6 @@ out = SimOut(terrain, grid)
     @test all(out.terrain[:, :] .== 0.0)
 end
 
-@testset "_init_body_soil!" begin
-    # Setting dummy values in body_soil
-    out.body_soil[1][5:17, 1:16] .= 1.0
-    out.body_soil[2][5:17, 1:16] .= 2.0
-    out.body_soil[3][4:10, 13:17] .= 0.0
-    out.body_soil[4][4:10, 13:17] .= 2*grid.half_length_z
-
-    # Testing that body_soil is properly reset
-    _init_body_soil!(out, grid)
-    @test isempty(nonzeros(out.body_soil[1]))
-    @test isempty(nonzeros(out.body_soil[2]))
-    @test isempty(nonzeros(out.body_soil[3]))
-    @test isempty(nonzeros(out.body_soil[4]))
-end
-
 @testset "_update_body_soil!" begin
     # Setting bucket position and orientation
     bucket.pos[:] .= [0.0, 0.0, 0.0]

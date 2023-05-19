@@ -7,6 +7,44 @@ Copyright, 2023,  Vilella Kenny.
 #                                                                                          #
 #==========================================================================================#
 """
+    _init_sparse_array!(
+        sparse_array::Vector{SparseMatrixCSC{T,I}},
+        grid::GridParam{I,T}
+    ) where {I<:Int64,T<:Float64}
+
+This function reinitializes `sparse_array`.
+`sparse_array` is expected to be either `body` or `body_soil`.
+
+# Note
+- This function is intended for internal use only.
+
+# Inputs
+- `sparse_array::Vector{SparseMatrixCSC{Float64,Int64}}`: Either `body` or `body_soil`.
+- `grid::GridParam{Int64,Float64}`: Struct that stores information related to the
+                                    simulation grid.
+
+# Outputs
+- None
+
+# Example
+
+    grid = GridParam(4.0, 4.0, 3.0, 0.05, 0.01)
+    terrain = zeros(2 * grid.half_length_x + 1, 2 * grid.half_length_y + 1)
+    out = SimOut(terrain, grid)
+
+    _init_sparse_array!(out.body, grid)
+"""
+function _init_sparse_array!(
+    sparse_array::Vector{SparseMatrixCSC{T,I}},
+    grid::GridParam{I,T}
+) where {I<:Int64,T<:Float64}
+
+    for ii in 1:length(sparse_array)
+        droptol!(sparse_array[ii], 2*grid.half_length_z+1)
+    end
+end
+
+"""
     _locate_all_non_zeros(
         out::SimOut{I,T},
         sparse_array::Vector{SparseMatrixCSC{T,I}}

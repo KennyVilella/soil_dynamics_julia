@@ -113,7 +113,7 @@ function _calc_bucket_pos!(
     sort!(left_side_pos)
 
     # Reinitializing bucket position
-    _init_body!(out, grid)
+    _init_sparse_array!(out.body, grid)
 
     # Updating the bucket position
     _update_body!(base_pos, out, grid, tol)
@@ -727,43 +727,6 @@ function _calc_line_pos(
     end
 
     return line_pos
-end
-
-"""
-    _init_body!(
-        out::SimOut{I,T},
-        grid::GridParam{I,T}
-    ) where {I<:Int64,T<:Float64}
-
-This function reinitializes `body`.
-
-# Note
-- This function is intended for internal use only.
-
-# Inputs
-- `out::SimOut{Int64,Float64}`: Struct that stores simulation outputs.
-- `grid::GridParam{Int64,Float64}`: Struct that stores information related to the
-                                    simulation grid.
-
-# Outputs
-- None
-
-# Example
-
-    grid = GridParam(4.0, 4.0, 3.0, 0.05, 0.01)
-    terrain = zeros(2 * grid.half_length_x + 1, 2 * grid.half_length_y + 1)
-    out = SimOut(terrain, grid)
-
-    _init_body!(out, grid)
-"""
-function _init_body!(
-    out::SimOut{I,T},
-    grid::GridParam{I,T}
-) where {I<:Int64,T<:Float64}
-
-    for ii in 1:length(out.body)
-        droptol!(out.body[ii], 2*grid.half_length_z+1)
-    end
 end
 
 """

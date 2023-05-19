@@ -72,17 +72,6 @@ display(
 )
 println("")
 
-# Benchmarking for _init_body_soil! function
-out.body_soil[1][20:50, 15:75] .= 0.2
-out.body_soil[2][20:50, 15:75] .= 0.5
-out.body_soil[3][40:50, 50:70] .= 0.3
-out.body_soil[4][40:50, 50:70] .= 0.7
-println("_init_body_soil")
-display(
-    @benchmark _init_body_soil!(out, grid)
-)
-println("")
-
 # Benchmarking for _body_to_terrain! function
 out.body_soil[1][10, 15] = 0.2
 out.body_soil[2][10, 15] = 0.5

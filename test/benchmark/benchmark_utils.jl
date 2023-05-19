@@ -30,6 +30,16 @@ BenchmarkTools.DEFAULT_PARAMETERS.evals = 1
 BenchmarkTools.DEFAULT_PARAMETERS.seconds = 60
 BenchmarkTools.DEFAULT_PARAMETERS.samples = 100
 
+# Benchmarking for _init_sparse_array! function
+ori = angle_to_quat(0.0, -pi / 2, 0.0, :ZYX)
+pos = Vector{Float64}([0.0, 0.0, -0.1])
+_calc_bucket_pos!(out, pos, ori, grid, bucket)
+println("_init_sparse_array!")
+display(
+    @benchmark _init_sparse_array!(out.body, grid)
+)
+println("")
+
 # Benchmarking for _locate_all_non_zeros function
 out.body_soil[1][20:50, 15:75] .= 0.2
 out.body_soil[2][20:50, 15:75] .= 0.5

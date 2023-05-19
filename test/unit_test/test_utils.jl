@@ -24,6 +24,34 @@ out = SimOut(terrain, grid)
 #                                         Testing                                          #
 #                                                                                          #
 #==========================================================================================#
+@testset "_init_sparse_array!" begin
+    # Setting dummy values in body
+    out.body[1][5:17, 1:16] .= 1.0
+    out.body[2][5:17, 1:16] .= 2.0
+    out.body[3][4:10, 13:17] .= 0.0
+    out.body[4][4:10, 13:17] .= 2*grid.half_length_z
+
+    # Setting dummy values in body_soil
+    out.body_soil[1][5:17, 1:16] .= 1.0
+    out.body_soil[2][5:17, 1:16] .= 2.0
+    out.body_soil[3][4:10, 13:17] .= 0.0
+    out.body_soil[4][4:10, 13:17] .= 2*grid.half_length_z
+
+    # Testing that body is properly reset
+    _init_sparse_array!(out.body, grid)
+    @test isempty(nonzeros(out.body[1]))
+    @test isempty(nonzeros(out.body[2]))
+    @test isempty(nonzeros(out.body[3]))
+    @test isempty(nonzeros(out.body[4]))
+
+    # Testing that body_soil is properly reset
+    _init_sparse_array!(out.body_soil, grid)
+    @test isempty(nonzeros(out.body_soil[1]))
+    @test isempty(nonzeros(out.body_soil[2]))
+    @test isempty(nonzeros(out.body_soil[3]))
+    @test isempty(nonzeros(out.body_soil[4]))
+end
+
 @testset "_locate_non_zeros" begin
     # Setting dummy values in body_soil
     out.body_soil[1][5, 5] = 0.1

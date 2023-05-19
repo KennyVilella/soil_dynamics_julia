@@ -71,7 +71,7 @@ function _update_body_soil!(
     body_soil_pos = _locate_all_non_zeros(out, out.body_soil)
 
     # Resetting body_soil
-    _init_body_soil!(out, grid)
+    _init_sparse_array!(out.body_soil, grid)
 
     # Iterating over all XY positions where body_soil is present
     for cell in body_soil_pos
@@ -132,43 +132,6 @@ function _update_body_soil!(
     # Updating new bucket position
     bucket.pos[:] .= pos[:]
     bucket.ori[:] .= ori[:]
-end
-
-"""
-    _init_body_soil!(
-        out::SimOut{I,T},
-        grid::GridParam{I,T}
-    ) where {I<:Int64,T<:Float64}
-
-This function reinitializes `body_soil`.
-
-# Note
-- This function is intended for internal use only.
-
-# Inputs
-- `out::SimOut{Int64,Float64}`: Struct that stores simulation outputs.
-- `grid::GridParam{Int64,Float64}`: Struct that stores information related to the
-                                    simulation grid.
-
-# Outputs
-- None
-
-# Example
-
-    grid = GridParam(4.0, 4.0, 3.0, 0.05, 0.01)
-    terrain = zeros(2 * grid.half_length_x + 1, 2 * grid.half_length_y + 1)
-    out = SimOut(terrain, grid)
-
-    _init_body_soil!(out, grid)
-"""
-function _init_body_soil!(
-    out::SimOut{I,T},
-    grid::GridParam{I,T}
-) where {I<:Int64,T<:Float64}
-
-    for ii in 1:length(out.body_soil)
-        droptol!(out.body_soil[ii], 2*grid.half_length_z+1)
-    end
 end
 
 """
