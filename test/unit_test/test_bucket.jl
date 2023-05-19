@@ -929,24 +929,9 @@ end
     @test length(tri_pos) == 1
 end
 
-@testset "_init_body!" begin
-    # Setting dummy values in body
-    out.body[1][5:17, 1:16] .= 1.0
-    out.body[2][5:17, 1:16] .= 2.0
-    out.body[3][4:10, 13:17] .= 0.0
-    out.body[4][4:10, 13:17] .= 2*grid.half_length_z
-
-    # Testing that body is properly reset
-    _init_body!(out, grid)
-    @test isempty(nonzeros(out.body[1]))
-    @test isempty(nonzeros(out.body[2]))
-    @test isempty(nonzeros(out.body[3]))
-    @test isempty(nonzeros(out.body[4]))
-end
-
 @testset "_include_new_body_pos!" begin
     # Setting a dummy body
-    _init_body!(out, grid)
+    _init_sparse_array!(out.body, grid)
     out.body[1][7, 10] = 1.0
     out.body[2][7, 10] = 2.0
     out.body[1][9, 12] = 0.5
@@ -1029,7 +1014,7 @@ end
 
 @testset "_update_body!" begin
     # Resetting bucket position
-    _init_body!(out, grid)
+    _init_sparse_array!(out.body, grid)
 
     # Creating a dummy bucket wall
     area_pos = Vector{Vector{Int64}}()

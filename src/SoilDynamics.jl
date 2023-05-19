@@ -12,15 +12,16 @@ export GridParam, BucketParam, SimOut
 
 # bucket.jl
 export _calc_bucket_pos!
-export _init_body!, _update_body!, _include_new_body_pos!
+export _update_body!, _include_new_body_pos!
 export _calc_rectangle_pos, _calc_triangle_pos, _calc_line_pos
 export _decompose_vector_rectangle, _decompose_vector_triangle
 
 # soil.jl
-export _update_body_soil!, _init_body_soil!, _locate_body_soil, _locate_non_zeros
+export _update_body_soil!
 export _body_to_terrain!
 
 # utils.jl
+export _locate_all_non_zeros, _locate_non_zeros, _init_sparse_array!
 export calc_normal
 
 # Files

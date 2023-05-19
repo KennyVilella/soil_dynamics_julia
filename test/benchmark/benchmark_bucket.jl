@@ -112,16 +112,6 @@ display(
 )
 println("")
 
-# Benchmarking for _init_body! function
-ori = angle_to_quat(0.0, -pi / 2, 0.0, :ZYX)
-pos = Vector{Float64}([0.0, 0.0, -0.1])
-_calc_bucket_pos!(out, pos, ori, grid, bucket)
-println("_init_body!")
-display(
-    @benchmark _init_body!(out, grid)
-)
-println("")
-
 # Benchmarking for _update_body! function
 a = [0.0, 0.0, 0.0]
 b = [1.0, 0.0, 0.0]
