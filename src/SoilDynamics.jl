@@ -1,6 +1,7 @@
 module SoilDynamics
 
 import LinearAlgebra: cross, norm
+import Random: seed!
 import ReferenceFrameRotations: vect, Quaternion, inv_rotation
 import SparseArrays: SparseMatrixCSC, spzeros, droptol!, nzrange, rowvals
 
@@ -22,7 +23,7 @@ export _body_to_terrain!
 
 # utils.jl
 export _locate_all_non_zeros, _locate_non_zeros, _init_sparse_array!
-export calc_normal
+export calc_normal, set_RNG_seed!
 
 # Files
 include("types.jl")

@@ -1,5 +1,6 @@
 using Test
 using SoilDynamics
+import Random: seed!
 import ReferenceFrameRotations: angle_to_quat, Quaternion
 import SparseArrays: SparseMatrixCSC, nonzeros, dropzeros!
 
