@@ -68,7 +68,7 @@ function _update_body_soil!(
     old_body_soil = deepcopy(out.body_soil)
 
     # Locating body_soil
-    body_soil_pos = _locate_all_non_zeros(out, out.body_soil)
+    body_soil_pos = _locate_all_non_zeros(out.body_soil)
 
     # Resetting body_soil
     _init_sparse_array!(out.body_soil, grid)

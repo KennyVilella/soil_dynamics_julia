@@ -124,14 +124,14 @@ end
     out.body[4][19, 5] = 0.0
 
     # Testing that cells in body_soil are located properly
-    body_soil_pos = _locate_all_non_zeros(out, out.body_soil)
+    body_soil_pos = _locate_all_non_zeros(out.body_soil)
     @test ([1, 5, 5] in body_soil_pos) && ([1, 4, 9] in body_soil_pos)
     @test ([1, 11, 7] in body_soil_pos) && ([3, 1, 1] in body_soil_pos)
     @test ([1, 3, 7] in body_soil_pos) && ([3, 3, 7] in body_soil_pos)
     @test (length(body_soil_pos) == 6)
 
     # Testing that cells in body are located properly
-    body_pos = _locate_all_non_zeros(out, out.body)
+    body_pos = _locate_all_non_zeros(out.body)
     @test ([1, 15, 5] in body_pos) && ([1, 4, 19] in body_pos)
     @test ([1, 11, 17] in body_pos) && ([3, 3, 3] in body_pos)
     @test ([1, 13, 17] in body_pos) && ([3, 13, 17] in body_pos)

@@ -47,7 +47,7 @@ out.body_soil[3][40:50, 50:70] .= 0.3
 out.body_soil[4][40:50, 50:70] .= 0.7
 println("_locate_all_non_zeros")
 display(
-    @benchmark body_soil_pos = _locate_all_non_zeros(out, out.body)
+    @benchmark body_soil_pos = _locate_all_non_zeros(out.body)
 )
 println("")
 

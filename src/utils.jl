@@ -46,7 +46,6 @@ end
 
 """
     _locate_all_non_zeros(
-        out::SimOut{I,T},
         sparse_array::Vector{SparseMatrixCSC{T,I}}
     ) where {I<:Int64,T<:Float64}
 
@@ -59,7 +58,6 @@ This function returns the indices of all non-zero values in `sparse_array`.
   and third indices are the indices in the X and Y direction, respectively.
 
 # Inputs
-- `out::SimOut{Int64,Float64}`: Struct that stores simulation outputs.
 - `sparse_array::Vector{SparseMatrixCSC{Float64,Int64}}`: Either `body` or `body_soil`.
 
 # Outputs
@@ -71,10 +69,9 @@ This function returns the indices of all non-zero values in `sparse_array`.
     terrain = zeros(2 * grid.half_length_x + 1, 2 * grid.half_length_y + 1)
     out = SimOut(terrain, grid)
 
-    body_soil_pos = _locate_all_non_zeros(out, out.body_soil)
+    body_soil_pos = _locate_all_non_zeros(out.body_soil)
 """
 function _locate_all_non_zeros(
-    out::SimOut{I,T},
     sparse_array::Vector{SparseMatrixCSC{T,I}}
 ) where {I<:Int64,T<:Float64}
 
