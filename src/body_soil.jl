@@ -8,12 +8,8 @@ Copyright, 2023,  Vilella Kenny.
 #==========================================================================================#
 """
     _update_body_soil!(
-        out::SimOut{I,T},
-        pos::Vector{T},
-        ori::Quaternion{T},
-        grid::GridParam{I,T},
-        bucket::BucketParam{T},
-        tol::T=1e-8
+        out::SimOut{I,T}, pos::Vector{T}, ori::Quaternion{T}, grid::GridParam{I,T},
+        bucket::BucketParam{T}, tol::T=1e-8
     ) where {I<:Int64,T<:Float64}
 
 This function moves the soil resting on the bucket following its movement. To do so, the

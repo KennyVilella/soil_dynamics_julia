@@ -8,7 +8,7 @@ Copyright, 2023,  Vilella Kenny.
 #==========================================================================================#
 """
     soil_dynamics!(
-        pos::Vector{T}, ori::Quaternion{T}, grid::GridParam{I,T},
+        out::SimOut{I,T}, pos::Vector{T}, ori::Quaternion{T}, grid::GridParam{I,T},
         bucket::BucketParam{I,T}, tol::T=1e-8
     ) where {I<:Int64,T<:Float64}
 
@@ -22,6 +22,7 @@ is updated following the bucket movement.
   intended use.
 
 # Inputs
+- `out::SimOut{Int64,Float64}`: Struct that stores simulation outputs.
 - `pos::Vector{Float64}`: Cartesian coordinates of the bucket origin. [m]
 - `ori::Quaternion{Float64}`: Orientation of the bucket. [Quaternion]
 - `grid::GridParam{Int64,Float64}`: Struct that stores information related to the
@@ -43,10 +44,13 @@ is updated following the bucket movement.
     b = [0.0, 0.0, -0.5]
     t = [1.0, 0.0, -0.5]
     bucket = BucketParam(o, j, b, t, 0.5)
+    terrain = zeros(2 * grid.half_length_x + 1, 2 * grid.half_length_y + 1)
+    out = SimOut(terrain, grid)
 
-    soil_dynamics!(pos, ori, grid, bucket)
+    soil_dynamics!(out, pos, ori, grid, bucket)
 """
 function soil_dynamics!(
+    out::SimOut{I,T},
     pos::Vector{T},
     ori::Quaternion{T},
     grid::GridParam{I,T},
