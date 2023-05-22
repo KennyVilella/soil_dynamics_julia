@@ -310,7 +310,7 @@ function write_bucket(
     # Calculating vector normal to the side of the bucket
     normal_side = calc_normal(j_pos, b_pos, t_pos)
 
-    # Calcualting position of bucket corners
+    # Calculating position of bucket corners
     j_r_pos = j_pos + 0.5 * bucket.width * normal_side
     j_l_pos = j_pos - 0.5 * bucket.width * normal_side
     b_r_pos = b_pos + 0.5 * bucket.width * normal_side
