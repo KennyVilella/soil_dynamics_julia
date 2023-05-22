@@ -14,6 +14,7 @@ import Logging
 #==========================================================================================#
 """
     soil_evolution(
+        writing_bucket_files::B=false, writing_soil_files::B=false,
         random_trajectory::B=false, set_RNG::B=false, tol::T=1e-8
     ) where {B<:Bool,T<:Float64}
 
@@ -31,6 +32,10 @@ the initial position (`x_i`, `z_i`) of the bucket and the deepest point of the s
 - The stepping should be such that the bucket is moving less than two cells between steps.
 
 # Inputs
+- `writing_bucket_files::Bool`: Indicates whether the six bucket corners are written into
+                                a file at every step.
+- `writing_soil_files::Bool`: Indicates whether the terrain heightmap is written into
+                              a file at every step.
 - `random_trajectory::Bool`: Indicates whether the default trajectory or a randomized one
                              is used.
 - `set_RNG::Bool`: Indicates whether the RNG seed is set or not.
@@ -41,9 +46,11 @@ the initial position (`x_i`, `z_i`) of the bucket and the deepest point of the s
 
 # Example
 
-    soil_evolution(true, false)
+    soil_evolution(false, false, true, false)
 """
 function soil_evolution(
+    writing_bucket_files::B=false,
+    writing_soil_files::B=false,
     random_trajectory::B=false,
     set_RNG::B=false,
     tol::T=1e-8
@@ -213,6 +220,16 @@ function soil_evolution(
 
         # Stepping the soil dynamics
         soil_dynamics!(out, pos_vec[ii], ori_vec[ii], grid, bucket, tol)
+
+        if (writing_bucket_files)
+            ### Writing files giving the bucket position ###
+            write_bucket(bucket)
+        end
+
+        if (writing_soil_files)
+            ### Writing files giving the terrain height ###
+            write_soil(out, grid)
+        end
     end
 end
 
