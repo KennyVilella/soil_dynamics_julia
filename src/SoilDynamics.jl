@@ -1,5 +1,6 @@
 module SoilDynamics
 
+import DelimitedFiles: writedlm
 import LinearAlgebra: cross, norm
 import Random: seed!
 import ReferenceFrameRotations: vect, Quaternion, inv_rotation
@@ -24,6 +25,7 @@ export _body_to_terrain!
 # utils.jl
 export _locate_all_non_zeros, _locate_non_zeros, _init_sparse_array!
 export calc_normal, set_RNG_seed!
+export write_bucket, write_soil, _write_vector
 
 # Files
 include("types.jl")

@@ -11,6 +11,10 @@ include("soil_evolution.jl")
 # Setting parameters
 random_trajectory = false
 set_RNG = true
+writing_bucket_files = true
+writing_soil_files = true
 
 # Launching the example script
-soil_evolution(random_trajectory, set_RNG)
+soil_evolution(
+    writing_bucket_files, writing_soil_files, random_trajectory, set_RNG
+)
