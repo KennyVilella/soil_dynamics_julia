@@ -89,9 +89,18 @@ function _locate_all_non_zeros(
     unique!(non_zeros_1)
     unique!(non_zeros_3)
 
+    non_zeros_pos = Vector{Vector{Int64}}()
     # Compiling all positions
-    non_zeros_pos = [[1; cell] for cell in non_zeros_1]
-    append!(non_zeros_pos, [[3; cell] for cell in non_zeros_3])
+    for cell in non_zeros_1
+        if ((sparse_array[1][cell] != 0.0) || (sparse_array[2][cell] != 0.0))
+            push!(non_zeros_pos, [1; cell])
+        end
+    end
+    for cell in non_zeros_3
+        if ((sparse_array[3][cell] != 0.0) || (sparse_array[4][cell] != 0.0))
+            push!(non_zeros_pos, [3; cell])
+        end
+    end
 
     return non_zeros_pos
 end
@@ -195,6 +204,218 @@ function set_RNG_seed!(
 ) where {I<:Int64}
 
     seed!(seed)
+end
+
+"""
+    check_volume(
+        out::SimOut{I,T}, init_volume::T, grid::GridParam{I,T}
+    ) where {I<:Int64,T<:Float64}
+
+This function checks that the volume of soil is conserved.
+The intial volume of soil (`init_volume`) has to be provided.
+
+# Inputs
+- `out::SimOut{Int64,Float64}`: Struct that stores simulation outputs.
+- `init_volume::Float64`: Initial volume of soil in the terrain. [m^3]
+- `grid::GridParam{Int64,Float64}`: Struct that stores information related to the
+                                    simulation grid.
+
+# Outputs
+- None
+
+# Example
+
+    grid = GridParam(4.0, 4.0, 3.0, 0.05, 0.01)
+    terrain = zeros(2 * grid.half_length_x + 1, 2 * grid.half_length_y + 1)
+    out = SimOut(terrain, grid)
+    init_volume = 0.0
+
+    check_volume(out, init_volume, grid)
+"""
+function check_volume(
+    out::SimOut{I,T},
+    init_volume::T,
+    grid::GridParam{I,T}
+) where {I<:Int64,T<:Float64}
+
+    # Calculating volume of soil in the terrain
+    terrain_volume = grid.cell_area * sum(out.terrain)
+
+    # Collecting all bucket soil
+    body_soil_pos = _locate_all_non_zeros(out.body_soil)
+
+    # Calculating volume of bucket soil
+    body_soil_volume = 0.0
+    for cell in body_soil_pos
+        ii = cell[2]
+        jj = cell[3]
+        ind = cell[1]
+
+        body_soil_volume += out.body_soil[ind+1][ii, jj] - out.body_soil[ind][ii, jj]
+    end
+    body_soil_volume *= grid.cell_area
+
+    # Calculating total volume of soil
+    total_volume = terrain_volume + body_soil_volume
+
+    if (abs(total_volume - init_volume) > 0.5 * grid.cell_volume)
+        @warn "Volume is not conserved!"
+        @warn "Initial volume: " * string(init_volume) *
+            "   Current volume: " * string(total_volume)
+    end
+end
+
+"""
+    check_soil(
+        out::SimOut{I,T}, tol::T=1e-8
+    ) where {I<:Int64,T<:Float64}
+
+This function checks that all the simulation outputs follow the conventions of the
+simulator. If any inconsistency is found, a warning is issued.
+The conventions that are checked include:
+- The terrain should not overlap with the bucket.
+- The bucket should be properly defined, with its maximum height higher than its minimum
+  height.
+- The bucket soil should be properly defined, with its maximum height higher than its
+  minimum height.
+- The two bucket layers should not overlap or touch each other.
+- One bucket layer should not overlap with all bucket soil layer.
+- The bucket should not overlap with the corresponding bucket soil layer.
+- The bucket soil layer should be resting on the corresponding bucket layer.
+- The bucket should be present when there is bucket soil.
+
+# Inputs
+- `out::SimOut{Int64,Float64}`: Struct that stores simulation outputs.
+- `tol::Float64`: Small number used to handle numerical approximation errors.
+
+# Outputs
+- None
+
+# Example
+
+    grid = GridParam(4.0, 4.0, 3.0, 0.05, 0.01)
+    terrain = zeros(2 * grid.half_length_x + 1, 2 * grid.half_length_y + 1)
+    out = SimOut(terrain, grid)
+
+    check_soil(out)
+"""
+function check_soil(
+    out::SimOut{I,T},
+    tol::T=1e-8
+) where {I<:Int64,T<:Float64}
+
+    # Collecting all cells where the bucket is located
+    bucket_pos = _locate_all_non_zeros(out.body)
+
+    # Iterating over all cells where the bucket is located
+    for cell in bucket_pos
+        ii = cell[2]
+        jj = cell[3]
+        ind = cell[1]
+
+        if (out.terrain[ii, jj] > out.body[ind][ii, jj] + tol)
+            @warn "Terrain is above the bucket"
+            @warn "Location: (" * string(ii) * ", " * string(jj) * ")"
+            @warn "Terrain height: " * string(out.terrain[ii, jj])
+            @warn "Bucket minimum height: " * string(out.body[ind][ii, jj])
+        end
+
+        if (out.body[ind][ii, jj] > out.body[ind+1][ii, jj] + tol)
+            @warn "Minimum height of the bucket is above its maximum height"
+            @warn "Location: (" * string(ii) * ", " * string(jj) * ")"
+            @warn "Bucket minimum height: " * string(out.body[ind][ii, jj])
+            @warn "Bucket maximum height: " * string(out.body[ind+1][ii, jj])
+        end
+
+        if (
+            ((out.body[1][ii, jj] != 0.0) || (out.body[2][ii, jj] != 0.0)) &&
+            ((out.body[3][ii, jj] != 0.0) || (out.body[4][ii, jj] != 0.0)) &&
+            (out.body[2][ii, jj] + tol > out.body[3][ii, jj]) &&
+            (out.body[4][ii, jj] + tol > out.body[1][ii, jj])
+        )
+            @warn "The two bucket layers are intersecting"
+            @warn "Location: (" * string(ii) * ", " * string(jj) * ")"
+            @warn "Bucket 1 minimum height: " * string(out.body[1][ii, jj])
+            @warn "Bucket 1 maximum height: " * string(out.body[2][ii, jj])
+            @warn "Bucket 2 minimum height: " * string(out.body[3][ii, jj])
+            @warn "Bucket 2 maximum height: " * string(out.body[4][ii, jj])
+        end
+
+        if (
+            ((out.body[1][ii, jj] != 0.0) || (out.body[2][ii, jj] != 0.0)) &&
+            ((out.body_soil[3][ii, jj] != 0.0) || (out.body_soil[4][ii, jj] != 0.0)) &&
+            (out.body[2][ii, jj] - tol > out.body_soil[3][ii, jj]) &&
+            (out.body_soil[4][ii, jj] - tol > out.body[1][ii, jj])
+        )
+            @warn "A bucket layer and a bucket soil layer are intersecting"
+            @warn "Location: (" * string(ii) * ", " * string(jj) * ")"
+            @warn "Bucket 1 minimum height: " * string(out.body[1][ii, jj])
+            @warn "Bucket 1 maximum height: " * string(out.body[2][ii, jj])
+            @warn "Bucket soil 2 minimum height: " * string(out.body_soil[3][ii, jj])
+            @warn "Bucket soil 2 maximum height: " * string(out.body_soil[4][ii, jj])
+        end
+
+        if (
+            ((out.body_soil[1][ii, jj] != 0.0) || (out.body_soil[2][ii, jj] != 0.0)) &&
+            ((out.body[3][ii, jj] != 0.0) || (out.body[4][ii, jj] != 0.0)) &&
+            (out.body_soil[2][ii, jj] - tol > out.body[3][ii, jj]) &&
+            (out.body[4][ii, jj] - tol > out.body_soil[1][ii, jj])
+        )
+            @warn "A bucket layer and a bucket soil layer are intersecting"
+            @warn "Location: (" * string(ii) * ", " * string(jj) * ")"
+            @warn "Bucket soil 1 minimum height: " * string(out.body_soil[1][ii, jj])
+            @warn "Bucket soil 1 maximum height: " * string(out.body_soil[2][ii, jj])
+            @warn "Bucket 2 minimum height: " * string(out.body[3][ii, jj])
+            @warn "Bucket 2 maximum height: " * string(out.body[4][ii, jj])
+        end
+
+
+        if ((out.body_soil[ind][ii, jj] == 0.0) && (out.body_soil[ind+1][ii, jj] == 0.0))
+            ### Bucket soil is not present ###
+            # Stopping the check
+            continue
+        end
+
+        if (out.body_soil[ind][ii, jj] > out.body_soil[ind+1][ii, jj] + tol)
+            @warn "Minimum height of the bucket soil is above its maximum height"
+            @warn "Location: (" * string(ii) * ", " * string(jj) * ")"
+            @warn "Bucket soil minimum height: " * string(out.body_soil[ind][ii, jj])
+            @warn "Bucket soil maximum height: " * string(out.body_soil[ind+1][ii, jj])
+        end
+
+        if (out.body[ind+1][ii, jj] > out.body_soil[ind][ii, jj] + tol)
+            @warn "Bucket is above the bucket soil"
+            @warn "Location: (" * string(ii) * ", " * string(jj) * ")"
+            @warn "Bucket maximum height: " * string(out.body[ind+1][ii, jj])
+            @warn "Bucket soil minimum height: " * string(out.body_soil[ind][ii, jj])
+        end
+
+        if (out.body_soil[ind][ii, jj] != out.body[ind+1][ii, jj])
+            @warn "Bucket soil is not above the bucket"
+            @warn "Location: (" * string(ii) * ", " * string(jj) * ")"
+            @warn "Terrain height: " * string(out.terrain[ii, jj])
+            @warn "Bucket maximum height: " * string(out.body[ind+1][ii, jj])
+            @warn "Bucket soil minimum height: " * string(out.body_soil[ind][ii, jj])
+        end
+    end
+
+    # Collecting all cells where the bucket soil is located
+    body_pos = _locate_all_non_zeros(out.body_soil)
+
+    # Iterating over all cells where the bucket is located
+    for cell in body_pos
+        ii = cell[2]
+        jj = cell[3]
+        ind = cell[1]
+
+        if ((out.body[ind][ii, jj] == 0.0) && (out.body[ind+1][ii, jj] == 0.0))
+            ### Bucket is not present ###
+            @warn "Bucket soil is present but there is no bucket"
+            @warn "Location: (" * string(ii) * ", " * string(jj) * ")"
+            @warn "Bucket soil minimum height: " * string(out.body_soil[ind][ii, jj])
+            @warn "Bucket soil maximum height: " * string(out.body_soil[ind+1][ii, jj])
+        end
+    end
 end
 
 """
