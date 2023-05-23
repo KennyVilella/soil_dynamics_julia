@@ -230,3 +230,283 @@ end
     exp_rand = rand(1)
     @test get_rand  == exp_rand
 end
+
+@testset "check_volume" begin
+    # Setting dummy properties
+    init_volume = 0.0
+
+    # Testing that no warning is sent for correct initial volume
+    @test_logs check_volume(out, init_volume, grid)
+
+    # Testing that warning is sent for incorrect initial volume
+    @test_logs (:warn,) match_mode=:any check_volume(out, 1.0, grid)
+    @test_logs (:warn,) match_mode=:any check_volume(
+            out, init_volume - 0.6 * grid.cell_volume, grid
+        )
+    @test_logs (:warn,) match_mode=:any check_volume(
+            out, init_volume + 0.6 * grid.cell_volume, grid
+        )
+
+    # Setting non-zero terrain
+    out.terrain[1, 2] = 0.2
+    init_volume =  0.2 * (grid.cell_size_xy * grid.cell_size_xy)
+
+    # Testing that no warning is sent for correct initial volume
+    @test_logs check_volume(out, init_volume, grid)
+
+    # Testing that warning is sent for incorrect initial volume
+    @test_logs (:warn,) match_mode=:any check_volume(out, 0.0, grid)
+    @test_logs (:warn,) match_mode=:any check_volume(
+            out, init_volume - 0.6 * grid.cell_volume, grid
+        )
+    @test_logs (:warn,) match_mode=:any check_volume(
+            out, init_volume + 0.6 * grid.cell_volume, grid
+        )
+    @test_logs (:warn,) match_mode=:any check_volume(out, -init_volume, grid)
+
+    # Setting non-zero body soil
+    out.terrain[1, 2] = 0.0
+    out.body_soil[1][2, 2] = -0.1
+    out.body_soil[2][2, 2] = 0.0
+    out.body_soil[3][2, 2] = 0.2
+    out.body_soil[4][2, 2] = 0.27
+    out.body_soil[1][1, 1] = 0.0
+    out.body_soil[2][1, 1] = 0.08
+    out.body_soil[3][2, 1] = 0.0
+    out.body_soil[4][2, 1] = 0.15
+
+    init_volume =  0.4 * (grid.cell_size_xy * grid.cell_size_xy)
+
+    # Testing that no warning is sent for correct initial volume
+    @test_logs check_volume(out, init_volume, grid)
+
+    # Testing that warning is sent for incorrect initial volume
+    @test_logs (:warn,) match_mode=:any check_volume(out, 0.0, grid)
+
+    # Resetting body_soil
+    out.body_soil[1][2, 2] = 0.0
+    out.body_soil[2][2, 2] = 0.0
+    out.body_soil[3][2, 2] = 0.0
+    out.body_soil[4][2, 2] = 0.0
+    out.body_soil[1][1, 1] = 0.0
+    out.body_soil[2][1, 1] = 0.0
+    out.body_soil[3][2, 1] = 0.0
+    out.body_soil[4][2, 1] = 0.0
+    dropzeros!(out.body_soil[1])
+    dropzeros!(out.body_soil[2])
+    dropzeros!(out.body_soil[3])
+    dropzeros!(out.body_soil[4])
+end
+
+@testset "check_soil" begin
+    # Testing that no warning is sent when everything is at zero
+    @test_logs check_soil(out)
+
+    # Changing terrain to an arbitrary shape
+    out.terrain[1, 1] = -0.2
+    out.terrain[1, 2] = -0.15
+    out.terrain[2, 1] = 0.0
+    out.terrain[2, 2] = 0.0
+
+    # Testing that no warning is sent
+    @test_logs check_soil(out)
+
+    # Setting the bucket
+    out.body[1][1, 1] = -0.2
+    out.body[2][1, 1] = 0.0
+    out.body[1][1, 2] = -0.15
+    out.body[2][1, 2] = 0.0
+    out.body[3][1, 2] = 0.1
+    out.body[4][1, 2] = 0.2
+    out.body[3][2, 1] = 0.0
+    out.body[4][2, 1] = 0.15
+    out.body[1][2, 2] = 0.1
+    out.body[2][2, 2] = 0.1
+
+    # Testing that no warning is sent
+    @test_logs check_soil(out)
+
+    # Setting the bucket soil
+    out.body_soil[1][1, 1] = 0.0
+    out.body_soil[2][1, 1] = 0.1
+    out.body_soil[1][1, 2] = 0.0
+    out.body_soil[2][1, 2] = 0.1
+    out.body_soil[3][1, 2] = 0.2
+    out.body_soil[4][1, 2] = 0.3
+    out.body_soil[3][2, 1] = 0.15
+    out.body_soil[4][2, 1] = 0.25
+    out.body_soil[1][2, 2] = 0.1
+    out.body_soil[2][2, 2] = 0.1
+
+    # Testing that no warning is sent
+    @test_logs check_soil(out)
+
+    # Testing that warning is sent when terrain is above the bucket
+    warning_message = "Terrain is above the bucket"
+    out.terrain[1, 1] = 0.5
+    @test_logs (:warn, warning_message) match_mode=:any check_soil(out)
+    out.terrain[1, 1] = -0.19
+    @test_logs (:warn, warning_message) match_mode=:any check_soil(out)
+    # Resetting value
+    out.terrain[1, 1] = -0.2
+
+    # Testing that no warning is sent
+    @test_logs check_soil(out)
+
+    # Testing that warning is sent when body is not set properly
+    warning_message = "Minimum height of the bucket is above its maximum height"
+    out.body[1][1, 1] = 0.0
+    out.body[2][1, 1] = -0.1
+    @test_logs (:warn, warning_message) match_mode=:any check_soil(out)
+    out.body_soil[1][1, 1] = 0.0
+    out.body_soil[2][1, 1] = 0.0
+    @test_logs (:warn, warning_message) match_mode=:any check_soil(out)
+    out.body[1][1, 1] = 0.41
+    out.body[2][1, 1] = 0.4
+    @test_logs (:warn, warning_message) match_mode=:any check_soil(out)
+    out.body[2][1, 1] = 0.0
+    @test_logs (:warn, warning_message) match_mode=:any check_soil(out)
+    out.body[1][1, 1] = 0.0
+    out.body[2][1, 1] = -0.4
+    @test_logs (:warn, warning_message) match_mode=:any check_soil(out)
+    # Resetting value
+    out.body[1][1, 1] = -0.2
+    out.body[2][1, 1] = 0.0
+    out.body_soil[1][1, 1] = 0.0
+    out.body_soil[2][1, 1] = 0.1
+
+    # Testing that no warning is sent
+    @test_logs check_soil(out)
+
+    # Testing that warning is sent when bucket soil is not set properly
+    warning_message = "Minimum height of the bucket soil is above its maximum height"
+    out.body_soil[1][1, 1] = 0.0
+    out.body_soil[2][1, 1] = -0.1
+    @test_logs (:warn, warning_message) match_mode=:any check_soil(out)
+    out.body_soil[1][1, 1] = 0.2
+    out.body_soil[2][1, 1] = 0.0
+    @test_logs (:warn, warning_message) match_mode=:any check_soil(out)
+    # Resetting value
+    out.body[1][1, 1] = -0.2
+    out.body[2][1, 1] = 0.0
+    out.body_soil[1][1, 1] = 0.0
+    out.body_soil[2][1, 1] = 0.1
+
+    # Testing that no warning is sent
+    @test_logs check_soil(out)
+
+    # Testing that warning is sent when the bucket is above the bucket soil
+    warning_message = "Bucket is above the bucket soil"
+    out.body[2][1, 1] = 0.05
+    @test_logs (:warn, warning_message) match_mode=:any check_soil(out)
+    out.body[4][1, 2] = 0.25
+    @test_logs (:warn, warning_message) match_mode=:any check_soil(out)
+    out.body[4][1, 2] = 0.45
+    @test_logs (:warn, warning_message) match_mode=:any check_soil(out)
+    # Resetting value
+    out.body[2][1, 1] = 0.0
+    out.body[4][1, 2] = 0.2
+
+    # Testing that no warning is sent
+    @test_logs check_soil(out)
+
+    # Testing that warning is sent when there is a gap between bucket and bucket soil
+    warning_message = "Bucket soil is not above the bucket"
+    out.body_soil[1][1, 1] = 0.1
+    @test_logs (:warn, warning_message) match_mode=:any check_soil(out)
+    out.body_soil[1][1, 1] = 0.05
+    @test_logs (:warn, warning_message) match_mode=:any check_soil(out)
+    # Resetting value
+    out.body_soil[1][1, 1] = 0.0
+
+    # Testing that no warning is sent
+    @test_logs check_soil(out)
+
+    # Testing that warning is sent when there is bucket soil but no bucket
+    warning_message = "Bucket soil is present but there is no bucket"
+    out.body[3][1, 2] = 0.0
+    out.body[4][1, 2] = 0.0
+    @test_logs (:warn, warning_message) match_mode=:any check_soil(out)
+    out.body[3][1, 2] = 0.1
+    out.body[4][1, 2] = 0.2
+    out.body[1][1, 1] = 0.0
+    out.body[2][1, 1] = 0.0
+    @test_logs (:warn, warning_message) match_mode=:any check_soil(out)
+    # Resetting value
+    out.body[1][1, 1] = -0.2
+    out.body[2][1, 1] = 0.0
+
+    # Testing that no warning is sent
+    @test_logs check_soil(out)
+
+    # Testing that warning is sent when two bucket layers are intersecting
+    warning_message = "The two bucket layers are intersecting"
+    out.terrain[3, 2] = -0.2
+    out.body[1][3, 2] = -0.15
+    out.body[2][3, 2] = 0.1
+    out.body[3][3, 2] = 0.0
+    out.body[4][3, 2] = 0.2
+    @test_logs (:warn, warning_message) match_mode=:any check_soil(out)
+    out.body[2][3, 2] = 0.0
+    @test_logs (:warn, warning_message) match_mode=:any check_soil(out)
+    out.body[1][3, 2] = 0.0
+    out.body[2][3, 2] = 0.2
+    out.body[3][3, 2] = -0.2
+    out.body[4][3, 2] = 0.1
+    @test_logs (:warn, warning_message) match_mode=:any check_soil(out)
+    out.body[4][3, 2] = 0.0
+    @test_logs (:warn, warning_message) match_mode=:any check_soil(out)
+    # Resetting value
+    out.body[1][3, 2] = 0.0
+    out.body[2][3, 2] = 0.0
+    out.body[3][3, 2] = 0.0
+    out.body[4][3, 2] = 0.0
+    dropzeros!(out.body[1])
+    dropzeros!(out.body[2])
+    dropzeros!(out.body[3])
+    dropzeros!(out.body[4])
+
+    # Testing that no warning is sent
+    @test_logs check_soil(out)
+
+    # Testing that warning is sent when a bucket layer and a bucket soil layer are
+    # intersecting
+    warning_message = "A bucket layer and a bucket soil layer are intersecting"
+    out.body[1][3, 2] = -0.15
+    out.body[2][3, 2] = 0.0
+    out.body[3][3, 2] = 0.1
+    out.body[4][3, 2] = 0.2
+    out.body_soil[1][3, 2] = 0.0
+    out.body_soil[2][3, 2] = 0.15
+    @test_logs (:warn, warning_message) match_mode=:any check_soil(out)
+    out.body_soil[1][3, 2] = 0.0
+    out.body_soil[2][3, 2] = 0.0
+    out.body[3][3, 2] = -0.15
+    out.body[4][3, 2] = 0.0
+    out.body[1][3, 2] = 0.1
+    out.body[2][3, 2] = 0.2
+    out.body_soil[3][3, 2] = 0.0
+    out.body_soil[4][3, 2] = 0.15
+    @test_logs (:warn, warning_message) match_mode=:any check_soil(out)
+    # Checking that no warning is sent when at same height
+    out.body_soil[4][3, 2] = 0.1
+    @test_logs check_soil(out)
+    # Resetting value
+    out.body[1][3, 2] = 0.0
+    out.body[2][3, 2] = 0.0
+    out.body[3][3, 2] = 0.0
+    out.body[4][3, 2] = 0.0
+    out.body_soil[3][3, 2] = 0.0
+    out.body_soil[4][3, 2] = 0.0
+    dropzeros!(out.body[1])
+    dropzeros!(out.body[2])
+    dropzeros!(out.body[3])
+    dropzeros!(out.body[4])
+    dropzeros!(out.body_soil[1])
+    dropzeros!(out.body_soil[2])
+    dropzeros!(out.body_soil[3])
+    dropzeros!(out.body_soil[4])
+
+    # Testing that no warning is sent
+    @test_logs check_soil(out)
+end
