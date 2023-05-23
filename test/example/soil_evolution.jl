@@ -87,7 +87,7 @@ function soil_evolution(
 
     # Initializing terrain array to zero height
     terrain = zeros(2 * grid.half_length_x + 1, 2 * grid.half_length_y + 1)
-    init_volume = sum(terrain)
+    init_volume = sum(terrain) * grid.cell_area
 
     # SimOut struct
     out = SimOut(terrain, grid)

@@ -232,7 +232,7 @@ end
 end
 
 @testset "check_volume" begin
-    # Set dummy properties
+    # Setting dummy properties
     init_volume = 0.0
 
     # Testing that no warning is sent for correct initial volume
@@ -338,7 +338,7 @@ end
     out.body_soil[1][2, 2] = 0.1
     out.body_soil[2][2, 2] = 0.1
 
-    # Test that no warning is sent
+    # Testing that no warning is sent
     @test_logs check_soil(out)
 
     # Testing that warning is sent when terrain is above the bucket
