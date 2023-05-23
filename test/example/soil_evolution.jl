@@ -14,7 +14,7 @@ import Logging
 #==========================================================================================#
 """
     soil_evolution(
-        writing_bucket_files::B=false, writing_soil_files::B=false,
+        debug::B=false, writing_bucket_files::B=false, writing_soil_files::B=false,
         random_trajectory::B=false, set_RNG::B=false, tol::T=1e-8
     ) where {B<:Bool,T<:Float64}
 
@@ -32,6 +32,7 @@ the initial position (`x_i`, `z_i`) of the bucket and the deepest point of the s
 - The stepping should be such that the bucket is moving less than two cells between steps.
 
 # Inputs
+- `debug::Bool`: Indicates whether to run simulation outputs check at every step.
 - `writing_bucket_files::Bool`: Indicates whether the six bucket corners are written into
                                 a file at every step.
 - `writing_soil_files::Bool`: Indicates whether the terrain heightmap is written into
@@ -46,9 +47,10 @@ the initial position (`x_i`, `z_i`) of the bucket and the deepest point of the s
 
 # Example
 
-    soil_evolution(false, false, true, false)
+    soil_evolution(true, false, false, true, false)
 """
 function soil_evolution(
+    debug::B=false,
     writing_bucket_files::B=false,
     writing_soil_files::B=false,
     random_trajectory::B=false,
@@ -85,6 +87,7 @@ function soil_evolution(
 
     # Initializing terrain array to zero height
     terrain = zeros(2 * grid.half_length_x + 1, 2 * grid.half_length_y + 1)
+    init_volume = sum(terrain)
 
     # SimOut struct
     out = SimOut(terrain, grid)
@@ -229,6 +232,15 @@ function soil_evolution(
         if (writing_soil_files)
             ### Writing files giving the terrain height ###
             write_soil(out, grid)
+        end
+
+        if (debug)
+            ### Checking results consistency ###
+            # Checking that volume is conserved
+            check_volume(out, init_volume, grid)
+
+            # Checking that simulation outputs are correct at first order
+            check_soil(out)
         end
     end
 end
