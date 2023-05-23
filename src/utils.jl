@@ -91,18 +91,16 @@ function _locate_all_non_zeros(
 
     non_zeros_pos = Vector{Vector{Int64}}()
     # Compiling all positions
-    #for cell in non_zeros_1
-    #    if ((sparse_array[1][cell] != 0.0) || (sparse_array[2][cell] != 0.0))
-    #        push!(non_zeros_pos, [1; cell])
-    #    end
-    #end
-    #for cell in non_zeros_3
-    #    if ((sparse_array[3][cell] != 0.0) || (sparse_array[4][cell] != 0.0))
-    #        push!(non_zeros_pos, [3; cell])
-    #    end
-    #end
-    non_zeros_pos = [[1; cell] for cell in non_zeros_1]
-    append!(non_zeros_pos, [[3; cell] for cell in non_zeros_3])
+    for cell in non_zeros_1
+        if ((sparse_array[1][cell] != 0.0) || (sparse_array[2][cell] != 0.0))
+            push!(non_zeros_pos, [1; cell])
+        end
+    end
+    for cell in non_zeros_3
+        if ((sparse_array[3][cell] != 0.0) || (sparse_array[4][cell] != 0.0))
+            push!(non_zeros_pos, [3; cell])
+        end
+    end
 
     return non_zeros_pos
 end
