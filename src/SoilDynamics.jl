@@ -2,7 +2,7 @@ module SoilDynamics
 
 import DelimitedFiles: writedlm
 import LinearAlgebra: cross, norm
-import Random: seed!
+import Random: seed!, shuffle!
 import ReferenceFrameRotations: vect, Quaternion, inv_rotation
 import SparseArrays: SparseMatrixCSC, spzeros, droptol!, nzrange, rowvals
 
@@ -18,9 +18,13 @@ export _update_body!, _include_new_body_pos!
 export _calc_rectangle_pos, _calc_triangle_pos, _calc_line_pos
 export _decompose_vector_rectangle, _decompose_vector_triangle
 
-# soil.jl
+# body_soil.jl
 export _update_body_soil!
 export _body_to_terrain!
+
+# intersecting_cells.jl
+export _move_intersecting_cells!
+export _move_intersecting_body!, _locate_intersecting_cells
 
 # utils.jl
 export _locate_all_non_zeros, _locate_non_zeros, _init_sparse_array!
@@ -31,7 +35,8 @@ export write_bucket, write_soil, _write_vector
 # Files
 include("types.jl")
 include("bucket.jl")
-include("soil.jl")
+include("body_soil.jl")
+include("intersecting_cells.jl")
 include("soil_dynamics.jl")
 include("utils.jl")
 
