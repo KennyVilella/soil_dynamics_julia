@@ -25,7 +25,6 @@ export _body_to_terrain!
 # intersecting_cells.jl
 export _move_intersecting_cells!
 export _move_intersecting_body!, _locate_intersecting_cells
-export _move_intersecting_body_soil!
 
 # utils.jl
 export _locate_all_non_zeros, _locate_non_zeros, _init_sparse_array!

@@ -60,7 +60,7 @@ display(
 )
 println("")
 
-# Benchmarking for _locate_intersecting_cell! function
+# Benchmarking for _locate_intersecting_cells function
 out.terrain[:, :] .= 0.0
 pos_1 = [0.0, 0.0, 0.0]
 ori_1 = angle_to_quat(0.0, 0.0, pi / 2, :ZYX)

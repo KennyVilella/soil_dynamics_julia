@@ -44,7 +44,7 @@ function _move_intersecting_cells!(
 ) where {I<:Int64,T<:Float64}
 
     # Moving terrain intersecting with the bucket
-    _move_intersecting_body!(out, grid)
+    _move_intersecting_body!(out, grid, tol)
 end
 
 """
@@ -84,7 +84,7 @@ all the soil has been moved. The process can be illustrated as follows
     terrain = zeros(2 * grid.half_length_x + 1, 2 * grid.half_length_y + 1)
     out = SimOut(terrain, grid)
 
-    _move_intersecting_cells!(out, grid)
+    _move_intersecting_body!(out, grid)
 """
 function _move_intersecting_body!(
     out::SimOut{I,T},
@@ -100,7 +100,7 @@ function _move_intersecting_body!(
         return
     end
 
-    # Storing all possible direction
+    # Storing all possible directions
     directions = [
         [1, 0], [-1, 0], [0, 1], [0, -1],
         [1, 1], [1, -1], [-1, 1], [-1, -1]
@@ -113,7 +113,7 @@ function _move_intersecting_body!(
         jj = cell[3]
 
         if (out.terrain[ii, jj] - tol < out.body[ind][ii, jj])
-            ### Intersecting cells have already been moved ###
+            ### Intersecting soil column has already been moved ###
             continue
         end
 
@@ -124,8 +124,10 @@ function _move_intersecting_body!(
         h_soil = out.terrain[ii, jj] - out.body[ind][ii, jj]
 
         nn = 0
+        # Investigating farther and farther until all the soil has been moved
         while (h_soil > tol)
             nn += 1
+            # Iterating over the eight lateral directions
             for xy in directions
                 # Calculating considered position
                 ii_n = ii + xy[1] * nn
@@ -202,7 +204,7 @@ This function identifies all the soil cells in the `terrain` that intersect with
     terrain = zeros(2 * grid.half_length_x + 1, 2 * grid.half_length_y + 1)
     out = SimOut(terrain, grid)
 
-    _locate_intersecting_cells!(out)
+    _locate_intersecting_cells(out)
 """
 function _locate_intersecting_cells(
     out::SimOut{I,T},

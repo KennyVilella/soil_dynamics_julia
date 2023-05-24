@@ -25,7 +25,7 @@ out = SimOut(terrain, grid)
 #                                                                                          #
 #==========================================================================================#
 @testset "_locate_intersecting_cells" begin
-    # Set dummy values in body and terrain
+    # Setting dummy values in body and terrain
     out.terrain[10, 11:16] .= 0.1
     out.terrain[11, 11] = -0.1
     out.body[1][5, 10] = 0.0
