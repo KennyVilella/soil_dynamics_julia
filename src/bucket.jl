@@ -854,23 +854,29 @@ function _include_new_body_pos!(
             (min_h - tol < out.body[ind][ii, jj]) &&
             (max_h + tol > out.body[ind][ii, jj])
         )
-            ### New position is overlapping with an existing one ###
+            ### New position is overlapping with an existing position ###
             push!(status, 1)
         elseif (
             (min_h - tol < out.body[ind+1][ii, jj]) &&
             (max_h + tol > out.body[ind+1][ii, jj])
         )
-            ### New position is overlapping with an existing one ###
+            ### New position is overlapping with an existing position ###
             push!(status, 1)
+        elseif (
+            (min_h + tol > out.body[ind][ii, jj]) &&
+            (max_h - tol < out.body[ind+1][ii, jj])
+        )
+            ### New position is within an existing position ###
+            return
         else
-            ### New position is not overlapping with the two existing ones ###
+            ### New position is not overlapping with the two existing positions ###
             push!(status, -1)
         end
     end
 
     # Updating the bucket position
     if (status == [1, 1])
-        ### New position is overlapping with the two existing ones ###
+        ### New position is overlapping with the two existing positions ###
         out.body[1][ii, jj] = minimum([out.body[1][ii, jj], out.body[3][ii, jj], min_h])
         out.body[2][ii, jj] = maximum([out.body[2][ii, jj], out.body[4][ii, jj], max_h])
 
@@ -878,11 +884,11 @@ function _include_new_body_pos!(
         out.body[3][ii, jj] = 0.0
         out.body[4][ii, jj] = 0.0
     elseif (status[1] == 1)
-        ### New position is overlapping with an existing one ###
+        ### New position is overlapping with an existing position ###
         out.body[1][ii, jj] = min(out.body[1][ii, jj], min_h)
         out.body[2][ii, jj] = max(out.body[2][ii, jj], max_h)
     elseif (status[2] == 1)
-        ### New position is overlapping with an existing one ###
+        ### New position is overlapping with an existing position ###
         out.body[3][ii, jj] = min(out.body[3][ii, jj], min_h)
         out.body[4][ii, jj] = max(out.body[4][ii, jj], max_h)
     elseif (status[1] == 0)
@@ -894,7 +900,7 @@ function _include_new_body_pos!(
         out.body[3][ii, jj] = min_h
         out.body[4][ii, jj] = max_h
     else
-        ### New position is not overlapping with the two existing ones ###
+        ### New position is not overlapping with the two existing positions ###
         # This should not happen and indicates a problem in the workflow
         throw(ErrorException(
             "Try to update body, but given position does not overlap with two existing ones"

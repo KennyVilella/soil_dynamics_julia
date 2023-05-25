@@ -984,6 +984,26 @@ end
     _include_new_body_pos!(out, 9, 12, 0.6, 0.8)
     @test (out.body[1][9, 12] ≈ 0.5) && (out.body[2][9, 12] ≈ 0.9)
 
+    # Testing to add a position within an existing position (1)
+    _include_new_body_pos!(out, 7, 10, 0.9, 2.5)
+    @test (out.body[1][7, 10] ≈ 0.7) && (out.body[2][7, 10] ≈ 2.5)
+    @test (out.body[3][7, 10] ≈ -0.4) && (out.body[4][7, 10] ≈ 0.6)
+
+    # Testing to add a position within an existing position (2)
+    _include_new_body_pos!(out, 7, 10, -0.4, 0.6)
+    @test (out.body[1][7, 10] ≈ 0.7) && (out.body[2][7, 10] ≈ 2.5)
+    @test (out.body[3][7, 10] ≈ -0.4) && (out.body[4][7, 10] ≈ 0.6)
+
+    # Testing to add a position within an existing position (3)
+    _include_new_body_pos!(out, 6, 6, 0.1, 0.2)
+    @test (out.body[1][6, 6] ≈ 0.1) && (out.body[2][6, 6] ≈ 0.2)
+    @test (out.body[3][6, 6] == 0.0) && (out.body[4][6, 6] == 0.0)
+
+    # Testing to add a position within an existing position (4)
+    _include_new_body_pos!(out, 6, 6, 0.15, 0.18)
+    @test (out.body[1][6, 6] ≈ 0.1) && (out.body[2][6, 6] ≈ 0.2)
+    @test (out.body[3][6, 6] == 0.0) && (out.body[4][6, 6] == 0.0)
+
     # Testing that incorrect request throws an error
     @test_throws ErrorException _include_new_body_pos!(out, 7, 10, 3.0, 3.1)
 
