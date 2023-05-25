@@ -92,12 +92,18 @@ function _locate_all_non_zeros(
     non_zeros_pos = Vector{Vector{Int64}}()
     # Compiling all positions
     for cell in non_zeros_1
-        if ((sparse_array[1][cell] != 0.0) || (sparse_array[2][cell] != 0.0))
+        if (
+            (sparse_array[1][cell[1], cell[2]] != 0.0) ||
+            (sparse_array[2][cell[1], cell[2]] != 0.0)
+        )
             push!(non_zeros_pos, [1; cell])
         end
     end
     for cell in non_zeros_3
-        if ((sparse_array[3][cell] != 0.0) || (sparse_array[4][cell] != 0.0))
+        if (
+            (sparse_array[3][cell[1], cell[2]] != 0.0) ||
+            (sparse_array[4][cell[1], cell[2]] != 0.0)
+        )
             push!(non_zeros_pos, [3; cell])
         end
     end
@@ -400,10 +406,10 @@ function check_soil(
     end
 
     # Collecting all cells where the bucket soil is located
-    body_pos = _locate_all_non_zeros(out.body_soil)
+    body_soil_pos = _locate_all_non_zeros(out.body_soil)
 
     # Iterating over all cells where the bucket is located
-    for cell in body_pos
+    for cell in body_soil_pos
         ii = cell[2]
         jj = cell[3]
         ind = cell[1]
