@@ -289,6 +289,60 @@ struct BucketParam{T<:Float64}
 end
 
 """
+    SimParam{I<:Int64,T<:Float64}
+
+Store all parameters related to the simulator.
+
+# Note
+- The value of `max_iterations` should be carefully selected. A higher number will result
+  in a `terrain` closer to equilibrium at the end of each time step, but it may impact
+  significantly the performance of the simulator. A value of 3 is suggested.
+
+# Fields
+- `repose_angle::Float64`: The repose angle of the considered soil. [rad]
+- `max_iterations::Int64`: The maximum number of relaxation iterations per step.
+
+# Inner constructor
+
+    SimParam(
+        repose_angle::T, max_iterations::I
+    ) where {I<:Int64,T<:Float64}
+
+Create a new instance of `SimParam`.
+
+Requirements:
+- The `repose_angle` should be between 0.0 and pi / 2. The upper limit may be extended in
+  the future.
+- The `max_iterations` should be greater or equal to zero.
+
+# Example
+
+    sim_param = SimParam(0.85, 3)
+"""
+struct SimParam{I<:Int64,T<:Float64}
+    repose_angle::T
+    max_iterations::I
+    function SimParam(
+        repose_angle::T,
+        max_iterations::I
+    ) where {I<:Int64,T<:Float64}
+
+        if (
+            ((repose_angle > pi / 2) && (repose_angle != pi / 2)) ||
+            ((repose_angle < 0.0) && (repose_angle != 0.0))
+        )
+            throw(DomainError(repose_angle, "repose_angle should be betweem 0.0 and pi/2"))
+        end
+        if ((max_iterations < 0.0) && (max_iterations != 0.0))
+            throw(DomainError(max_iterations, "max_iterations should be greater or equal" *
+            " to zero"))
+        end
+
+        new{I,T}(repose_angle, max_iterations)
+    end
+end
+
+"""
     SimOut{I<:Int64,T<:Float64}
 
 Store all outputs of the simulation.

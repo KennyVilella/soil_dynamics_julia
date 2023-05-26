@@ -28,6 +28,10 @@ b_pos_init = Vector{Float64}([0.0, 0.0, -0.5])
 t_pos_init = Vector{Float64}([1.0, 0.0, -0.5])
 bucket_width = 0.5
 
+# Simulation properties
+repose_angle = 0.85
+max_iterations = 3
+
 # Terrain properties
 terrain = zeros(2 * grid_half_length_x + 1, 2 * grid_half_length_y + 1)
 
@@ -39,6 +43,7 @@ terrain = zeros(2 * grid_half_length_x + 1, 2 * grid_half_length_y + 1)
 #==========================================================================================#
 @testset "GridParam struct" begin
     # Creating dummy GridParam by using the inner constructor
+    @test_nowarn GridParam(grid_size_x, grid_size_y, grid_size_z, cell_size_xy, cell_size_z)
     grid = GridParam(grid_size_x, grid_size_y, grid_size_z, cell_size_xy, cell_size_z)
 
     # Testing the type of the struct
@@ -107,6 +112,7 @@ end
 
 @testset "BucketParam struct" begin
     # Creating dummy BucketParam by using the inner constructor
+    @test_nowarn BucketParam(o_pos_init, j_pos_init, b_pos_init, t_pos_init, bucket_width)
     bucket = BucketParam(o_pos_init, j_pos_init, b_pos_init, t_pos_init, bucket_width)
 
     # Testing the type of the struct
@@ -154,11 +160,41 @@ end
         )
 end
 
+@testset "SimParam struct" begin
+    # Creating dummy SimParam by using the inner constructor
+    @test_nowarn SimParam(repose_angle, max_iterations)
+    sim_param = SimParam(repose_angle, max_iterations)
+
+    # Testing the type of the struct
+    @test sim_param isa SimParam
+
+    # Testing properties of the struct
+    @test sim_param.repose_angle == repose_angle
+    @test sim_param.max_iterations == max_iterations
+
+    # Testing that repose_angle outside the allowed range throws an error
+    @test_throws DomainError SimParam(-0.1, max_iterations)
+    @test_throws DomainError SimParam(3.14, max_iterations)
+ 
+    # Testing that repose_angle on the edge of the allowed range does not throw an error
+    @test_nowarn SimParam(0.0, max_iterations)
+    @test_nowarn SimParam(pi / 2, max_iterations)
+
+    # Testing that max_iterations lower than zero throws an error
+    @test_throws DomainError SimParam(repose_angle, -1)
+    @test_throws DomainError SimParam(repose_angle, -10)
+
+    # Testing that max_iterations equal to zero does not throw an error
+    @test_nowarn SimParam(repose_angle, 0)
+end
+
 @testset "SimOut struct" begin
     # Setting dummy properties
+    @test_nowarn GridParam(grid_size_x, grid_size_y, grid_size_z, cell_size_xy, cell_size_z)
     grid = GridParam(grid_size_x, grid_size_y, grid_size_z, cell_size_xy, cell_size_z)
 
     # Creating dummy SimOut by calling the inner constructor
+    @test_nowarn SimOut(terrain, grid)
     out = SimOut(terrain, grid)
 
     # Testing the type of the struct
