@@ -172,7 +172,7 @@ end
     @test sim_param.repose_angle == repose_angle
     @test sim_param.max_iterations == max_iterations
 
-    # Testing that repose_angle outside is allowed range throws an error
+    # Testing that repose_angle outside the allowed range throws an error
     @test_throws DomainError SimParam(-0.1, max_iterations)
     @test_throws DomainError SimParam(3.14, max_iterations)
  
