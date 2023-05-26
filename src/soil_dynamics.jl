@@ -67,4 +67,7 @@ function soil_dynamics!(
 
     # Updating position of soil resting on the bucket
     _update_body_soil!(out, pos, ori, grid, bucket)
+
+    # Moving intersecting soil cells
+    _move_intersecting_cells!(out, grid, tol)
 end
