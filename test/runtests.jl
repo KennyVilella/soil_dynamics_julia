@@ -24,3 +24,7 @@ println("")
 @time @testset "intersecting_cells.jl" verbose = true begin
     include("./unit_test/test_intersecting_cells.jl")
 end
+println("")
+@time @testset "relax.jl" verbose = true begin
+    include("./unit_test/test_relax.jl")
+end
