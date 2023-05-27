@@ -291,7 +291,7 @@ end
 """
     SimParam{I<:Int64,T<:Float64}
 
-Store all parameters related to the simulator.
+Store all parameters related to the simulation.
 
 # Note
 - The value of `max_iterations` should be carefully selected. A higher number will result
@@ -317,7 +317,7 @@ Requirements:
 
 # Example
 
-    sim_param = SimParam(0.85, 3)
+    sim = SimParam(0.85, 3)
 """
 struct SimParam{I<:Int64,T<:Float64}
     repose_angle::T
@@ -343,7 +343,7 @@ struct SimParam{I<:Int64,T<:Float64}
 end
 
 """
-    SimOut{I<:Int64,T<:Float64}
+    SimOut{B<:Bool,I<:Int64,T<:Float64}
 
 Store all outputs of the simulation.
 
@@ -370,8 +370,10 @@ Store all outputs of the simulation.
 - Sparse Matrices are used to reduce memory allocation and speed up calculation.
 - An attempt has been made to use Dicts instead of sparse Matrices, however Dicts seem to be
   prohibitively slow in that context, probably due to the size.
+- `equilibrium` is a Vector of Bool instead of a Bool to make its value mutable.
 
 # Fields
+- `equilibrium::Vector{Bool}`: Indicates whether the terrain is at equilibrium.
 - `terrain::Matrix{Float64}`: Height of the terrain. [m]
 - `body::Vector{SparseMatrixCSC{Float64,Int64}}`: Store the vertical extension of all
                                                   bucket walls for each XY position. [m]
@@ -399,7 +401,8 @@ Requirements:
 
 This would create a flat terrain located at 0 height.
 """
-struct SimOut{I<:Int64,T<:Float64}
+struct SimOut{B<:Bool,I<:Int64,T<:Float64}
+    equilibrium::Vector{B}
     terrain::Matrix{T}
     body::Vector{SparseMatrixCSC{T,I}}
     body_soil::Vector{SparseMatrixCSC{T,I}}
@@ -433,6 +436,6 @@ struct SimOut{I<:Int64,T<:Float64}
             push!(body_soil, spzeros(2*grid.half_length_x+1, 2*grid.half_length_y+1))
         end
 
-        new{I,T}(terrain, body, body_soil)
+        new{Bool,I,T}([false], terrain, body, body_soil)
     end
 end

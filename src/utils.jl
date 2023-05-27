@@ -214,14 +214,14 @@ end
 
 """
     check_volume(
-        out::SimOut{I,T}, init_volume::T, grid::GridParam{I,T}
-    ) where {I<:Int64,T<:Float64}
+        out::SimOut{B,I,T}, init_volume::T, grid::GridParam{I,T}
+    ) where {B<:Bool,I<:Int64,T<:Float64}
 
 This function checks that the volume of soil is conserved.
 The intial volume of soil (`init_volume`) has to be provided.
 
 # Inputs
-- `out::SimOut{Int64,Float64}`: Struct that stores simulation outputs.
+- `out::SimOut{Bool,Int64,Float64}`: Struct that stores simulation outputs.
 - `init_volume::Float64`: Initial volume of soil in the terrain. [m^3]
 - `grid::GridParam{Int64,Float64}`: Struct that stores information related to the
                                     simulation grid.
@@ -239,10 +239,10 @@ The intial volume of soil (`init_volume`) has to be provided.
     check_volume(out, init_volume, grid)
 """
 function check_volume(
-    out::SimOut{I,T},
+    out::SimOut{B,I,T},
     init_volume::T,
     grid::GridParam{I,T}
-) where {I<:Int64,T<:Float64}
+) where {B<:Bool,I<:Int64,T<:Float64}
 
     # Calculating volume of soil in the terrain
     terrain_volume = grid.cell_area * sum(out.terrain)
@@ -273,8 +273,8 @@ end
 
 """
     check_soil(
-        out::SimOut{I,T}, tol::T=1e-8
-    ) where {I<:Int64,T<:Float64}
+        out::SimOut{B,I,T}, tol::T=1e-8
+    ) where {B<:Bool,I<:Int64,T<:Float64}
 
 This function checks that all the simulation outputs follow the conventions of the
 simulator. If any inconsistency is found, a warning is issued.
@@ -291,7 +291,7 @@ The conventions that are checked include:
 - The bucket should be present when there is bucket soil.
 
 # Inputs
-- `out::SimOut{Int64,Float64}`: Struct that stores simulation outputs.
+- `out::SimOut{Bool,Int64,Float64}`: Struct that stores simulation outputs.
 - `tol::Float64`: Small number used to handle numerical approximation errors.
 
 # Outputs
@@ -306,9 +306,9 @@ The conventions that are checked include:
     check_soil(out)
 """
 function check_soil(
-    out::SimOut{I,T},
+    out::SimOut{B,I,T},
     tol::T=1e-8
-) where {I<:Int64,T<:Float64}
+) where {B<:Bool,I<:Int64,T<:Float64}
 
     # Collecting all cells where the bucket is located
     bucket_pos = _locate_all_non_zeros(out.body)
@@ -426,15 +426,15 @@ end
 
 """
     write_soil(
-        out::SimOut{I,T}, grid::GridParam{I,T}
-    ) where {S<:String,I<:Int64,T<:Float64}
+        out::SimOut{B,I,T}, grid::GridParam{I,T}
+    ) where {B<:Bool,I<:Int64,T<:Float64}
 
 This function writes the terrain and the bucket soil into a csv located in the "results"
 directory. `terrain` and `body_soil` are saved into files named "terrain" and "body_soil",
 respectively, followed by the file number.
 
 # Inputs
-- `out::SimOut{Int64,Float64}`: Struct that stores simulation outputs.
+- `out::SimOut{Bool,Int64,Float64}`: Struct that stores simulation outputs.
 - `grid::GridParam{Int64,Float64}`: Struct that stores information related to the
                                     simulation grid.
 
@@ -450,9 +450,9 @@ respectively, followed by the file number.
     write_soil(out, grid)
 """
 function write_soil(
-    out::SimOut{I,T},
+    out::SimOut{B,I,T},
     grid::GridParam{I,T}
-) where {S<:String,I<:Int64,T<:Float64}
+) where {B<:Bool,I<:Int64,T<:Float64}
 
     # Finding next filename for the terrain file
     step = 1

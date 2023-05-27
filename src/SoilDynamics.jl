@@ -26,6 +26,10 @@ export _body_to_terrain!
 export _move_intersecting_cells!
 export _move_intersecting_body!, _locate_intersecting_cells
 
+# relax.jl
+export _relax_terrain!
+export _locate_unstable_terrain_cell
+
 # utils.jl
 export _locate_all_non_zeros, _locate_non_zeros, _init_sparse_array!
 export calc_normal, set_RNG_seed!
@@ -37,6 +41,7 @@ include("types.jl")
 include("bucket.jl")
 include("body_soil.jl")
 include("intersecting_cells.jl")
+include("relax.jl")
 include("soil_dynamics.jl")
 include("utils.jl")
 
