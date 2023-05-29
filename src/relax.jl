@@ -14,7 +14,7 @@ Copyright, 2023,  Vilella Kenny.
         tol::T=1e-8
     ) where {B<:Bool,I<:Int64,T<:Float64}
 
-This function moves the soil in `terrain` in order to reach a state closer to equilibrium.
+This function moves the soil in `terrain` towards a state closer to equilibrium.
 
 # Note
 - This function is intended for internal use only.
@@ -71,8 +71,11 @@ end
         tol::T=1e-8
     ) where {B<:Bool,I<:Int64,T<:Float64}
 
-This function locates all the cells that have a height difference larger than `dh_max` with
-at least one neighboring cell, which may indicate that the soil column is unstable.
+This function locates all the cells in `terrain `that have a height difference larger than
+`dh_max` with at least one neighboring cell. Such height difference may indicate that the
+soil column is unstable. However, it is important to note that this condition is not
+necessarily indicative of an actual soil instability, as a bucket or the soil resting on it
+could be supporting the soil column.
 
 # Note
 - This function is intended for internal use only.
@@ -84,7 +87,7 @@ at least one neighboring cell, which may indicate that the soil column is unstab
 
 # Outputs
 - `unstable_cells::Vector{Vector{Int64}}`: Collection of cells indices that are possibly
-                                           unstables.
+                                           unstable.
 
 # Example
 
