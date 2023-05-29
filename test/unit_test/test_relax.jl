@@ -48,3 +48,694 @@ out = SimOut(terrain, grid)
     # Resetting terrain
     out.terrain[:, :] .= 0.0
 end
+
+@testset "_check_unstable_terrain_cell!" begin
+    # Testing the case where there is no bucket and soil is not unstable
+    status = _check_unstable_terrain_cell(out, 10, 15, -0.1)
+    @test (status == 0)
+
+    # Testing the case where there is no bucket and soil is unstable
+    out.terrain[10, 15] = -0.2
+    status = _check_unstable_terrain_cell(out, 10, 15, -0.1)
+    @test (status == 400)
+    # Resetting values
+    out.terrain[10, 15] = 0.0
+
+    # Testing the case where there is the first bucket layer and it has space under it
+    out.terrain[10, 15] = -0.2
+    out.body[1][10, 15] = -0.1
+    out.body[2][10, 15] = 0.0
+    status = _check_unstable_terrain_cell(out, 10, 15, -0.1)
+    @test (status == 141)
+    # Resetting values
+    out.terrain[10, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+
+    # Testing the case where there is the first bucket layer and soil should avalanche on it
+    out.terrain[10, 15] = -0.4
+    out.body[1][10, 15] = -0.4
+    out.body[2][10, 15] = -0.2
+    status = _check_unstable_terrain_cell(out, 10, 15, -0.1)
+    @test (status == 142)
+    # Resetting values
+    out.terrain[10, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+
+    # Testing the case where there is the first bucket layer and it is high enough to
+    # prevent the soil from avalanching
+    out.terrain[10, 15] = -0.4
+    out.body[1][10, 15] = -0.4
+    out.body[2][10, 15] = 0.0
+    status = _check_unstable_terrain_cell(out, 10, 15, -0.1)
+    @test (status == 0)
+    # Resetting values
+    out.terrain[10, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+
+    # Testing the case where there is the first bucket layer with bucket soil and it has
+    # space under it
+    out.terrain[10, 15] = -0.8
+    out.body[1][10, 15] = -0.7
+    out.body[2][10, 15] = -0.5
+    out.body_soil[1][10, 15] = -0.5
+    out.body_soil[2][10, 15] = -0.3
+    status = _check_unstable_terrain_cell(out, 10, 15, -0.1)
+    @test (status == 131)
+    # Resetting values
+    out.terrain[10, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body_soil[1][10, 15] = 0.0
+    out.body_soil[2][10, 15] = 0.0
+
+    # Testing the case where there is the first bucket layer with bucket soil and soil
+    # should avalanche on it
+    out.terrain[10, 15] = -0.8
+    out.body[1][10, 15] = -0.8
+    out.body[2][10, 15] = -0.5
+    out.body_soil[1][10, 15] = -0.5
+    out.body_soil[2][10, 15] = -0.3
+    status = _check_unstable_terrain_cell(out, 10, 15, -0.1)
+    @test (status == 132)
+    # Resetting values
+    out.terrain[10, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body_soil[1][10, 15] = 0.0
+    out.body_soil[2][10, 15] = 0.0
+
+    # Testing the case where there is the first bucket layer with bucket soil and it is high
+    # enough to prevent the soil from avalanching
+    out.terrain[10, 15] = -0.8
+    out.body[1][10, 15] = -0.8
+    out.body[2][10, 15] = -0.5
+    out.body_soil[1][10, 15] = -0.5
+    out.body_soil[2][10, 15] = 0.0
+    status = _check_unstable_terrain_cell(out, 10, 15, -0.1)
+    @test (status == 0)
+    # Resetting values
+    out.terrain[10, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body_soil[1][10, 15] = 0.0
+    out.body_soil[2][10, 15] = 0.0
+
+    # Testing the case where there is the second bucket layer and it has space under it
+    out.terrain[10, 15] = -0.2
+    out.body[3][10, 15] = -0.1
+    out.body[4][10, 15] = 0.0
+    status = _check_unstable_terrain_cell(out, 10, 15, -0.1)
+    @test (status == 221)
+    # Resetting values
+    out.terrain[10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+
+    # Testing the case where there is the second bucket layer and soil should avalanche on
+    # it
+    out.terrain[10, 15] = -0.4
+    out.body[3][10, 15] = -0.4
+    out.body[4][10, 15] = -0.2
+    status = _check_unstable_terrain_cell(out, 10, 15, -0.1)
+    @test (status == 222)
+    # Resetting values
+    out.terrain[10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+
+    # Testing the case where there is the second bucket layer and it is high enough to
+    # prevent the soil from avalanching
+    out.terrain[10, 15] = -0.4
+    out.body[3][10, 15] = -0.4
+    out.body[4][10, 15] = 0.0
+    status = _check_unstable_terrain_cell(out, 10, 15, -0.1)
+    @test (status == 0)
+    # Resetting values
+    out.terrain[10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+
+    # Testing the case where there is the second bucket layer with bucket soil and it has
+    #  space under it
+    out.terrain[10, 15] = -0.8
+    out.body[3][10, 15] = -0.7
+    out.body[4][10, 15] = -0.5
+    out.body_soil[3][10, 15] = -0.5
+    out.body_soil[4][10, 15] = -0.3
+    status = _check_unstable_terrain_cell(out, 10, 15, -0.1)
+    @test (status == 211)
+    # Resetting values
+    out.terrain[10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+    out.body_soil[3][10, 15] = 0.0
+    out.body_soil[4][10, 15] = 0.0
+
+    # Testing the case where there is the second bucket layer with bucket soil and soil
+    # should avalanche on it
+    out.terrain[10, 15] = -0.8
+    out.body[3][10, 15] = -0.8
+    out.body[4][10, 15] = -0.5
+    out.body_soil[3][10, 15] = -0.5
+    out.body_soil[4][10, 15] = -0.3
+    status = _check_unstable_terrain_cell(out, 10, 15, -0.1)
+    @test (status == 212)
+    # Resetting values
+    out.terrain[10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+    out.body_soil[3][10, 15] = 0.0
+    out.body_soil[4][10, 15] = 0.0
+
+    # Testing the case where there is the second bucket layer with bucket soil and it is
+    # high enough to prevent the soil from avalanching
+    out.terrain[10, 15] = -0.8
+    out.body[3][10, 15] = -0.8
+    out.body[4][10, 15] = -0.5
+    out.body_soil[3][10, 15] = -0.5
+    out.body_soil[4][10, 15] = 0.0
+    status = _check_unstable_terrain_cell(out, 10, 15, -0.1)
+    @test (status == 0)
+    # Resetting values
+    out.terrain[10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+    out.body_soil[3][10, 15] = 0.0
+    out.body_soil[4][10, 15] = 0.0
+
+    # Testing the case where there is two bucket layers, the first layer being lower and it
+    # has space under it
+    out.terrain[10, 15] = -0.8
+    out.body[1][10, 15] = -0.7
+    out.body[2][10, 15] = -0.6
+    out.body[3][10, 15] = -0.4
+    out.body[4][10, 15] = -0.3
+    status = _check_unstable_terrain_cell(out, 10, 15, -0.1)
+    @test (status == 321)
+    # Resetting values
+    out.terrain[10, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+
+    # Testing the case where there is two bucket layers, the first layer being lower, and
+    # soil should avalanche on the second bucket layer
+    out.terrain[10, 15] = -0.8
+    out.body[1][10, 15] = -0.8
+    out.body[2][10, 15] = -0.6
+    out.body[3][10, 15] = -0.4
+    out.body[4][10, 15] = -0.3
+    status = _check_unstable_terrain_cell(out, 10, 15, -0.1)
+    @test (status == 322)
+    # Resetting values
+    out.terrain[10, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+
+    # Testing the case where there is two bucket layers, the first layer being lower, and
+    # the second bucket layer is high enough to prevent the soil from avalanching
+    out.terrain[10, 15] = -0.8
+    out.body[1][10, 15] = -0.8
+    out.body[2][10, 15] = -0.6
+    out.body[3][10, 15] = -0.4
+    out.body[4][10, 15] = 0.0
+    status = _check_unstable_terrain_cell(out, 10, 15, -0.1)
+    @test (status == 0)
+    # Resetting values
+    out.terrain[10, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+
+    # Testing the case where there is two bucket layers, the first layer with bucket soil
+    # being lower and has space under it
+    out.terrain[10, 15] = -0.8
+    out.body[1][10, 15] = -0.7
+    out.body[2][10, 15] = -0.6
+    out.body[3][10, 15] = -0.4
+    out.body[4][10, 15] = -0.3
+    out.body_soil[1][10, 15] = -0.6
+    out.body_soil[2][10, 15] = -0.5
+    status = _check_unstable_terrain_cell(out, 10, 15, -0.1)
+    @test (status == 321)
+    # Resetting values
+    out.terrain[10, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+    out.body_soil[1][10, 15] = 0.0
+    out.body_soil[2][10, 15] = 0.0
+
+    # Testing the case where there is two bucket layers, the first layer with bucket soil
+    # being lower, and soil should avalanche on the second bucket layer
+    out.terrain[10, 15] = -0.8
+    out.body[1][10, 15] = -0.8
+    out.body[2][10, 15] = -0.6
+    out.body[3][10, 15] = -0.4
+    out.body[4][10, 15] = -0.3
+    out.body_soil[1][10, 15] = -0.6
+    out.body_soil[2][10, 15] = -0.5
+    status = _check_unstable_terrain_cell(out, 10, 15, -0.1)
+    @test (status == 322)
+    # Resetting values
+    out.terrain[10, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+    out.body_soil[1][10, 15] = 0.0
+    out.body_soil[2][10, 15] = 0.0
+
+    # Testing the case where there is two bucket layers, the first layer with bucket soil
+    # being lower, and the second bucket layer is high enough to prevent the soil from
+    # avalanching
+    out.terrain[10, 15] = -0.8
+    out.body[1][10, 15] = -0.8
+    out.body[2][10, 15] = -0.6
+    out.body[3][10, 15] = -0.4
+    out.body[4][10, 15] = 0.0
+    out.body_soil[1][10, 15] = -0.6
+    out.body_soil[2][10, 15] = -0.5
+    status = _check_unstable_terrain_cell(out, 10, 15, -0.1)
+    @test (status == 0)
+    # Resetting values
+    out.terrain[10, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+    out.body_soil[1][10, 15] = 0.0
+    out.body_soil[2][10, 15] = 0.0
+
+    # Testing the case where there is two bucket layers, the first layer being lower and it
+    # has space under it, while the second layer is with bucket soil
+    out.terrain[10, 15] = -0.8
+    out.body[1][10, 15] = -0.7
+    out.body[2][10, 15] = -0.6
+    out.body[3][10, 15] = -0.4
+    out.body[4][10, 15] = -0.3
+    out.body_soil[3][10, 15] = -0.3
+    out.body_soil[4][10, 15] = -0.2
+    status = _check_unstable_terrain_cell(out, 10, 15, -0.1)
+    @test (status == 311)
+    # Resetting values
+    out.terrain[10, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+    out.body_soil[3][10, 15] = 0.0
+    out.body_soil[4][10, 15] = 0.0
+
+    # Testing the case where there is two bucket layers, the first layer with bucket soil
+    # being lower, and soil should avalanche on the second bucket layer with bucket soil
+    out.terrain[10, 15] = -0.8
+    out.body[1][10, 15] = -0.8
+    out.body[2][10, 15] = -0.6
+    out.body[3][10, 15] = -0.4
+    out.body[4][10, 15] = -0.3
+    out.body_soil[3][10, 15] = -0.3
+    out.body_soil[4][10, 15] = -0.2
+    status = _check_unstable_terrain_cell(out, 10, 15, -0.1)
+    @test (status == 312)
+    # Resetting values
+    out.terrain[10, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+    out.body_soil[3][10, 15] = 0.0
+    out.body_soil[4][10, 15] = 0.0
+
+    # Testing the case where there is two bucket layers, the first layer with bucket soil
+    # being lower, and the second bucket layer with bucket soil is high enough to prevent
+    # the soil from avalanching
+    out.terrain[10, 15] = -0.8
+    out.body[1][10, 15] = -0.8
+    out.body[2][10, 15] = -0.6
+    out.body[3][10, 15] = -0.4
+    out.body[4][10, 15] = -0.3
+    out.body_soil[3][10, 15] = -0.3
+    out.body_soil[4][10, 15] = 0.0
+    status = _check_unstable_terrain_cell(out, 10, 15, -0.1)
+    @test (status == 0)
+    # Resetting values
+    out.terrain[10, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+    out.body_soil[3][10, 15] = 0.0
+    out.body_soil[4][10, 15] = 0.0
+
+    # Testing the case where there is two bucket layers with bucket soil, the first layer
+    # being lower and it has space under it
+    out.terrain[10, 15] = -0.8
+    out.body[1][10, 15] = -0.7
+    out.body[2][10, 15] = -0.6
+    out.body[3][10, 15] = -0.4
+    out.body[4][10, 15] = -0.3
+    out.body_soil[1][10, 15] = -0.6
+    out.body_soil[2][10, 15] = -0.5
+    out.body_soil[3][10, 15] = -0.3
+    out.body_soil[4][10, 15] = -0.2
+    status = _check_unstable_terrain_cell(out, 10, 15, -0.1)
+    @test (status == 311)
+    # Resetting values
+    out.terrain[10, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+    out.body_soil[1][10, 15] = 0.0
+    out.body_soil[2][10, 15] = 0.0
+    out.body_soil[3][10, 15] = 0.0
+    out.body_soil[4][10, 15] = 0.0
+
+    # Testing the case where there is two bucket layers with bucket soil, the first layer
+    # being lower, and soil should avalanche on the second bucket layer
+    out.terrain[10, 15] = -0.8
+    out.body[1][10, 15] = -0.8
+    out.body[2][10, 15] = -0.6
+    out.body[3][10, 15] = -0.4
+    out.body[4][10, 15] = -0.3
+    out.body_soil[1][10, 15] = -0.6
+    out.body_soil[2][10, 15] = -0.5
+    out.body_soil[3][10, 15] = -0.3
+    out.body_soil[4][10, 15] = -0.2
+    status = _check_unstable_terrain_cell(out, 10, 15, -0.1)
+    @test (status == 312)
+    # Resetting values
+    out.terrain[10, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+    out.body_soil[1][10, 15] = 0.0
+    out.body_soil[2][10, 15] = 0.0
+    out.body_soil[3][10, 15] = 0.0
+    out.body_soil[4][10, 15] = 0.0
+
+    # Testing the case where there is two bucket layers with bucket soil, the first layer
+    # being lower, and the second bucket layer is high enough to prevent the soil from
+    # avalanching
+    out.terrain[10, 15] = -0.8
+    out.body[1][10, 15] = -0.8
+    out.body[2][10, 15] = -0.6
+    out.body[3][10, 15] = -0.4
+    out.body[4][10, 15] = -0.3
+    out.body_soil[1][10, 15] = -0.6
+    out.body_soil[2][10, 15] = -0.5
+    out.body_soil[3][10, 15] = -0.3
+    out.body_soil[4][10, 15] = 0.0
+    status = _check_unstable_terrain_cell(out, 10, 15, -0.1)
+    @test (status == 0)
+    # Resetting values
+    out.terrain[10, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+    out.body_soil[1][10, 15] = 0.0
+    out.body_soil[2][10, 15] = 0.0
+    out.body_soil[3][10, 15] = 0.0
+    out.body_soil[4][10, 15] = 0.0
+
+    # Testing the case where there is two bucket layers, the second layer being lower and
+    # it has space under it
+    out.terrain[10, 15] = -0.8
+    out.body[1][10, 15] = -0.4
+    out.body[2][10, 15] = -0.3
+    out.body[3][10, 15] = -0.7
+    out.body[4][10, 15] = -0.6
+    status = _check_unstable_terrain_cell(out, 10, 15, -0.1)
+    @test (status == 341)
+    # Resetting values
+    out.terrain[10, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+
+    # Testing the case where there is two bucket layers, the second layer being lower, and
+    # soil should avalanche on the first bucket layer
+    out.terrain[10, 15] = -0.8
+    out.body[1][10, 15] = -0.4
+    out.body[2][10, 15] = -0.3
+    out.body[3][10, 15] = -0.8
+    out.body[4][10, 15] = -0.6
+    status = _check_unstable_terrain_cell(out, 10, 15, -0.1)
+    @test (status == 342)
+    # Resetting values
+    out.terrain[10, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+
+    # Testing the case where there is two bucket layers, the second layer being lower, and
+    # the first bucket layer is high enough to prevent the soil from avalanching
+    out.terrain[10, 15] = -0.8
+    out.body[1][10, 15] = -0.4
+    out.body[2][10, 15] = 0.0
+    out.body[3][10, 15] = -0.8
+    out.body[4][10, 15] = -0.6
+    status = _check_unstable_terrain_cell(out, 10, 15, -0.1)
+    @test (status == 0)
+    # Resetting values
+    out.terrain[10, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+
+    # Testing the case where there is two bucket layers, the second layer with bucket soil
+    # being lower and it has space under it
+    out.terrain[10, 15] = -0.8
+    out.body[1][10, 15] = -0.4
+    out.body[2][10, 15] = -0.3
+    out.body[3][10, 15] = -0.7
+    out.body[4][10, 15] = -0.6
+    out.body_soil[3][10, 15] = -0.6
+    out.body_soil[4][10, 15] = -0.5
+    status = _check_unstable_terrain_cell(out, 10, 15, -0.1)
+    @test (status == 341)
+    # Resetting values
+    out.terrain[10, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+    out.body_soil[3][10, 15] = 0.0
+    out.body_soil[4][10, 15] = 0.0
+
+    # Testing the case where there is two bucket layers, the second layer with bucket soil
+    # being lower, and soil should avalanche on the first bucket layer
+    out.terrain[10, 15] = -0.8
+    out.body[1][10, 15] = -0.4
+    out.body[2][10, 15] = -0.3
+    out.body[3][10, 15] = -0.8
+    out.body[4][10, 15] = -0.6
+    out.body_soil[3][10, 15] = -0.6
+    out.body_soil[4][10, 15] = -0.5
+    status = _check_unstable_terrain_cell(out, 10, 15, -0.1)
+    @test (status == 342)
+    # Resetting values
+    out.terrain[10, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+    out.body_soil[3][10, 15] = 0.0
+    out.body_soil[4][10, 15] = 0.0
+
+    # Testing the case where there is two bucket layers, the second layer with bucket soil
+    # being lower, and the first bucket layer is high enough to prevent the soil from
+    # avalanching
+    out.terrain[10, 15] = -0.8
+    out.body[1][10, 15] = -0.4
+    out.body[2][10, 15] = 0.0
+    out.body[3][10, 15] = -0.8
+    out.body[4][10, 15] = -0.6
+    out.body_soil[3][10, 15] = -0.6
+    out.body_soil[4][10, 15] = -0.5
+    status = _check_unstable_terrain_cell(out, 10, 15, -0.1)
+    @test (status == 0)
+    # Resetting values
+    out.terrain[10, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+    out.body_soil[3][10, 15] = 0.0
+    out.body_soil[4][10, 15] = 0.0
+
+    # Testing the case where there is two bucket layers, the second layer being lower and
+    # has space under it, while the first layer is with bucket soil
+    out.terrain[10, 15] = -0.8
+    out.body[1][10, 15] = -0.4
+    out.body[2][10, 15] = -0.3
+    out.body[3][10, 15] = -0.7
+    out.body[4][10, 15] = -0.6
+    out.body_soil[1][10, 15] = -0.3
+    out.body_soil[2][10, 15] = -0.2
+    status = _check_unstable_terrain_cell(out, 10, 15, -0.1)
+    @test (status == 331)
+    # Resetting values
+    out.terrain[10, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+    out.body_soil[1][10, 15] = 0.0
+    out.body_soil[2][10, 15] = 0.0
+
+    # Testing the case where there is two bucket layers, the second layer with bucket soil
+    # being lower, and soil should avalanche on the first bucket layer with bucket soil
+    out.terrain[10, 15] = -0.8
+    out.body[1][10, 15] = -0.4
+    out.body[2][10, 15] = -0.3
+    out.body[3][10, 15] = -0.8
+    out.body[4][10, 15] = -0.6
+    out.body_soil[1][10, 15] = -0.3
+    out.body_soil[2][10, 15] = -0.2
+    status = _check_unstable_terrain_cell(out, 10, 15, -0.1)
+    @test (status == 332)
+    # Resetting values
+    out.terrain[10, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+    out.body_soil[1][10, 15] = 0.0
+    out.body_soil[2][10, 15] = 0.0
+
+    # Testing the case where there is two bucket layers, the second layer with bucket soil
+    # being lower, and the first bucket layer with bucket soil is high enough to prevent the
+    # soil from avalanching
+    out.terrain[10, 15] = -0.8
+    out.body[1][10, 15] = -0.4
+    out.body[2][10, 15] = -0.3
+    out.body[3][10, 15] = -0.8
+    out.body[4][10, 15] = -0.6
+    out.body_soil[1][10, 15] = -0.3
+    out.body_soil[2][10, 15] = 0.0
+    status = _check_unstable_terrain_cell(out, 10, 15, -0.1)
+    @test (status == 0)
+    # Resetting values
+    out.terrain[10, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+    out.body_soil[1][10, 15] = 0.0
+    out.body_soil[2][10, 15] = 0.0
+
+    # Testing the case where there is two bucket layers with bucket soil, the second layer
+    # being lower has space under it
+    out.terrain[10, 15] = -0.8
+    out.body[1][10, 15] = -0.4
+    out.body[2][10, 15] = -0.3
+    out.body[3][10, 15] = -0.7
+    out.body[4][10, 15] = -0.6
+    out.body_soil[1][10, 15] = -0.3
+    out.body_soil[2][10, 15] = -0.2
+    out.body_soil[3][10, 15] = -0.6
+    out.body_soil[4][10, 15] = -0.5
+    status = _check_unstable_terrain_cell(out, 10, 15, -0.1)
+    @test (status == 331)
+    # Resetting values
+    out.terrain[10, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+    out.body_soil[1][10, 15] = 0.0
+    out.body_soil[2][10, 15] = 0.0
+    out.body_soil[3][10, 15] = 0.0
+    out.body_soil[4][10, 15] = 0.0
+
+    # Testing the case where there is two bucket layers with bucket soil, the second layer
+    # being lower, and soil should avalanche on the first bucket layer
+    out.terrain[10, 15] = -0.8
+    out.body[1][10, 15] = -0.4
+    out.body[2][10, 15] = -0.3
+    out.body[3][10, 15] = -0.8
+    out.body[4][10, 15] = -0.6
+    out.body_soil[1][10, 15] = -0.3
+    out.body_soil[2][10, 15] = -0.2
+    out.body_soil[3][10, 15] = -0.6
+    out.body_soil[4][10, 15] = -0.5
+    status = _check_unstable_terrain_cell(out, 10, 15, -0.1)
+    @test (status == 332)
+    # Resetting values
+    out.terrain[10, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+    out.body_soil[1][10, 15] = 0.0
+    out.body_soil[2][10, 15] = 0.0
+    out.body_soil[3][10, 15] = 0.0
+    out.body_soil[4][10, 15] = 0.0
+
+    # Testing the case where there is two bucket layers with bucket soil, the second layer
+    # being lower, and the first bucket layer is high enough to prevent the soil from
+    # avalanching
+    out.terrain[10, 15] = -0.8
+    out.body[1][10, 15] = -0.4
+    out.body[2][10, 15] = -0.3
+    out.body[3][10, 15] = -0.8
+    out.body[4][10, 15] = -0.6
+    out.body_soil[1][10, 15] = -0.3
+    out.body_soil[2][10, 15] = 0.0
+    out.body_soil[3][10, 15] = -0.6
+    out.body_soil[4][10, 15] = -0.5
+    status = _check_unstable_terrain_cell(out, 10, 15, -0.1)
+    @test (status == 0)
+    # Resetting values
+    out.terrain[10, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+    out.body_soil[1][10, 15] = 0.0
+    out.body_soil[2][10, 15] = 0.0
+    out.body_soil[3][10, 15] = 0.0
+    out.body_soil[4][10, 15] = 0.0
+
+    # Testing the edge case where a lot of space under the bucket is present
+    out.terrain[10, 15] = -1.0
+    out.body[1][10, 15] = -0.4
+    out.body[2][10, 15] = -0.2
+    status = _check_unstable_terrain_cell(out, 10, 15, -0.6)
+    @test (status == 141)
+    # Resetting values
+    out.terrain[10, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+
+    # Testing the edge case for soil avalanching on the bucket
+    out.terrain[10, 15] = -0.4
+    out.body[1][10, 15] = -0.4
+    out.body[2][10, 15] = -0.1
+    status = _check_unstable_terrain_cell(out, 10, 15, -0.1)
+    @test (status == 0)
+    # Resetting values
+    out.terrain[10, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+
+    # Testing the edge case for soil avalanching on terrain
+    out.terrain[10, 15] = -0.4
+    status = _check_unstable_terrain_cell(out, 10, 15, -0.4)
+    @test (status == 0)
+    # Resetting values
+    out.terrain[10, 15] = 0.0
+end
