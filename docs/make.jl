@@ -10,6 +10,7 @@ makedocs(
     "bucket.jl" => "bucket.md",
     "body_soil.jl" => "body_soil.md",
     "intersecting_cells.jl" => "intersecting_cells.md",
+    "relax.jl" => "relax.md",
     "utils.jl" => "utils.md",
 #   "Section 1" => ["Subsection 1" => "subsection1.md",
 #                   "Subsection 2" => "subsection2.md",

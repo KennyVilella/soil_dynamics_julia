@@ -8,9 +8,9 @@ Copyright, 2023,  Vilella Kenny.
 #==========================================================================================#
 """
     _calc_bucket_pos!(
-        out::SimOut{I,T}, pos::Vector{T}, ori::Quaternion{T}, grid::GridParam{I,T},
+        out::SimOut{B,I,T}, pos::Vector{T}, ori::Quaternion{T}, grid::GridParam{I,T},
         bucket::BucketParam{I,T}, step_bucket_grid::T=0.5, tol::T=1e-8
-    ) where {I<:Int64,T<:Float64}
+    ) where {B<:Bool,I<:Int64,T<:Float64}
 
 This function determines all the cells where the bucket is located.
 The bucket position is calculated based on its reference pose stored in the `bucket` struct,
@@ -23,7 +23,7 @@ origin. The orientation is provided using the quaternion definition.
 - This function is intended for internal use only.
 
 # Inputs
-- `out::SimOut{Int64,Float64}`: Struct that stores simulation outputs.
+- `out::SimOut{Bool,Int64,Float64}`: Struct that stores simulation outputs.
 - `pos::Vector{Float64}`: Cartesian coordinates of the bucket origin. [m]
 - `ori::Quaternion{Float64}`: Orientation of the bucket. [Quaternion]
 - `grid::GridParam{Int64,Float64}`: Struct that stores information related to the
@@ -52,14 +52,14 @@ origin. The orientation is provided using the quaternion definition.
     _calc_bucket_pos!(out, pos, ori, grid, bucket)
 """
 function _calc_bucket_pos!(
-    out::SimOut{I,T},
+    out::SimOut{B,I,T},
     pos::Vector{T},
     ori::Quaternion{T},
     grid::GridParam{I,T},
     bucket::BucketParam{T},
     step_bucket_grid::T=0.5,
     tol::T=1e-8
-) where {I<:Int64,T<:Float64}
+) where {B<:Bool,I<:Int64,T<:Float64}
 
     # Calculating position of the bucker vertices
     j_pos = Vector{T}(vect(ori \ bucket.j_pos_init * ori))
@@ -731,8 +731,8 @@ end
 
 """
     _update_body!(
-        area_pos::Vector{Vector{I}}, out::SimOut{I,T}, grid::GridParam{I,T}, tol::T=1e-8
-    ) where {I<:Int64,T<:Float64}
+        area_pos::Vector{Vector{I}}, out::SimOut{B,I,T}, grid::GridParam{I,T}, tol::T=1e-8
+    ) where {B<:Bool,I<:Int64,T<:Float64}
 
 This function updates the bucket position in `body` following the cells composing
 `area_pos`. For each XY position, the first cell found in `area_pos` corresponds to
@@ -746,7 +746,7 @@ As a result, this function must be called separately for each bucket wall.
 # Inputs
 - `area_pos::Vector{Vector{Int64}}`: A collection of cell indices specifying where a bucket
                                      wall is located.
-- `out::SimOut{Int64,Float64}`: Struct that stores simulation outputs.
+- `out::SimOut{Bool,Int64,Float64}`: Struct that stores simulation outputs.
 - `grid::GridParam{Int64,Float64}`: Struct that stores information related to the
                                     simulation grid.
 - `tol::Float64`: Small number used to handle numerical approximation errors.
@@ -768,10 +768,10 @@ As a result, this function must be called separately for each bucket wall.
 """
 function _update_body!(
     area_pos::Vector{Vector{I}},
-    out::SimOut{I,T},
+    out::SimOut{B,I,T},
     grid::GridParam{I,T},
     tol::T=1e-8
-) where {I<:Int64,T<:Float64}
+) where {B<:Bool,I<:Int64,T<:Float64}
 
     # Initializing cell position and height
     ii = area_pos[1][1]
@@ -804,8 +804,8 @@ end
 
 """
     _include_new_body_pos!(
-        out::SimOut{I,T}, ii::I, jj::I, min_h::T, max_h::T, tol::T=1e-8
-    ) where {I<:Int64,T<:Float64}
+        out::SimOut{B,I,T}, ii::I, jj::I, min_h::T, max_h::T, tol::T=1e-8
+    ) where {B<:Bool,I<:Int64,T<:Float64}
 
 This function updates the bucket position in `body` at the coordinates (`ii`, `jj`).
 The minimum and maximum heights of the bucket at that position are given by `min_h` and
@@ -817,7 +817,7 @@ updated as the union of the two positions. Otherwise, a new position is added to
 - This function is intended for internal use only.
 
 # Inputs
-- `out::SimOut{Int64,Float64}`: Struct that stores simulation outputs.
+- `out::SimOut{Bool,Int64,Float64}`: Struct that stores simulation outputs.
 - `ii::Int64`: Index of the considered position in the X direction.
 - `jj::Int64`: Index of the considered position in the Y direction.
 - `min_h::Float64`: Minimum height of the bucket. [m]
@@ -836,13 +836,13 @@ updated as the union of the two positions. Otherwise, a new position is added to
     _include_new_body_pos!(out, 10, 15, 0.5, 0.6)
 """
 function _include_new_body_pos!(
-    out::SimOut{I,T},
+    out::SimOut{B,I,T},
     ii::I,
     jj::I,
     min_h::T,
     max_h::T,
     tol::T=1e-8
-) where {I<:Int64,T<:Float64}
+) where {B<:Bool,I<:Int64,T<:Float64}
 
     status = Vector{Int64}()
     # Iterating over the two bucket layers and storing their status

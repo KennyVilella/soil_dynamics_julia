@@ -8,27 +8,31 @@ Copyright, 2023,  Vilella Kenny.
 #==========================================================================================#
 """
     soil_dynamics!(
-        out::SimOut{I,T}, pos::Vector{T}, ori::Quaternion{T}, grid::GridParam{I,T},
-        bucket::BucketParam{I,T}, tol::T=1e-8
-    ) where {I<:Int64,T<:Float64}
+        out::SimOut{B,I,T}, pos::Vector{T}, ori::Quaternion{T}, grid::GridParam{I,T},
+        bucket::BucketParam{I,T}, sim::SimParam{I,T}, tol::T=1e-8
+    ) where {B<:Bool,I<:Int64,T<:Float64}
 
 This function is the main entry point for the simulator. 
-Currently, the function takes the position and orientation of the bucket and calculates
-all the cells where the bucket is located. The position of the soil resting on the bucket
-is updated following the bucket movement.
+Currently, the function takes the position and orientation of the bucket, calculates all
+the cells where the bucket is located and moves the soil resting on the bucket. The soil
+in the `terrain` intersecting with the bucket or with the soil resting on the bucket is then
+moved following a set of rules. Lastly, the `terrain` is relaxed in order to reach a state
+closer to equilibrium.
 
 # Note
 - This function is a work in progress and its current state does not reflect its
   intended use.
 
 # Inputs
-- `out::SimOut{Int64,Float64}`: Struct that stores simulation outputs.
+- `out::SimOut{Bool,Int64,Float64}`: Struct that stores simulation outputs.
 - `pos::Vector{Float64}`: Cartesian coordinates of the bucket origin. [m]
 - `ori::Quaternion{Float64}`: Orientation of the bucket. [Quaternion]
 - `grid::GridParam{Int64,Float64}`: Struct that stores information related to the
                                     simulation grid.
 - `bucket::BucketParam{Float64}`: Struct that stores information related to the
                                   bucket object.
+- `sim::SimParam{Int64,Float64}`: Struct that stores information related to the
+                                  simulation.
 - `tol::Float64`: Small number used to handle numerical approximation errors.
 
 # Outputs
@@ -44,19 +48,21 @@ is updated following the bucket movement.
     b = [0.0, 0.0, -0.5]
     t = [1.0, 0.0, -0.5]
     bucket = BucketParam(o, j, b, t, 0.5)
+    sim = SimParam(0.85, 3)
     terrain = zeros(2 * grid.half_length_x + 1, 2 * grid.half_length_y + 1)
     out = SimOut(terrain, grid)
 
-    soil_dynamics!(out, pos, ori, grid, bucket)
+    soil_dynamics!(out, pos, ori, grid, bucket, sim)
 """
 function soil_dynamics!(
-    out::SimOut{I,T},
+    out::SimOut{B,I,T},
     pos::Vector{T},
     ori::Quaternion{T},
     grid::GridParam{I,T},
     bucket::BucketParam{T},
+    sim::SimParam{I,T},
     tol::T=1e-8
-) where {I<:Int64,T<:Float64}
+) where {B<:Bool,I<:Int64,T<:Float64}
 
     if (length(pos) != 3)
         throw(DimensionMismatch("position should be a vector of size 3"))
@@ -70,4 +76,16 @@ function soil_dynamics!(
 
     # Moving intersecting soil cells
     _move_intersecting_cells!(out, grid, tol)
+
+    # Assuming that the terrain is not at equilibrium
+    out.equilibrium[1] = false
+
+    # Iterating until equilibrium or the maximum number of iterations is reached
+    it = 0
+    while (!out.equilibrium[1] && it < sim.max_iterations)
+        it += 1
+
+        # Relaxing the terrain
+        _relax_terrain!(out, grid, sim, tol)
+    end
 end

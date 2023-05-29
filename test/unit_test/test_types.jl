@@ -201,6 +201,7 @@ end
     @test out isa SimOut
 
     # Testing properties of the struct
+    @test out.equilibrium == [false]
     @test out.terrain == terrain
     @test out.body isa Vector{SparseMatrixCSC{Float64,Int64}}
     @test out.body_soil isa Vector{SparseMatrixCSC{Float64,Int64}}

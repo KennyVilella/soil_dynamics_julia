@@ -85,6 +85,13 @@ function soil_evolution(
     # GridParam struct
     grid = GridParam(grid_size_x, grid_size_y, grid_size_z, cell_size_xy, cell_size_z)
 
+    # Initializing the simulation properties
+    repose_angle = 0.85
+    max_iterations = 3
+
+    # SimParam struct
+    sim = SimParam(repose_angle, max_iterations)
+
     # Initializing terrain array to zero height
     terrain = zeros(2 * grid.half_length_x + 1, 2 * grid.half_length_y + 1)
     init_volume = sum(terrain) * grid.cell_area
@@ -222,7 +229,7 @@ function soil_evolution(
         @info "Step " * string(ii) * "/" * string(length(time_vec))
 
         # Stepping the soil dynamics
-        soil_dynamics!(out, pos_vec[ii], ori_vec[ii], grid, bucket, tol)
+        soil_dynamics!(out, pos_vec[ii], ori_vec[ii], grid, bucket, sim, tol)
 
         if (writing_bucket_files)
             ### Writing files giving the bucket position ###

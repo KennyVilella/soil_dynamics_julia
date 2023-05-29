@@ -8,9 +8,9 @@ Copyright, 2023,  Vilella Kenny.
 #==========================================================================================#
 """
     _update_body_soil!(
-        out::SimOut{I,T}, pos::Vector{T}, ori::Quaternion{T}, grid::GridParam{I,T},
+        out::SimOut{B,I,T}, pos::Vector{T}, ori::Quaternion{T}, grid::GridParam{I,T},
         bucket::BucketParam{T}, tol::T=1e-8
-    ) where {I<:Int64,T<:Float64}
+    ) where {B<:Bool,I<:Int64,T<:Float64}
 
 This function moves the soil resting on the bucket following its movement. To do so, the
 movement applied to the base of the soil column is calculated and the soil is moved to this
@@ -25,7 +25,7 @@ If no bucket wall is present, the soil is moved down to the terrain.
 - This function is a work in progress. Some optimization and improvements may be needed.
 
 # Inputs
-- `out::SimOut{Int64,Float64}`: Struct that stores simulation outputs.
+- `out::SimOut{Bool,Int64,Float64}`: Struct that stores simulation outputs.
 - `pos::Vector{Float64}`: Cartesian coordinates of the bucket origin. [m]
 - `ori::Quaternion{Float64}`: Orientation of the bucket. [Quaternion]
 - `grid::GridParam{Int64,Float64}`: Struct that stores information related to the
@@ -52,13 +52,13 @@ If no bucket wall is present, the soil is moved down to the terrain.
     _update_body_soil!(out, pos, ori, grid, bucket)
 """
 function _update_body_soil!(
-    out::SimOut{I,T},
+    out::SimOut{B,I,T},
     pos::Vector{T},
     ori::Quaternion{T},
     grid::GridParam{I,T},
     bucket::BucketParam{T},
     tol::T=1e-8
-) where {I<:Int64,T<:Float64}
+) where {B<:Bool,I<:Int64,T<:Float64}
 
     # Copying previous body_soil locations
     old_body_soil = deepcopy(out.body_soil)
@@ -132,9 +132,9 @@ end
 
 """
     _body_to_terrain!(
-        out::SimOut{I,T}, ii::I, jj::I, ind::I, ii_n::I, jj_n::I, grid::GridParam{I,T},
+        out::SimOut{B,I,T}, ii::I, jj::I, ind::I, ii_n::I, jj_n::I, grid::GridParam{I,T},
         delta_h::T=1e8, tol::T=1e-8
-    ) where {I<:Int64,T<:Float64}
+    ) where {B<:Bool,I<:Int64,T<:Float64}
 
 This function moves soil from `body_soil` at position (`ii`, `jj`) to the `terrain` at
 position (`ii_n`, `jj_n`).
@@ -146,7 +146,7 @@ location, and that there is no bucket walls interfering with the avalanching soi
 - By default, all available soil is moved to the terrain.
 
 # Inputs
-- `out::SimOut{Int64,Float64}`: Struct that stores simulation outputs.
+- `out::SimOut{Bool,Int64,Float64}`: Struct that stores simulation outputs.
 - `ii::Int64`: Index of the avalanching soil position in the X direction.
 - `jj::Int64`: Index of the avalanching soil position in the Y direction.
 - `ind::Int64`: Index of the avalanching soil layer.
@@ -170,7 +170,7 @@ location, and that there is no bucket walls interfering with the avalanching soi
     _body_to_terrain!(out, 11, 10, 1, 5, 7, grid)
 """
 function _body_to_terrain!(
-    out::SimOut{I,T},
+    out::SimOut{B,I,T},
     ii::I,
     jj::I,
     ind::I,
@@ -179,7 +179,7 @@ function _body_to_terrain!(
     grid::GridParam{I,T},
     delta_h::T=1e8,
     tol::T=1e-8
-) where {I<:Int64,T<:Float64}
+) where {B<:Bool,I<:Int64,T<:Float64}
 
     # Calculating amount of soil present in body_soil
     h_soil = out.body_soil[ind+1][ii, jj] - out.body_soil[ind][ii, jj]
