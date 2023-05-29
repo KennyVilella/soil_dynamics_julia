@@ -177,7 +177,7 @@ end
     out.body[4][10, 15] = 0.0
 
     # Testing the case where there is the second bucket layer with bucket soil and it has
-    #  space under it
+    # space under it
     out.terrain[10, 15] = -0.8
     out.body[3][10, 15] = -0.7
     out.body[4][10, 15] = -0.5
@@ -224,7 +224,7 @@ end
     out.body_soil[3][10, 15] = 0.0
     out.body_soil[4][10, 15] = 0.0
 
-    # Testing the case where there is two bucket layers, the first layer being lower and it
+    # Testing the case where there are two bucket layers, the first layer being lower and it
     # has space under it
     out.terrain[10, 15] = -0.8
     out.body[1][10, 15] = -0.7
@@ -240,7 +240,7 @@ end
     out.body[3][10, 15] = 0.0
     out.body[4][10, 15] = 0.0
 
-    # Testing the case where there is two bucket layers, the first layer being lower, and
+    # Testing the case where there are two bucket layers, the first layer being lower, and
     # soil should avalanche on the second bucket layer
     out.terrain[10, 15] = -0.8
     out.body[1][10, 15] = -0.8
@@ -256,7 +256,7 @@ end
     out.body[3][10, 15] = 0.0
     out.body[4][10, 15] = 0.0
 
-    # Testing the case where there is two bucket layers, the first layer being lower, and
+    # Testing the case where there are two bucket layers, the first layer being lower, and
     # the second bucket layer is high enough to prevent the soil from avalanching
     out.terrain[10, 15] = -0.8
     out.body[1][10, 15] = -0.8
@@ -272,7 +272,7 @@ end
     out.body[3][10, 15] = 0.0
     out.body[4][10, 15] = 0.0
 
-    # Testing the case where there is two bucket layers, the first layer with bucket soil
+    # Testing the case where there are two bucket layers, the first layer with bucket soil
     # being lower and has space under it
     out.terrain[10, 15] = -0.8
     out.body[1][10, 15] = -0.7
@@ -292,7 +292,7 @@ end
     out.body_soil[1][10, 15] = 0.0
     out.body_soil[2][10, 15] = 0.0
 
-    # Testing the case where there is two bucket layers, the first layer with bucket soil
+    # Testing the case where there are two bucket layers, the first layer with bucket soil
     # being lower, and soil should avalanche on the second bucket layer
     out.terrain[10, 15] = -0.8
     out.body[1][10, 15] = -0.8
@@ -312,7 +312,7 @@ end
     out.body_soil[1][10, 15] = 0.0
     out.body_soil[2][10, 15] = 0.0
 
-    # Testing the case where there is two bucket layers, the first layer with bucket soil
+    # Testing the case where there are two bucket layers, the first layer with bucket soil
     # being lower, and the second bucket layer is high enough to prevent the soil from
     # avalanching
     out.terrain[10, 15] = -0.8
@@ -333,7 +333,7 @@ end
     out.body_soil[1][10, 15] = 0.0
     out.body_soil[2][10, 15] = 0.0
 
-    # Testing the case where there is two bucket layers, the first layer being lower and it
+    # Testing the case where there are two bucket layers, the first layer being lower and it
     # has space under it, while the second layer is with bucket soil
     out.terrain[10, 15] = -0.8
     out.body[1][10, 15] = -0.7
@@ -353,8 +353,8 @@ end
     out.body_soil[3][10, 15] = 0.0
     out.body_soil[4][10, 15] = 0.0
 
-    # Testing the case where there is two bucket layers, the first layer with bucket soil
-    # being lower, and soil should avalanche on the second bucket layer with bucket soil
+    # Testing the case where there are two bucket layers, the first layer being lower, and
+    # soil should avalanche on the second bucket layer with bucket soil
     out.terrain[10, 15] = -0.8
     out.body[1][10, 15] = -0.8
     out.body[2][10, 15] = -0.6
@@ -373,9 +373,9 @@ end
     out.body_soil[3][10, 15] = 0.0
     out.body_soil[4][10, 15] = 0.0
 
-    # Testing the case where there is two bucket layers, the first layer with bucket soil
-    # being lower, and the second bucket layer with bucket soil is high enough to prevent
-    # the soil from avalanching
+    # Testing the case where there are two bucket layers, the first layer being lower, and
+    # the second bucket layer with bucket soil is high enough to prevent the soil from
+    # avalanching
     out.terrain[10, 15] = -0.8
     out.body[1][10, 15] = -0.8
     out.body[2][10, 15] = -0.6
@@ -394,7 +394,7 @@ end
     out.body_soil[3][10, 15] = 0.0
     out.body_soil[4][10, 15] = 0.0
 
-    # Testing the case where there is two bucket layers with bucket soil, the first layer
+    # Testing the case where there are two bucket layers with bucket soil, the first layer
     # being lower and it has space under it
     out.terrain[10, 15] = -0.8
     out.body[1][10, 15] = -0.7
@@ -418,7 +418,7 @@ end
     out.body_soil[3][10, 15] = 0.0
     out.body_soil[4][10, 15] = 0.0
 
-    # Testing the case where there is two bucket layers with bucket soil, the first layer
+    # Testing the case where there are two bucket layers with bucket soil, the first layer
     # being lower, and soil should avalanche on the second bucket layer
     out.terrain[10, 15] = -0.8
     out.body[1][10, 15] = -0.8
@@ -442,7 +442,7 @@ end
     out.body_soil[3][10, 15] = 0.0
     out.body_soil[4][10, 15] = 0.0
 
-    # Testing the case where there is two bucket layers with bucket soil, the first layer
+    # Testing the case where there are two bucket layers with bucket soil, the first layer
     # being lower, and the second bucket layer is high enough to prevent the soil from
     # avalanching
     out.terrain[10, 15] = -0.8
@@ -467,7 +467,7 @@ end
     out.body_soil[3][10, 15] = 0.0
     out.body_soil[4][10, 15] = 0.0
 
-    # Testing the case where there is two bucket layers, the second layer being lower and
+    # Testing the case where there are two bucket layers, the second layer being lower and
     # it has space under it
     out.terrain[10, 15] = -0.8
     out.body[1][10, 15] = -0.4
@@ -483,7 +483,7 @@ end
     out.body[3][10, 15] = 0.0
     out.body[4][10, 15] = 0.0
 
-    # Testing the case where there is two bucket layers, the second layer being lower, and
+    # Testing the case where there are two bucket layers, the second layer being lower, and
     # soil should avalanche on the first bucket layer
     out.terrain[10, 15] = -0.8
     out.body[1][10, 15] = -0.4
@@ -499,7 +499,7 @@ end
     out.body[3][10, 15] = 0.0
     out.body[4][10, 15] = 0.0
 
-    # Testing the case where there is two bucket layers, the second layer being lower, and
+    # Testing the case where there are two bucket layers, the second layer being lower, and
     # the first bucket layer is high enough to prevent the soil from avalanching
     out.terrain[10, 15] = -0.8
     out.body[1][10, 15] = -0.4
@@ -515,7 +515,7 @@ end
     out.body[3][10, 15] = 0.0
     out.body[4][10, 15] = 0.0
 
-    # Testing the case where there is two bucket layers, the second layer with bucket soil
+    # Testing the case where there are two bucket layers, the second layer with bucket soil
     # being lower and it has space under it
     out.terrain[10, 15] = -0.8
     out.body[1][10, 15] = -0.4
@@ -535,7 +535,7 @@ end
     out.body_soil[3][10, 15] = 0.0
     out.body_soil[4][10, 15] = 0.0
 
-    # Testing the case where there is two bucket layers, the second layer with bucket soil
+    # Testing the case where there are two bucket layers, the second layer with bucket soil
     # being lower, and soil should avalanche on the first bucket layer
     out.terrain[10, 15] = -0.8
     out.body[1][10, 15] = -0.4
@@ -555,7 +555,7 @@ end
     out.body_soil[3][10, 15] = 0.0
     out.body_soil[4][10, 15] = 0.0
 
-    # Testing the case where there is two bucket layers, the second layer with bucket soil
+    # Testing the case where there are two bucket layers, the second layer with bucket soil
     # being lower, and the first bucket layer is high enough to prevent the soil from
     # avalanching
     out.terrain[10, 15] = -0.8
@@ -576,7 +576,7 @@ end
     out.body_soil[3][10, 15] = 0.0
     out.body_soil[4][10, 15] = 0.0
 
-    # Testing the case where there is two bucket layers, the second layer being lower and
+    # Testing the case where there are two bucket layers, the second layer being lower and
     # has space under it, while the first layer is with bucket soil
     out.terrain[10, 15] = -0.8
     out.body[1][10, 15] = -0.4
@@ -596,8 +596,8 @@ end
     out.body_soil[1][10, 15] = 0.0
     out.body_soil[2][10, 15] = 0.0
 
-    # Testing the case where there is two bucket layers, the second layer with bucket soil
-    # being lower, and soil should avalanche on the first bucket layer with bucket soil
+    # Testing the case where there are two bucket layers, the second layer being lower, and
+    # soil should avalanche on the first bucket layer with bucket soil
     out.terrain[10, 15] = -0.8
     out.body[1][10, 15] = -0.4
     out.body[2][10, 15] = -0.3
@@ -616,9 +616,9 @@ end
     out.body_soil[1][10, 15] = 0.0
     out.body_soil[2][10, 15] = 0.0
 
-    # Testing the case where there is two bucket layers, the second layer with bucket soil
-    # being lower, and the first bucket layer with bucket soil is high enough to prevent the
-    # soil from avalanching
+    # Testing the case where there are two bucket layers, the second layer being lower, and
+    # the first bucket layer with bucket soil is high enough to prevent the soil from
+    # avalanching
     out.terrain[10, 15] = -0.8
     out.body[1][10, 15] = -0.4
     out.body[2][10, 15] = -0.3
@@ -637,7 +637,7 @@ end
     out.body_soil[1][10, 15] = 0.0
     out.body_soil[2][10, 15] = 0.0
 
-    # Testing the case where there is two bucket layers with bucket soil, the second layer
+    # Testing the case where there are two bucket layers with bucket soil, the second layer
     # being lower has space under it
     out.terrain[10, 15] = -0.8
     out.body[1][10, 15] = -0.4
@@ -661,7 +661,7 @@ end
     out.body_soil[3][10, 15] = 0.0
     out.body_soil[4][10, 15] = 0.0
 
-    # Testing the case where there is two bucket layers with bucket soil, the second layer
+    # Testing the case where there are two bucket layers with bucket soil, the second layer
     # being lower, and soil should avalanche on the first bucket layer
     out.terrain[10, 15] = -0.8
     out.body[1][10, 15] = -0.4
@@ -685,7 +685,7 @@ end
     out.body_soil[3][10, 15] = 0.0
     out.body_soil[4][10, 15] = 0.0
 
-    # Testing the case where there is two bucket layers with bucket soil, the second layer
+    # Testing the case where there are two bucket layers with bucket soil, the second layer
     # being lower, and the first bucket layer is high enough to prevent the soil from
     # avalanching
     out.terrain[10, 15] = -0.8
