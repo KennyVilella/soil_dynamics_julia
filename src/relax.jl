@@ -188,7 +188,7 @@ end
     ) where {B<:Bool,I<:Int64,T<:Float64}
 
 This function checks the stability of a soil column in `terrain` compared to one of its
-neighbor (`ii_c`, `jj_c`). In case of instability, the function returns a three-digits
+neighbor (`ii_c`, `jj_c`). In case of instability, the function returns a three-digit
 number (`status`) that provides information on how the soil should avalanche.
 The interpretation of the three-digit number is described below.
 

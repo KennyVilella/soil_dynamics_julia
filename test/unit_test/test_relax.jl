@@ -638,7 +638,7 @@ end
     out.body_soil[2][10, 15] = 0.0
 
     # Testing the case where there are two bucket layers with bucket soil, the second layer
-    # being lower has space under it
+    # being lower and has space under it
     out.terrain[10, 15] = -0.8
     out.body[1][10, 15] = -0.4
     out.body[2][10, 15] = -0.3
