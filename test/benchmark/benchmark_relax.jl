@@ -54,3 +54,10 @@ display(
     @benchmark unstable_cells = _locate_unstable_terrain_cell(out, 0.1)
 )
 println("")
+
+# Benchmarking for _check_unstable_terrain_cell function
+println("_check_unstable_terrain_cell")
+display(
+    @benchmark status = _check_unstable_terrain_cell(out, 50, 55, 0.2)
+)
+println("")

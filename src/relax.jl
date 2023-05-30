@@ -15,6 +15,30 @@ Copyright, 2023,  Vilella Kenny.
     ) where {B<:Bool,I<:Int64,T<:Float64}
 
 This function moves the soil in `terrain` towards a state closer to equilibrium.
+The soil stability is determined by the `repose_angle`. If the slope formed by two
+neighboring soil columns exceeds the `repose_angle`, it is considered unstable, and the soil
+from the higher column should avalanche to the neighboring column to reach an equilibrium
+state.
+
+By convention, this function only checks the stability of the soil in the four adjacent
+cells:
+                     ↑
+                   ← O →
+                     ↓
+
+The diagonal directions are not checked for simplicity and performance reasons.
+
+This function only moves the soil when the following conditions are met:
+
+(1) The soil column in the neighboring cell is low enough.
+(2) Either:
+        (a) The bucket is not on the soil, meaning there is space between the `terrain` and
+            the bucket, or there is no bucket.
+        (b) The bucket is on the `terrain`, but the combination of the bucket and bucket
+            soil is not high enough to prevent soil avalanche.
+
+In case (2a), the soil will avalanche on the `terrain`, while in case (2b), the soil will
+avalanche on the bucket.
 
 # Note
 - This function is intended for internal use only.
@@ -61,6 +85,33 @@ function _relax_terrain!(
     if isempty(unstable_cells)
         ### Terrain is already at equilibrium ###
         return nothing
+    end
+
+    # Randomizing unstable cells to reduce asymmetry
+    shuffle!(unstable_cells)
+
+    # Iterating over all unstable cells
+    for cell in unstable_cells
+        ii = cell[1]
+        jj = cell[2]
+
+        # Storing all possible directions for relaxation
+        directions = [[1, 0], [-1, 0], [0, 1], [0, -1]]
+
+        # Randomizing direction to avoid asymmetry
+        shuffle!(directions)
+
+        # Iterating over the possible directions
+        for xy in directions
+            ii_c = ii + xy[1]
+            jj_c = jj + xy[2]
+
+            # Calculating minimum height allowed surrounding the considered soil cell
+            h_min = out.terrain[ii, jj] - dh_max
+
+            # Checking if the cell requires relaxation
+            status = _check_unstable_terrain_cell(out, ii_c, jj_c, h_min, tol)
+        end
     end
 end
 
@@ -125,4 +176,169 @@ function _locate_unstable_terrain_cell(
     end
 
     return unstable_cells
+end
+
+"""
+    _check_unstable_terrain_cell(
+        out::SimOut{B,I,T},
+        ii_c::I,
+        jj_c::I,
+        h_min::T,
+        tol::T=1e-8
+    ) where {B<:Bool,I<:Int64,T<:Float64}
+
+This function checks the stability of a soil column in `terrain` compared to one of its
+neighbor (`ii_c`, `jj_c`). In case of instability, the function returns a three-digit
+number (`status`) that provides information on how the soil should avalanche.
+The interpretation of the three-digit number is described below.
+
+The first digit indicates the potential presence of the bucket:
+- 1 when the first bucket layer is present.
+- 2 when the second bucket layer is present.
+- 3 when the two bucket layers are present.
+- 4 when no bucket layer is present.
+
+The second digit indicates the layer at the top where the soil should avalanche:
+- 0 when it is the `terrain` (no bucket is present).
+- 1 when it is the second bucket soil layer.
+- 2 when it is the second bucket layer.
+- 3 when it is the first bucket soil layer.
+- 4 when it is the first bucket layer.
+
+The third digit indicates whether the soil should avalanche below or above the bucket:
+- 0 when there is no bucket.
+- 1 when the soil should avalanche below the bucket.
+- 2 when the soil should avalanche on the top of the bucket.
+
+The combination of these three digits provides a comprehensive description of how the soil
+should avalanche in different scenarios.
+
+# Note
+- This function is intended for internal use only.
+- Not all combinations for `status` are possible. Some combinations, such as `401`, `231`
+  and `220`, are impossible.
+
+# Inputs
+- `out::SimOut{Bool,Int64,Float64}`: Struct that stores simulation outputs.
+- `ii_c::Int64`: Index of the neighboring cell in the X direction.
+- `jj_c::Int64`: Index of the neighboring cell in the Y direction.
+- `h_min::Float64`: Minimum allowed height for a stable configuration. [m]
+- `tol::Float64`: Small number used to handle numerical approximation errors.
+
+# Outputs
+- `status::Int64`: Three-digit number indicating how the soil should avalanche.
+                   `0` is returned if the soil column is stable.
+
+# Example
+
+    grid = GridParam(4.0, 4.0, 3.0, 0.05, 0.01)
+    terrain = zeros(2 * grid.half_length_x + 1, 2 * grid.half_length_y + 1)
+    out = SimOut(terrain, grid)
+
+    _check_unstable_terrain_cell(out, 10, 15, -0.1)
+"""
+function _check_unstable_terrain_cell(
+    out::SimOut{B,I,T},
+    ii_c::I,
+    jj_c::I,
+    h_min::T,
+    tol::T=1e-8
+) where {B<:Bool,I<:Int64,T<:Float64}
+
+    if (out.terrain[ii_c, jj_c] + tol < h_min)
+        ### Adjacent terrain is low enough ###
+        bucket_presence_1 = (
+            (out.body[1][ii_c, jj_c] != 0.0) || (out.body[2][ii_c, jj_c] != 0.0)
+        )
+        bucket_presence_3 = (
+            (out.body[3][ii_c, jj_c] != 0.0) || (out.body[4][ii_c, jj_c] != 0.0)
+        )
+        if (bucket_presence_1 || bucket_presence_3)
+            ### Bucket is present ###
+            # Calculating extension of bucket and soil
+            if (!bucket_presence_1)
+                ### Only the second bucket layer is present ###
+                status = 200
+                bucket_bot = out.body[3][ii_c, jj_c]
+                if (
+                    (out.body_soil[3][ii_c, jj_c] != 0.0) ||
+                    (out.body_soil[4][ii_c, jj_c] != 0.0)
+                )
+                    ### Bucket soil is present ###
+                    status += 10
+                    column_top = out.body_soil[4][ii_c, jj_c]
+                else
+                    ### Bucket soil is not present ###
+                    status += 20
+                    column_top = out.body[4][ii_c, jj_c]
+                end
+            elseif (!bucket_presence_3)
+                status = 100
+                ### Only the first bucket layer is present ###
+                bucket_bot = out.body[1][ii_c, jj_c]
+                if (
+                    (out.body_soil[1][ii_c, jj_c] != 0.0) ||
+                    (out.body_soil[2][ii_c, jj_c] != 0.0)
+                )
+                    ### Bucket soil is present ###
+                    status += 30
+                    column_top = out.body_soil[2][ii_c, jj_c]
+                else
+                    ### Bucket soil is not present ###
+                    status += 40
+                    column_top = out.body[2][ii_c, jj_c]
+                end
+            else
+                ### Two bucket layers are present ###
+                status = 300
+                bucket_bot, min_ind = findmin(
+                    [out.body[1][ii_c, jj_c], out.body[3][ii_c, jj_c]]
+                )
+                if (min_ind == 1)
+                    ### First bucket layer is lower ###
+                    if (
+                        (out.body_soil[3][ii_c, jj_c] != 0.0) ||
+                        (out.body_soil[4][ii_c, jj_c] != 0.0)
+                    )
+                        ### Bucket soil is present ###
+                        status += 10
+                        column_top = out.body_soil[4][ii_c, jj_c]
+                    else
+                        ### Bucket soil is not present ###
+                        status += 20
+                        column_top = out.body[4][ii_c, jj_c]
+                    end
+                else
+                    ### Second bucket layer is lower ###
+                    if (
+                        (out.body_soil[1][ii_c, jj_c] != 0.0) ||
+                        (out.body_soil[2][ii_c, jj_c] != 0.0)
+                    )
+                        ### Bucket soil is present ###
+                        status += 30
+                        column_top = out.body_soil[2][ii_c, jj_c]
+                    else
+                        ### Bucket soil is not present ###
+                        status += 40
+                        column_top = out.body[2][ii_c, jj_c]
+                    end
+                end
+            end
+
+            if (out.terrain[ii_c, jj_c] + tol < bucket_bot)
+                ### Space under the bucket ###
+                return status + 1
+            end
+
+            if (column_top + tol < h_min)
+                ### Column is low enough ###
+                return status + 2
+            end
+        else
+            ### No bucket ###
+            return 400
+        end
+    end
+
+    return 0
 end
