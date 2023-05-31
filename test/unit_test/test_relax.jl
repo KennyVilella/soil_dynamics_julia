@@ -2068,7 +2068,7 @@ end
     out.terrain[10, 15] = 0.0
     out.terrain[10, 14] = 0.0
 
-    # Removing zeroes from Sparse matrices
+    # Removing zeros from Sparse matrices
     dropzeros!(out.body[1])
     dropzeros!(out.body[2])
     dropzeros!(out.body[3])
@@ -2078,7 +2078,7 @@ end
     dropzeros!(out.body_soil[3])
     dropzeros!(out.body_soil[4])
 
-    # Check that nothing has been unexpectedly modified
+    # Checking that nothing has been unexpectedly modified
     @test all(out.terrain[:, :] .== 0.0)
     @test isempty(nonzeros(out.body[1]))
     @test isempty(nonzeros(out.body[2]))
