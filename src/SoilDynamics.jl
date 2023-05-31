@@ -28,7 +28,7 @@ export _move_intersecting_body!, _locate_intersecting_cells
 
 # relax.jl
 export _relax_terrain!
-export _locate_unstable_terrain_cell, _check_unstable_terrain_cell
+export _locate_unstable_terrain_cell, _check_unstable_terrain_cell, _relax_unstable_cell!
 
 # utils.jl
 export _locate_all_non_zeros, _locate_non_zeros, _init_sparse_array!
