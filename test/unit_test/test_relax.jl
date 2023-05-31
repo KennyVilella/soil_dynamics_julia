@@ -14,6 +14,11 @@ cell_size_xy = 0.1
 cell_size_z = 0.1
 grid = GridParam(grid_size_x, grid_size_y, grid_size_z, cell_size_xy, cell_size_z)
 
+# Simulation properties
+repose_angle = 0.785
+max_iterations = 3
+sim = SimParam(repose_angle, max_iterations)
+
 # Terrain properties
 terrain = zeros(2 * grid.half_length_x + 1, 2 * grid.half_length_y + 1)
 out = SimOut(terrain, grid)
@@ -1228,4 +1233,859 @@ end
     out.body[4][10, 15] = 0.0
     out.body_soil[1][10, 15] = 0.0
     out.body_soil[2][10, 15] = 0.0
+end
+
+@testset "_relax_terrain!" begin
+    # Testing the case where there is no bucket and soil is unstable
+    set_RNG_seed!(1234)
+    out.terrain[10, 15] = -0.2
+    _relax_terrain!(out, grid, sim)
+    @test (out.terrain[10, 15] ≈ -0.1) && (out.terrain[9, 15] ≈ -0.1)
+    # Resetting values
+    out.terrain[10, 15] = 0.0
+    out.terrain[9, 15] = 0.0
+
+    # Testing the case where there is the first bucket layer and it has space under it
+    set_RNG_seed!(1234)
+    out.terrain[10, 15] = -0.2
+    out.body[1][10, 15] = -0.1
+    out.body[2][10, 15] = 0.0
+    _relax_terrain!(out, grid, sim)
+    @test (out.terrain[10, 15] ≈ -0.1) && (out.terrain[9, 15] ≈ -0.1)
+    # Resetting values
+    out.terrain[10, 15] = 0.0
+    out.terrain[9, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+
+    # Testing the case where there is the first bucket layer and soil should avalanche on it
+    set_RNG_seed!(1234)
+    out.terrain[10, 15] = -0.4
+    out.body[1][10, 15] = -0.4
+    out.body[2][10, 15] = -0.2
+    _relax_terrain!(out, grid, sim)
+    @test (out.terrain[10, 15] ≈ -0.4) && (out.terrain[9, 15] ≈ -0.1)
+    @test (out.body_soil[1][10, 15] == -0.2) && (out.body_soil[2][10, 15] ≈ -0.1)
+    @test (out.body_soil[3][10, 15] == 0.0) && (out.body_soil[4][10, 15] == 0.0)
+    # Resetting values
+    out.terrain[10, 15] = 0.0
+    out.terrain[9, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body_soil[1][10, 15] = 0.0
+    out.body_soil[2][10, 15] = 0.0
+
+    # Testing the case where there is the first bucket layer and it is high enough to
+    # prevent the soil from avalanching
+    set_RNG_seed!(1234)
+    out.terrain[10, 15] = -0.4
+    out.body[1][10, 15] = -0.4
+    out.body[2][10, 15] = 0.0
+    _relax_terrain!(out, grid, sim)
+    @test (out.terrain[10, 15] == -0.4) && (out.terrain[9, 15] == 0.0)
+    @test (out.terrain[10, 14] == 0.0) && (out.terrain[10, 16] == 0.0)
+    @test (out.terrain[11, 15] == 0.0)
+    @test (out.body_soil[1][10, 15] == 0.0) && (out.body_soil[2][10, 15] == 0.0)
+    @test (out.body_soil[3][10, 15] == 0.0) && (out.body_soil[4][10, 15] == 0.0)
+    # Resetting values
+    out.terrain[10, 15] = 0.0
+    out.terrain[9, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+
+    # Testing the case where there is the first bucket layer with bucket soil and it has
+    # space under it
+    set_RNG_seed!(1234)
+    out.terrain[10, 15] = -0.8
+    out.body[1][10, 15] = -0.7
+    out.body[2][10, 15] = -0.5
+    out.body_soil[1][10, 15] = -0.5
+    out.body_soil[2][10, 15] = 0.0
+    _relax_terrain!(out, grid, sim)
+    @test (out.terrain[10, 15] ≈ -0.7) && (out.terrain[9, 15] ≈ -0.1)
+    @test (out.body_soil[1][10, 15] == -0.5) && (out.body_soil[2][10, 15] == 0.0)
+    @test (out.body_soil[3][10, 15] == 0.0) && (out.body_soil[4][10, 15] == 0.0)
+    out.terrain[10, 15] = 0.0
+    out.terrain[9, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body_soil[1][10, 15] = 0.0
+    out.body_soil[2][10, 15] = 0.0
+
+    # Testing the case where there is the first bucket layer with bucket soil and soil
+    # should avalanche on it
+    set_RNG_seed!(1234)
+    out.terrain[10, 15] = -0.8
+    out.body[1][10, 15] = -0.8
+    out.body[2][10, 15] = -0.5
+    out.body_soil[1][10, 15] = -0.5
+    out.body_soil[2][10, 15] = -0.3
+    _relax_terrain!(out, grid, sim)
+    @test (out.terrain[10, 15] == -0.8) && (out.terrain[9, 15] ≈ -0.1)
+    @test (out.terrain[10, 14] ≈ -0.1)
+    @test (out.body_soil[1][10, 15] == -0.5) && (out.body_soil[2][10, 15] ≈ -0.1)
+    @test (out.body_soil[3][10, 15] == 0.0) && (out.body_soil[4][10, 15] == 0.0)
+    out.terrain[10, 15] = 0.0
+    out.terrain[10, 14] = 0.0
+    out.terrain[9, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body_soil[1][10, 15] = 0.0
+    out.body_soil[2][10, 15] = 0.0
+
+    # Testing the case where there is the first bucket layer with bucket soil and it is high
+    # enough to prevent the soil from avalanching
+    set_RNG_seed!(1234)
+    out.terrain[10, 15] = -0.8
+    out.body[1][10, 15] = -0.8
+    out.body[2][10, 15] = -0.5
+    out.body_soil[1][10, 15] = -0.5
+    out.body_soil[2][10, 15] = 0.0
+    _relax_terrain!(out, grid, sim)
+    @test (out.terrain[10, 15] == -0.8) && (out.terrain[9, 15] == 0.0)
+    @test (out.terrain[10, 14] == 0.0) && (out.terrain[10, 16] == 0.0)
+    @test (out.terrain[11, 15] == 0.0)
+    @test (out.body_soil[1][10, 15] == -0.5) && (out.body_soil[2][10, 15] == 0.0)
+    @test (out.body_soil[3][10, 15] == 0.0) && (out.body_soil[4][10, 15] == 0.0)
+    out.terrain[10, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body_soil[1][10, 15] = 0.0
+    out.body_soil[2][10, 15] = 0.0
+
+    # Testing the case where there is the second bucket layer and it has space under it
+    set_RNG_seed!(1234)
+    out.terrain[10, 15] = -0.2
+    out.body[3][10, 15] = -0.1
+    out.body[4][10, 15] = 0.0
+    _relax_terrain!(out, grid, sim)
+    @test (out.terrain[10, 15] ≈ -0.1) && (out.terrain[9, 15] ≈ -0.1)
+    out.terrain[10, 15] = 0.0
+    out.terrain[9, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+
+    # Testing the case where there is the second bucket layer and soil should avalanche on
+    # it
+    set_RNG_seed!(1234)
+    out.terrain[10, 15] = -0.4
+    out.body[3][10, 15] = -0.4
+    out.body[4][10, 15] = -0.2
+    _relax_terrain!(out, grid, sim)
+    @test (out.terrain[10, 15] == -0.4) && (out.terrain[9, 15] ≈ -0.1)
+    @test (out.body_soil[1][10, 15] == 0.0) && (out.body_soil[2][10, 15] == 0.0)
+    @test (out.body_soil[3][10, 15] ≈ -0.2) && (out.body_soil[4][10, 15] ≈ -0.1)
+    out.terrain[10, 15] = 0.0
+    out.terrain[9, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+    out.body_soil[3][10, 15] = 0.0
+    out.body_soil[4][10, 15] = 0.0
+
+    # Testing the case where there is the second bucket layer and it is high enough to
+    # prevent the soil from avalanching
+    set_RNG_seed!(1234)
+    out.terrain[10, 15] = -0.4
+    out.body[3][10, 15] = -0.4
+    out.body[4][10, 15] = 0.0
+    _relax_terrain!(out, grid, sim)
+    @test (out.terrain[10, 15] == -0.4) && (out.terrain[9, 15] == 0.0)
+    @test (out.terrain[10, 14] == 0.0) && (out.terrain[10, 16] == 0.0)
+    @test (out.terrain[11, 15] == 0.0)
+    out.terrain[10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+
+    # Testing the case where there is the second bucket layer with bucket soil and it has
+    # space under it
+    set_RNG_seed!(1234)
+    out.terrain[10, 15] = -0.8
+    out.body[3][10, 15] = -0.7
+    out.body[4][10, 15] = -0.5
+    out.body_soil[3][10, 15] = -0.5
+    out.body_soil[4][10, 15] = -0.1
+    _relax_terrain!(out, grid, sim)
+    @test (out.terrain[10, 15] ≈ -0.7) && (out.terrain[9, 15] ≈ -0.1)
+    @test (out.body_soil[1][10, 15] == 0.0) && (out.body_soil[2][10, 15] == 0.0)
+    @test (out.body_soil[3][10, 15] == -0.5) && (out.body_soil[4][10, 15] == -0.1)
+    out.terrain[10, 15] = 0.0
+    out.terrain[9, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+    out.body_soil[3][10, 15] = 0.0
+    out.body_soil[4][10, 15] = 0.0
+
+    # Testing the case where there is the second bucket layer with bucket soil and soil
+    # should avalanche on it
+    set_RNG_seed!(1234)
+    out.terrain[10, 15] = -0.8
+    out.body[3][10, 15] = -0.8
+    out.body[4][10, 15] = -0.5
+    out.body_soil[3][10, 15] = -0.5
+    out.body_soil[4][10, 15] = -0.2
+    _relax_terrain!(out, grid, sim)
+    @test (out.terrain[10, 15] == -0.8) && (out.terrain[9, 15] ≈ -0.1)
+    @test (out.body_soil[1][10, 15] == 0.0) && (out.body_soil[2][10, 15] == 0.0)
+    @test (out.body_soil[3][10, 15] == -0.5) && (out.body_soil[4][10, 15] ≈ -0.1)
+    out.terrain[10, 15] = 0.0
+    out.terrain[9, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+    out.body_soil[3][10, 15] = 0.0
+    out.body_soil[4][10, 15] = 0.0
+
+    # Testing the case where there is the second bucket layer with bucket soil and it is
+    # high enough to prevent the soil from avalanching
+    set_RNG_seed!(1234)
+    out.terrain[10, 15] = -0.8
+    out.body[3][10, 15] = -0.8
+    out.body[4][10, 15] = -0.5
+    out.body_soil[3][10, 15] = -0.5
+    out.body_soil[4][10, 15] = 0.0
+    _relax_terrain!(out, grid, sim)
+    @test (out.terrain[10, 15] == -0.8) && (out.terrain[9, 15] == 0.0)
+    @test (out.terrain[10, 14] == 0.0) && (out.terrain[10, 16] == 0.0)
+    @test (out.terrain[11, 15] == 0.0)
+    @test (out.body_soil[1][10, 15] == 0.0) && (out.body_soil[2][10, 15] == 0.0)
+    @test (out.body_soil[3][10, 15] == -0.5) && (out.body_soil[4][10, 15] == 0.0)
+    out.terrain[10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+    out.body_soil[3][10, 15] = 0.0
+    out.body_soil[4][10, 15] = 0.0
+
+    # Testing the case where there are two bucket layers, the first layer being lower and it
+    # has space under it
+    set_RNG_seed!(1234)
+    out.terrain[10, 15] = -0.8
+    out.body[1][10, 15] = -0.7
+    out.body[2][10, 15] = -0.6
+    out.body[3][10, 15] = -0.4
+    out.body[4][10, 15] = -0.1
+    _relax_terrain!(out, grid, sim)
+    @test (out.terrain[10, 15] ≈ -0.7) && (out.terrain[9, 15] ≈ -0.1)
+    @test (out.body_soil[1][10, 15] == 0.0) && (out.body_soil[2][10, 15] == 0.0)
+    @test (out.body_soil[3][10, 15] == 0.0) && (out.body_soil[4][10, 15] == 0.0)
+    out.terrain[10, 15] = 0.0
+    out.terrain[9, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+
+    # Testing the case where there are two bucket layers, the first layer being lower, and
+    # soil should avalanche on the second bucket layer
+    set_RNG_seed!(1234)
+    out.terrain[10, 15] = -0.8
+    out.body[1][10, 15] = -0.8
+    out.body[2][10, 15] = -0.6
+    out.body[3][10, 15] = -0.4
+    out.body[4][10, 15] = -0.2
+    _relax_terrain!(out, grid, sim)
+    @test (out.terrain[10, 15] == -0.8) && (out.terrain[9, 15] ≈ -0.1)
+    @test (out.body_soil[1][10, 15] == 0.0) && (out.body_soil[2][10, 15] == 0.0)
+    @test (out.body_soil[3][10, 15] ≈ -0.2) && (out.body_soil[4][10, 15] ≈ -0.1)
+    out.terrain[10, 15] = 0.0
+    out.terrain[9, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+    out.body_soil[3][10, 15] = 0.0
+    out.body_soil[4][10, 15] = 0.0
+
+    # Testing the case where there are two bucket layers, the first layer being lower, and
+    # the second bucket layer is high enough to prevent the soil from avalanching
+    set_RNG_seed!(1234)
+    out.terrain[10, 15] = -0.8
+    out.body[1][10, 15] = -0.8
+    out.body[2][10, 15] = -0.6
+    out.body[3][10, 15] = -0.4
+    out.body[4][10, 15] = 0.0
+    _relax_terrain!(out, grid, sim)
+    @test (out.terrain[10, 15] == -0.8) && (out.terrain[9, 15] == 0.0)
+    @test (out.terrain[10, 14] == 0.0) && (out.terrain[10, 16] == 0.0)
+    @test (out.terrain[11, 15] == 0.0)
+    @test (out.body_soil[1][10, 15] == 0.0) && (out.body_soil[2][10, 15] == 0.0)
+    @test (out.body_soil[3][10, 15] == 0.0) && (out.body_soil[4][10, 15] == 0.0)
+    out.terrain[10, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+
+    # Testing the case where there are two bucket layers, the first layer with bucket soil
+    # being lower and has space under it
+    set_RNG_seed!(1234)
+    out.terrain[10, 15] = -0.8
+    out.body[1][10, 15] = -0.7
+    out.body[2][10, 15] = -0.6
+    out.body[3][10, 15] = -0.4
+    out.body[4][10, 15] = -0.1
+    out.body_soil[1][10, 15] = -0.6
+    out.body_soil[2][10, 15] = -0.5
+    _relax_terrain!(out, grid, sim)
+    @test (out.terrain[10, 15] ≈ -0.7) && (out.terrain[9, 15] ≈ -0.1)
+    @test (out.body_soil[1][10, 15] == -0.6) && (out.body_soil[2][10, 15] == -0.5)
+    @test (out.body_soil[3][10, 15] == 0.0) && (out.body_soil[4][10, 15] == 0.0)
+    out.terrain[10, 15] = 0.0
+    out.terrain[9, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+    out.body_soil[1][10, 15] = 0.0
+    out.body_soil[2][10, 15] = 0.0
+
+    # Testing the case where there are two bucket layers, the first layer with bucket soil
+    # being lower, and soil should avalanche on the second bucket layer
+    set_RNG_seed!(1234)
+    out.terrain[10, 15] = -0.8
+    out.body[1][10, 15] = -0.8
+    out.body[2][10, 15] = -0.6
+    out.body[3][10, 15] = -0.4
+    out.body[4][10, 15] = -0.2
+    out.body_soil[1][10, 15] = -0.6
+    out.body_soil[2][10, 15] = -0.5
+    _relax_terrain!(out, grid, sim)
+    @test (out.terrain[10, 15] == -0.8) && (out.terrain[9, 15] ≈ -0.1)
+    @test (out.body_soil[1][10, 15] == -0.6) && (out.body_soil[2][10, 15] == -0.5)
+    @test (out.body_soil[3][10, 15] ≈ -0.2) && (out.body_soil[4][10, 15] ≈ -0.1)
+    out.terrain[10, 15] = 0.0
+    out.terrain[9, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+    out.body_soil[1][10, 15] = 0.0
+    out.body_soil[2][10, 15] = 0.0
+    out.body_soil[3][10, 15] = 0.0
+    out.body_soil[4][10, 15] = 0.0
+
+    # Testing the case where there are two bucket layers, the first layer with bucket soil
+    # being lower, and the second bucket layer is high enough to prevent the soil from
+    # avalanching
+    set_RNG_seed!(1234)
+    out.terrain[10, 15] = -0.8
+    out.body[1][10, 15] = -0.8
+    out.body[2][10, 15] = -0.6
+    out.body[3][10, 15] = -0.4
+    out.body[4][10, 15] = 0.0
+    out.body_soil[1][10, 15] = -0.6
+    out.body_soil[2][10, 15] = -0.5
+    _relax_terrain!(out, grid, sim)
+    @test (out.terrain[10, 15] == -0.8) && (out.terrain[9, 15] == 0.0)
+    @test (out.terrain[10, 14] == 0.0) && (out.terrain[10, 16] == 0.0)
+    @test (out.terrain[11, 15] == 0.0)
+    @test (out.body_soil[1][10, 15] == -0.6) && (out.body_soil[2][10, 15] == -0.5)
+    @test (out.body_soil[3][10, 15] == 0.0) && (out.body_soil[4][10, 15] == 0.0)
+    out.terrain[10, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+    out.body_soil[1][10, 15] = 0.0
+    out.body_soil[2][10, 15] = 0.0
+
+    # Testing the case where there are two bucket layers, the first layer being lower and it
+    # has space under it, while the second layer is with bucket soil
+    set_RNG_seed!(1234)
+    out.terrain[10, 15] = -0.8
+    out.body[1][10, 15] = -0.7
+    out.body[2][10, 15] = -0.6
+    out.body[3][10, 15] = -0.4
+    out.body[4][10, 15] = -0.3
+    out.body_soil[3][10, 15] = -0.3
+    out.body_soil[4][10, 15] = 0.4
+    _relax_terrain!(out, grid, sim)
+    @test (out.terrain[10, 15] ≈ -0.7) && (out.terrain[9, 15] ≈ -0.1)
+    @test (out.body_soil[1][10, 15] == 0.0) && (out.body_soil[2][10, 15] == 0.0)
+    @test (out.body_soil[3][10, 15] == -0.3) && (out.body_soil[4][10, 15] == 0.4)
+    out.terrain[10, 15] = 0.0
+    out.terrain[9, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+    out.body_soil[3][10, 15] = 0.0
+    out.body_soil[4][10, 15] = 0.0
+
+    # Testing the case where there are two bucket layers, the first layer being lower, and
+    # soil should avalanche on the second bucket layer with bucket soil
+    set_RNG_seed!(1234)
+    out.terrain[10, 15] = -0.8
+    out.body[1][10, 15] = -0.8
+    out.body[2][10, 15] = -0.6
+    out.body[3][10, 15] = -0.4
+    out.body[4][10, 15] = -0.3
+    out.body_soil[3][10, 15] = -0.3
+    out.body_soil[4][10, 15] = -0.2
+    _relax_terrain!(out, grid, sim)
+    @test (out.terrain[10, 15] == -0.8) && (out.terrain[9, 15] ≈ -0.1)
+    @test (out.body_soil[1][10, 15] == 0.0) && (out.body_soil[2][10, 15] == 0.0)
+    @test (out.body_soil[3][10, 15] == -0.3) && (out.body_soil[4][10, 15] ≈ -0.1)
+    out.terrain[10, 15] = 0.0
+    out.terrain[9, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+    out.body_soil[3][10, 15] = 0.0
+    out.body_soil[4][10, 15] = 0.0
+
+    # Testing the case where there are two bucket layers, the first layer being lower, and
+    # the second bucket layer with bucket soil is high enough to prevent the soil from
+    # avalanching
+    set_RNG_seed!(1234)
+    out.terrain[10, 15] = -0.8
+    out.body[1][10, 15] = -0.8
+    out.body[2][10, 15] = -0.6
+    out.body[3][10, 15] = -0.4
+    out.body[4][10, 15] = -0.3
+    out.body_soil[3][10, 15] = -0.3
+    out.body_soil[4][10, 15] = 0.0
+    _relax_terrain!(out, grid, sim)
+    @test (out.terrain[10, 15] == -0.8) && (out.terrain[9, 15] == 0.0)
+    @test (out.terrain[10, 14] == 0.0) && (out.terrain[10, 16] == 0.0)
+    @test (out.terrain[11, 15] == 0.0)
+    @test (out.body_soil[1][10, 15] == 0.0) && (out.body_soil[2][10, 15] == 0.0)
+    @test (out.body_soil[3][10, 15] == -0.3) && (out.body_soil[4][10, 15] == 0.0)
+    out.terrain[10, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+    out.body_soil[3][10, 15] = 0.0
+    out.body_soil[4][10, 15] = 0.0
+
+    # Testing the case where there are two bucket layers with bucket soil, the first layer
+    # being lower and it has space under it
+    set_RNG_seed!(1234)
+    out.terrain[10, 15] = -0.8
+    out.body[1][10, 15] = -0.7
+    out.body[2][10, 15] = -0.6
+    out.body[3][10, 15] = -0.4
+    out.body[4][10, 15] = -0.3
+    out.body_soil[1][10, 15] = -0.6
+    out.body_soil[2][10, 15] = -0.5
+    out.body_soil[3][10, 15] = -0.3
+    out.body_soil[4][10, 15] = -0.1
+    _relax_terrain!(out, grid, sim)
+    @test (out.terrain[10, 15] ≈ -0.7) && (out.terrain[9, 15] ≈ -0.1)
+    @test (out.body_soil[1][10, 15] == -0.6) && (out.body_soil[2][10, 15] == -0.5)
+    @test (out.body_soil[3][10, 15] == -0.3) && (out.body_soil[4][10, 15] == -0.1)
+    out.terrain[10, 15] = 0.0
+    out.terrain[9, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+    out.body_soil[1][10, 15] = 0.0
+    out.body_soil[2][10, 15] = 0.0
+    out.body_soil[3][10, 15] = 0.0
+    out.body_soil[4][10, 15] = 0.0
+
+    # Testing the case where there are two bucket layers with bucket soil, the first layer
+    # being lower, and soil should avalanche on the second bucket layer
+    set_RNG_seed!(1234)
+    out.terrain[10, 15] = -0.8
+    out.body[1][10, 15] = -0.8
+    out.body[2][10, 15] = -0.6
+    out.body[3][10, 15] = -0.4
+    out.body[4][10, 15] = -0.3
+    out.body_soil[1][10, 15] = -0.6
+    out.body_soil[2][10, 15] = -0.5
+    out.body_soil[3][10, 15] = -0.3
+    out.body_soil[4][10, 15] = -0.2
+    _relax_terrain!(out, grid, sim)
+    @test (out.terrain[10, 15] == -0.8) && (out.terrain[9, 15] ≈ -0.1)
+    @test (out.body_soil[1][10, 15] == -0.6) && (out.body_soil[2][10, 15] == -0.5)
+    @test (out.body_soil[3][10, 15] == -0.3) && (out.body_soil[4][10, 15] ≈ -0.1)
+    out.terrain[10, 15] = 0.0
+    out.terrain[9, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+    out.body_soil[1][10, 15] = 0.0
+    out.body_soil[2][10, 15] = 0.0
+    out.body_soil[3][10, 15] = 0.0
+    out.body_soil[4][10, 15] = 0.0
+
+    # Testing the case where there are two bucket layers with bucket soil, the first layer
+    # being lower, and the second bucket layer is high enough to prevent the soil from
+    # avalanching
+    set_RNG_seed!(1234)
+    out.terrain[10, 15] = -0.8
+    out.body[1][10, 15] = -0.8
+    out.body[2][10, 15] = -0.6
+    out.body[3][10, 15] = -0.4
+    out.body[4][10, 15] = -0.3
+    out.body_soil[1][10, 15] = -0.6
+    out.body_soil[2][10, 15] = -0.5
+    out.body_soil[3][10, 15] = -0.3
+    out.body_soil[4][10, 15] = 0.0
+    @test (out.terrain[10, 15] == -0.8) && (out.terrain[9, 15] == 0.0)
+    @test (out.terrain[10, 14] == 0.0) && (out.terrain[10, 16] == 0.0)
+    @test (out.terrain[11, 15] == 0.0)
+    @test (out.body_soil[1][10, 15] == -0.6) && (out.body_soil[2][10, 15] == -0.5)
+    @test (out.body_soil[3][10, 15] == -0.3) && (out.body_soil[4][10, 15] == 0.0)
+    out.terrain[10, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+    out.body_soil[1][10, 15] = 0.0
+    out.body_soil[2][10, 15] = 0.0
+    out.body_soil[3][10, 15] = 0.0
+    out.body_soil[4][10, 15] = 0.0
+
+    # Testing the case where there are two bucket layers, the second layer being lower and
+    # it has space under it
+    set_RNG_seed!(1234)
+    out.terrain[10, 15] = -0.8
+    out.body[1][10, 15] = -0.4
+    out.body[2][10, 15] = -0.1
+    out.body[3][10, 15] = -0.7
+    out.body[4][10, 15] = -0.6
+    _relax_terrain!(out, grid, sim)
+    @test (out.terrain[10, 15] ≈ -0.7) && (out.terrain[9, 15] ≈ -0.1)
+    @test (out.body_soil[1][10, 15] == 0.0) && (out.body_soil[2][10, 15] == 0.0)
+    @test (out.body_soil[3][10, 15] == 0.0) && (out.body_soil[4][10, 15] == 0.0)
+    out.terrain[10, 15] = 0.0
+    out.terrain[9, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+
+    # Testing the case where there are two bucket layers, the second layer being lower, and
+    # soil should avalanche on the first bucket layer
+    set_RNG_seed!(1234)
+    out.terrain[10, 15] = -0.8
+    out.body[1][10, 15] = -0.4
+    out.body[2][10, 15] = -0.2
+    out.body[3][10, 15] = -0.8
+    out.body[4][10, 15] = -0.6
+    _relax_terrain!(out, grid, sim)
+    @test (out.terrain[10, 15] == -0.8) && (out.terrain[9, 15] ≈ -0.1)
+    @test (out.body_soil[1][10, 15] ≈ -0.2) && (out.body_soil[2][10, 15] ≈ -0.1)
+    @test (out.body_soil[3][10, 15] == 0.0) && (out.body_soil[4][10, 15] == 0.0)
+    out.terrain[10, 15] = 0.0
+    out.terrain[9, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+    out.body_soil[1][10, 15] = 0.0
+    out.body_soil[2][10, 15] = 0.0
+
+    # Testing the case where there are two bucket layers, the second layer being lower, and
+    # the first bucket layer is high enough to prevent the soil from avalanching
+    set_RNG_seed!(1234)
+    out.terrain[10, 15] = -0.8
+    out.body[1][10, 15] = -0.4
+    out.body[2][10, 15] = 0.0
+    out.body[3][10, 15] = -0.8
+    out.body[4][10, 15] = -0.6
+    @test (out.terrain[10, 15] == -0.8) && (out.terrain[9, 15] == 0.0)
+    @test (out.terrain[10, 14] == 0.0) && (out.terrain[10, 16] == 0.0)
+    @test (out.terrain[11, 15] == 0.0)
+    @test (out.body_soil[1][10, 15] == 0.0) && (out.body_soil[2][10, 15] == 0.0)
+    @test (out.body_soil[3][10, 15] == 0.0) && (out.body_soil[4][10, 15] == 0.0)
+    out.terrain[10, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+
+    # Testing the case where there are two bucket layers, the second layer with bucket soil
+    # being lower and it has space under it
+    set_RNG_seed!(1234)
+    out.terrain[10, 15] = -0.8
+    out.body[1][10, 15] = -0.4
+    out.body[2][10, 15] = -0.1
+    out.body[3][10, 15] = -0.7
+    out.body[4][10, 15] = -0.6
+    out.body_soil[3][10, 15] = -0.6
+    out.body_soil[4][10, 15] = -0.5
+    _relax_terrain!(out, grid, sim)
+    @test (out.terrain[10, 15] ≈ -0.7) && (out.terrain[9, 15] ≈ -0.1)
+    @test (out.body_soil[1][10, 15] == 0.0) && (out.body_soil[2][10, 15] == 0.0)
+    @test (out.body_soil[3][10, 15] == -0.6) && (out.body_soil[4][10, 15] == -0.5)
+    out.terrain[10, 15] = 0.0
+    out.terrain[9, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+    out.body_soil[3][10, 15] = 0.0
+    out.body_soil[4][10, 15] = 0.0
+
+    # Testing the case where there are two bucket layers, the second layer with bucket soil
+    # being lower, and soil should avalanche on the first bucket layer
+    set_RNG_seed!(1234)
+    out.terrain[10, 15] = -0.8
+    out.body[1][10, 15] = -0.4
+    out.body[2][10, 15] = -0.2
+    out.body[3][10, 15] = -0.8
+    out.body[4][10, 15] = -0.6
+    out.body_soil[3][10, 15] = -0.6
+    out.body_soil[4][10, 15] = -0.5
+    _relax_terrain!(out, grid, sim)
+    @test (out.terrain[10, 15] == -0.8) && (out.terrain[9, 15] ≈ -0.1)
+    @test (out.body_soil[1][10, 15] ≈ -0.2) && (out.body_soil[2][10, 15] ≈ -0.1)
+    @test (out.body_soil[3][10, 15] == -0.6) && (out.body_soil[4][10, 15] == -0.5)
+    out.terrain[10, 15] = 0.0
+    out.terrain[9, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+    out.body_soil[1][10, 15] = 0.0
+    out.body_soil[2][10, 15] = 0.0
+    out.body_soil[3][10, 15] = 0.0
+    out.body_soil[4][10, 15] = 0.0
+
+    # Testing the case where there are two bucket layers, the second layer with bucket soil
+    # being lower, and the first bucket layer is high enough to prevent the soil from
+    # avalanching
+    set_RNG_seed!(1234)
+    out.terrain[10, 15] = -0.8
+    out.body[1][10, 15] = -0.4
+    out.body[2][10, 15] = 0.0
+    out.body[3][10, 15] = -0.8
+    out.body[4][10, 15] = -0.6
+    out.body_soil[3][10, 15] = -0.6
+    out.body_soil[4][10, 15] = -0.5
+    _relax_terrain!(out, grid, sim)
+    @test (out.terrain[10, 15] == -0.8) && (out.terrain[9, 15] == 0.0)
+    @test (out.terrain[10, 14] == 0.0) && (out.terrain[10, 16] == 0.0)
+    @test (out.terrain[11, 15] == 0.0)
+    @test (out.body_soil[1][10, 15] == 0.0) && (out.body_soil[2][10, 15] == 0.0)
+    @test (out.body_soil[3][10, 15] == -0.6) && (out.body_soil[4][10, 15] == -0.5)
+    out.terrain[10, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+    out.body_soil[3][10, 15] = 0.0
+    out.body_soil[4][10, 15] = 0.0
+
+    # Testing the case where there are two bucket layers, the second layer being lower and
+    # has space under it, while the first layer is with bucket soil
+    set_RNG_seed!(1234)
+    out.terrain[10, 15] = -0.8
+    out.body[1][10, 15] = -0.4
+    out.body[2][10, 15] = -0.3
+    out.body[3][10, 15] = -0.7
+    out.body[4][10, 15] = -0.6
+    out.body_soil[1][10, 15] = -0.3
+    out.body_soil[2][10, 15] = -0.1
+    _relax_terrain!(out, grid, sim)
+    @test (out.terrain[10, 15] ≈ -0.7) && (out.terrain[9, 15] ≈ -0.1)
+    @test (out.body_soil[1][10, 15] == -0.3) && (out.body_soil[2][10, 15] == -0.1)
+    @test (out.body_soil[3][10, 15] == 0.0) && (out.body_soil[4][10, 15] == 0.0)
+    out.terrain[10, 15] = 0.0
+    out.terrain[9, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+    out.body_soil[1][10, 15] = 0.0
+    out.body_soil[2][10, 15] = 0.0
+
+    # Testing the case where there are two bucket layers, the second layer being lower, and
+    # soil should avalanche on the first bucket layer with bucket soil
+    set_RNG_seed!(1234)
+    out.terrain[10, 15] = -0.8
+    out.body[1][10, 15] = -0.4
+    out.body[2][10, 15] = -0.3
+    out.body[3][10, 15] = -0.8
+    out.body[4][10, 15] = -0.6
+    out.body_soil[1][10, 15] = -0.3
+    out.body_soil[2][10, 15] = -0.2
+    _relax_terrain!(out, grid, sim)
+    @test (out.terrain[10, 15] == -0.8) && (out.terrain[9, 15] ≈ -0.1)
+    @test (out.body_soil[1][10, 15] == -0.3) && (out.body_soil[2][10, 15] ≈ -0.1)
+    @test (out.body_soil[3][10, 15] == 0.0) && (out.body_soil[4][10, 15] == 0.0)
+    out.terrain[10, 15] = 0.0
+    out.terrain[9, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+    out.body_soil[1][10, 15] = 0.0
+    out.body_soil[2][10, 15] = 0.0
+
+    # Testing the case where there are two bucket layers, the second layer being lower, and
+    # the first bucket layer with bucket soil is high enough to prevent the soil from
+    # avalanching
+    set_RNG_seed!(1234)
+    out.terrain[10, 15] = -0.8
+    out.body[1][10, 15] = -0.4
+    out.body[2][10, 15] = -0.3
+    out.body[3][10, 15] = -0.8
+    out.body[4][10, 15] = -0.6
+    out.body_soil[1][10, 15] = -0.3
+    out.body_soil[2][10, 15] = 0.0
+    _relax_terrain!(out, grid, sim)
+    @test (out.terrain[10, 15] == -0.8) && (out.terrain[9, 15] == 0.0)
+    @test (out.terrain[10, 14] == 0.0) && (out.terrain[10, 16] == 0.0)
+    @test (out.terrain[11, 15] == 0.0)
+    @test (out.body_soil[1][10, 15] == -0.3) && (out.body_soil[2][10, 15] == 0.0)
+    @test (out.body_soil[3][10, 15] == 0.0) && (out.body_soil[4][10, 15] == 0.0)
+    out.terrain[10, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+    out.body_soil[1][10, 15] = 0.0
+    out.body_soil[2][10, 15] = 0.0
+
+    # Testing the case where there are two bucket layers with bucket soil, the second layer
+    # being lower and has space under it
+    set_RNG_seed!(1234)
+    out.terrain[10, 15] = -0.8
+    out.body[1][10, 15] = -0.4
+    out.body[2][10, 15] = -0.3
+    out.body[3][10, 15] = -0.7
+    out.body[4][10, 15] = -0.6
+    out.body_soil[1][10, 15] = -0.3
+    out.body_soil[2][10, 15] = -0.1
+    out.body_soil[3][10, 15] = -0.6
+    out.body_soil[4][10, 15] = -0.5
+    _relax_terrain!(out, grid, sim)
+    @test (out.terrain[10, 15] ≈ -0.7) && (out.terrain[9, 15] ≈ -0.1)
+    @test (out.body_soil[1][10, 15] == -0.3) && (out.body_soil[2][10, 15] == -0.1)
+    @test (out.body_soil[3][10, 15] == -0.6) && (out.body_soil[4][10, 15] == -0.5)
+    out.terrain[10, 15] = 0.0
+    out.terrain[9, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+    out.body_soil[1][10, 15] = 0.0
+    out.body_soil[2][10, 15] = 0.0
+    out.body_soil[3][10, 15] = 0.0
+    out.body_soil[4][10, 15] = 0.0
+
+    # Testing the case where there are two bucket layers with bucket soil, the second layer
+    # being lower, and soil should avalanche on the first bucket layer
+    set_RNG_seed!(1234)
+    out.terrain[10, 15] = -0.8
+    out.body[1][10, 15] = -0.4
+    out.body[2][10, 15] = -0.3
+    out.body[3][10, 15] = -0.8
+    out.body[4][10, 15] = -0.6
+    out.body_soil[1][10, 15] = -0.3
+    out.body_soil[2][10, 15] = -0.2
+    out.body_soil[3][10, 15] = -0.6
+    out.body_soil[4][10, 15] = -0.5
+    _relax_terrain!(out, grid, sim)
+    @test (out.terrain[10, 15] == -0.8) && (out.terrain[9, 15] ≈ -0.1)
+    @test (out.body_soil[1][10, 15] == -0.3) && (out.body_soil[2][10, 15] ≈ -0.1)
+    @test (out.body_soil[3][10, 15] == -0.6) && (out.body_soil[4][10, 15] == -0.5)
+    out.terrain[10, 15] = 0.0
+    out.terrain[9, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+    out.body_soil[1][10, 15] = 0.0
+    out.body_soil[2][10, 15] = 0.0
+    out.body_soil[3][10, 15] = 0.0
+    out.body_soil[4][10, 15] = 0.0
+
+    # Testing the case where there are two bucket layers with bucket soil, the second layer
+    # being lower, and the first bucket layer is high enough to prevent the soil from
+    # avalanching
+    set_RNG_seed!(1234)
+    out.terrain[10, 15] = -0.8
+    out.body[1][10, 15] = -0.4
+    out.body[2][10, 15] = -0.3
+    out.body[3][10, 15] = -0.8
+    out.body[4][10, 15] = -0.6
+    out.body_soil[1][10, 15] = -0.3
+    out.body_soil[2][10, 15] = 0.0
+    out.body_soil[3][10, 15] = -0.6
+    out.body_soil[4][10, 15] = -0.5
+    _relax_terrain!(out, grid, sim)
+    @test (out.terrain[10, 15] == -0.8) && (out.terrain[9, 15] == 0.0)
+    @test (out.terrain[10, 14] == 0.0) && (out.terrain[10, 16] == 0.0)
+    @test (out.terrain[11, 15] == 0.0)
+    @test (out.body_soil[1][10, 15] == -0.3) && (out.body_soil[2][10, 15] == 0.0)
+    @test (out.body_soil[3][10, 15] == -0.6) && (out.body_soil[4][10, 15] == -0.5)
+    out.terrain[10, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+    out.body_soil[1][10, 15] = 0.0
+    out.body_soil[2][10, 15] = 0.0
+    out.body_soil[3][10, 15] = 0.0
+    out.body_soil[4][10, 15] = 0.0
+
+    # Testing the edge case where a lot of space under the bucket is present
+    set_RNG_seed!(1234)
+    out.terrain[10, 15] = -0.6
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.2
+    _relax_terrain!(out, grid, sim)
+    @test (out.terrain[10, 15] ≈ -0.1) && (out.terrain[9, 15] ≈ -0.3)
+    @test (out.terrain[10, 14] ≈ -0.1) && (out.terrain[10, 16] ≈ -0.1)
+    @test (out.terrain[11, 15] == 0.0)
+    @test (out.body_soil[1][10, 15] == 0.0) && (out.body_soil[2][10, 15] == 0.0)
+    @test (out.body_soil[3][10, 15] == 0.0) && (out.body_soil[4][10, 15] == 0.0)
+    out.terrain[10, 15] = 0.0
+    out.terrain[9, 15] = 0.0
+    out.terrain[10, 16] = 0.0
+    out.terrain[10, 14] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+
+    # Testing the edge case for soil avalanching on terrain
+    set_RNG_seed!(1234)
+    out.terrain[10, 15] = -0.4
+    _relax_terrain!(out, grid, sim)
+    @test (out.terrain[10, 15] ≈ -0.1) && (out.terrain[9, 15] ≈ -0.2)
+    @test (out.terrain[10, 14] ≈ -0.1) && (out.terrain[10, 16] == 0.0)
+    @test (out.terrain[11, 15] == 0.0)
+    out.terrain[10, 15] = 0.0
+    out.terrain[9, 15] = 0.0
+    out.terrain[10, 14] = 0.0
+
+    # Testing randomization
+    set_RNG_seed!(1234)
+    out.terrain[10, 15] = -0.2
+    _relax_terrain!(out, grid, sim)
+    @test (out.terrain[10, 15] ≈ -0.1) && (out.terrain[9, 15] ≈ -0.1)
+    out.terrain[10, 15] = -0.2
+    out.terrain[9, 15] = 0.0
+    set_RNG_seed!(1235)
+    _relax_terrain!(out, grid, sim)
+    @test (out.terrain[10, 15] ≈ -0.1) && (out.terrain[10, 14] ≈ -0.1)
+    out.terrain[10, 15] = 0.0
+    out.terrain[10, 14] = 0.0
+
+    # Removing zeros from Sparse matrices
+    dropzeros!(out.body[1])
+    dropzeros!(out.body[2])
+    dropzeros!(out.body[3])
+    dropzeros!(out.body[4])
+    dropzeros!(out.body_soil[1])
+    dropzeros!(out.body_soil[2])
+    dropzeros!(out.body_soil[3])
+    dropzeros!(out.body_soil[4])
+
+    # Checking that nothing has been unexpectedly modified
+    @test all(out.terrain[:, :] .== 0.0)
+    @test isempty(nonzeros(out.body[1]))
+    @test isempty(nonzeros(out.body[2]))
+    @test isempty(nonzeros(out.body[3]))
+    @test isempty(nonzeros(out.body[4]))
+    @test isempty(nonzeros(out.body_soil[1]))
+    @test isempty(nonzeros(out.body_soil[2]))
+    @test isempty(nonzeros(out.body_soil[3]))
+    @test isempty(nonzeros(out.body_soil[4]))
 end
