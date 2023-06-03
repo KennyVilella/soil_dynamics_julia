@@ -489,9 +489,9 @@ function write_soil(
             jj = cell[3]
             ind = cell[1]
 
-            _write_vector(io, grid.vect_x[ii], grid.vect_y[jj], out.body_soil[ind][ii][jj])
+            _write_vector(io, grid.vect_x[ii], grid.vect_y[jj], out.body_soil[ind][ii, jj])
             _write_vector(
-                io, grid.vect_x[ii], grid.vect_y[jj], out.body_soil[ind+1][ii][jj]
+                io, grid.vect_x[ii], grid.vect_y[jj], out.body_soil[ind+1][ii, jj]
             )
         end
     end
