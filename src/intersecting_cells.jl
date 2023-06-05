@@ -46,7 +46,7 @@ function _move_intersecting_cells!(
     # Moving terrain intersecting with the bucket
     _move_intersecting_body!(out, grid, tol)
 
-    # Moving bucket_soil intersecting with the bucket
+    # Moving bucket soil intersecting with the bucket
     _move_intersecting_body_soil!(out, grid, tol)
 end
 
@@ -248,7 +248,7 @@ function _move_intersecting_body_soil!(
         ii = cell[2]
         jj = cell[3]
 
-        if (ind === 1)
+        if (ind == 1)
             ### First bucket soil layer ###
             ind_top = 3
         else
