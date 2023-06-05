@@ -60,6 +60,27 @@ display(
 )
 println("")
 
+# Benchmarking for _move_intersecting_body_soil! function
+out.terrain[:, :] .= 0.0
+_init_sparse_array!(out.body, grid)
+_init_sparse_array!(out.body_soil, grid)
+out.body[1][20:30, 24:41] .= 0.1
+out.body[2][20:30, 24:41] .= 0.3
+out.body[3][20:30, 24:41] .= 0.6
+out.body[4][20:30, 24:41] .= 0.8
+out.body_soil[1][20:30, 24:41] .= 0.3
+out.body_soil[2][20:30, 24:41] .= 0.4
+out.body_soil[3][20:30, 24:41] .= 0.8
+out.body_soil[4][20:30, 24:41] .= 0.9
+out.body_soil[2][20, 24:41] .= 0.8
+out.body_soil[2][25, 24:41] .= 0.9
+out.body_soil[2][20:38, 40] .= 0.7
+println("_move_intersecting_body_soil!")
+display(
+    @benchmark _move_intersecting_body_soil!(out, grid)
+)
+println("")
+
 # Benchmarking for _locate_intersecting_cells function
 out.terrain[:, :] .= 0.0
 pos_1 = [0.0, 0.0, 0.0]

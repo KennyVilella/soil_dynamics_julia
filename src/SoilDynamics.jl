@@ -24,7 +24,7 @@ export _body_to_terrain!
 
 # intersecting_cells.jl
 export _move_intersecting_cells!
-export _move_intersecting_body!, _locate_intersecting_cells
+export _move_intersecting_body!, _move_intersecting_body_soil!, _locate_intersecting_cells
 
 # relax.jl
 export _relax_terrain!
