@@ -45,6 +45,9 @@ function _move_intersecting_cells!(
 
     # Moving terrain intersecting with the bucket
     _move_intersecting_body!(out, grid, tol)
+
+    # Moving bucket_soil intersecting with the bucket
+    _move_intersecting_body_soil!(out, grid, tol)
 end
 
 """
@@ -177,6 +180,302 @@ function _move_intersecting_body!(
 
         # Removing intersecting soil
         out.terrain[ii, jj] = out.body[ind][ii, jj]
+    end
+end
+
+"""
+    _move_intersecting_body_soil!(
+        out::SimOut{B,I,T}, grid::GridParam{I,T}, tol::T=1e-8
+    ) where {B<:Bool,I<:Int64,T<:Float64}
+
+This function moves the soil cells resting on the bucket that intersect with another bucket
+layer. It checks the eight lateral directions surrounding the intersecting soil column and
+moves the soil to available spaces.
+
+It is assumed that the adjacent neighbors always have enough space to accomodate the
+intersecting soil. This is to avoid the complexity of checking farther cells, which would
+require considering the potential presence of bucket walls blocking the movement.
+
+In situations where there is insufficient space to accommodate all the intersecting soil,
+the algorithm currently handles it by allowing the excess soil to simply disappear.
+This compromise seems to be reasonable as long as the amount of soil disappearing remains
+negligible.
+
+# Note
+- This function is intended for internal use only.
+- This function is a work in progress. Additional modifications may be required to improve
+  efficiency and simplicity.
+- The order in which the directions are checked is randomized in order to avoid
+  asymmetrical results.
+- By convention, the soil can be moved from the bucket to the terrain even if the bucket is
+  underground.
+
+# Inputs
+- `out::SimOut{Bool,Int64,Float64}`: Struct that stores simulation outputs.
+- `grid::GridParam{Int64,Float64}`: Struct that stores information related to the
+                                    simulation grid.
+- `tol::Float64`: Small number used to handle numerical approximation errors.
+
+# Outputs
+- None
+
+# Example
+
+    grid = GridParam(4.0, 4.0, 3.0, 0.05, 0.01)
+    terrain = zeros(2 * grid.half_length_x + 1, 2 * grid.half_length_y + 1)
+    out = SimOut(terrain, grid)
+
+    _move_intersecting_body_soil!(out, grid)
+"""
+function _move_intersecting_body_soil!(
+    out::SimOut{B,I,T},
+    grid::GridParam{I,T},
+    tol::T=1e-8
+) where {B<:Bool,I<:Int64,T<:Float64}
+
+    # Locating all non-zero values in body_soil
+    body_soil_pos = _locate_all_non_zeros(out.body_soil)
+
+    # Storing all possible directions
+    directions = [
+        [1, 0], [-1, 0], [0, 1], [0, -1],
+        [1, 1], [1, -1], [-1, 1], [-1, -1]
+    ]
+
+    # Iterating over bucket soil cells
+    for cell in body_soil_pos
+        ind = cell[1]
+        ii = cell[2]
+        jj = cell[3]
+
+        if (ind === 1)
+            ### First bucket soil layer ###
+            ind_top = 3
+        else
+            ### Second bucket soil layer ###
+            ind_top = 1
+        end
+
+        if (out.body[ind_top][ii, jj] == 0.0) && (out.body[ind_top+1][ii, jj] == 0.0)
+            ### No additionnal bucket layer ###
+            continue
+        end
+
+        if (
+            (out.body_soil[ind+1][ii, jj] - tol > out.body[ind_top][ii, jj]) &&
+            (out.body[ind_top+1][ii, jj] - tol > out.body_soil[ind][ii, jj])
+        )
+            ### Bucket soil intersects with bucket ###
+            h_soil = out.body_soil[ind+1][ii, jj] - out.body[ind_top][ii, jj]
+        else
+            ### No intersection between bucket soil and bucket ###
+            continue
+        end
+
+        # Randomizing direction to avoid asymmetry
+        shuffle!(directions)
+
+        # Iterating over the eight lateral directions
+        for xy in directions
+            # Calculating considered position
+            ii_n = ii + xy[1]
+            jj_n = jj + xy[2]
+
+            # Determining presence of bucket
+            bucket_absence_1 = (
+                (out.body[1][ii_n, jj_n] == 0.0) && (out.body[2][ii_n, jj_n] == 0.0)
+            )
+            bucket_absence_3 = (
+                (out.body[3][ii_n, jj_n] == 0.0) && (out.body[4][ii_n, jj_n] == 0.0)
+            )
+
+            if (bucket_absence_1 && bucket_absence_3)
+                ### No bucket ###
+                out.terrain[ii_n, jj_n] += h_soil
+                h_soil = 0.0
+                break
+            elseif (bucket_absence_1)
+                ### Only the second bucket layer ###
+                if (out.body[3][ii_n, jj_n] - tol > out.body[ind][ii, jj])
+                    ### Soil avalanche below the second bucket layer to the terrain ###
+                        out.terrain[ii_n, jj_n] += h_soil
+                        h_soil = 0.0
+                    break
+                elseif (out.body[4][ii_n, jj_n] + tol > out.body[ind_top][ii, jj])
+                    ### Bucket is blocking the movement ###
+                    continue
+                end
+
+                bucket_soil_presence_3 = (
+                    (out.body_soil[3][ii_n, jj_n] != 0.0) ||
+                    (out.body_soil[4][ii_n, jj_n] != 0.0)
+                )
+
+                if (
+                    bucket_soil_presence_3 &&
+                    (out.body_soil[4][ii_n, jj_n] + tol > out.body[ind_top][ii, jj])
+                )
+                    ### Soil is blocking the movement ###
+                    continue
+                end
+
+                # The only option left is that there is space for the intersecting soil
+                # Note that there is necessarily enough space for all the soil, otherwise
+                # the soil column would block the movement
+                if (bucket_soil_presence_3)
+                    ### Soil should go into the existing bucket soil layer ###
+                    out.body_soil[4][ii_n, jj_n] += h_soil
+                else
+                    ### Soil should create a new bucket soil layer ###
+                    out.body_soil[3][ii_n, jj_n] = out.body[4][ii_n, jj_n]
+                    out.body_soil[4][ii_n, jj_n] = out.body[4][ii_n, jj_n] + h_soil
+                end
+
+                h_soil = 0.0
+                break
+            elseif (bucket_absence_3)
+                ### Only the first bucket layer ###
+                if (out.body[1][ii_n, jj_n] - tol > out.body[ind][ii, jj])
+                    ### Soil avalanche below the first bucket layer to the terrain ###
+                        out.terrain[ii_n, jj_n] += h_soil
+                        h_soil = 0.0
+                    break
+                elseif (out.body[2][ii_n, jj_n] + tol > out.body[ind_top][ii, jj])
+                    ### Bucket is blocking the movement ###
+                    continue
+                end
+
+                bucket_soil_presence_1 = (
+                    (out.body_soil[1][ii_n, jj_n] != 0.0) ||
+                    (out.body_soil[2][ii_n, jj_n] != 0.0)
+                )
+
+                if (
+                    bucket_soil_presence_1 &&
+                    (out.body_soil[2][ii_n, jj_n] + tol > out.body[ind_top][ii, jj])
+                )
+                    ### Soil is blocking the movement ###
+                    continue
+                end
+
+                # The only option left is that there is space for the intersecting soil
+                # Note that there is necessarily enough space for all the soil, otherwise
+                # the soil column would block the movement
+                if (bucket_soil_presence_1)
+                    ### Soil should go into the existing bucket soil layer ###
+                    out.body_soil[2][ii_n, jj_n] += h_soil
+                else
+                    ### Soil should create a new bucket soil layer ###
+                    out.body_soil[1][ii_n, jj_n] = out.body[2][ii_n, jj_n]
+                    out.body_soil[2][ii_n, jj_n] = out.body[2][ii_n, jj_n] + h_soil
+                end
+
+                h_soil = 0.0
+                break
+            else
+                ### Both bucket layers are present ###
+                if (out.body[1][ii_n, jj_n] < out.body[3][ii_n, jj_n])
+                    ### First layer at bottom ###
+                    ind_n_bot = 1
+                    ind_n_top = 3
+                else
+                    ### Second layer at bottom ###
+                    ind_n_bot = 3
+                    ind_n_top = 1
+                end
+
+                bucket_soil_presence = (
+                    (out.body_soil[ind_n_bot][ii_n, jj_n] != 0.0) ||
+                    (out.body_soil[ind_n_bot+1][ii_n, jj_n] != 0.0)
+                )
+
+                if (bucket_soil_presence)
+                    ### Bucket soil is present between the two bucket layers ###
+                    if (
+                        out.body_soil[ind_n_bot+1][ii_n, jj_n] + tol >
+                        out.body[ind_n_top][ii_n, jj_n]
+                    )
+                        ### Bucket and soil blocking the movement ###
+                        continue
+                    elseif (
+                        out.body_soil[ind_n_bot+1][ii_n, jj_n] + tol >
+                        out.body[ind_top][ii, jj]
+                    )
+                        ### Bucket and soil blocking the movement ###
+                        continue
+                    end
+                else
+                    if (out.body[ind_n_bot+1][ii_n, jj_n] + tol > out.body[ind_top][ii, jj])
+                        ### Bucket is blocking the movement ###
+                        continue
+                    end
+                end
+
+                # The only option left is that there is some space for the intersecting soil
+                if (bucket_soil_presence)
+                   ### Soil should go into the existing bucket soil layer ###
+                    # Calculating available space
+                    delta_h = (
+                        out.body[ind_n_top][ii_n, jj_n] -
+                        out.body_soil[ind_n_bot+1][ii_n, jj_n]
+                    )
+
+                    if (delta_h < h_soil)
+                        ### Not enough space ###
+                        h_soil -= delta_h
+
+                        # Adding soil to the bucket soil layer
+                        out.body_soil[ind_n_bot+1][ii_n, jj_n] += delta_h
+                    else
+                        ### More space than soil ###
+                        # Adding soil to the bucket soil layer
+                        out.body_soil[ind_n_bot+1][ii_n, jj_n] += h_soil
+
+                        h_soil = 0.0
+                        break
+                    end
+                else
+                    ### Soil should create a new bucket soil layer ###
+                    # Calculating available space
+                    delta_h = (
+                        out.body[ind_n_top][ii_n, jj_n] - out.body[ind_n_bot+1][ii_n, jj_n]
+                    )
+
+                    if (delta_h < h_soil)
+                        ### Not enough space ###
+                        h_soil -= delta_h
+
+                        # Creating a new bucket soil layer
+                        out.body_soil[ind_n_bot][ii_n, jj_n] = (
+                            out.body[ind_n_bot+1][ii_n, jj_n]
+                        )
+                        out.body_soil[ind_n_bot+1][ii_n, jj_n] = (
+                            out.body[ind_n_bot+1][ii_n, jj_n] + delta_h
+                        )
+                    else
+                        ### More space than soil ###
+                        # Creating a new bucket soil layer
+                        out.body_soil[ind_n_bot][ii_n, jj_n] = (
+                            out.body[ind_n_bot+1][ii_n, jj_n]
+                        )
+                        out.body_soil[ind_n_bot+1][ii_n, jj_n] = (
+                            out.body[ind_n_bot+1][ii_n, jj_n] + h_soil
+                        )
+
+                        h_soil = 0.0
+                        break
+                    end
+                end
+            end
+        end
+
+        if (h_soil > tol)
+            @warn "Not all soil intersecting with a bucket layer could be moved"
+            @warn "The extra soil has been arbitrarily removed"
+        end
+
+        # Updating bucket soil
+        out.body_soil[ind+1][ii, jj] = out.body[ind_top][ii, jj]
     end
 end
 
