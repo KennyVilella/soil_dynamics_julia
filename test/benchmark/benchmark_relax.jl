@@ -61,3 +61,10 @@ display(
     @benchmark status = _check_unstable_terrain_cell(out, 50, 55, 0.2)
 )
 println("")
+
+# Benchmarking for _relax_unstable_cell! function
+println("_relax_unstable_cell!")
+display(
+    @benchmark _relax_unstable_cell!(out, 142, 0.1, 50, 55, 49, 55, grid)
+)
+println("")

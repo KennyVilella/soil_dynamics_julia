@@ -8,10 +8,7 @@ Copyright, 2023,  Vilella Kenny.
 #==========================================================================================#
 """
     _relax_terrain!(
-        out::SimOut{B,I,T},
-        grid::GridParam{I,T},
-        sim::SimParam{I,T},
-        tol::T=1e-8
+        out::SimOut{B,I,T}, grid::GridParam{I,T}, sim::SimParam{I,T}, tol::T=1e-8
     ) where {B<:Bool,I<:Int64,T<:Float64}
 
 This function moves the soil in `terrain` towards a state closer to equilibrium.
@@ -111,15 +108,26 @@ function _relax_terrain!(
 
             # Checking if the cell requires relaxation
             status = _check_unstable_terrain_cell(out, ii_c, jj_c, h_min, tol)
+
+            if (status == 0)
+                ### Soil cell already at equilibrium ###
+                continue
+            else
+                ### Soil cell requires relaxation ###
+                out.equilibrium[1] = false
+            end
+
+            # Relaxing the soil cell
+            _relax_unstable_cell!(
+                out, status, dh_max, ii, jj, ii_c, jj_c, grid,  tol
+            )
         end
     end
 end
 
 """
     _locate_unstable_terrain_cell(
-        out::SimOut{B,I,T},
-        dh_max::T,
-        tol::T=1e-8
+        out::SimOut{B,I,T}, dh_max::T, tol::T=1e-8
     ) where {B<:Bool,I<:Int64,T<:Float64}
 
 This function locates all the cells in `terrain `that have a height difference larger than
@@ -180,11 +188,7 @@ end
 
 """
     _check_unstable_terrain_cell(
-        out::SimOut{B,I,T},
-        ii_c::I,
-        jj_c::I,
-        h_min::T,
-        tol::T=1e-8
+        out::SimOut{B,I,T}, ii_c::I, jj_c::I, h_min::T, tol::T=1e-8
     ) where {B<:Bool,I<:Int64,T<:Float64}
 
 This function checks the stability of a soil column in `terrain` compared to one of its
@@ -235,7 +239,7 @@ should avalanche in different scenarios.
     terrain = zeros(2 * grid.half_length_x + 1, 2 * grid.half_length_y + 1)
     out = SimOut(terrain, grid)
 
-    _check_unstable_terrain_cell(out, 10, 15, -0.1)
+    status = _check_unstable_terrain_cell(out, 10, 15, -0.1)
 """
 function _check_unstable_terrain_cell(
     out::SimOut{B,I,T},
@@ -341,4 +345,136 @@ function _check_unstable_terrain_cell(
     end
 
     return 0
+end
+
+"""
+    _relax_unstable_cell!(
+        out::SimOut{B,I,T}, status::I, dh_max::T, ii::I, jj::I, ii_c::I, jj_c::I,
+        grid::GridParam{I,T}, tol::T=1e-8
+    ) where {B<:Bool,I<:Int64,T<:Float64}
+
+This function moves the soil from the `terrain` at (`ii`, `jj`) to the soil column in
+(`ii_c`, `jj_c`). The precise movement depends on the `status` number as explained in the
+`_check_unstable_terrain_cell` function.
+
+The soil is moved such that the slope formed by the two neighboring soil columns is equal to
+the `repose_angle`. When the bucket is preventing this configuration, the soil avalanche
+below the bucket to fill the space under it.
+
+# Note
+- This function is intended for internal use only.
+- It is assumed that the given `status` is accurate, so no extra checks are present.
+
+# Inputs
+- `out::SimOut{Bool,Int64,Float64}`: Struct that stores simulation outputs.
+- `status::Int64`: Three-digit number indicating how the soil should avalanche.
+- `dh_max::Float64`: Maximum height difference allowed between two neighboring cells. [m]
+- `ii::Int64`: Index of the considered cell in the X direction.
+- `jj::Int64`: Index of the considered cell in the Y direction.
+- `ii_c::Int64`: Index of the neighboring cell in the X direction.
+- `jj_c::Int64`: Index of the neighboring cell in the Y direction.
+- `grid::GridParam{Int64,Float64}`: Struct that stores information related to the
+                                    simulation grid.
+- `tol::Float64`: Small number used to handle numerical approximation errors.
+
+# Outputs
+- None
+
+# Example
+
+    grid = GridParam(4.0, 4.0, 3.0, 0.05, 0.01)
+    terrain = zeros(2 * grid.half_length_x + 1, 2 * grid.half_length_y + 1)
+    out = SimOut(terrain, grid)
+
+    _relax_unstable_cell!(out, 131, 0.1, 10, 15, 10, 14, grid)
+"""
+function _relax_unstable_cell!(
+    out::SimOut{B,I,T},
+    status::I,
+    dh_max::T,
+    ii::I,
+    jj::I,
+    ii_c::I,
+    jj_c::I,
+    grid::GridParam{I,T},
+    tol::T=1e-8
+) where {B<:Bool,I<:Int64,T<:Float64}
+
+    # Converting status into a string for convenience
+    st = string(status)
+
+    # Calculating new height values
+    h_new = 0.5 * (dh_max + out.terrain[ii, jj] + out.terrain[ii_c, jj_c])
+    h_new = grid.cell_size_z * floor((h_new + tol) / grid.cell_size_z)
+    h_new_c = out.terrain[ii, jj] + out.terrain[ii_c, jj_c] - h_new
+
+    if (status == 400)
+        ### No Bucket ###
+        # Updating terrain
+        out.terrain[ii, jj] = h_new
+        out.terrain[ii_c, jj_c] = h_new_c
+    elseif (st[3] == '1')
+        ### Space under the bucket ###
+        if (st[1] == '1')
+            ### Under the first bucket layer ###
+            bucket_bot = out.body[1][ii_c, jj_c]
+        elseif (st[1] == '2')
+            ### Under the second bucket layer ###
+            bucket_bot = out.body[3][ii_c, jj_c]
+        elseif (st[1] == '3')
+            ### Two bucket layers present ###
+            bucket_bot = min(out.body[1][ii_c, jj_c], out.body[3][ii_c, jj_c])
+        end
+
+        if (h_new_c < bucket_bot)
+            ### Full avalanche ###
+            out.terrain[ii, jj] = h_new
+            out.terrain[ii_c, jj_c] = h_new_c
+        else
+            ### Partial avalanche ###
+            out.terrain[ii, jj] = out.terrain[ii, jj] + out.terrain[ii_c, jj_c] - bucket_bot
+            out.terrain[ii_c, jj_c] = bucket_bot
+        end
+    elseif (st[3] == '2')
+        ### Soil should avalanche on the bucket ###
+        if (st[2] == '1')
+            ### Soil avalanche on the second bucket soil layer ###
+            h_new = 0.5 * (dh_max + out.terrain[ii, jj] + out.body_soil[4][ii_c, jj_c])
+            h_new = grid.cell_size_z * floor((h_new + tol) / grid.cell_size_z)
+            h_new_c = out.terrain[ii, jj] + out.body_soil[4][ii_c, jj_c] - h_new
+
+            # Updating terrain
+            out.terrain[ii, jj] = h_new
+            out.body_soil[4][ii_c, jj_c] = h_new_c
+        elseif (st[2] == '2')
+            ### Soil avalanche on the second bucket layer ###
+            h_new = 0.5 * (dh_max + out.terrain[ii, jj] + out.body[4][ii_c, jj_c])
+            h_new = grid.cell_size_z * floor((h_new + tol) / grid.cell_size_z)
+            h_new_c = out.terrain[ii, jj] + out.body[4][ii_c, jj_c] - h_new
+
+            # Updating terrain
+            out.terrain[ii, jj] = h_new
+            out.body_soil[3][ii_c, jj_c] = out.body[4][ii_c, jj_c]
+            out.body_soil[4][ii_c, jj_c] = h_new_c
+        elseif (st[2] == '3')
+            ### Soil avalanche on the first bucket soil layer ###
+            h_new = 0.5 * (dh_max + out.terrain[ii, jj] + out.body_soil[2][ii_c, jj_c])
+            h_new = grid.cell_size_z * floor((h_new + tol) / grid.cell_size_z)
+            h_new_c = out.terrain[ii, jj] + out.body_soil[2][ii_c, jj_c] - h_new
+
+            # Updating terrain
+            out.terrain[ii, jj] = h_new
+            out.body_soil[2][ii_c, jj_c] = h_new_c
+        elseif (st[2] == '4')
+            ### Soil avalanche on the first bucket layer ###
+            h_new = 0.5 * (dh_max + out.terrain[ii, jj] + out.body[2][ii_c, jj_c])
+            h_new = grid.cell_size_z * floor((h_new + tol) / grid.cell_size_z)
+            h_new_c = out.terrain[ii, jj] + out.body[2][ii_c, jj_c] - h_new
+
+            # Updating terrain
+            out.terrain[ii, jj] = h_new
+            out.body_soil[1][ii_c, jj_c] = out.body[2][ii_c, jj_c]
+            out.body_soil[2][ii_c, jj_c] = h_new_c
+        end
+    end
 end
