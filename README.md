@@ -5,7 +5,6 @@
 
 
 <code><b> Note:
-
 This is still a work in progress and the first fully working version has not yet been released.</b> </code>
 
 This soil dynamics simulator is a fast first-order model designed to simulate soil displacement caused by the movement of an excavator bucket.
