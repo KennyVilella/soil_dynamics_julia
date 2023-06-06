@@ -39,7 +39,6 @@ avalanche on the bucket.
 
 # Note
 - This function is intended for internal use only.
-- This function is a work in progress.
 
 # Inputs
 - `out::SimOut{Bool,Int64,Float64}`: Struct that stores simulation outputs.
@@ -119,7 +118,7 @@ function _relax_terrain!(
 
             # Relaxing the soil cell
             _relax_unstable_cell!(
-                out, status, dh_max, ii, jj, ii_c, jj_c, grid,  tol
+                out, status, dh_max, ii, jj, ii_c, jj_c, grid, tol
             )
         end
     end

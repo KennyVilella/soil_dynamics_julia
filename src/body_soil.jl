@@ -71,7 +71,6 @@ function _update_body_soil!(
 
     # Iterating over all XY positions where body_soil is present
     for cell in body_soil_pos
-        # Processing cell information
         ind = cell[1]
         ii = cell[2]
         jj = cell[3]

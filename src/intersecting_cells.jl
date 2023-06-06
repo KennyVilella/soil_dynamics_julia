@@ -11,13 +11,10 @@ Copyright, 2023,  Vilella Kenny.
         out::SimOut{B,I,T}, grid::GridParam{I,T}, tol::T=1e-8
     ) where {B<:Bool,I<:Int64,T<:Float64}
 
-This function moves the soil cells that intersect with the bucket or bucket soil.
-Since only one bucket is considered, the soil in `body_soil` is currently not moved.
-When the simulator supports multiple buckets, this function should account for the possible
-intersection between the bucket soil and other buckets.
+This function moves all soil cells in `terrain` and in `body_soil` that intersect with the
+bucket or with another soil cell.
 
 # Note
-- This function is a work in progress.
 - This function is intended for internal use only.
 
 # Inputs

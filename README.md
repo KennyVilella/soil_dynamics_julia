@@ -3,7 +3,8 @@
 [![Build status](https://github.com/KennyVilella/soil_dynamics_julia/workflows/CI/badge.svg)](https://github.com/KennyVilella/soil_dynamics_julia/actions)
 [![](https://img.shields.io/badge/docs-main-blue.svg)][docs-main]
 
-Note: This is still a work in progress and the first fully working version has not yet been released.
+
+<code><b> Note: This is still a work in progress and the first fully working version has not yet been released.</b> </code>
 
 This soil dynamics simulator is a fast first-order model designed to simulate soil displacement caused by the movement of an excavator bucket.
 It employs a cellular automata approach to model the behavior of the soil.
@@ -17,7 +18,6 @@ The primary objective of the simulator is to provide terrain updates in less tha
 There are several important features that are yet to be implemented.
 These include, in order of priority:
 
-- Terrain relaxation: Implement the relaxation of the terrain.
 - Bucket soil relaxation: Implement the relaxation of soil on the bucket.
 - Code optimization: Enhance the overall performance and efficiency of the codebase.
 - Documentation: Provide comprehensive and user-friendly documentation for the simulator.

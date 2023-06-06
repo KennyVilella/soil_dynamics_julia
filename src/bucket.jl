@@ -274,8 +274,8 @@ end
     ) where {I<:Int64,T<:Float64}
 
 This function performs a vector decomposition on a portion of the horizontal plane where
-a rectangle ABCD is located. The position of the rectangle is defined by its edges AB and AD
-, while the specified area extends over [`area_min_x`, `area_min_x + area_length_x`]
+a rectangle ABCD is located. The position of the rectangle is defined by its edges AB
+and AD, while the specified area extends over [`area_min_x`, `area_min_x + area_length_x`]
 on the X direction and [`area_min_y`, `area_min_y + area_length_y`] on the Y direction.
 
 For each cell in the specified area, the function decomposes it into the basis formed by
@@ -474,7 +474,7 @@ function _calc_triangle_pos(
     ab_ind = ab ./ cell_size
     ac_ind = ac ./ cell_size
 
-    # Listing the cells inside the triangle area 
+    # Listing the cells inside the triangle area
     c_ab, c_ac, in_triangle, n_cell = _decompose_vector_triangle(
         ab_ind, ac_ind, a_ind, area_min_x, area_min_y, area_length_x, area_length_y, tol
     )
@@ -708,7 +708,7 @@ function _calc_line_pos(
     nn = max(2, round(Int64, norm(ab) / delta) + 1)
     unit_vec = LinRange(0.0, 1.0, nn)
 
-    # Initialization
+    # Allocating memory
     line_pos = [Vector{Int64}(undef,3) for _ in 1:nn]
 
     # Setting constants used for the vectorial decomposition
