@@ -204,7 +204,7 @@ Store all parameters related to a bucket object.
 - `t_pos_init::Vector{Float64}`: Cartesian coordinates of the bucket teeth in its
                                  reference pose. [m]
 - `width::Float64`: Width of the bucket. [m]
-- `pos::Vector{Float64}`: Cartesian coordinates of the bucket origin. [m] 
+- `pos::Vector{Float64}`: Cartesian coordinates of the bucket origin. [m]
 - `ori::Vector{Float64}`: Orientation of the bucket. Note that it is stored as a Vector,
                           since Quaternions are not mutable. [Quaternion]
 
@@ -348,7 +348,7 @@ end
 Store all outputs of the simulation.
 
 # Convention
-- The `terrain` Matrix stores the height of the terrain at each XY position, see the 
+- The `terrain` Matrix stores the height of the terrain at each XY position, see the
   `GridParam` struct for more information on the simulation grid.
 - The cells where a bucket wall is located is stored in `body`, which is a vector of sparse
   Matrices. At each XY position, the first sparse Matrix indicates the lowest height where

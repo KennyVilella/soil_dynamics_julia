@@ -8,8 +8,7 @@ Copyright, 2023,  Vilella Kenny.
 #==========================================================================================#
 """
     _init_sparse_array!(
-        sparse_array::Vector{SparseMatrixCSC{T,I}},
-        grid::GridParam{I,T}
+        sparse_array::Vector{SparseMatrixCSC{T,I}}, grid::GridParam{I,T}
     ) where {I<:Int64,T<:Float64}
 
 This function reinitializes `sparse_array`.
@@ -156,7 +155,9 @@ function _locate_non_zeros(
 end
 
 """
-    calc_normal(a::Vector{T}, b::Vector{T}, c::Vector{T}) where {T<:Float64}
+    calc_normal(
+        a::Vector{T}, b::Vector{T}, c::Vector{T}
+    ) where {T<:Float64}
 
 This function calculates the unit normal vector of a plane formed by three points using
 the right-hand rule.
@@ -191,7 +192,9 @@ function calc_normal(
 end
 
 """
-    set_RNG_seed!(seed::I=1234) where {I<:Int64}
+    set_RNG_seed!(
+        seed::I=1234
+    ) where {I<:Int64}
 
 This function sets the used RNG seed.
 
@@ -374,7 +377,6 @@ function check_soil(
             @warn "Bucket 2 minimum height: " * string(out.body[3][ii, jj])
             @warn "Bucket 2 maximum height: " * string(out.body[4][ii, jj])
         end
-
 
         if ((out.body_soil[ind][ii, jj] == 0.0) && (out.body_soil[ind+1][ii, jj] == 0.0))
             ### Bucket soil is not present ###
@@ -610,6 +612,5 @@ function _write_vector(
     z::T
 ) where {T<:Float64}
 
-    # Writing vector to file
     writedlm(io, [string(x, ", ", y, ", ", z)])
 end
