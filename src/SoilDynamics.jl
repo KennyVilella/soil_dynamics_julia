@@ -30,7 +30,7 @@ export _move_intersecting_body!, _move_intersecting_body_soil!, _locate_intersec
 export _relax_terrain!, _relax_body_soil!
 export _locate_unstable_terrain_cell
 export _check_unstable_terrain_cell, _relax_unstable_terrain_cell!
-export _check_unstable_body_cell
+export _check_unstable_body_cell, _relax_unstable_body_cell!
 
 # utils.jl
 export _locate_all_non_zeros, _locate_non_zeros, _init_sparse_array!
