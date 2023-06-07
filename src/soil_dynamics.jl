@@ -87,5 +87,8 @@ function soil_dynamics!(
 
         # Relaxing the terrain
         _relax_terrain!(out, grid, sim, tol)
+
+        # Relaxing the soil resting on the bucket
+        _relax_body_soil!(out, grid, sim, tol)
     end
 end
