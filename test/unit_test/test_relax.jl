@@ -745,11 +745,11 @@ end
     out.terrain[10, 15] = 0.0
 end
 
-@testset "_relax_unstable_cell!" begin
+@testset "_relax_unstable_terrain_cell!" begin
     # Testing the case where there is no bucket and soil is unstable
     out.terrain[10, 14] = 0.4
     out.terrain[10, 15] = 0.1
-    _relax_unstable_cell!(out, 400, 0.1, 10, 14, 10, 15, grid)
+    _relax_unstable_terrain_cell!(out, 400, 0.1, 10, 14, 10, 15, grid)
     @test (out.terrain[10, 14] ≈ 0.3) && (out.terrain[10, 15] ≈ 0.2)
     @test (out.body_soil[1][10, 15] == 0.0) && (out.body_soil[2][10, 15] == 0.0)
     @test (out.body_soil[3][10, 15] == 0.0) && (out.body_soil[4][10, 15] == 0.0)
@@ -764,7 +764,7 @@ end
     out.body[4][10, 15] = -0.5
     out.body_soil[3][10, 15] = -0.5
     out.body_soil[4][10, 15] = -0.3
-    _relax_unstable_cell!(out, 211, 0.1, 10, 14, 10, 15, grid)
+    _relax_unstable_terrain_cell!(out, 211, 0.1, 10, 14, 10, 15, grid)
     @test (out.terrain[10, 14] ≈ -0.1) && (out.terrain[10, 15] ≈ -0.7)
     @test (out.body_soil[1][10, 15] == 0.0) && (out.body_soil[2][10, 15] == 0.0)
     @test (out.body_soil[3][10, 15] == -0.5) && (out.body_soil[4][10, 15] == -0.3)
@@ -783,7 +783,7 @@ end
     out.body[4][10, 15] = 0.3
     out.body_soil[3][10, 15] = 0.3
     out.body_soil[4][10, 15] = 0.5
-    _relax_unstable_cell!(out, 211, 0.1, 10, 14, 10, 15, grid)
+    _relax_unstable_terrain_cell!(out, 211, 0.1, 10, 14, 10, 15, grid)
     @test (out.terrain[10, 14] ≈ -0.1) && (out.terrain[10, 15] ≈ -0.2)
     @test (out.body_soil[1][10, 15] == 0.0) && (out.body_soil[2][10, 15] == 0.0)
     @test (out.body_soil[3][10, 15] == 0.3) && (out.body_soil[4][10, 15] == 0.5)
@@ -802,7 +802,7 @@ end
     out.body[4][10, 15] = -0.5
     out.body_soil[3][10, 15] = -0.5
     out.body_soil[4][10, 15] = -0.3
-    _relax_unstable_cell!(out, 212, 0.1, 10, 14, 10, 15, grid)
+    _relax_unstable_terrain_cell!(out, 212, 0.1, 10, 14, 10, 15, grid)
     @test (out.terrain[10, 14] ≈ -0.1) && (out.terrain[10, 15] ≈ -0.8)
     @test (out.body_soil[3][10, 15] ≈ -0.5) && (out.body_soil[4][10, 15] ≈ -0.2)
     @test (out.body_soil[1][10, 15] == 0.0) && (out.body_soil[2][10, 15] == 0.0)
@@ -819,7 +819,7 @@ end
     out.terrain[10, 15] = -0.6
     out.body[3][10, 15] = -0.4
     out.body[4][10, 15] = 0.3
-    _relax_unstable_cell!(out, 221, 0.1, 10, 14, 10, 15, grid)
+    _relax_unstable_terrain_cell!(out, 221, 0.1, 10, 14, 10, 15, grid)
     @test (out.terrain[10, 14] ≈ -0.2) && (out.terrain[10, 15] ≈ -0.4)
     @test (out.body_soil[1][10, 15] == 0.0) && (out.body_soil[2][10, 15] == 0.0)
     @test (out.body_soil[3][10, 15] == 0.0) && (out.body_soil[4][10, 15] == 0.0)
@@ -834,7 +834,7 @@ end
     out.terrain[10, 15] = -0.6
     out.body[3][10, 15] = 0.0
     out.body[4][10, 15] = 0.3
-    _relax_unstable_cell!(out, 221, 0.1, 10, 14, 10, 15, grid)
+    _relax_unstable_terrain_cell!(out, 221, 0.1, 10, 14, 10, 15, grid)
     @test (out.terrain[10, 14] ≈ -0.3) && (out.terrain[10, 15] ≈ -0.3)
     @test (out.body_soil[1][10, 15] == 0.0) && (out.body_soil[2][10, 15] == 0.0)
     @test (out.body_soil[3][10, 15] == 0.0) && (out.body_soil[4][10, 15] == 0.0)
@@ -849,7 +849,7 @@ end
     out.terrain[10, 15] = -0.4
     out.body[3][10, 15] = -0.4
     out.body[4][10, 15] = -0.3
-    _relax_unstable_cell!(out, 222, 0.1, 10, 14, 10, 15, grid)
+    _relax_unstable_terrain_cell!(out, 222, 0.1, 10, 14, 10, 15, grid)
     @test (out.terrain[10, 14] ≈ -0.1) && (out.terrain[10, 15] == -0.4)
     @test (out.body_soil[1][10, 15] == 0.0) && (out.body_soil[2][10, 15] == 0.0)
     @test (out.body_soil[3][10, 15] ≈ -0.3) && (out.body_soil[4][10, 15] ≈ -0.2)
@@ -868,7 +868,7 @@ end
     out.body[2][10, 15] = -0.5
     out.body_soil[1][10, 15] = -0.5
     out.body_soil[2][10, 15] = -0.3
-    _relax_unstable_cell!(out, 131, 0.1, 10, 14, 10, 15, grid)
+    _relax_unstable_terrain_cell!(out, 131, 0.1, 10, 14, 10, 15, grid)
     @test (out.terrain[10, 14] ≈ -0.1) && (out.terrain[10, 15] ≈ -0.7)
     @test (out.body_soil[1][10, 15] ≈ -0.5) && (out.body_soil[2][10, 15] ≈ -0.3)
     @test (out.body_soil[3][10, 15] == 0.0) && (out.body_soil[4][10, 15] == 0.0)
@@ -887,7 +887,7 @@ end
     out.body[2][10, 15] = -0.1
     out.body_soil[1][10, 15] = -0.1
     out.body_soil[2][10, 15] = 0.3
-    _relax_unstable_cell!(out, 131, 0.1, 10, 14, 10, 15, grid)
+    _relax_unstable_terrain_cell!(out, 131, 0.1, 10, 14, 10, 15, grid)
     @test (out.terrain[10, 14] ≈ -0.3) && (out.terrain[10, 15] ≈ -0.4)
     @test (out.body_soil[1][10, 15] ≈ -0.1) && (out.body_soil[2][10, 15] ≈ 0.3)
     @test (out.body_soil[3][10, 15] == 0.0) && (out.body_soil[4][10, 15] == 0.0)
@@ -906,7 +906,7 @@ end
     out.body[2][10, 15] = -0.5
     out.body_soil[1][10, 15] = -0.5
     out.body_soil[2][10, 15] = -0.3
-    _relax_unstable_cell!(out, 132, 0.1, 10, 14, 10, 15, grid)
+    _relax_unstable_terrain_cell!(out, 132, 0.1, 10, 14, 10, 15, grid)
     @test (out.terrain[10, 14] ≈ -0.1) && (out.terrain[10, 15] == -0.8)
     @test (out.body_soil[1][10, 15] ≈ -0.5) && (out.body_soil[2][10, 15] ≈ -0.2)
     @test (out.body_soil[3][10, 15] == 0.0) && (out.body_soil[4][10, 15] == 0.0)
@@ -923,7 +923,7 @@ end
     out.terrain[10, 15] = -0.8
     out.body[1][10, 15] = -0.5 
     out.body[2][10, 15] = -0.2 
-    _relax_unstable_cell!(out, 141, 0.1, 10, 14, 10, 15, grid)
+    _relax_unstable_terrain_cell!(out, 141, 0.1, 10, 14, 10, 15, grid)
     @test (out.terrain[10, 14] ≈ -0.3) && (out.terrain[10, 15] ≈ -0.5)
     @test (out.body_soil[1][10, 15] == 0.0) && (out.body_soil[2][10, 15] == 0.0)
     @test (out.body_soil[3][10, 15] == 0.0) && (out.body_soil[4][10, 15] == 0.0)
@@ -938,7 +938,7 @@ end
     out.terrain[10, 15] = -0.8
     out.body[1][10, 15] = -0.3
     out.body[2][10, 15] = -0.1
-    _relax_unstable_cell!(out, 141, 0.1, 10, 14, 10, 15, grid)
+    _relax_unstable_terrain_cell!(out, 141, 0.1, 10, 14, 10, 15, grid)
     @test (out.terrain[10, 14] ≈ -0.4) && (out.terrain[10, 15] ≈ -0.4)
     @test (out.body_soil[1][10, 15] == 0.0) && (out.body_soil[2][10, 15] == 0.0)
     @test (out.body_soil[3][10, 15] == 0.0) && (out.body_soil[4][10, 15] == 0.0)
@@ -952,7 +952,7 @@ end
     out.terrain[10, 15] = -0.4
     out.body[1][10, 15] = -0.4
     out.body[2][10, 15] = -0.2
-    _relax_unstable_cell!(out, 142, 0.1, 10, 14, 10, 15, grid)
+    _relax_unstable_terrain_cell!(out, 142, 0.1, 10, 14, 10, 15, grid)
     @test (out.terrain[10, 14] ≈ -0.1) && (out.terrain[10, 15] == -0.4)
     @test (out.body_soil[1][10, 15] ≈ -0.2) && (out.body_soil[2][10, 15] ≈ -0.1)
     @test (out.body_soil[3][10, 15] == 0.0) && (out.body_soil[4][10, 15] == 0.0)
@@ -975,7 +975,7 @@ end
     out.body_soil[2][10, 15] = -0.5
     out.body_soil[3][10, 15] = -0.3
     out.body_soil[4][10, 15] = -0.2
-    _relax_unstable_cell!(out, 311, 0.1, 10, 14, 10, 15, grid)
+    _relax_unstable_terrain_cell!(out, 311, 0.1, 10, 14, 10, 15, grid)
     @test (out.terrain[10, 14] ≈ -0.1) && (out.terrain[10, 15] ≈ -0.7)
     @test (out.body_soil[1][10, 15] == -0.6) && (out.body_soil[2][10, 15] == -0.5)
     @test (out.body_soil[3][10, 15] == -0.3) && (out.body_soil[4][10, 15] == -0.2)
@@ -1002,7 +1002,7 @@ end
     out.body_soil[2][10, 15] = 0.2
     out.body_soil[3][10, 15] = 0.5
     out.body_soil[4][10, 15] = 0.7
-    _relax_unstable_cell!(out, 311, 0.1, 10, 14, 10, 15, grid)
+    _relax_unstable_terrain_cell!(out, 311, 0.1, 10, 14, 10, 15, grid)
     @test (out.terrain[10, 14] ≈ -0.3) && (out.terrain[10, 15] ≈ -0.3)
     @test (out.body_soil[1][10, 15] == -0.1) && (out.body_soil[2][10, 15] == 0.2)
     @test (out.body_soil[3][10, 15] == 0.5) && (out.body_soil[4][10, 15] == 0.7)
@@ -1029,7 +1029,7 @@ end
     out.body_soil[2][10, 15] = -0.5
     out.body_soil[3][10, 15] = -0.3
     out.body_soil[4][10, 15] = -0.2
-    _relax_unstable_cell!(out, 312, 0.1, 10, 14, 10, 15, grid)
+    _relax_unstable_terrain_cell!(out, 312, 0.1, 10, 14, 10, 15, grid)
     @test (out.terrain[10, 14] ≈ -0.1) && (out.terrain[10, 15] == -0.8)
     @test (out.body_soil[1][10, 15] == -0.6) && (out.body_soil[2][10, 15] == -0.5)
     @test (out.body_soil[3][10, 15] == -0.3) && (out.body_soil[4][10, 15] ≈ -0.1)
@@ -1052,7 +1052,7 @@ end
     out.body[2][10, 15] = -0.6 
     out.body[3][10, 15] = -0.4 
     out.body[4][10, 15] = -0.3 
-    _relax_unstable_cell!(out, 321, 0.1, 10, 14, 10, 15, grid)
+    _relax_unstable_terrain_cell!(out, 321, 0.1, 10, 14, 10, 15, grid)
     @test (out.terrain[10, 14] ≈ -0.1) && (out.terrain[10, 15] ≈ -0.7)
     @test (out.body_soil[1][10, 15] == 0.0) && (out.body_soil[2][10, 15] == 0.0)
     @test (out.body_soil[3][10, 15] == 0.0) && (out.body_soil[4][10, 15] == 0.0)
@@ -1071,7 +1071,7 @@ end
     out.body[2][10, 15] = 0.0
     out.body[3][10, 15] = 0.2
     out.body[4][10, 15] = 0.4
-    _relax_unstable_cell!(out, 321, 0.1, 10, 14, 10, 15, grid)
+    _relax_unstable_terrain_cell!(out, 321, 0.1, 10, 14, 10, 15, grid)
     @test (out.terrain[10, 14] ≈ -0.2) && (out.terrain[10, 15] ≈ -0.3)
     @test (out.body_soil[1][10, 15] == 0.0) && (out.body_soil[2][10, 15] == 0.0)
     @test (out.body_soil[3][10, 15] == 0.0) && (out.body_soil[4][10, 15] == 0.0)
@@ -1090,7 +1090,7 @@ end
     out.body[2][10, 15] = -0.6
     out.body[3][10, 15] = -0.4
     out.body[4][10, 15] = -0.3
-    _relax_unstable_cell!(out, 322, 0.1, 10, 14, 10, 15, grid)
+    _relax_unstable_terrain_cell!(out, 322, 0.1, 10, 14, 10, 15, grid)
     @test (out.terrain[10, 14] ≈ -0.1) && (out.terrain[10, 15] == -0.8)
     @test (out.body_soil[1][10, 15] == 0.0) && (out.body_soil[2][10, 15] == 0.0)
     @test (out.body_soil[3][10, 15] == -0.3) && (out.body_soil[4][10, 15] ≈ -0.2)
@@ -1114,7 +1114,7 @@ end
     out.body[4][10, 15] = -0.6
     out.body_soil[1][10, 15] = -0.3
     out.body_soil[2][10, 15] = -0.2
-    _relax_unstable_cell!(out, 331, 0.1, 10, 14, 10, 15, grid)
+    _relax_unstable_terrain_cell!(out, 331, 0.1, 10, 14, 10, 15, grid)
     @test (out.terrain[10, 14] ≈ -0.1) && (out.terrain[10, 15] ≈ -0.7)
     @test (out.body_soil[1][10, 15] == -0.3) && (out.body_soil[2][10, 15] == -0.2)
     @test (out.body_soil[3][10, 15] == 0.0) && (out.body_soil[4][10, 15] == 0.0)
@@ -1138,7 +1138,7 @@ end
     out.body[4][10, 15] = -0.3
     out.body_soil[1][10, 15] = -0.1
     out.body_soil[2][10, 15] = 0.0
-    _relax_unstable_cell!(out, 331, 0.1, 10, 14, 10, 15, grid)
+    _relax_unstable_terrain_cell!(out, 331, 0.1, 10, 14, 10, 15, grid)
     @test (out.terrain[10, 14] ≈ -0.4) && (out.terrain[10, 15] ≈ -0.5)
     @test (out.body_soil[1][10, 15] == -0.1) && (out.body_soil[2][10, 15] == 0.0)
     @test (out.body_soil[3][10, 15] == 0.0) && (out.body_soil[4][10, 15] == 0.0)
@@ -1161,7 +1161,7 @@ end
     out.body[4][10, 15] = -0.6
     out.body_soil[1][10, 15] = -0.3
     out.body_soil[2][10, 15] = -0.2
-    _relax_unstable_cell!(out, 332, 0.1, 10, 14, 10, 15, grid)
+    _relax_unstable_terrain_cell!(out, 332, 0.1, 10, 14, 10, 15, grid)
     @test (out.terrain[10, 14] ≈ -0.1) && (out.terrain[10, 15] == -0.8)
     @test (out.body_soil[1][10, 15] == -0.3) && (out.body_soil[2][10, 15] ≈ -0.1)
     @test (out.body_soil[3][10, 15] == 0.0) && (out.body_soil[4][10, 15] == 0.0)
@@ -1182,7 +1182,7 @@ end
     out.body[2][10, 15] = -0.3
     out.body[3][10, 15] = -0.7
     out.body[4][10, 15] = -0.6
-    _relax_unstable_cell!(out, 341, 0.1, 10, 14, 10, 15, grid)
+    _relax_unstable_terrain_cell!(out, 341, 0.1, 10, 14, 10, 15, grid)
     @test (out.terrain[10, 14] ≈ -0.1) && (out.terrain[10, 15] ≈ -0.7)
     @test (out.body_soil[1][10, 15] == 0.0) && (out.body_soil[2][10, 15] == 0.0)
     @test (out.body_soil[3][10, 15] == 0.0) && (out.body_soil[4][10, 15] == 0.0)
@@ -1201,7 +1201,7 @@ end
     out.body[2][10, 15] = 0.0
     out.body[3][10, 15] = -0.3
     out.body[4][10, 15] = -0.2
-    _relax_unstable_cell!(out, 341, 0.1, 10, 14, 10, 15, grid)
+    _relax_unstable_terrain_cell!(out, 341, 0.1, 10, 14, 10, 15, grid)
     @test (out.terrain[10, 14] ≈ -0.4) && (out.terrain[10, 15] ≈ -0.4)
     @test (out.body_soil[1][10, 15] == 0.0) && (out.body_soil[2][10, 15] == 0.0)
     @test (out.body_soil[3][10, 15] == 0.0) && (out.body_soil[4][10, 15] == 0.0)
@@ -1220,7 +1220,7 @@ end
     out.body[2][10, 15] = -0.3
     out.body[3][10, 15] = -0.8
     out.body[4][10, 15] = -0.6
-    _relax_unstable_cell!(out, 342, 0.1, 10, 14, 10, 15, grid)
+    _relax_unstable_terrain_cell!(out, 342, 0.1, 10, 14, 10, 15, grid)
     @test (out.terrain[10, 14] ≈ -0.1) && (out.terrain[10, 15] == -0.8)
     @test (out.body_soil[1][10, 15] ≈ -0.3) && (out.body_soil[2][10, 15] ≈ -0.2)
     @test (out.body_soil[3][10, 15] == 0.0) && (out.body_soil[4][10, 15] == 0.0)
@@ -2088,4 +2088,821 @@ end
     @test isempty(nonzeros(out.body_soil[2]))
     @test isempty(nonzeros(out.body_soil[3]))
     @test isempty(nonzeros(out.body_soil[4]))
+end
+
+@testset "_check_unstable_body_cell!" begin
+    # Testing the case where there is no bucket and soil is unstable
+    out.terrain[10, 15] = -0.2
+    out.terrain[10, 14] = -0.2
+    out.body[1][10, 14] = -0.2
+    out.body[2][10, 14] = 0.0
+    out.body_soil[1][10, 14] = 0.0
+    out.body_soil[2][10, 14] = 0.2
+    status = _check_unstable_body_cell(out, 10, 14, 1, 10, 15, 0.1)
+    @test (status == 40)
+    # Resetting values
+    out.terrain[10, 15] = 0.0
+    out.terrain[10, 14] = 0.0
+    out.body[1][10, 14] = 0.0
+    out.body[2][10, 14] = 0.0
+    out.body_soil[1][10, 14] = 0.0
+    out.body_soil[2][10, 14] = 0.0
+
+    # Testing the case where there is the first bucket layer and soil should avalanche on it
+    out.terrain[10, 15] = -0.2
+    out.body[1][10, 15] = -0.2
+    out.body[2][10, 15] = 0.0
+    out.terrain[10, 14] = -0.2
+    out.body[1][10, 14] = -0.2
+    out.body[2][10, 14] = 0.0
+    out.body_soil[1][10, 14] = 0.0
+    out.body_soil[2][10, 14] = 0.2
+    status = _check_unstable_body_cell(out, 10, 14, 1, 10, 15, 0.1)
+    @test (status == 14)
+    # Resetting values
+    out.terrain[10, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.terrain[10, 14] = 0.0
+    out.body[1][10, 14] = 0.0
+    out.body[2][10, 14] = 0.0
+    out.body_soil[1][10, 14] = 0.0
+    out.body_soil[2][10, 14] = 0.0
+
+    # Testing the case where there is the first bucket layer with bucket soil and soil
+    # should avalanche on it
+    out.terrain[10, 15] = -0.2
+    out.body[1][10, 15] = -0.2
+    out.body[2][10, 15] = -0.1
+    out.body_soil[1][10, 15] = -0.1
+    out.body_soil[2][10, 15] = 0.0
+    out.terrain[10, 14] = -0.2
+    out.body[1][10, 14] = -0.2
+    out.body[2][10, 14] = 0.0
+    out.body_soil[1][10, 14] = 0.0
+    out.body_soil[2][10, 14] = 0.2
+    status = _check_unstable_body_cell(out, 10, 14, 1, 10, 15, 0.1)
+    @test (status == 13)
+    # Resetting values
+    out.terrain[10, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body_soil[1][10, 15] = 0.0
+    out.body_soil[2][10, 15] = 0.0
+    out.terrain[10, 14] = 0.0
+    out.body[1][10, 14] = 0.0
+    out.body[2][10, 14] = 0.0
+    out.body_soil[1][10, 14] = 0.0
+    out.body_soil[2][10, 14] = 0.0
+
+    # Testing the case where there is the second bucket layer and soil should avalanche
+    # on it
+    out.terrain[10, 15] = -0.2
+    out.body[3][10, 15] = -0.2
+    out.body[4][10, 15] = 0.0
+    out.terrain[10, 14] = -0.2
+    out.body[1][10, 14] = -0.2
+    out.body[2][10, 14] = 0.0
+    out.body_soil[1][10, 14] = 0.0
+    out.body_soil[2][10, 14] = 0.2
+    status = _check_unstable_body_cell(out, 10, 14, 1, 10, 15, 0.1)
+    @test (status == 22)
+    # Resetting values
+    out.terrain[10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+    out.terrain[10, 14] = 0.0
+    out.body[1][10, 14] = 0.0
+    out.body[2][10, 14] = 0.0
+    out.body_soil[1][10, 14] = 0.0
+    out.body_soil[2][10, 14] = 0.0
+
+    # Testing the case where there is the second bucket layer with bucket soil and soil
+    # should avalanche on it
+    out.terrain[10, 15] = -0.2
+    out.body[3][10, 15] = -0.2
+    out.body[4][10, 15] = -0.1
+    out.body_soil[3][10, 15] = -0.1
+    out.body_soil[4][10, 15] = 0.0
+    out.terrain[10, 14] = -0.2
+    out.body[1][10, 14] = -0.2
+    out.body[2][10, 14] = 0.0
+    out.body_soil[1][10, 14] = 0.0
+    out.body_soil[2][10, 14] = 0.2
+    status = _check_unstable_body_cell(out, 10, 14, 1, 10, 15, 0.1)
+    @test (status == 21)
+    # Resetting values
+    out.terrain[10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+    out.body_soil[3][10, 15] = 0.0
+    out.body_soil[4][10, 15] = 0.0
+    out.terrain[10, 14] = 0.0
+    out.body[1][10, 14] = 0.0
+    out.body[2][10, 14] = 0.0
+    out.body_soil[1][10, 14] = 0.0
+    out.body_soil[2][10, 14] = 0.0
+
+    # Testing the case where there are two bucket layers, the first layer being lower and
+    # soil should avalanche on it
+    out.terrain[10, 15] = -0.2
+    out.body[1][10, 15] = -0.2
+    out.body[2][10, 15] = -0.1
+    out.body[3][10, 15] = 0.1
+    out.body[4][10, 15] = 0.2
+    out.terrain[10, 14] = -0.2
+    out.body[1][10, 14] = -0.2
+    out.body[2][10, 14] = 0.0
+    out.body_soil[1][10, 14] = 0.0
+    out.body_soil[2][10, 14] = 0.2
+    status = _check_unstable_body_cell(out, 10, 14, 1, 10, 15, 0.1)
+    @test (status == 34)
+    # Resetting values
+    out.terrain[10, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+    out.terrain[10, 14] = 0.0
+    out.body[1][10, 14] = 0.0
+    out.body[2][10, 14] = 0.0
+    out.body_soil[1][10, 14] = 0.0
+    out.body_soil[2][10, 14] = 0.0
+
+    # Testing the case where there are two bucket layers, the first layer with bucket soil
+    # being lower and soil should avalanche on it
+    out.terrain[10, 15] = -0.2
+    out.body[1][10, 15] = -0.2
+    out.body[2][10, 15] = -0.1
+    out.body_soil[1][10, 15] = -0.1
+    out.body_soil[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.1
+    out.body[4][10, 15] = 0.2
+    out.terrain[10, 14] = -0.2
+    out.body[1][10, 14] = -0.2
+    out.body[2][10, 14] = 0.0
+    out.body_soil[1][10, 14] = 0.0
+    out.body_soil[2][10, 14] = 0.2
+    status = _check_unstable_body_cell(out, 10, 14, 1, 10, 15, 0.1)
+    @test (status == 33)
+    # Resetting values
+    out.terrain[10, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body_soil[1][10, 15] = 0.0
+    out.body_soil[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+    out.terrain[10, 14] = 0.0
+    out.body[1][10, 14] = 0.0
+    out.body[2][10, 14] = 0.0
+    out.body_soil[1][10, 14] = 0.0
+    out.body_soil[2][10, 14] = 0.0
+
+    # Testing the case where there are two bucket layers, the first layer being lower and
+    # soil should avalanche on it, while the second layer is with bucket soil
+    out.terrain[10, 15] = -0.2
+    out.body[1][10, 15] = -0.2
+    out.body[2][10, 15] = -0.1
+    out.body[3][10, 15] = 0.1
+    out.body[4][10, 15] = 0.2
+    out.body_soil[3][10, 15] = 0.2
+    out.body_soil[4][10, 15] = 0.3
+    out.terrain[10, 14] = -0.2
+    out.body[1][10, 14] = -0.2
+    out.body[2][10, 14] = 0.0
+    out.body_soil[1][10, 14] = 0.0
+    out.body_soil[2][10, 14] = 0.2
+    status = _check_unstable_body_cell(out, 10, 14, 1, 10, 15, 0.1)
+    @test (status == 34)
+    # Resetting values
+    out.terrain[10, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+    out.body_soil[3][10, 15] = 0.0
+    out.body_soil[4][10, 15] = 0.0
+    out.terrain[10, 14] = 0.0
+    out.body[1][10, 14] = 0.0
+    out.body[2][10, 14] = 0.0
+    out.body_soil[1][10, 14] = 0.0
+    out.body_soil[2][10, 14] = 0.0
+
+    # Testing the case where there are two bucket layers with bucket soil, the first layer
+    # being lower and soil should avalanche on it
+    out.terrain[10, 15] = -0.2
+    out.body[1][10, 15] = -0.2
+    out.body[2][10, 15] = -0.1
+    out.body_soil[1][10, 15] = -0.1
+    out.body_soil[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.1
+    out.body[4][10, 15] = 0.2
+    out.body_soil[3][10, 15] = 0.2
+    out.body_soil[4][10, 15] = 0.3
+    out.terrain[10, 14] = -0.2
+    out.body[1][10, 14] = -0.2
+    out.body[2][10, 14] = 0.0
+    out.body_soil[1][10, 14] = 0.0
+    out.body_soil[2][10, 14] = 0.2
+    status = _check_unstable_body_cell(out, 10, 14, 1, 10, 15, 0.1)
+    @test (status == 33)
+    # Resetting values
+    out.terrain[10, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body_soil[1][10, 15] = 0.0
+    out.body_soil[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+    out.body_soil[3][10, 15] = 0.0
+    out.body_soil[4][10, 15] = 0.0
+    out.terrain[10, 14] = 0.0
+    out.body[1][10, 14] = 0.0
+    out.body[2][10, 14] = 0.0
+    out.body_soil[1][10, 14] = 0.0
+    out.body_soil[2][10, 14] = 0.0
+
+    # Testing the case where there are two bucket layers, the first layer being lower and
+    # soil should avalanche on the second bucket layer
+    out.terrain[10, 15] = -0.4
+    out.body[1][10, 15] = -0.4
+    out.body[2][10, 15] = -0.3
+    out.body[3][10, 15] = -0.2
+    out.body[4][10, 15] = -0.1
+    out.terrain[10, 14] = -0.2
+    out.body[1][10, 14] = -0.2
+    out.body[2][10, 14] = 0.0
+    out.body_soil[1][10, 14] = 0.0
+    out.body_soil[2][10, 14] = 0.2
+    status = _check_unstable_body_cell(out, 10, 14, 1, 10, 15, 0.1)
+    @test (status == 32)
+    # Resetting values
+    out.terrain[10, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+    out.terrain[10, 14] = 0.0
+    out.body[1][10, 14] = 0.0
+    out.body[2][10, 14] = 0.0
+    out.body_soil[1][10, 14] = 0.0
+    out.body_soil[2][10, 14] = 0.0
+
+    # Testing the case where there are two bucket layers, the first layer with bucket soil
+    # being lower and soil should avalanche on the second bucket layer
+    out.terrain[10, 15] = -0.4
+    out.body[1][10, 15] = -0.4
+    out.body[2][10, 15] = -0.3
+    out.body_soil[1][10, 15] = -0.3
+    out.body_soil[2][10, 15] = -0.2
+    out.body[3][10, 15] = -0.2
+    out.body[4][10, 15] = -0.1
+    out.terrain[10, 14] = -0.2
+    out.body[1][10, 14] = -0.2
+    out.body[2][10, 14] = 0.0
+    out.body_soil[1][10, 14] = 0.0
+    out.body_soil[2][10, 14] = 0.2
+    status = _check_unstable_body_cell(out, 10, 14, 1, 10, 15, 0.1)
+    @test (status == 32)
+    # Resetting values
+    out.terrain[10, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body_soil[1][10, 15] = 0.0
+    out.body_soil[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+    out.terrain[10, 14] = 0.0
+    out.body[1][10, 14] = 0.0
+    out.body[2][10, 14] = 0.0
+    out.body_soil[1][10, 14] = 0.0
+    out.body_soil[2][10, 14] = 0.0
+
+    # Testing the case where there are two bucket layers, the first layer being lower and
+    # soil should avalanche on the second bucket layer with soil
+    out.terrain[10, 15] = -0.4
+    out.body[1][10, 15] = -0.4
+    out.body[2][10, 15] = -0.3
+    out.body[3][10, 15] = -0.2
+    out.body[4][10, 15] = -0.1
+    out.body_soil[3][10, 15] = -0.1
+    out.body_soil[4][10, 15] = 0.0
+    out.terrain[10, 14] = -0.2
+    out.body[1][10, 14] = -0.2
+    out.body[2][10, 14] = 0.0
+    out.body_soil[1][10, 14] = 0.0
+    out.body_soil[2][10, 14] = 0.2
+    status = _check_unstable_body_cell(out, 10, 14, 1, 10, 15, 0.1)
+    @test (status == 31)
+    # Resetting values
+    out.terrain[10, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+    out.body_soil[3][10, 15] = 0.0
+    out.body_soil[4][10, 15] = 0.0
+    out.terrain[10, 14] = 0.0
+    out.body[1][10, 14] = 0.0
+    out.body[2][10, 14] = 0.0
+    out.body_soil[1][10, 14] = 0.0
+    out.body_soil[2][10, 14] = 0.0
+
+    # Testing the case where there are two bucket layers with bucket soil, the first layer
+    # being lower and soil should avalanche on the second bucket layer
+    out.terrain[10, 15] = -0.4
+    out.body[1][10, 15] = -0.4
+    out.body[2][10, 15] = -0.3
+    out.body_soil[1][10, 15] = -0.3
+    out.body_soil[2][10, 15] = -0.2
+    out.body[3][10, 15] = -0.2
+    out.body[4][10, 15] = -0.1
+    out.body_soil[3][10, 15] = -0.1
+    out.body_soil[4][10, 15] = 0.0
+    out.terrain[10, 14] = -0.2
+    out.body[1][10, 14] = -0.2
+    out.body[2][10, 14] = 0.0
+    out.body_soil[1][10, 14] = 0.0
+    out.body_soil[2][10, 14] = 0.2
+    status = _check_unstable_body_cell(out, 10, 14, 1, 10, 15, 0.1)
+    @test (status == 31)
+    # Resetting values
+    out.terrain[10, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body_soil[1][10, 15] = 0.0
+    out.body_soil[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+    out.body_soil[3][10, 15] = 0.0
+    out.body_soil[4][10, 15] = 0.0
+    out.terrain[10, 14] = 0.0
+    out.body[1][10, 14] = 0.0
+    out.body[2][10, 14] = 0.0
+    out.body_soil[1][10, 14] = 0.0
+    out.body_soil[2][10, 14] = 0.0
+
+    # Testing the case where there are two bucket layers, the second layer being lower and
+    # soil should avalanche on it
+    out.terrain[10, 15] = -0.2
+    out.body[1][10, 15] = 0.1
+    out.body[2][10, 15] = 0.2
+    out.body[3][10, 15] = -0.2
+    out.body[4][10, 15] = -0.1
+    out.terrain[10, 14] = -0.2
+    out.body[1][10, 14] = -0.2
+    out.body[2][10, 14] = 0.0
+    out.body_soil[1][10, 14] = 0.0
+    out.body_soil[2][10, 14] = 0.2
+    status = _check_unstable_body_cell(out, 10, 14, 1, 10, 15, 0.1)
+    @test (status == 32)
+    # Resetting values
+    out.terrain[10, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+    out.terrain[10, 14] = 0.0
+    out.body[1][10, 14] = 0.0
+    out.body[2][10, 14] = 0.0
+    out.body_soil[1][10, 14] = 0.0
+    out.body_soil[2][10, 14] = 0.0
+
+    # Testing the case where there are two bucket layers, the second layer with bucket soil
+    # being lower and soil should avalanche on it
+    out.terrain[10, 15] = -0.2
+    out.body[1][10, 15] = 0.1
+    out.body[2][10, 15] = 0.2
+    out.body[3][10, 15] = -0.2
+    out.body[4][10, 15] = -0.1
+    out.body_soil[3][10, 15] = -0.1
+    out.body_soil[4][10, 15] = 0.0
+    out.terrain[10, 14] = -0.2
+    out.body[1][10, 14] = -0.2
+    out.body[2][10, 14] = 0.0
+    out.body_soil[1][10, 14] = 0.0
+    out.body_soil[2][10, 14] = 0.2
+    status = _check_unstable_body_cell(out, 10, 14, 1, 10, 15, 0.1)
+    @test (status == 31)
+    # Resetting values
+    out.terrain[10, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+    out.body_soil[3][10, 15] = 0.0
+    out.body_soil[4][10, 15] = 0.0
+    out.terrain[10, 14] = 0.0
+    out.body[1][10, 14] = 0.0
+    out.body[2][10, 14] = 0.0
+    out.body_soil[1][10, 14] = 0.0
+    out.body_soil[2][10, 14] = 0.0
+
+    # Testing the case where there are two bucket layers, the second layer being lower and
+    # soil should avalanche on it, while the first layer is with bucket soil
+    out.terrain[10, 15] = -0.2
+    out.body[1][10, 15] = 0.1
+    out.body[2][10, 15] = 0.2
+    out.body_soil[1][10, 15] = 0.2
+    out.body_soil[2][10, 15] = 0.3
+    out.body[3][10, 15] = -0.2
+    out.body[4][10, 15] = -0.1
+    out.terrain[10, 14] = -0.2
+    out.body[1][10, 14] = -0.2
+    out.body[2][10, 14] = 0.0
+    out.body_soil[1][10, 14] = 0.0
+    out.body_soil[2][10, 14] = 0.2
+    status = _check_unstable_body_cell(out, 10, 14, 1, 10, 15, 0.1)
+    @test (status == 32)
+    # Resetting values
+    out.terrain[10, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body_soil[1][10, 15] = 0.0
+    out.body_soil[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+    out.terrain[10, 14] = 0.0
+    out.body[1][10, 14] = 0.0
+    out.body[2][10, 14] = 0.0
+    out.body_soil[1][10, 14] = 0.0
+    out.body_soil[2][10, 14] = 0.0
+
+    # Testing the case where there are two bucket layers with bucket soil, the second layer
+    # being lower and soil should avalanche on it
+    out.terrain[10, 15] = -0.2
+    out.body[1][10, 15] = 0.1
+    out.body[2][10, 15] = 0.2
+    out.body_soil[1][10, 15] = 0.2
+    out.body_soil[2][10, 15] = 0.3
+    out.body[3][10, 15] = -0.2
+    out.body[4][10, 15] = -0.1
+    out.body_soil[3][10, 15] = -0.1
+    out.body_soil[4][10, 15] = 0.0
+    out.terrain[10, 14] = -0.2
+    out.body[1][10, 14] = -0.2
+    out.body[2][10, 14] = 0.0
+    out.body_soil[1][10, 14] = 0.0
+    out.body_soil[2][10, 14] = 0.2
+    status = _check_unstable_body_cell(out, 10, 14, 1, 10, 15, 0.1)
+    @test (status == 31)
+    # Resetting values
+    out.terrain[10, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body_soil[1][10, 15] = 0.0
+    out.body_soil[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+    out.body_soil[3][10, 15] = 0.0
+    out.body_soil[4][10, 15] = 0.0
+    out.terrain[10, 14] = 0.0
+    out.body[1][10, 14] = 0.0
+    out.body[2][10, 14] = 0.0
+    out.body_soil[1][10, 14] = 0.0
+    out.body_soil[2][10, 14] = 0.0
+
+    # Testing the case where there are two bucket layers, the second layer being lower and
+    # soil should avalanche on the first bucket layer
+    out.terrain[10, 15] = -0.4
+    out.body[1][10, 15] = -0.2
+    out.body[2][10, 15] = -0.1
+    out.body[3][10, 15] = -0.4
+    out.body[4][10, 15] = -0.3
+    out.terrain[10, 14] = -0.2
+    out.body[1][10, 14] = -0.2
+    out.body[2][10, 14] = 0.0
+    out.body_soil[1][10, 14] = 0.0
+    out.body_soil[2][10, 14] = 0.2
+    status = _check_unstable_body_cell(out, 10, 14, 1, 10, 15, 0.1)
+    @test (status == 34)
+    # Resetting values
+    out.terrain[10, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+    out.terrain[10, 14] = 0.0
+    out.body[1][10, 14] = 0.0
+    out.body[2][10, 14] = 0.0
+    out.body_soil[1][10, 14] = 0.0
+    out.body_soil[2][10, 14] = 0.0
+
+    # Testing the case where there are two bucket layers, the second layer with bucket soil
+    # being lower and soil should avalanche on the first bucket layer
+    out.terrain[10, 15] = -0.4
+    out.body[1][10, 15] = -0.2
+    out.body[2][10, 15] = -0.1
+    out.body[3][10, 15] = -0.4
+    out.body[4][10, 15] = -0.3
+    out.body_soil[3][10, 15] = -0.3
+    out.body_soil[4][10, 15] = -0.2
+    out.terrain[10, 14] = -0.2
+    out.body[1][10, 14] = -0.2
+    out.body[2][10, 14] = 0.0
+    out.body_soil[1][10, 14] = 0.0
+    out.body_soil[2][10, 14] = 0.2
+    status = _check_unstable_body_cell(out, 10, 14, 1, 10, 15, 0.1)
+    @test (status == 34)
+    # Resetting values
+    out.terrain[10, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+    out.body_soil[3][10, 15] = 0.0
+    out.body_soil[4][10, 15] = 0.0
+    out.terrain[10, 14] = 0.0
+    out.body[1][10, 14] = 0.0
+    out.body[2][10, 14] = 0.0
+    out.body_soil[1][10, 14] = 0.0
+    out.body_soil[2][10, 14] = 0.0
+
+    # Testing the case where there are two bucket layers, the second layer being lower and
+    # soil should avalanche on the first bucket layer with soil
+    out.terrain[10, 15] = -0.4
+    out.body[1][10, 15] = -0.2
+    out.body[2][10, 15] = -0.1
+    out.body_soil[1][10, 15] = -0.1
+    out.body_soil[2][10, 15] = 0.0
+    out.body[3][10, 15] = -0.4
+    out.body[4][10, 15] = -0.3
+    out.terrain[10, 14] = -0.2
+    out.body[1][10, 14] = -0.2
+    out.body[2][10, 14] = 0.0
+    out.body_soil[1][10, 14] = 0.0
+    out.body_soil[2][10, 14] = 0.2
+    status = _check_unstable_body_cell(out, 10, 14, 1, 10, 15, 0.1)
+    @test (status == 33)
+    # Resetting values
+    out.terrain[10, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body_soil[1][10, 15] = 0.0
+    out.body_soil[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+    out.terrain[10, 14] = 0.0
+    out.body[1][10, 14] = 0.0
+    out.body[2][10, 14] = 0.0
+    out.body_soil[1][10, 14] = 0.0
+    out.body_soil[2][10, 14] = 0.0
+
+    # Testing the case where there are two bucket layers with bucket soil, the second layer
+    # being lower and soil should avalanche on the first bucket layer
+    out.terrain[10, 15] = -0.4
+    out.body[1][10, 15] = -0.2
+    out.body[2][10, 15] = -0.1
+    out.body_soil[1][10, 15] = -0.1
+    out.body_soil[2][10, 15] = 0.0
+    out.body[3][10, 15] = -0.4
+    out.body[4][10, 15] = -0.3
+    out.body_soil[3][10, 15] = -0.3
+    out.body_soil[4][10, 15] = -0.2
+    out.terrain[10, 14] = -0.2
+    out.body[1][10, 14] = -0.2
+    out.body[2][10, 14] = 0.0
+    out.body_soil[1][10, 14] = 0.0
+    out.body_soil[2][10, 14] = 0.2
+    status = _check_unstable_body_cell(out, 10, 14, 1, 10, 15, 0.1)
+    @test (status == 33)
+    # Resetting values
+    out.terrain[10, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body_soil[1][10, 15] = 0.0
+    out.body_soil[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+    out.body_soil[3][10, 15] = 0.0
+    out.body_soil[4][10, 15] = 0.0
+    out.terrain[10, 14] = 0.0
+    out.body[1][10, 14] = 0.0
+    out.body[2][10, 14] = 0.0
+    out.body_soil[1][10, 14] = 0.0
+    out.body_soil[2][10, 14] = 0.0
+
+    # Testing the case where there is no bucket and soil is not unstable
+    out.terrain[10, 15] = 0.1
+    out.terrain[10, 14] = -0.2
+    out.body[1][10, 14] = -0.2
+    out.body[2][10, 14] = 0.0
+    out.body_soil[1][10, 14] = 0.0
+    out.body_soil[2][10, 14] = 0.2
+    status = _check_unstable_body_cell(out, 10, 14, 1, 10, 15, 0.1)
+    @test (status == 0)
+    # Resetting values
+    out.terrain[10, 15] = 0.0
+    out.terrain[10, 14] = 0.0
+    out.body[1][10, 14] = 0.0
+    out.body[2][10, 14] = 0.0
+    out.body_soil[1][10, 14] = 0.0
+    out.body_soil[2][10, 14] = 0.0
+
+    # Testing the case where there is the first bucket layer and soil is not unstable
+    out.terrain[10, 15] = -0.2
+    out.body[1][10, 15] = -0.2
+    out.body[2][10, 15] = 0.1
+    out.terrain[10, 14] = -0.2
+    out.body[1][10, 14] = -0.2
+    out.body[2][10, 14] = 0.0
+    out.body_soil[1][10, 14] = 0.0
+    out.body_soil[2][10, 14] = 0.2
+    status = _check_unstable_body_cell(out, 10, 14, 1, 10, 15, 0.1)
+    @test (status == 0)
+    # Resetting values
+    out.terrain[10, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.terrain[10, 14] = 0.0
+    out.body[1][10, 14] = 0.0
+    out.body[2][10, 14] = 0.0
+    out.body_soil[1][10, 14] = 0.0
+    out.body_soil[2][10, 14] = 0.0
+
+    # Testing the case where there is the first bucket layer with bucket soil and soil
+    # is not unstable
+    out.terrain[10, 15] = -0.2
+    out.body[1][10, 15] = -0.2
+    out.body[2][10, 15] = 0.0
+    out.body_soil[1][10, 15] = 0.0
+    out.body_soil[2][10, 15] = 0.1
+    out.terrain[10, 14] = -0.2
+    out.body[1][10, 14] = -0.2
+    out.body[2][10, 14] = 0.0
+    out.body_soil[1][10, 14] = 0.0
+    out.body_soil[2][10, 14] = 0.2
+    status = _check_unstable_body_cell(out, 10, 14, 1, 10, 15, 0.1)
+    @test (status == 0)
+    # Resetting values
+    out.terrain[10, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body_soil[1][10, 15] = 0.0
+    out.body_soil[2][10, 15] = 0.0
+    out.terrain[10, 14] = 0.0
+    out.body[1][10, 14] = 0.0
+    out.body[2][10, 14] = 0.0
+    out.body_soil[1][10, 14] = 0.0
+    out.body_soil[2][10, 14] = 0.0
+
+    # Testing the case where there is the second bucket layer and soil is not unstable
+    out.terrain[10, 15] = -0.2
+    out.body[3][10, 15] = -0.2
+    out.body[4][10, 15] = 0.1
+    out.terrain[10, 14] = -0.2
+    out.body[1][10, 14] = -0.2
+    out.body[2][10, 14] = 0.0
+    out.body_soil[1][10, 14] = 0.0
+    out.body_soil[2][10, 14] = 0.2
+    status = _check_unstable_body_cell(out, 10, 14, 1, 10, 15, 0.1)
+    @test (status == 0)
+    # Resetting values
+    out.terrain[10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+    out.terrain[10, 14] = 0.0
+    out.body[1][10, 14] = 0.0
+    out.body[2][10, 14] = 0.0
+    out.body_soil[1][10, 14] = 0.0
+    out.body_soil[2][10, 14] = 0.0
+
+    # Testing the case where there is the second bucket layer with bucket soil and soil
+    # is not unstable
+    out.terrain[10, 15] = -0.2
+    out.body[3][10, 15] = -0.2
+    out.body[4][10, 15] = 0.0
+    out.body_soil[3][10, 15] = 0.0
+    out.body_soil[4][10, 15] = 0.1
+    out.terrain[10, 14] = -0.2
+    out.body[1][10, 14] = -0.2
+    out.body[2][10, 14] = 0.0
+    out.body_soil[1][10, 14] = 0.0
+    out.body_soil[2][10, 14] = 0.2
+    status = _check_unstable_body_cell(out, 10, 14, 1, 10, 15, 0.1)
+    @test (status == 0)
+    # Resetting values
+    out.terrain[10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+    out.body_soil[3][10, 15] = 0.0
+    out.body_soil[4][10, 15] = 0.0
+    out.terrain[10, 14] = 0.0
+    out.body[1][10, 14] = 0.0
+    out.body[2][10, 14] = 0.0
+    out.body_soil[1][10, 14] = 0.0
+    out.body_soil[2][10, 14] = 0.0
+
+    # Testing the case where there are two bucket layers and soil is not unstable (1)
+    out.terrain[10, 15] = -0.4
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.1
+    out.body[3][10, 15] = -0.4
+    out.body[4][10, 15] = -0.3
+    out.body_soil[3][10, 15] = -0.3
+    out.body_soil[4][10, 15] = -0.2
+    out.terrain[10, 14] = -0.2
+    out.body[1][10, 14] = -0.2
+    out.body[2][10, 14] = 0.0
+    out.body_soil[1][10, 14] = 0.0
+    out.body_soil[2][10, 14] = 0.2
+    status = _check_unstable_body_cell(out, 10, 14, 1, 10, 15, 0.1)
+    @test (status == 0)
+    # Resetting values
+    out.terrain[10, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+    out.body_soil[3][10, 15] = 0.0
+    out.body_soil[4][10, 15] = 0.0
+    out.terrain[10, 14] = 0.0
+    out.body[1][10, 14] = 0.0
+    out.body[2][10, 14] = 0.0
+    out.body_soil[1][10, 14] = 0.0
+    out.body_soil[2][10, 14] = 0.0
+
+    # Testing the case where there are two bucket layers and soil is not unstable (2)
+    out.terrain[10, 15] = -0.4
+    out.body[1][10, 15] = 0.1
+    out.body[2][10, 15] = 0.2
+    out.body[3][10, 15] = -0.4
+    out.body[4][10, 15] = -0.3
+    out.body_soil[3][10, 15] = -0.3
+    out.body_soil[4][10, 15] = 0.1
+    out.terrain[10, 14] = -0.2
+    out.body[1][10, 14] = -0.2
+    out.body[2][10, 14] = 0.0
+    out.body_soil[1][10, 14] = 0.0
+    out.body_soil[2][10, 14] = 0.2
+    status = _check_unstable_body_cell(out, 10, 14, 1, 10, 15, 0.1)
+    @test (status == 0)
+    # Resetting values
+    out.terrain[10, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+    out.body_soil[3][10, 15] = 0.0
+    out.body_soil[4][10, 15] = 0.0
+    out.terrain[10, 14] = 0.0
+    out.body[1][10, 14] = 0.0
+    out.body[2][10, 14] = 0.0
+    out.body_soil[1][10, 14] = 0.0
+    out.body_soil[2][10, 14] = 0.0
+
+    # Testing the case where there are two bucket layers and soil is not unstable (3)
+    out.terrain[10, 15] = -0.4
+    out.body[1][10, 15] = -0.4
+    out.body[2][10, 15] = -0.3
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.1
+    out.body_soil[3][10, 15] = 0.1
+    out.body_soil[4][10, 15] = 0.3
+    out.terrain[10, 14] = -0.2
+    out.body[1][10, 14] = -0.2
+    out.body[2][10, 14] = 0.0
+    out.body_soil[1][10, 14] = 0.0
+    out.body_soil[2][10, 14] = 0.4
+    status = _check_unstable_body_cell(out, 10, 14, 1, 10, 15, 0.3)
+    @test (status == 0)
+    # Resetting values
+    out.terrain[10, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+    out.body_soil[3][10, 15] = 0.0
+    out.body_soil[4][10, 15] = 0.0
+    out.terrain[10, 14] = 0.0
+    out.body[1][10, 14] = 0.0
+    out.body[2][10, 14] = 0.0
+    out.body_soil[1][10, 14] = 0.0
+    out.body_soil[2][10, 14] = 0.0
+
+    # Testing the case where there are two bucket layers and soil is not unstable (4)
+    out.terrain[10, 15] = -0.4
+    out.body[1][10, 15] = -0.4
+    out.body[2][10, 15] = -0.1
+    out.body[3][10, 15] = 0.1
+    out.body[4][10, 15] = 0.2
+    out.terrain[10, 14] = -0.2
+    out.body[1][10, 14] = -0.2
+    out.body[2][10, 14] = 0.0
+    out.body_soil[1][10, 14] = 0.0
+    out.body_soil[2][10, 14] = 0.4
+    status = _check_unstable_body_cell(out, 10, 14, 1, 10, 15, -0.1)
+    @test (status == 0)
+    # Resetting values
+    out.terrain[10, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+    out.terrain[10, 14] = 0.0
+    out.body[1][10, 14] = 0.0
+    out.body[2][10, 14] = 0.0
+    out.body_soil[1][10, 14] = 0.0
+    out.body_soil[2][10, 14] = 0.0
 end
