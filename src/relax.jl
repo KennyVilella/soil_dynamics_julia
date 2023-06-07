@@ -190,7 +190,7 @@ function _relax_body_soil!(
     # Randomizing body_soil cells to reduce asymmetry
     shuffle!(body_soil_pos)
 
-    # Iterating over all unstable cells
+    # Iterating over all body_soil cells
     for cell in body_soil_pos
         ii = cell[2]
         jj = cell[3]
@@ -454,7 +454,7 @@ end
     ) where {B<:Bool,I<:Int64,T<:Float64}
 
 This function checks the stability of a soil column in the soil layer `ind` of `body_soil`
-(`ii`, `jj`) compared to one of its neighbor (`ii_c`, `jj_c`).
+at (`ii`, `jj`) compared to one of its neighbor at (`ii_c`, `jj_c`).
 In case of instability, the function returns a two-digit number (`status`) that provides
 information on how the soil should avalanche. The interpretation of the two-digit number
 is described below.
