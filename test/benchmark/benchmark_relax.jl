@@ -90,3 +90,10 @@ display(
     @benchmark status = _check_unstable_body_cell(out, 50, 61, 1, 50, 60, 0.0)
 )
 println("")
+
+# Benchmarking for _relax_unstable_body_cell! function
+println("_relax_unstable_body_cell!")
+display(
+    @benchmark _relax_unstable_body_cell!(out, 13, 0.1, 50, 55, 1, 49, 55, grid)
+)
+println("")
