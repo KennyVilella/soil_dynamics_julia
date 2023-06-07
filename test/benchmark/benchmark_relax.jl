@@ -71,13 +71,13 @@ println("")
 
 # Benchmarking for _relax_body_soil! function
 out.terrain[50:65, 50:65] .= 0.4
-out.body[1][49, 50:65] .= 0.0
-out.body[2][49, 50:60] .= 0.1
-out.body[2][49, 61:65] .= 0.4
-out.body_soil[1][49, 50:60] .= 0.1
-out.body_soil[2][49, 50:60] .= 0.4
-out.body_soil[1][49, 61:65] .= 0.4
-out.body_soil[2][49, 61:65] .= 0.7
+out.body[1][50:65, 50:65] .= 0.0
+out.body[2][50:65, 50:60] .= 0.1
+out.body[2][50:65, 61:65] .= 0.4
+out.body_soil[1][50:65, 50:60] .= 0.1
+out.body_soil[2][50:65, 50:60] .= 0.4
+out.body_soil[1][50:65, 61:65] .= 0.4
+out.body_soil[2][50:65, 61:65] .= 0.7
 println("_relax_body_soil!")
 display(
     @benchmark _relax_body_soil!(out, grid, sim)
@@ -87,6 +87,6 @@ println("")
 # Benchmarking for _check_unstable_body_cell function
 println("_check_unstable_body_cell")
 display(
-    @benchmark status = _check_unstable_body_cell(out, 50, 55, 0.0)
+    @benchmark status = _check_unstable_body_cell(out, 50, 61, 1, 50, 60, 0.0)
 )
 println("")
