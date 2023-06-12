@@ -87,7 +87,7 @@ function soil_evolution(
 
     # Initializing the simulation properties
     repose_angle = 0.85
-    max_iterations = 3
+    max_iterations = 10
 
     # SimParam struct
     sim = SimParam(repose_angle, max_iterations)
@@ -105,13 +105,13 @@ function soil_evolution(
         x_i = -3.0 + 2.0 * rand() # Between [-3.0, -1.0]
         z_i = 0.5 + 1.5 * rand() # Between [0.5, 2.0]
         x_min = -0.5 * rand() # Between [-0.5, 0.5]
-        z_min = -2.0 * rand() # Between [-2.0, 0.0]
+        z_min = -0.25 + 0.5 * rand() # Between [-0.25, 0.25]
 
         # Creating the trajectory
         pos, ori = _calc_trajectory(x_i, z_i, x_min, z_min, 100)
     else
         ### Default parabolic trajectory ###
-        pos, ori = _calc_trajectory(-2.0, 1.5, 0.1, -0.5, 100)
+        pos, ori = _calc_trajectory(-2.0, 1.5, 0.1, 0.25, 100)
     end
 
     # Initializing bucket corner position vectors
