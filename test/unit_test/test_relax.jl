@@ -3928,3 +3928,192 @@ end
     out.body_soil[3][10, 15] = 0.0
     out.body_soil[4][10, 15] = 0.0
 end
+
+@testset "_relax_body_soil!" begin
+    # Testing the case where there is no bucket and soil should partially avalanche
+
+    # Testing the case where there is no bucket and soil should fully avalanche
+
+    # Testing the case where there is the first bucket layer and soil should partially
+    # avalanche on it
+
+    # Testing the case where there is the first bucket layer and soil should fully
+    # avalanche on it
+
+    # Testing the case where there is the first bucket layer with bucket soil and soil
+    # should partially avalanche on it
+
+    # Testing the case where there is the first bucket layer with bucket soil and soil
+    # should fully avalanche on it
+
+    # Testing the case where there is the second bucket layer and soil should partially
+    # avalanche on it
+
+    # Testing the case where there is the second bucket layer and soil should fully
+    # avalanche on it
+
+    # Testing the case where there is the second bucket layer with bucket soil and soil
+    # should partially avalanche on it
+
+    # Testing the case where there is the second bucket layer with bucket soil and soil
+    # should fully avalanche on it
+
+    # Testing the case where there are two bucket layers, the first layer being lower and
+    # soil should partially avalanche on it
+
+    # Testing the case where there are two bucket layers, the first layer being lower and
+    # soil should fully avalanche on it
+
+    # Testing the case where there are two bucket layers, the first layer being lower and
+    # soil should partially avalanche on the second bucket layer
+
+    # Testing the case where there are two bucket layers, the first layer being lower and
+    # soil should fully avalanche on the second bucket layer
+
+    # Testing the case where there are two bucket layers, the first layer with soil being
+    # lower and soil should partially avalanche on it
+
+    # Testing the case where there are two bucket layers, the first layer with soil being
+    # lower and soil should fully avalanche on it
+
+    # Testing the case where there are two bucket layers, the first layer with soil being
+    # lower and soil should partially avalanche on the second bucket layer
+
+    # Testing the case where there are two bucket layers, the first layer with soil being
+    # lower and soil should fully avalanche on the second bucket layer
+
+    # Testing the case where there are two bucket layers, the first layer being lower and
+    # soil should partially avalanche on it, while the second layer is with bucket soil
+
+    # Testing the case where there are two bucket layers, the first layer being lower and
+    # soil should fully avalanche on it, while the second layer is with bucket soil
+
+    # Testing the case where there are two bucket layers, the first layer being lower and
+    # soil should partially avalanche on the second bucket layer with soil
+
+    # Testing the case where there are two bucket layers, the first layer being lower and
+    # soil should fully avalanche on the second bucket layer with soil
+
+    # Testing the case where there are two bucket layers with bucket soil, the first layer
+    # being lower and soil should partially avalanche on it
+
+    # Testing the case where there are two bucket layers with bucket soil, the first layer
+    # being lower and soil should fully avalanche on it
+
+    # Testing the case where there are two bucket layers with bucket soil, the first layer
+    # being lower and soil should partially avalanche on the second bucket layer
+
+    # Testing the case where there are two bucket layers with bucket soil, the first layer
+    # being lower and soil should fully avalanche on the second bucket layer
+
+    # Testing the case where there are two bucket layers, the first layer being lower and
+    # soil should partially avalanche on it but there is not enough space for all the soil
+
+    # Testing the case where there are two bucket layers with bucket soil, the first layer
+    # being lower and soil should partially avalanche on it but there is not enough space
+    # for all the soil
+
+    # Testing the case where there are two bucket layers with bucket soil, the first layer
+    # being lower and soil should partially avalanche on it but there is no space at all
+
+    # Testing the case where there are two bucket layers, the second layer being lower and
+    # soil should partially avalanche on it
+
+    # Testing the case where there are two bucket layers, the second layer being lower and
+    # soil should fully avalanche on it
+
+    # Testing the case where there are two bucket layers, the second layer being lower and
+    # soil should partially avalanche on the first bucket layer
+
+    # Testing the case where there are two bucket layers, the second layer being lower and
+    # soil should fully avalanche on the first bucket layer
+
+    # Testing the case where there are two bucket layers, the second layer with soil being
+    # lower and soil should partially avalanche on it
+
+    # Testing the case where there are two bucket layers, the second layer with soil being
+    # lower and soil should fully avalanche on it
+
+    # Testing the case where there are two bucket layers, the second layer with soil being
+    # lower and soil should partially avalanche on the first bucket layer
+
+    # Testing the case where there are two bucket layers, the second layer with soil being
+    # lower and soil should fully avalanche on the first bucket layer
+
+    # Testing the case where there are two bucket layers, the second layer being lower and
+    # soil should partially avalanche on it, while the first layer is with bucket soil
+
+    # Testing the case where there are two bucket layers, the second layer being lower and
+    # soil should fully avalanche on it, while the first layer is with bucket soil
+
+    # Testing the case where there are two bucket layers, the second layer being lower and
+    # soil should partially avalanche on the first bucket layer with soil
+
+    # Testing the case where there are two bucket layers, the second layer being lower and
+    # soil should fully avalanche on the first bucket layer with soil
+
+    # Testing the case where there are two bucket layers with bucket soil, the second layer
+    # being lower and soil should partially avalanche on it
+
+    # Testing the case where there are two bucket layers with bucket soil, the second layer
+    # being lower and soil should fully avalanche on it
+
+    # Testing the case where there are two bucket layers with bucket soil, the second layer
+    # being lower and soil should partially avalanche on the first bucket layer
+
+    # Testing the case where there are two bucket layers with bucket soil, the second layer
+    # being lower and soil should fully avalanche on the first bucket layer
+
+    # Testing the case where there are two bucket layers, the second layer being lower and
+    # soil should partially avalanche on it but there is not enough space for all the soil
+
+    # Testing the case where there are two bucket layers with bucket soil, the second layer
+    # being lower and soil should partially avalanche on it but there is not enough space
+    # for all the soil
+
+    # Testing the case where there are two bucket layers with bucket soil, the second layer
+    # being lower and soil should partially avalanche on it but there is no space at all
+
+    # Testing the case where there is no bucket and soil is not unstable
+
+    # Testing the case where there is the first bucket layer and soil is not unstable
+
+    # Testing the case where there is the first bucket layer with bucket soil and soil
+    # is not unstable
+
+    # Testing the case where there is the second bucket layer and soil is not unstable
+
+    # Testing the case where there is the second bucket layer with bucket soil and soil
+    # is not unstable
+
+    # Testing the case where there are two bucket layers and soil is not unstable (1)
+
+    # Testing the case where there are two bucket layers and soil is not unstable (2)
+
+    # Testing the case where there are two bucket layers and soil is not unstable (3)
+
+    # Testing the case where there are two bucket layers and soil is not unstable (4)
+
+    # Testing randomization
+
+    # Removing zeros from Sparse matrices
+    dropzeros!(out.body[1])
+    dropzeros!(out.body[2])
+    dropzeros!(out.body[3])
+    dropzeros!(out.body[4])
+    dropzeros!(out.body_soil[1])
+    dropzeros!(out.body_soil[2])
+    dropzeros!(out.body_soil[3])
+    dropzeros!(out.body_soil[4])
+
+    # Checking that nothing has been unexpectedly modified
+    @test all(out.terrain[:, :] .== 0.0)
+    @test isempty(nonzeros(out.body[1]))
+    @test isempty(nonzeros(out.body[2]))
+    @test isempty(nonzeros(out.body[3]))
+    @test isempty(nonzeros(out.body[4]))
+    @test isempty(nonzeros(out.body_soil[1]))
+    @test isempty(nonzeros(out.body_soil[2]))
+    @test isempty(nonzeros(out.body_soil[3]))
+    @test isempty(nonzeros(out.body_soil[4]))
+end
