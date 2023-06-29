@@ -990,7 +990,7 @@ function _relax_unstable_body_cell!(
                     if (h_new_c - tol > out.body[1][ii_c, jj_c])
                         ### Not enough space available ###
                         out.body_soil[ind+1][ii, jj] -= (
-                            out.body[1][ii_c, jj_c] - out.body_soil[4][ii_c, jj_c]
+                            out.body[1][ii_c, jj_c] - out.body[4][ii_c, jj_c]
                         )
                         out.body_soil[3][ii_c, jj_c] = out.body[4][ii_c, jj_c]
                         out.body_soil[4][ii_c, jj_c] = out.body[1][ii_c, jj_c]
