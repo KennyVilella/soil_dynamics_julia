@@ -1626,7 +1626,8 @@ end
     #                                                                                      #
     #======================================================================================#
     # Testing when there is the first bucket layer blocking the movement (1)
-    warning_message = "Not all soil intersecting with a bucket layer could be moved"
+    warning_message = "Not all soil intersecting with a bucket layer could be moved\n" *
+        "The extra soil has been arbitrarily removed"
     out.body[1][9:11, 14:16] .= 0.0
     out.body[2][9:11, 14:16] .= 0.3
     out.body[1][10, 15] = 0.0
@@ -1647,7 +1648,6 @@ end
     out.body_soil[2][10, 15] = 0.0
 
     # Testing when there is the first bucket layer blocking the movement (2)
-    warning_message = "Not all soil intersecting with a bucket layer could be moved"
     out.body[1][9:11, 14:16] .= 0.0
     out.body[2][9:11, 14:16] .= 0.3
     out.body[1][10, 15] = 0.3
@@ -1668,7 +1668,6 @@ end
     out.body_soil[4][10, 15] = 0.0
 
     # Testing when there is the second bucket layer blocking the movement (1)
-    warning_message = "Not all soil intersecting with a bucket layer could be moved"
     out.body[3][9:11, 14:16] .= 0.0
     out.body[4][9:11, 14:16] .= 0.3
     out.body[1][10, 15] = 0.0
@@ -1689,7 +1688,6 @@ end
     out.body_soil[2][10, 15] = 0.0
 
     # Testing when there is the second bucket layer blocking the movement (2)
-    warning_message = "Not all soil intersecting with a bucket layer could be moved"
     out.body[3][9:11, 14:16] .= 0.0
     out.body[4][9:11, 14:16] .= 0.3
     out.body[1][10, 15] = 0.3
@@ -1710,7 +1708,6 @@ end
     out.body_soil[4][10, 15] = 0.0
 
     # Testing when there is the first bucket soil layer blocking the movement (1)
-    warning_message = "Not all soil intersecting with a bucket layer could be moved"
     out.body[1][9:11, 14:16] .= 0.0
     out.body[2][9:11, 14:16] .= 0.1
     out.body_soil[1][9:11, 14:16] .= 0.1
@@ -1733,7 +1730,6 @@ end
     out.body[4][10, 15] = 0.0
 
     # Testing when there is the first bucket soil layer blocking the movement (2)
-    warning_message = "Not all soil intersecting with a bucket layer could be moved"
     out.body[1][9:11, 14:16] .= 0.0
     out.body[2][9:11, 14:16] .= 0.1
     out.body_soil[1][9:11, 14:16] .= 0.1
@@ -1758,7 +1754,6 @@ end
     out.body_soil[4][10, 15] = 0.0
 
     # Testing when there is the second bucket soil layer blocking the movement (1)
-    warning_message = "Not all soil intersecting with a bucket layer could be moved"
     out.body[3][9:11, 14:16] .= 0.0
     out.body[4][9:11, 14:16] .= 0.1
     out.body_soil[3][9:11, 14:16] .= 0.1
@@ -1783,7 +1778,6 @@ end
     out.body_soil[2][10, 15] = 0.0
 
     # Testing when there is the second bucket soil layer blocking the movement (2)
-    warning_message = "Not all soil intersecting with a bucket layer could be moved"
     out.body[3][9:11, 14:16] .= 0.0
     out.body[4][9:11, 14:16] .= 0.1
     out.body_soil[3][9:11, 14:16] .= 0.1
@@ -1807,7 +1801,6 @@ end
 
     # Testing when there are two bucket layers, the first bucket layer being lower, and the
     # second bucket layer is blocking the movement (1)
-    warning_message = "Not all soil intersecting with a bucket layer could be moved"
     out.body[1][9:11, 14:16] .= -0.1
     out.body[2][9:11, 14:16] .= 0.0
     out.body[3][9:11, 14:16] .= 0.0
@@ -1831,7 +1824,6 @@ end
 
     # Testing when there are two bucket layers, the first bucket layer being lower, and the
     # second bucket layer is blocking the movement (2)
-    warning_message = "Not all soil intersecting with a bucket layer could be moved"
     out.body[1][9:11, 14:16] .= -0.1
     out.body[2][9:11, 14:16] .= 0.0
     out.body[3][9:11, 14:16] .= 0.0
@@ -1855,7 +1847,6 @@ end
 
     # Testing when there are two bucket layers, the first bucket layer being lower, and the
     # first bucket layer is blocking the movement (1)
-    warning_message = "Not all soil intersecting with a bucket layer could be moved"
     out.body[1][9:11, 14:16] .= -0.1
     out.body[2][9:11, 14:16] .= 0.3
     out.body[3][9:11, 14:16] .= 0.6
@@ -1879,7 +1870,6 @@ end
 
     # Testing when there are two bucket layers, the first bucket layer being lower, and the
     # first bucket layer is blocking the movement (2)
-    warning_message = "Not all soil intersecting with a bucket layer could be moved"
     out.body[1][9:11, 14:16] .= -0.1
     out.body[2][9:11, 14:16] .= 0.3
     out.body[3][9:11, 14:16] .= 0.6
@@ -1903,7 +1893,6 @@ end
 
     # Testing when there are two bucket layers, the second bucket layer being lower, and the
     # first bucket layer is blocking the movement (1)
-    warning_message = "Not all soil intersecting with a bucket layer could be moved"
     out.body[1][9:11, 14:16] .= 0.0
     out.body[2][9:11, 14:16] .= 0.3
     out.body[3][9:11, 14:16] .= -0.1
@@ -1927,7 +1916,6 @@ end
 
     # Testing when there are two bucket layers, the second bucket layer being lower, and the
     # first bucket layer is blocking the movement (2)
-    warning_message = "Not all soil intersecting with a bucket layer could be moved"
     out.body[1][9:11, 14:16] .= 0.0
     out.body[2][9:11, 14:16] .= 0.3
     out.body[3][9:11, 14:16] .= -0.1
@@ -1951,7 +1939,6 @@ end
 
     # Testing when there are two bucket layers, the second bucket layer being lower, and the
     # second bucket layer is blocking the movement (1)
-    warning_message = "Not all soil intersecting with a bucket layer could be moved"
     out.body[1][9:11, 14:16] .= 0.4
     out.body[2][9:11, 14:16] .= 0.5
     out.body[3][9:11, 14:16] .= -0.1
@@ -1975,7 +1962,6 @@ end
 
     # Testing when there are two bucket layers, the second bucket layer being lower, and the
     # second bucket layer is blocking the movement (2)
-    warning_message = "Not all soil intersecting with a bucket layer could be moved"
     out.body[1][9:11, 14:16] .= 0.4
     out.body[2][9:11, 14:16] .= 0.5
     out.body[3][9:11, 14:16] .= -0.1
@@ -1997,13 +1983,8 @@ end
     out.body_soil[3][10, 15] = 0.0
     out.body_soil[4][10, 15] = 0.0
 
-
-
-
-
     # Testing when there are two bucket layers, the first bucket layer being lower, and the
     # bucket soil is totally filling the space (1)
-    warning_message = "Not all soil intersecting with a bucket layer could be moved"
     out.body[1][9:11, 14:16] .= -0.1
     out.body[2][9:11, 14:16] .= 0.0
     out.body[3][9:11, 14:16] .= 0.2
@@ -2029,7 +2010,6 @@ end
 
     # Testing when there are two bucket layers, the first bucket layer being lower, and the
     # bucket soil is totally filling the space (2)
-    warning_message = "Not all soil intersecting with a bucket layer could be moved"
     out.body[1][9:11, 14:16] .= -0.1
     out.body[2][9:11, 14:16] .= 0.0
     out.body[3][9:11, 14:16] .= 0.2
@@ -2059,7 +2039,6 @@ end
 
     # Testing when there are two bucket layers, the second bucket layer being lower, and the
     # bucket soil is totally filling the space (1)
-    warning_message = "Not all soil intersecting with a bucket layer could be moved"
     out.body[1][9:11, 14:16] .= 0.2
     out.body[2][9:11, 14:16] .= 0.7
     out.body[3][9:11, 14:16] .= -0.1
@@ -2089,7 +2068,6 @@ end
 
     # Testing when there are two bucket layers, the second bucket layer being lower, and the
     # bucket soil is totally filling the space (2)
-   warning_message = "Not all soil intersecting with a bucket layer could be moved"
     out.body[1][9:11, 14:16] .= 0.2
     out.body[2][9:11, 14:16] .= 0.7
     out.body[3][9:11, 14:16] .= -0.1
@@ -2115,7 +2093,6 @@ end
 
     # Testing when there are two bucket layers, the first bucket layer being lower, and the
     # bucket soil is blocking the movement (1)
-    warning_message = "Not all soil intersecting with a bucket layer could be moved"
     out.body[1][9:11, 14:16] .= -0.1
     out.body[2][9:11, 14:16] .= 0.0
     out.body[3][9:11, 14:16] .= 0.6
@@ -2141,7 +2118,6 @@ end
 
     # Testing when there are two bucket layers, the first bucket layer being lower, and the
     # bucket soil is blocking the movement (2)
-    warning_message = "Not all soil intersecting with a bucket layer could be moved"
     out.body[1][9:11, 14:16] .= -0.1
     out.body[2][9:11, 14:16] .= 0.0
     out.body[3][9:11, 14:16] .= 0.6
@@ -2171,7 +2147,6 @@ end
 
     # Testing when there are two bucket layers, the second bucket layer being lower, and the
     # bucket soil is blocking the movement (1)
-    warning_message = "Not all soil intersecting with a bucket layer could be moved"
     out.body[1][9:11, 14:16] .= 0.6
     out.body[2][9:11, 14:16] .= 0.7
     out.body[3][9:11, 14:16] .= -0.1
@@ -2201,7 +2176,6 @@ end
 
     # Testing when there are two bucket layers, the second bucket layer being lower, and the
     # bucket soil is blocking the movement (2)
-   warning_message = "Not all soil intersecting with a bucket layer could be moved"
     out.body[1][9:11, 14:16] .= 0.6
     out.body[2][9:11, 14:16] .= 0.7
     out.body[3][9:11, 14:16] .= -0.1
