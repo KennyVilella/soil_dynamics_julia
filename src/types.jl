@@ -406,6 +406,7 @@ struct SimOut{B<:Bool,I<:Int64,T<:Float64}
     terrain::Matrix{T}
     body::Vector{SparseMatrixCSC{T,I}}
     body_soil::Vector{SparseMatrixCSC{T,I}}
+    body_soil_pos::Vector{Vector{I}}
     function SimOut(
         terrain::Matrix{T},
         grid::GridParam{I,T}
@@ -436,6 +437,9 @@ struct SimOut{B<:Bool,I<:Int64,T<:Float64}
             push!(body_soil, spzeros(2*grid.half_length_x+1, 2*grid.half_length_y+1))
         end
 
-        new{Bool,I,T}([false], terrain, body, body_soil)
+        # Initalizing body_soil_pos
+        body_soil_pos = Vector{Vector{I}}()
+
+        new{Bool,I,T}([false], terrain, body, body_soil, body_soil_pos)
     end
 end
