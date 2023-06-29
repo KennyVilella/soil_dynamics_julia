@@ -295,9 +295,19 @@ function _move_intersecting_body_soil!(
                 ### Only the second bucket layer ###
                 if (out.body[3][ii_n, jj_n] - tol > out.body[ind][ii, jj])
                     ### Soil avalanche below the second bucket layer to the terrain ###
+                    # Calculating available space
+                    delta_h = out.body[3][ii_n, jj_n] - out.terrain[ii_n, jj_n]
+
+                    if (delta_h < h_soil)
+                        ### Not enough space ###
+                        h_soil -= delta_h
+                        out.terrain[ii_n, jj_n] += delta_h
+                    else
+                        ### More space than soil ###
                         out.terrain[ii_n, jj_n] += h_soil
                         h_soil = 0.0
-                    break
+                        break
+                    end
                 elseif (out.body[4][ii_n, jj_n] + tol > out.body[ind_top][ii, jj])
                     ### Bucket is blocking the movement ###
                     continue
@@ -334,9 +344,19 @@ function _move_intersecting_body_soil!(
                 ### Only the first bucket layer ###
                 if (out.body[1][ii_n, jj_n] - tol > out.body[ind][ii, jj])
                     ### Soil avalanche below the first bucket layer to the terrain ###
+                    # Calculating available space
+                    delta_h = out.body[1][ii_n, jj_n] - out.terrain[ii_n, jj_n]
+
+                    if (delta_h < h_soil)
+                        ### Not enough space ###
+                        h_soil -= delta_h
+                        out.terrain[ii_n, jj_n] += delta_h
+                    else
+                        ### More space than soil ###
                         out.terrain[ii_n, jj_n] += h_soil
                         h_soil = 0.0
-                    break
+                        break
+                    end
                 elseif (out.body[2][ii_n, jj_n] + tol > out.body[ind_top][ii, jj])
                     ### Bucket is blocking the movement ###
                     continue

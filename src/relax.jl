@@ -86,13 +86,13 @@ function _relax_terrain!(
     # Randomizing unstable cells to reduce asymmetry
     shuffle!(unstable_cells)
 
+    # Storing all possible directions for relaxation
+    directions = [[1, 0], [-1, 0], [0, 1], [0, -1]]
+
     # Iterating over all unstable cells
     for cell in unstable_cells
         ii = cell[1]
         jj = cell[2]
-
-        # Storing all possible directions for relaxation
-        directions = [[1, 0], [-1, 0], [0, 1], [0, -1]]
 
         # Randomizing direction to avoid asymmetry
         shuffle!(directions)
@@ -275,13 +275,13 @@ function _locate_unstable_terrain_cell(
     for ii in 2:size(out.terrain, 1) - 1
         for jj in 2:size(out.terrain, 2) - 1
             # Calculating the minimum height allowed surrounding the considered soil cell
-            h_min = out.terrain[ii, jj] - dh_max
+            h_min = out.terrain[ii, jj] - dh_max - tol
 
             if (
-                (out.terrain[ii - 1, jj] + tol < h_min) ||
-                (out.terrain[ii + 1, jj] + tol < h_min) ||
-                (out.terrain[ii, jj - 1] + tol < h_min) ||
-                (out.terrain[ii, jj + 1] + tol < h_min)
+                (out.terrain[ii - 1, jj] < h_min) ||
+                (out.terrain[ii + 1, jj] < h_min) ||
+                (out.terrain[ii, jj - 1] < h_min) ||
+                (out.terrain[ii, jj + 1] < h_min)
             )
                 ### Soil cell is requiring relaxation ###
                 push!(unstable_cells, [ii, jj])
