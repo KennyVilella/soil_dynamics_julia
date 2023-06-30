@@ -208,7 +208,7 @@ function _relax_body_soil!(
             jj_c = jj + xy[2]
 
             # Calculating minimum height allowed surrounding the considered soil cell
-            h_min = out.body_soil[ind][ii, jj] - dh_max
+            h_min = out.body_soil[ind+1][ii, jj] - dh_max
 
             # Checking if the cell requires relaxation
             status = _check_unstable_body_cell(
@@ -990,7 +990,7 @@ function _relax_unstable_body_cell!(
                     if (h_new_c - tol > out.body[1][ii_c, jj_c])
                         ### Not enough space available ###
                         out.body_soil[ind+1][ii, jj] -= (
-                            out.body[1][ii_c, jj_c] - out.body_soil[4][ii_c, jj_c]
+                            out.body[1][ii_c, jj_c] - out.body[4][ii_c, jj_c]
                         )
                         out.body_soil[3][ii_c, jj_c] = out.body[4][ii_c, jj_c]
                         out.body_soil[4][ii_c, jj_c] = out.body[1][ii_c, jj_c]
