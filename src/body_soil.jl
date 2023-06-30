@@ -66,7 +66,7 @@ function _update_body_soil!(
 
     # Resetting body_soil
     _init_sparse_array!(out.body_soil, grid)
-    out.body_soil_pos[:] = Vector{Vector{I}}()
+    empty!(out.body_soil_pos)
 
     # Iterating over all XY positions where body_soil is present
     for cell in old_body_soil_pos
