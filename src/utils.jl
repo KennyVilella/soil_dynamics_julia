@@ -268,8 +268,8 @@ function check_volume(
     total_volume = terrain_volume + body_soil_volume
 
     if (abs(total_volume - init_volume) > 0.5 * grid.cell_volume)
-        @warn "Volume is not conserved!"
-        @warn "Initial volume: " * string(init_volume) *
+        @warn "Volume is not conserved! \n" *
+            "Initial volume: " * string(init_volume) *
             "   Current volume: " * string(total_volume)
     end
 end
@@ -323,17 +323,17 @@ function check_soil(
         ind = cell[1]
 
         if (out.terrain[ii, jj] > out.body[ind][ii, jj] + tol)
-            @warn "Terrain is above the bucket"
-            @warn "Location: (" * string(ii) * ", " * string(jj) * ")"
-            @warn "Terrain height: " * string(out.terrain[ii, jj])
-            @warn "Bucket minimum height: " * string(out.body[ind][ii, jj])
+            @warn "Terrain is above the bucket\n" *
+                "Location: (" * string(ii) * ", " * string(jj) * ")\n" *
+                "Terrain height: " * string(out.terrain[ii, jj]) * "\n" *
+                "Bucket minimum height: " * string(out.body[ind][ii, jj])
         end
 
         if (out.body[ind][ii, jj] > out.body[ind+1][ii, jj] + tol)
-            @warn "Minimum height of the bucket is above its maximum height"
-            @warn "Location: (" * string(ii) * ", " * string(jj) * ")"
-            @warn "Bucket minimum height: " * string(out.body[ind][ii, jj])
-            @warn "Bucket maximum height: " * string(out.body[ind+1][ii, jj])
+            @warn "Minimum height of the bucket is above its maximum height\n" *
+                "Location: (" * string(ii) * ", " * string(jj) * ")\n" *
+                "Bucket minimum height: " * string(out.body[ind][ii, jj]) * "\n" *
+                "Bucket maximum height: " * string(out.body[ind+1][ii, jj])
         end
 
         if (
@@ -342,12 +342,12 @@ function check_soil(
             (out.body[2][ii, jj] + tol > out.body[3][ii, jj]) &&
             (out.body[4][ii, jj] + tol > out.body[1][ii, jj])
         )
-            @warn "The two bucket layers are intersecting"
-            @warn "Location: (" * string(ii) * ", " * string(jj) * ")"
-            @warn "Bucket 1 minimum height: " * string(out.body[1][ii, jj])
-            @warn "Bucket 1 maximum height: " * string(out.body[2][ii, jj])
-            @warn "Bucket 2 minimum height: " * string(out.body[3][ii, jj])
-            @warn "Bucket 2 maximum height: " * string(out.body[4][ii, jj])
+            @warn "The two bucket layers are intersecting\n" *
+                "Location: (" * string(ii) * ", " * string(jj) * ")\n" *
+                "Bucket 1 minimum height: " * string(out.body[1][ii, jj]) * "\n" *
+                "Bucket 1 maximum height: " * string(out.body[2][ii, jj]) * "\n" *
+                "Bucket 2 minimum height: " * string(out.body[3][ii, jj]) * "\n" *
+                "Bucket 2 maximum height: " * string(out.body[4][ii, jj])
         end
 
         if (
@@ -356,12 +356,12 @@ function check_soil(
             (out.body[2][ii, jj] - tol > out.body_soil[3][ii, jj]) &&
             (out.body_soil[4][ii, jj] - tol > out.body[1][ii, jj])
         )
-            @warn "A bucket layer and a bucket soil layer are intersecting"
-            @warn "Location: (" * string(ii) * ", " * string(jj) * ")"
-            @warn "Bucket 1 minimum height: " * string(out.body[1][ii, jj])
-            @warn "Bucket 1 maximum height: " * string(out.body[2][ii, jj])
-            @warn "Bucket soil 2 minimum height: " * string(out.body_soil[3][ii, jj])
-            @warn "Bucket soil 2 maximum height: " * string(out.body_soil[4][ii, jj])
+            @warn "A bucket layer and a bucket soil layer are intersecting\n" *
+                "Location: (" * string(ii) * ", " * string(jj) * ")\n" *
+                "Bucket 1 minimum height: " * string(out.body[1][ii, jj]) * "\n" *
+                "Bucket 1 maximum height: " * string(out.body[2][ii, jj]) * "\n" *
+                "Bucket soil 2 minimum height: " * string(out.body_soil[3][ii, jj]) * "\n" *
+                "Bucket soil 2 maximum height: " * string(out.body_soil[4][ii, jj])
         end
 
         if (
@@ -370,12 +370,12 @@ function check_soil(
             (out.body_soil[2][ii, jj] - tol > out.body[3][ii, jj]) &&
             (out.body[4][ii, jj] - tol > out.body_soil[1][ii, jj])
         )
-            @warn "A bucket layer and a bucket soil layer are intersecting"
-            @warn "Location: (" * string(ii) * ", " * string(jj) * ")"
-            @warn "Bucket soil 1 minimum height: " * string(out.body_soil[1][ii, jj])
-            @warn "Bucket soil 1 maximum height: " * string(out.body_soil[2][ii, jj])
-            @warn "Bucket 2 minimum height: " * string(out.body[3][ii, jj])
-            @warn "Bucket 2 maximum height: " * string(out.body[4][ii, jj])
+            @warn "A bucket layer and a bucket soil layer are intersecting\n" *
+                "Location: (" * string(ii) * ", " * string(jj) * ")\n" *
+                "Bucket soil 1 minimum height: " * string(out.body_soil[1][ii, jj]) * "\n" *
+                "Bucket soil 1 maximum height: " * string(out.body_soil[2][ii, jj]) * "\n" *
+                "Bucket 2 minimum height: " * string(out.body[3][ii, jj]) * "\n" *
+                "Bucket 2 maximum height: " * string(out.body[4][ii, jj])
         end
 
         if ((out.body_soil[ind][ii, jj] == 0.0) && (out.body_soil[ind+1][ii, jj] == 0.0))
@@ -385,25 +385,25 @@ function check_soil(
         end
 
         if (out.body_soil[ind][ii, jj] > out.body_soil[ind+1][ii, jj] + tol)
-            @warn "Minimum height of the bucket soil is above its maximum height"
-            @warn "Location: (" * string(ii) * ", " * string(jj) * ")"
-            @warn "Bucket soil minimum height: " * string(out.body_soil[ind][ii, jj])
-            @warn "Bucket soil maximum height: " * string(out.body_soil[ind+1][ii, jj])
+            @warn "Minimum height of the bucket soil is above its maximum height\n" *
+                "Location: (" * string(ii) * ", " * string(jj) * ")\n" *
+                "Bucket soil minimum height: " * string(out.body_soil[ind][ii, jj]) * "\n" *
+                "Bucket soil maximum height: " * string(out.body_soil[ind+1][ii, jj])
         end
 
         if (out.body[ind+1][ii, jj] > out.body_soil[ind][ii, jj] + tol)
-            @warn "Bucket is above the bucket soil"
-            @warn "Location: (" * string(ii) * ", " * string(jj) * ")"
-            @warn "Bucket maximum height: " * string(out.body[ind+1][ii, jj])
-            @warn "Bucket soil minimum height: " * string(out.body_soil[ind][ii, jj])
+            @warn "Bucket is above the bucket soil\n" *
+                "Location: (" * string(ii) * ", " * string(jj) * ")\n" *
+                "Bucket maximum height: " * string(out.body[ind+1][ii, jj]) * "\n" *
+                "Bucket soil minimum height: " * string(out.body_soil[ind][ii, jj])
         end
 
         if (out.body_soil[ind][ii, jj] != out.body[ind+1][ii, jj])
-            @warn "Bucket soil is not above the bucket"
-            @warn "Location: (" * string(ii) * ", " * string(jj) * ")"
-            @warn "Terrain height: " * string(out.terrain[ii, jj])
-            @warn "Bucket maximum height: " * string(out.body[ind+1][ii, jj])
-            @warn "Bucket soil minimum height: " * string(out.body_soil[ind][ii, jj])
+            @warn "Bucket soil is not above the bucket\n" *
+                "Location: (" * string(ii) * ", " * string(jj) * ")\n" *
+                "Terrain height: " * string(out.terrain[ii, jj]) * "\n" *
+                "Bucket maximum height: " * string(out.body[ind+1][ii, jj]) * "\n" *
+                "Bucket soil minimum height: " * string(out.body_soil[ind][ii, jj])
         end
     end
 
@@ -418,10 +418,10 @@ function check_soil(
 
         if ((out.body[ind][ii, jj] == 0.0) && (out.body[ind+1][ii, jj] == 0.0))
             ### Bucket is not present ###
-            @warn "Bucket soil is present but there is no bucket"
-            @warn "Location: (" * string(ii) * ", " * string(jj) * ")"
-            @warn "Bucket soil minimum height: " * string(out.body_soil[ind][ii, jj])
-            @warn "Bucket soil maximum height: " * string(out.body_soil[ind+1][ii, jj])
+            @warn "Bucket soil is present but there is no bucket\n" *
+                "Location: (" * string(ii) * ", " * string(jj) * ")\n" *
+                "Bucket soil minimum height: " * string(out.body_soil[ind][ii, jj]) * "\n" *
+                "Bucket soil maximum height: " * string(out.body_soil[ind+1][ii, jj])
         end
     end
 end
