@@ -184,14 +184,11 @@ function _relax_body_soil!(
     dh_max = grid.cell_size_xy * slope_max
     dh_max = grid.cell_size_z * round(dh_max / grid.cell_size_z)
 
-    # Locating all non-zero values in body_soil
-    body_soil_pos = _locate_all_non_zeros(out.body_soil)
-
-    # Randomizing body_soil cells to reduce asymmetry
-    shuffle!(body_soil_pos)
+    # Randomizing body_soil_pos to reduce asymmetry
+    shuffle!(out.body_soil_pos)
 
     # Iterating over all body_soil cells
-    for cell in body_soil_pos
+    for cell in out.body_soil_pos
         ii = cell[2]
         jj = cell[3]
         ind = cell[1]
