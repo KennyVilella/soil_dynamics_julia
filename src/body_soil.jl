@@ -62,15 +62,14 @@ function _update_body_soil!(
 
     # Copying previous body_soil locations
     old_body_soil = deepcopy(out.body_soil)
-
-    # Locating body_soil
-    body_soil_pos = _locate_all_non_zeros(out.body_soil)
+    old_body_soil_pos = deepcopy(out.body_soil_pos)
 
     # Resetting body_soil
     _init_sparse_array!(out.body_soil, grid)
+    out.body_soil_pos[:] = Vector{Vector{I}}()
 
     # Iterating over all XY positions where body_soil is present
-    for cell in body_soil_pos
+    for cell in old_body_soil_pos
         ind = cell[1]
         ii = cell[2]
         jj = cell[3]
@@ -102,6 +101,9 @@ function _update_body_soil!(
                 (old_body_soil[ind+1][ii, jj] - old_body_soil[ind][ii, jj])
             )
             out.body_soil[1][ii_n, jj_n] = out.body[2][ii_n, jj_n]
+
+            # Adding position to body_soil_pos
+            push!(out.body_soil_pos, [1, ii_n, jj_n])
         elseif (
             (!iszero(out.body[3][ii_n, jj_n]) || !iszero(out.body[4][ii_n, jj_n])) &&
             (abs(new_cell_pos[3] - out.body[4][ii_n, jj_n]) - tol < grid.cell_size_xy)
@@ -113,6 +115,9 @@ function _update_body_soil!(
                 (old_body_soil[ind+1][ii, jj] - old_body_soil[ind][ii, jj])
             )
             out.body_soil[3][ii_n, jj_n] = out.body[4][ii_n, jj_n]
+
+            # Adding position to body_soil_pos
+            push!(out.body_soil_pos, [1, ii_n, jj_n])
         else
             ### Bucket is not present ###
             # Moving body_soil to terrain
