@@ -150,6 +150,7 @@ end
     _update_body_soil!(out, pos, ori, grid, bucket)
     # Checking body_soil
     @test (out.body_soil[1][12, 11] ≈ 0.1) && (out.body_soil[2][12, 11] ≈ 0.2)
+    @test (out.body_soil_pos == [[1; 12; 11]])
     out.body_soil[1][12, 11] = 0.0
     out.body_soil[2][12, 11] = 0.0
     dropzeros!(out.body_soil[1])
@@ -176,6 +177,7 @@ end
     _update_body_soil!(out, pos, ori, grid, bucket)
     # Checking body_soil
     @test (out.body_soil[1][12, 11] ≈ 0.1) && (out.body_soil[2][12, 11] ≈ 0.2)
+    @test (out.body_soil_pos == [[1; 12; 11]])
     out.body_soil[1][12, 11] = 0.0
     out.body_soil[2][12, 11] = 0.0
     dropzeros!(out.body_soil[1])
@@ -202,6 +204,7 @@ end
     _update_body_soil!(out, pos, ori, grid, bucket)
     # Checking body_soil
     @test (out.body_soil[3][12, 11] ≈ 0.1) && (out.body_soil[4][12, 11] ≈ 0.2)
+    @test (out.body_soil_pos == [[3; 12; 11]])
     out.body_soil[3][12, 11] = 0.0
     out.body_soil[4][12, 11] = 0.0
     dropzeros!(out.body_soil[3])
@@ -228,6 +231,7 @@ end
     _update_body_soil!(out, pos, ori, grid, bucket)
     # Checking body_soil
     @test (out.body_soil[3][12, 11] ≈ 0.1) && (out.body_soil[4][12, 11] ≈ 0.2)
+    @test (out.body_soil_pos == [[3; 12; 11]])
     out.body_soil[3][12, 11] = 0.0
     out.body_soil[4][12, 11] = 0.0
     dropzeros!(out.body_soil[3])
@@ -254,6 +258,7 @@ end
     _update_body_soil!(out, pos, ori, grid, bucket)
     # Checking body_soil
     @test (out.body_soil[1][11, 12] ≈ 0.1) && (out.body_soil[2][11, 12] ≈ 0.2)
+    @test (out.body_soil_pos == [[1; 11; 12]])
     out.body_soil[1][11, 12] = 0.0
     out.body_soil[2][11, 12] = 0.0
     dropzeros!(out.body_soil[1])
@@ -280,6 +285,7 @@ end
     _update_body_soil!(out, pos, ori, grid, bucket)
     # Checking body_soil
     @test (out.body_soil[1][12, 12] ≈ 0.1) && (out.body_soil[2][12, 12] ≈ 0.2)
+    @test (out.body_soil_pos == [[1; 12; 12]])
     out.body_soil[1][12, 12] = 0.0
     out.body_soil[2][12, 12] = 0.0
     dropzeros!(out.body_soil[1])
@@ -306,6 +312,7 @@ end
     _update_body_soil!(out, pos, ori, grid, bucket)
     # Checking body_soil
     @test (out.body_soil[1][13, 12] ≈ 0.1) && (out.body_soil[2][13, 12] ≈ 0.2)
+    @test (out.body_soil_pos == [[1; 13; 12]])
     out.body_soil[1][13, 12] = 0.0
     out.body_soil[2][13, 12] = 0.0
     dropzeros!(out.body_soil[1])
@@ -358,6 +365,7 @@ end
     _update_body_soil!(out, pos, ori, grid, bucket)
     # Checking body_soil
     @test (out.body_soil[1][10, 11] ≈ 0.1) && (out.body_soil[2][10, 11] ≈ 0.4)
+    @test (out.body_soil_pos == [[1; 10; 11]])
     out.body_soil[1][10, 11] = 0.0
     out.body_soil[2][10, 11] = 0.0
     dropzeros!(out.body_soil[1])
@@ -387,6 +395,7 @@ end
     _update_body_soil!(out, pos, ori, grid, bucket)
     # Checking body_soil
     @test (out.body_soil[1][10, 11] ≈ 0.1) && (out.body_soil[2][10, 11] ≈ 0.4)
+    @test (out.body_soil_pos == [[1; 10; 11]])
     out.body_soil[1][10, 11] = 0.0
     out.body_soil[2][10, 11] = 0.0
     dropzeros!(out.body_soil[1])
@@ -416,6 +425,7 @@ end
     _update_body_soil!(out, pos, ori, grid, bucket)
     # Checking body_soil
     @test (out.body_soil[3][10, 11] ≈ 0.1) && (out.body_soil[4][10, 11] ≈ 0.4)
+    @test (out.body_soil_pos == [[3; 10; 11]])
     out.body_soil[3][10, 11] = 0.0
     out.body_soil[4][10, 11] = 0.0
     dropzeros!(out.body_soil[1])
