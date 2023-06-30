@@ -117,7 +117,7 @@ function _update_body_soil!(
             out.body_soil[3][ii_n, jj_n] = out.body[4][ii_n, jj_n]
 
             # Adding position to body_soil_pos
-            push!(out.body_soil_pos, [1, ii_n, jj_n])
+            push!(out.body_soil_pos, [3, ii_n, jj_n])
         else
             ### Bucket is not present ###
             # Moving body_soil to terrain
@@ -128,6 +128,9 @@ function _update_body_soil!(
             )
         end
     end
+
+    # Removing duplicates in body_soil_pos
+    unique!(out.body_soil_pos)
 
     # Updating new bucket position
     bucket.pos[:] .= pos[:]
