@@ -487,8 +487,8 @@ function _move_intersecting_body_soil!(
         end
 
         if (h_soil > tol)
-            @warn "Not all soil intersecting with a bucket layer could be moved"
-            @warn "The extra soil has been arbitrarily removed"
+            @warn "Not all soil intersecting with a bucket layer could be moved\n" *
+                "The extra soil has been arbitrarily removed"
         end
 
         # Updating bucket soil

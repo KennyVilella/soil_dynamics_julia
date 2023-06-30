@@ -342,10 +342,13 @@ end
     @test_logs check_soil(out)
 
     # Testing that warning is sent when terrain is above the bucket
-    warning_message = "Terrain is above the bucket"
     out.terrain[1, 1] = 0.5
+    warning_message = "Terrain is above the bucket\nLocation: (1, 1)\n" *
+        "Terrain height: 0.5\nBucket minimum height: -0.2"
     @test_logs (:warn, warning_message) match_mode=:any check_soil(out)
     out.terrain[1, 1] = -0.19
+    warning_message = "Terrain is above the bucket\nLocation: (1, 1)\n" *
+        "Terrain height: -0.19\nBucket minimum height: -0.2"
     @test_logs (:warn, warning_message) match_mode=:any check_soil(out)
     # Resetting value
     out.terrain[1, 1] = -0.2
@@ -354,20 +357,34 @@ end
     @test_logs check_soil(out)
 
     # Testing that warning is sent when body is not set properly
-    warning_message = "Minimum height of the bucket is above its maximum height"
     out.body[1][1, 1] = 0.0
     out.body[2][1, 1] = -0.1
+    warning_message = "Minimum height of the bucket is above its maximum height\n" *
+        "Location: (1, 1)\nBucket minimum height: 0.0\n" *
+        "Bucket maximum height: -0.1"
     @test_logs (:warn, warning_message) match_mode=:any check_soil(out)
     out.body_soil[1][1, 1] = 0.0
     out.body_soil[2][1, 1] = 0.0
+    warning_message = "Minimum height of the bucket is above its maximum height\n" *
+        "Location: (1, 1)\nBucket minimum height: 0.0\n" *
+        "Bucket maximum height: -0.1"
     @test_logs (:warn, warning_message) match_mode=:any check_soil(out)
     out.body[1][1, 1] = 0.41
     out.body[2][1, 1] = 0.4
+    warning_message = "Minimum height of the bucket is above its maximum height\n" *
+        "Location: (1, 1)\nBucket minimum height: 0.41\n" *
+        "Bucket maximum height: 0.4"
     @test_logs (:warn, warning_message) match_mode=:any check_soil(out)
     out.body[2][1, 1] = 0.0
+    warning_message = "Minimum height of the bucket is above its maximum height\n" *
+        "Location: (1, 1)\nBucket minimum height: 0.41\n" *
+        "Bucket maximum height: 0.0"
     @test_logs (:warn, warning_message) match_mode=:any check_soil(out)
     out.body[1][1, 1] = 0.0
     out.body[2][1, 1] = -0.4
+    warning_message = "Minimum height of the bucket is above its maximum height\n" *
+        "Location: (1, 1)\nBucket minimum height: 0.0\n" *
+        "Bucket maximum height: -0.4"
     @test_logs (:warn, warning_message) match_mode=:any check_soil(out)
     # Resetting value
     out.body[1][1, 1] = -0.2
@@ -379,12 +396,17 @@ end
     @test_logs check_soil(out)
 
     # Testing that warning is sent when bucket soil is not set properly
-    warning_message = "Minimum height of the bucket soil is above its maximum height"
     out.body_soil[1][1, 1] = 0.0
     out.body_soil[2][1, 1] = -0.1
+    warning_message = "Minimum height of the bucket soil is above its maximum height\n" *
+        "Location: (1, 1)\nBucket soil minimum height: 0.0\n" *
+        "Bucket soil maximum height: -0.1"
     @test_logs (:warn, warning_message) match_mode=:any check_soil(out)
     out.body_soil[1][1, 1] = 0.2
     out.body_soil[2][1, 1] = 0.0
+    warning_message = "Minimum height of the bucket soil is above its maximum height\n" *
+        "Location: (1, 1)\nBucket soil minimum height: 0.2\n" *
+        "Bucket soil maximum height: 0.0"
     @test_logs (:warn, warning_message) match_mode=:any check_soil(out)
     # Resetting value
     out.body[1][1, 1] = -0.2
@@ -396,12 +418,17 @@ end
     @test_logs check_soil(out)
 
     # Testing that warning is sent when the bucket is above the bucket soil
-    warning_message = "Bucket is above the bucket soil"
     out.body[2][1, 1] = 0.05
+    warning_message = "Bucket is above the bucket soil\nLocation: (1, 1)\n" *
+        "Bucket maximum height: 0.05\nBucket soil minimum height: 0.0"
     @test_logs (:warn, warning_message) match_mode=:any check_soil(out)
     out.body[4][1, 2] = 0.25
+    warning_message = "Bucket is above the bucket soil\nLocation: (1, 2)\n" *
+        "Bucket maximum height: 0.25\nBucket soil minimum height: 0.2"
     @test_logs (:warn, warning_message) match_mode=:any check_soil(out)
     out.body[4][1, 2] = 0.45
+    warning_message = "Bucket is above the bucket soil\nLocation: (1, 2)\n" *
+        "Bucket maximum height: 0.45\nBucket soil minimum height: 0.2"
     @test_logs (:warn, warning_message) match_mode=:any check_soil(out)
     # Resetting value
     out.body[2][1, 1] = 0.0
@@ -411,10 +438,13 @@ end
     @test_logs check_soil(out)
 
     # Testing that warning is sent when there is a gap between bucket and bucket soil
-    warning_message = "Bucket soil is not above the bucket"
     out.body_soil[1][1, 1] = 0.1
+    warning_message = "Bucket soil is not above the bucket\nLocation: (1, 1)\n" *
+        "Terrain height: -0.2\nBucket maximum height: 0.0\nBucket soil minimum height: 0.1"
     @test_logs (:warn, warning_message) match_mode=:any check_soil(out)
     out.body_soil[1][1, 1] = 0.05
+    warning_message = "Bucket soil is not above the bucket\nLocation: (1, 1)\n" *
+        "Terrain height: -0.2\nBucket maximum height: 0.0\nBucket soil minimum height: 0.05"
     @test_logs (:warn, warning_message) match_mode=:any check_soil(out)
     # Resetting value
     out.body_soil[1][1, 1] = 0.0
@@ -423,14 +453,17 @@ end
     @test_logs check_soil(out)
 
     # Testing that warning is sent when there is bucket soil but no bucket
-    warning_message = "Bucket soil is present but there is no bucket"
     out.body[3][1, 2] = 0.0
     out.body[4][1, 2] = 0.0
+    warning_message = "Bucket soil is present but there is no bucket\nLocation: (1, 2)\n" *
+        "Bucket soil minimum height: 0.2\nBucket soil maximum height: 0.3"
     @test_logs (:warn, warning_message) match_mode=:any check_soil(out)
     out.body[3][1, 2] = 0.1
     out.body[4][1, 2] = 0.2
     out.body[1][1, 1] = 0.0
     out.body[2][1, 1] = 0.0
+    warning_message = "Bucket soil is present but there is no bucket\nLocation: (1, 1)\n" *
+        "Bucket soil minimum height: 0.0\nBucket soil maximum height: 0.1"
     @test_logs (:warn, warning_message) match_mode=:any check_soil(out)
     # Resetting value
     out.body[1][1, 1] = -0.2
@@ -440,21 +473,32 @@ end
     @test_logs check_soil(out)
 
     # Testing that warning is sent when two bucket layers are intersecting
-    warning_message = "The two bucket layers are intersecting"
     out.terrain[3, 2] = -0.2
     out.body[1][3, 2] = -0.15
     out.body[2][3, 2] = 0.1
     out.body[3][3, 2] = 0.0
     out.body[4][3, 2] = 0.2
+    warning_message = "The two bucket layers are intersecting\nLocation: (3, 2)\n" *
+        "Bucket 1 minimum height: -0.15\nBucket 1 maximum height: 0.1\n" *
+        "Bucket 2 minimum height: 0.0\nBucket 2 maximum height: 0.2"
     @test_logs (:warn, warning_message) match_mode=:any check_soil(out)
     out.body[2][3, 2] = 0.0
+    warning_message = "The two bucket layers are intersecting\nLocation: (3, 2)\n" *
+        "Bucket 1 minimum height: -0.15\nBucket 1 maximum height: 0.0\n" *
+        "Bucket 2 minimum height: 0.0\nBucket 2 maximum height: 0.2"
     @test_logs (:warn, warning_message) match_mode=:any check_soil(out)
     out.body[1][3, 2] = 0.0
     out.body[2][3, 2] = 0.2
     out.body[3][3, 2] = -0.2
     out.body[4][3, 2] = 0.1
+    warning_message = "The two bucket layers are intersecting\nLocation: (3, 2)\n" *
+        "Bucket 1 minimum height: 0.0\nBucket 1 maximum height: 0.2\n" *
+        "Bucket 2 minimum height: -0.2\nBucket 2 maximum height: 0.1"
     @test_logs (:warn, warning_message) match_mode=:any check_soil(out)
     out.body[4][3, 2] = 0.0
+    warning_message = "The two bucket layers are intersecting\nLocation: (3, 2)\n" *
+        "Bucket 1 minimum height: 0.0\nBucket 1 maximum height: 0.2\n" *
+        "Bucket 2 minimum height: -0.2\nBucket 2 maximum height: 0.0"
     @test_logs (:warn, warning_message) match_mode=:any check_soil(out)
     # Resetting value
     out.body[1][3, 2] = 0.0
@@ -471,13 +515,16 @@ end
 
     # Testing that warning is sent when a bucket layer and a bucket soil layer are
     # intersecting
-    warning_message = "A bucket layer and a bucket soil layer are intersecting"
     out.body[1][3, 2] = -0.15
     out.body[2][3, 2] = 0.0
     out.body[3][3, 2] = 0.1
     out.body[4][3, 2] = 0.2
     out.body_soil[1][3, 2] = 0.0
     out.body_soil[2][3, 2] = 0.15
+    warning_message = "A bucket layer and a bucket soil layer are intersecting\n" *
+        "Location: (3, 2)\nBucket soil 1 minimum height: 0.0\n" *
+        "Bucket soil 1 maximum height: 0.15\nBucket 2 minimum height: 0.1\n" *
+        "Bucket 2 maximum height: 0.2"
     @test_logs (:warn, warning_message) match_mode=:any check_soil(out)
     out.body_soil[1][3, 2] = 0.0
     out.body_soil[2][3, 2] = 0.0
@@ -487,6 +534,9 @@ end
     out.body[2][3, 2] = 0.2
     out.body_soil[3][3, 2] = 0.0
     out.body_soil[4][3, 2] = 0.15
+    warning_message = "A bucket layer and a bucket soil layer are intersecting\n" *
+        "Location: (3, 2)\nBucket 1 minimum height: 0.1\nBucket 1 maximum height: 0.2\n" *
+        "Bucket soil 2 minimum height: 0.0\nBucket soil 2 maximum height: 0.15"
     @test_logs (:warn, warning_message) match_mode=:any check_soil(out)
     # Checking that no warning is sent when at same height
     out.body_soil[4][3, 2] = 0.1
