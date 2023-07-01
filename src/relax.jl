@@ -860,6 +860,9 @@ function _relax_unstable_body_cell!(
             h_new = grid.cell_size_z * floor((h_new + tol) / grid.cell_size_z)
             h_new_c = out.body_soil[ind+1][ii, jj] + out.body[2][ii_c, jj_c] - h_new
 
+            # Adding new bucket soil position to body_soil_pos
+            push!(out.body_soil_pos, [1; ii_c; jj_c])
+
             if (h_new - tol > out.body_soil[ind][ii, jj])
                 ### Soil on the bucket should partially avalanche ###
                 out.body_soil[1][ii_c, jj_c] = out.body[2][ii_c, jj_c]
@@ -903,6 +906,9 @@ function _relax_unstable_body_cell!(
             h_new = 0.5 * (dh_max + out.body_soil[ind+1][ii, jj] + out.body[4][ii_c, jj_c])
             h_new = grid.cell_size_z * floor((h_new + tol) / grid.cell_size_z)
             h_new_c = out.body_soil[ind+1][ii, jj] + out.body[4][ii_c, jj_c] - h_new
+
+            # Adding new bucket soil position to body_soil_pos
+            push!(out.body_soil_pos, [3; ii_c; jj_c])
 
             if (h_new_c - tol > out.body_soil[ind][ii, jj])
                 ### Soil on the bucket should partially avalanche ###
@@ -979,6 +985,9 @@ function _relax_unstable_body_cell!(
             )
             h_new = grid.cell_size_z * floor((h_new + tol) / grid.cell_size_z)
             h_new_c = out.body_soil[ind+1][ii, jj] + out.body[4][ii_c, jj_c] - h_new
+
+            # Adding new bucket soil position to body_soil_pos
+            push!(out.body_soil_pos, [3; ii_c; jj_c])
 
             if (out.body[1][ii_c, jj_c] > out.body[3][ii_c, jj_c])
                 ### Soil should avalanche on the bottom layer ###
@@ -1085,6 +1094,9 @@ function _relax_unstable_body_cell!(
             )
             h_new = grid.cell_size_z * floor((h_new + tol) / grid.cell_size_z)
             h_new_c = out.body_soil[ind+1][ii, jj] + out.body[2][ii_c, jj_c] - h_new
+
+            # Adding new bucket soil position to body_soil_pos
+            push!(out.body_soil_pos, [1; ii_c; jj_c])
 
             if (out.body[1][ii_c, jj_c] > out.body[3][ii_c, jj_c])
                 ### Soil should avalanche on the top layer ###
