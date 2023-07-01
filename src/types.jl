@@ -363,6 +363,10 @@ Store all outputs of the simulation.
   structure of `body_soil` is identical to `body`. An additionnal restriction is that the
   minimum height of the soil resting on the bucket must correspond to the maximum height of
   a bucket wall.
+- The locations where there is soil resting on the bucket are stored in `body_soil_pos` as 
+  3-elements vectors. The first element corresponds to the index of the sparse Matrix where
+  the minimum height of the soil is stored, while the second and third element correspond to
+  the index of the X and Y position, respectively.
 
 # Note
 - Currently, only one bucket at a time is supported, but this restriction may be
@@ -380,6 +384,8 @@ Store all outputs of the simulation.
 - `body_soil::Vector{SparseMatrixCSC{Float64,Int64}}`: Store the vertical extension of all
                                                        soil resting on a bucket wall for
                                                        each XY position. [m]
+- `body_soil_pos::Vector{Vector{Int64}}`: Store the indices of locations where there is
+                                          soil resting on the bucket.
 
 # Inner constructor
 
