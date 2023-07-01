@@ -2920,6 +2920,7 @@ end
     @test (out.body_soil[1][10, 14] == 0.0) && (out.body_soil[2][10, 14] ≈ 0.1)
     @test (out.body_soil[1][10, 15] == 0.0) && (out.body_soil[2][10, 15] == 0.0)
     @test (out.body_soil[3][10, 15] == 0.0) && (out.body_soil[4][10, 15] == 0.0)
+    @test (out.body_soil_pos == [])
     # Resetting values
     out.terrain[10, 14] = 0.0
     out.terrain[10, 15] = 0.0
@@ -2941,6 +2942,7 @@ end
     @test (out.body_soil[1][10, 14] == 0.0) && (out.body_soil[2][10, 14] == 0.0)
     @test (out.body_soil[1][10, 15] == 0.0) && (out.body_soil[2][10, 15] == 0.0)
     @test (out.body_soil[3][10, 15] == 0.0) && (out.body_soil[4][10, 15] == 0.0)
+    @test (out.body_soil_pos == [])
     # Resetting values
     out.terrain[10, 14] = 0.0
     out.terrain[10, 15] = 0.0
@@ -2965,6 +2967,7 @@ end
     @test (out.body_soil[1][10, 14] == 0.0) && (out.body_soil[2][10, 14] ≈ 0.1)
     @test (out.body_soil[1][10, 15] ≈ 0.0) && (out.body_soil[2][10, 15] ≈ 0.1)
     @test (out.body_soil[3][10, 15] == 0.0) && (out.body_soil[4][10, 15] == 0.0)
+    @test (out.body_soil_pos == [[1; 10; 15]])
     # Resetting values
     out.terrain[10, 14] = 0.0
     out.terrain[10, 15] = 0.0
@@ -2993,6 +2996,7 @@ end
     @test (out.body_soil[1][10, 14] == 0.0) && (out.body_soil[2][10, 14] == 0.0)
     @test (out.body_soil[1][10, 15] ≈ -0.2) && (out.body_soil[2][10, 15] ≈ 0.0)
     @test (out.body_soil[3][10, 15] == 0.0) && (out.body_soil[4][10, 15] == 0.0)
+    @test (out.body_soil_pos == [[1; 10; 15]])
     # Resetting values
     out.terrain[10, 14] = 0.0
     out.terrain[10, 15] = 0.0
@@ -3023,6 +3027,7 @@ end
     @test (out.body_soil[1][10, 14] == 0.0) && (out.body_soil[2][10, 14] ≈ 0.1)
     @test (out.body_soil[1][10, 15] == -0.2) && (out.body_soil[2][10, 15] ≈ 0.1)
     @test (out.body_soil[3][10, 15] == 0.0) && (out.body_soil[4][10, 15] == 0.0)
+    @test (out.body_soil_pos == [])
     # Resetting values
     out.terrain[10, 14] = 0.0
     out.terrain[10, 15] = 0.0
@@ -3053,6 +3058,7 @@ end
     @test (out.body_soil[1][10, 14] == 0.0) && (out.body_soil[2][10, 14] == 0.0)
     @test (out.body_soil[1][10, 15] == -0.2) && (out.body_soil[2][10, 15] ≈ 0.0)
     @test (out.body_soil[3][10, 15] == 0.0) && (out.body_soil[4][10, 15] == 0.0)
+    @test (out.body_soil_pos == [])
     # Resetting values
     out.terrain[10, 14] = 0.0
     out.terrain[10, 15] = 0.0
@@ -3081,6 +3087,7 @@ end
     @test (out.body_soil[1][10, 14] == 0.0) && (out.body_soil[2][10, 14] ≈ 0.1)
     @test (out.body_soil[1][10, 15] == 0.0) && (out.body_soil[2][10, 15] == 0.0)
     @test (out.body_soil[3][10, 15] ≈ 0.0) && (out.body_soil[4][10, 15] ≈ 0.1)
+    @test (out.body_soil_pos == [[3; 10; 15]])
     # Resetting values
     out.terrain[10, 14] = 0.0
     out.terrain[10, 15] = 0.0
@@ -3109,6 +3116,7 @@ end
     @test (out.body_soil[1][10, 14] == 0.0) && (out.body_soil[2][10, 14] == 0.0)
     @test (out.body_soil[1][10, 15] == 0.0) && (out.body_soil[2][10, 15] == 0.0)
     @test (out.body_soil[3][10, 15] ≈ -0.1) && (out.body_soil[4][10, 15] ≈ 0.0)
+    @test (out.body_soil_pos == [[3; 10; 15]])
     # Resetting values
     out.terrain[10, 14] = 0.0
     out.terrain[10, 15] = 0.0
@@ -3139,6 +3147,7 @@ end
     @test (out.body_soil[1][10, 14] == 0.0) && (out.body_soil[2][10, 14] ≈ 0.1)
     @test (out.body_soil[1][10, 15] == 0.0) && (out.body_soil[2][10, 15] == 0.0)
     @test (out.body_soil[3][10, 15] == -0.1) && (out.body_soil[4][10, 15] ≈ 0.1)
+    @test (out.body_soil_pos == [])
     # Resetting values
     out.terrain[10, 14] = 0.0
     out.terrain[10, 15] = 0.0
@@ -3169,6 +3178,7 @@ end
     @test (out.body_soil[1][10, 14] == 0.0) && (out.body_soil[2][10, 14] == 0.0)
     @test (out.body_soil[1][10, 15] == 0.0) && (out.body_soil[2][10, 15] == 0.0)
     @test (out.body_soil[3][10, 15] == -0.1) && (out.body_soil[4][10, 15] ≈ 0.1)
+    @test (out.body_soil_pos == [])
     # Resetting values
     out.terrain[10, 14] = 0.0
     out.terrain[10, 15] = 0.0
@@ -3199,6 +3209,7 @@ end
     @test (out.body_soil[1][10, 14] == 0.0) && (out.body_soil[2][10, 14] ≈ 0.1)
     @test (out.body_soil[1][10, 15] ≈ -0.1) && (out.body_soil[2][10, 15] ≈ 0.1)
     @test (out.body_soil[3][10, 15] == 0.0) && (out.body_soil[4][10, 15] == 0.0)
+    @test (out.body_soil_pos == [[1; 10; 15]])
     # Resetting values
     out.terrain[10, 14] = 0.0
     out.terrain[10, 15] = 0.0
@@ -3231,6 +3242,7 @@ end
     @test (out.body_soil[1][10, 14] == 0.0) && (out.body_soil[2][10, 14] == 0.0)
     @test (out.body_soil[1][10, 15] ≈ -0.1) && (out.body_soil[2][10, 15] ≈ 0.0)
     @test (out.body_soil[3][10, 15] == 0.0) && (out.body_soil[4][10, 15] == 0.0)
+    @test (out.body_soil_pos == [[1; 10; 15]])
     # Resetting values
     out.terrain[10, 14] = 0.0
     out.terrain[10, 15] = 0.0
@@ -3263,6 +3275,7 @@ end
     @test (out.body_soil[1][10, 14] == 0.0) && (out.body_soil[2][10, 14] ≈ 0.3)
     @test (out.body_soil[1][10, 15] ≈ -0.1) && (out.body_soil[2][10, 15] ≈ 0.1)
     @test (out.body_soil[3][10, 15] == 0.0) && (out.body_soil[4][10, 15] == 0.0)
+    @test (out.body_soil_pos == [[1; 10; 15]])
     # Resetting values
     out.terrain[10, 14] = 0.0
     out.terrain[10, 15] = 0.0
@@ -3295,6 +3308,7 @@ end
     @test (out.body_soil[1][10, 14] == 0.0) && (out.body_soil[2][10, 14] ≈ 0.4)
     @test (out.body_soil[1][10, 15] == 0.0) && (out.body_soil[2][10, 15] == 0.0)
     @test (out.body_soil[3][10, 15] ≈ 0.3) && (out.body_soil[4][10, 15] ≈ 0.4)
+    @test (out.body_soil_pos == [[3; 10; 15]])
     # Resetting values
     out.terrain[10, 14] = 0.0
     out.terrain[10, 15] = 0.0
@@ -3327,6 +3341,7 @@ end
     @test (out.body_soil[1][10, 14] == 0.0) && (out.body_soil[2][10, 14] == 0.0)
     @test (out.body_soil[1][10, 15] == 0.0) && (out.body_soil[2][10, 15] == 0.0)
     @test (out.body_soil[3][10, 15] ≈ 0.2) && (out.body_soil[4][10, 15] ≈ 0.5)
+    @test (out.body_soil_pos == [[3; 10; 15]])
     # Resetting values
     out.terrain[10, 14] = 0.0
     out.terrain[10, 15] = 0.0
@@ -3363,6 +3378,7 @@ end
     @test (out.body_soil[1][10, 14] == 0.0) && (out.body_soil[2][10, 14] ≈ 0.1)
     @test (out.body_soil[1][10, 15] == -0.2) && (out.body_soil[2][10, 15] ≈ 0.1)
     @test (out.body_soil[3][10, 15] == 0.3) && (out.body_soil[4][10, 15] == 0.5)
+    @test (out.body_soil_pos == [])
     # Resetting values
     out.terrain[10, 14] = 0.0
     out.terrain[10, 15] = 0.0
@@ -3401,6 +3417,7 @@ end
     @test (out.body_soil[1][10, 14] == 0.0) && (out.body_soil[2][10, 14] == 0.0)
     @test (out.body_soil[1][10, 15] == -0.2) && (out.body_soil[2][10, 15] ≈ 0.1)
     @test (out.body_soil[3][10, 15] == 0.3) && (out.body_soil[4][10, 15] == 0.5)
+    @test (out.body_soil_pos == [])
     # Resetting values
     out.terrain[10, 14] = 0.0
     out.terrain[10, 15] = 0.0
@@ -3440,6 +3457,7 @@ end
     @test (out.body_soil[1][10, 14] == 0.1) && (out.body_soil[2][10, 14] ≈ 0.6)
     @test (out.body_soil[1][10, 15] == -0.2) && (out.body_soil[2][10, 15] ≈ 0.2)
     @test (out.body_soil[3][10, 15] == 0.3) && (out.body_soil[4][10, 15] == 0.5)
+    @test (out.body_soil_pos == [])
     # Resetting values
     out.terrain[10, 14] = 0.0
     out.terrain[10, 15] = 0.0
@@ -3478,6 +3496,7 @@ end
     @test (out.body_soil[1][10, 14] == 0.1) && (out.body_soil[2][10, 14] ≈ 0.7)
     @test (out.body_soil[1][10, 15] == -0.2) && (out.body_soil[2][10, 15] == -0.1)
     @test (out.body_soil[3][10, 15] == 0.3) && (out.body_soil[4][10, 15] ≈ 0.7)
+    @test (out.body_soil_pos == [])
     # Resetting values
     out.terrain[10, 14] = 0.0
     out.terrain[10, 15] = 0.0
@@ -3516,6 +3535,7 @@ end
     @test (out.body_soil[1][10, 14] == 0.0) && (out.body_soil[2][10, 14] == 0.0)
     @test (out.body_soil[1][10, 15] == -0.2) && (out.body_soil[2][10, 15] == -0.1)
     @test (out.body_soil[3][10, 15] == 0.3) && (out.body_soil[4][10, 15] ≈ 0.7)
+    @test (out.body_soil_pos == [])
     # Resetting values
     out.terrain[10, 14] = 0.0
     out.terrain[10, 15] = 0.0
@@ -3550,6 +3570,7 @@ end
     @test (out.body_soil[1][10, 14] == 0.0) && (out.body_soil[2][10, 14] ≈ 0.1)
     @test (out.body_soil[1][10, 15] == 0.0) && (out.body_soil[2][10, 15] == 0.0)
     @test (out.body_soil[3][10, 15] ≈ -0.1) && (out.body_soil[4][10, 15] ≈ 0.1)
+    @test (out.body_soil_pos == [[3; 10; 15]])
     # Resetting values
     out.terrain[10, 14] = 0.0
     out.terrain[10, 15] = 0.0
@@ -3582,6 +3603,7 @@ end
     @test (out.body_soil[1][10, 14] == 0.0) && (out.body_soil[2][10, 14] == 0.0)
     @test (out.body_soil[1][10, 15] == 0.0) && (out.body_soil[2][10, 15] == 0.0)
     @test (out.body_soil[3][10, 15] ≈ 0.0) && (out.body_soil[4][10, 15] ≈ 0.2)
+    @test (out.body_soil_pos == [[3; 10; 15]])
     # Resetting values
     out.terrain[10, 14] = 0.0
     out.terrain[10, 15] = 0.0
@@ -3614,6 +3636,7 @@ end
     @test (out.body_soil[1][10, 14] == 0.1) && (out.body_soil[2][10, 14] ≈ 0.6)
     @test (out.body_soil[1][10, 15] == 0.0) && (out.body_soil[2][10, 15] == 0.0)
     @test (out.body_soil[3][10, 15] ≈ 0.0) && (out.body_soil[4][10, 15] ≈ 0.2)
+    @test (out.body_soil_pos == [[3; 10; 15]])
     # Resetting values
     out.terrain[10, 14] = 0.0
     out.terrain[10, 15] = 0.0
@@ -3646,6 +3669,7 @@ end
     @test (out.body_soil[1][10, 14] == 0.1) && (out.body_soil[2][10, 14] ≈ 0.6)
     @test (out.body_soil[1][10, 15] == 0.4) && (out.body_soil[2][10, 15] ≈ 0.6)
     @test (out.body_soil[3][10, 15] == 0.0) && (out.body_soil[4][10, 15] == 0.0)
+    @test (out.body_soil_pos == [[1; 10; 15]])
     # Resetting values
     out.terrain[10, 14] = 0.0
     out.terrain[10, 15] = 0.0
@@ -3678,6 +3702,7 @@ end
     @test (out.body_soil[1][10, 14] == 0.0) && (out.body_soil[2][10, 14] == 0.0)
     @test (out.body_soil[1][10, 15] == 0.2) && (out.body_soil[2][10, 15] ≈ 0.4)
     @test (out.body_soil[3][10, 15] == 0.0) && (out.body_soil[4][10, 15] == 0.0)
+    @test (out.body_soil_pos == [[1; 10; 15]])
     # Resetting values
     out.terrain[10, 14] = 0.0
     out.terrain[10, 15] = 0.0
@@ -3714,6 +3739,7 @@ end
     @test (out.body_soil[1][10, 14] == 0.0) && (out.body_soil[2][10, 14] ≈ 0.1)
     @test (out.body_soil[1][10, 15] == 0.3) && (out.body_soil[2][10, 15] == 0.8)
     @test (out.body_soil[3][10, 15] == -0.2) && (out.body_soil[4][10, 15] ≈ 0.1)
+    @test (out.body_soil_pos == [])
     # Resetting values
     out.terrain[10, 14] = 0.0
     out.terrain[10, 15] = 0.0
@@ -3752,6 +3778,7 @@ end
     @test (out.body_soil[1][10, 14] == 0.0) && (out.body_soil[2][10, 14] == 0.0)
     @test (out.body_soil[1][10, 15] == 0.3) && (out.body_soil[2][10, 15] == 0.8)
     @test (out.body_soil[3][10, 15] == -0.2) && (out.body_soil[4][10, 15] ≈ 0.0)
+    @test (out.body_soil_pos == [])
     # Resetting values
     out.terrain[10, 14] = 0.0
     out.terrain[10, 15] = 0.0
@@ -3791,6 +3818,7 @@ end
     @test (out.body_soil[1][10, 14] == 0.0) && (out.body_soil[2][10, 14] ≈ 0.6)
     @test (out.body_soil[1][10, 15] == 0.3) && (out.body_soil[2][10, 15] == 0.8)
     @test (out.body_soil[3][10, 15] == -0.2) && (out.body_soil[4][10, 15] ≈ 0.1)
+    @test (out.body_soil_pos == [])
     # Resetting values
     out.terrain[10, 14] = 0.0
     out.terrain[10, 15] = 0.0
@@ -3829,6 +3857,7 @@ end
     @test (out.body_soil[1][10, 14] == 0.1) && (out.body_soil[2][10, 14] ≈ 0.7)
     @test (out.body_soil[1][10, 15] == 0.3) && (out.body_soil[2][10, 15] ≈ 0.6)
     @test (out.body_soil[3][10, 15] == -0.2) && (out.body_soil[4][10, 15] == -0.1)
+    @test (out.body_soil_pos == [])
     # Resetting values
     out.terrain[10, 14] = 0.0
     out.terrain[10, 15] = 0.0
@@ -3867,6 +3896,7 @@ end
     @test (out.body_soil[1][10, 14] == 0.0) && (out.body_soil[2][10, 14] == 0.0)
     @test (out.body_soil[1][10, 15] == 0.3) && (out.body_soil[2][10, 15] ≈ 0.6)
     @test (out.body_soil[3][10, 15] == -0.2) && (out.body_soil[4][10, 15] == -0.1)
+    @test (out.body_soil_pos == [])
     # Resetting values
     out.terrain[10, 14] = 0.0
     out.terrain[10, 15] = 0.0
@@ -3905,6 +3935,7 @@ end
     @test (out.body_soil[1][10, 14] == 0.0) && (out.body_soil[2][10, 14] == 0.8)
     @test (out.body_soil[1][10, 15] == -0.2) && (out.body_soil[2][10, 15] == 0.1)
     @test (out.body_soil[3][10, 15] == 0.3) && (out.body_soil[4][10, 15] == 0.8)
+    @test (out.body_soil_pos == [])
     # Resetting values
     out.terrain[10, 14] = 0.0
     out.terrain[10, 15] = 0.0
@@ -3943,6 +3974,7 @@ end
     @test (out.body_soil[1][10, 14] == 0.0) && (out.body_soil[2][10, 14] == 0.8)
     @test (out.body_soil[1][10, 15] == 0.3) && (out.body_soil[2][10, 15] == 0.8)
     @test (out.body_soil[3][10, 15] == -0.2) && (out.body_soil[4][10, 15] == 0.1)
+    @test (out.body_soil_pos == [])
     # Resetting values
     out.terrain[10, 14] = 0.0
     out.terrain[10, 15] = 0.0
