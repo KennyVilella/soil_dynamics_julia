@@ -230,9 +230,6 @@ function _move_intersecting_body_soil!(
     tol::T=1e-8
 ) where {B<:Bool,I<:Int64,T<:Float64}
 
-    # Locating all non-zero values in body_soil
-    body_soil_pos = _locate_all_non_zeros(out.body_soil)
-
     # Storing all possible directions
     directions = [
         [1, 0], [-1, 0], [0, 1], [0, -1],
@@ -240,7 +237,7 @@ function _move_intersecting_body_soil!(
     ]
 
     # Iterating over bucket soil cells
-    for cell in body_soil_pos
+    for cell in out.body_soil_pos
         ind = cell[1]
         ii = cell[2]
         jj = cell[3]
@@ -336,6 +333,9 @@ function _move_intersecting_body_soil!(
                     ### Soil should create a new bucket soil layer ###
                     out.body_soil[3][ii_n, jj_n] = out.body[4][ii_n, jj_n]
                     out.body_soil[4][ii_n, jj_n] = out.body[4][ii_n, jj_n] + h_soil
+
+                    # Adding new bucket soil position to body_soil_pos
+                    push!(out.body_soil_pos, [3; ii_n; jj_n])
                 end
 
                 h_soil = 0.0
@@ -385,6 +385,9 @@ function _move_intersecting_body_soil!(
                     ### Soil should create a new bucket soil layer ###
                     out.body_soil[1][ii_n, jj_n] = out.body[2][ii_n, jj_n]
                     out.body_soil[2][ii_n, jj_n] = out.body[2][ii_n, jj_n] + h_soil
+
+                    # Adding new bucket soil position to body_soil_pos
+                    push!(out.body_soil_pos, [1; ii_n; jj_n])
                 end
 
                 h_soil = 0.0
@@ -469,6 +472,9 @@ function _move_intersecting_body_soil!(
                         out.body_soil[ind_n_bot+1][ii_n, jj_n] = (
                             out.body[ind_n_bot+1][ii_n, jj_n] + delta_h
                         )
+
+                        # Adding new bucket soil position to body_soil_pos
+                        push!(out.body_soil_pos, [ind_n_bot; ii_n; jj_n])
                     else
                         ### More space than soil ###
                         # Creating a new bucket soil layer
@@ -478,6 +484,9 @@ function _move_intersecting_body_soil!(
                         out.body_soil[ind_n_bot+1][ii_n, jj_n] = (
                             out.body[ind_n_bot+1][ii_n, jj_n] + h_soil
                         )
+
+                        # Adding new bucket soil position to body_soil_pos
+                        push!(out.body_soil_pos, [ind_n_bot; ii_n; jj_n])
 
                         h_soil = 0.0
                         break
