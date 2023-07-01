@@ -733,6 +733,9 @@ function _relax_unstable_terrain_cell!(
             out.terrain[ii, jj] = h_new
             out.body_soil[3][ii_c, jj_c] = out.body[4][ii_c, jj_c]
             out.body_soil[4][ii_c, jj_c] = h_new_c
+
+            # Adding new bucket soil position to body_soil_pos
+            push!(out.body_soil_pos, [3; ii_c; jj_c])
         elseif (st[2] == '3')
             ### Soil avalanche on the first bucket soil layer ###
             h_new = 0.5 * (dh_max + out.terrain[ii, jj] + out.body_soil[2][ii_c, jj_c])
@@ -752,6 +755,9 @@ function _relax_unstable_terrain_cell!(
             out.terrain[ii, jj] = h_new
             out.body_soil[1][ii_c, jj_c] = out.body[2][ii_c, jj_c]
             out.body_soil[2][ii_c, jj_c] = h_new_c
+
+            # Adding new bucket soil position to body_soil_pos
+            push!(out.body_soil_pos, [1; ii_c; jj_c])
         end
     end
 end
