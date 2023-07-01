@@ -20,6 +20,9 @@ locations, if this height difference is lower than `cell_size_xy`, it is assumed
 same bucket wall. Some errors may however be present and further testing is required.
 If no bucket wall is present, the soil is moved down to the terrain.
 
+The new positions of the soil resting on the bucket are collected into `out.body_soil_pos`
+and duplicates are removed.
+
 #  Note
 - This function is intended for internal use only.
 - This function is a work in progress. Some optimization and improvements may be needed.
@@ -73,6 +76,11 @@ function _update_body_soil!(
         ind = cell[1]
         ii = cell[2]
         jj = cell[3]
+
+        if (iszero(old_body_soil[ind][ii, jj]) && iszero(old_body_soil[ind+1][ii, jj]))
+            ### No bucket soil at that position ###
+            continue
+        end
 
         # Converting indices to position
         cell_pos = [grid.vect_x[ii], grid.vect_y[jj], old_body_soil[ind][ii, jj]]
