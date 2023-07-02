@@ -86,13 +86,13 @@ function _relax_terrain!(
     # Randomizing unstable cells to reduce asymmetry
     shuffle!(unstable_cells)
 
+    # Storing all possible directions for relaxation
+    directions = [[1, 0], [-1, 0], [0, 1], [0, -1]]
+
     # Iterating over all unstable cells
     for cell in unstable_cells
         ii = cell[1]
         jj = cell[2]
-
-        # Storing all possible directions for relaxation
-        directions = [[1, 0], [-1, 0], [0, 1], [0, -1]]
 
         # Randomizing direction to avoid asymmetry
         shuffle!(directions)
@@ -184,20 +184,20 @@ function _relax_body_soil!(
     dh_max = grid.cell_size_xy * slope_max
     dh_max = grid.cell_size_z * round(dh_max / grid.cell_size_z)
 
-    # Locating all non-zero values in body_soil
-    body_soil_pos = _locate_all_non_zeros(out.body_soil)
+    # Removing duplicates in body_soil_pos
+    unique!(out.body_soil_pos)
 
-    # Randomizing body_soil cells to reduce asymmetry
-    shuffle!(body_soil_pos)
+    # Randomizing body_soil_pos to reduce asymmetry
+    shuffle!(out.body_soil_pos)
+
+    # Storing all possible directions for relaxation
+    directions = [[1, 0], [-1, 0], [0, 1], [0, -1]]
 
     # Iterating over all body_soil cells
-    for cell in body_soil_pos
+    for cell in out.body_soil_pos
         ii = cell[2]
         jj = cell[3]
         ind = cell[1]
-
-        # Storing all possible directions for relaxation
-        directions = [[1, 0], [-1, 0], [0, 1], [0, -1]]
 
         # Randomizing direction to avoid asymmetry
         shuffle!(directions)
@@ -275,13 +275,13 @@ function _locate_unstable_terrain_cell(
     for ii in 2:size(out.terrain, 1) - 1
         for jj in 2:size(out.terrain, 2) - 1
             # Calculating the minimum height allowed surrounding the considered soil cell
-            h_min = out.terrain[ii, jj] - dh_max
+            h_min = out.terrain[ii, jj] - dh_max - tol
 
             if (
-                (out.terrain[ii - 1, jj] + tol < h_min) ||
-                (out.terrain[ii + 1, jj] + tol < h_min) ||
-                (out.terrain[ii, jj - 1] + tol < h_min) ||
-                (out.terrain[ii, jj + 1] + tol < h_min)
+                (out.terrain[ii - 1, jj] < h_min) ||
+                (out.terrain[ii + 1, jj] < h_min) ||
+                (out.terrain[ii, jj - 1] < h_min) ||
+                (out.terrain[ii, jj + 1] < h_min)
             )
                 ### Soil cell is requiring relaxation ###
                 push!(unstable_cells, [ii, jj])
@@ -736,6 +736,9 @@ function _relax_unstable_terrain_cell!(
             out.terrain[ii, jj] = h_new
             out.body_soil[3][ii_c, jj_c] = out.body[4][ii_c, jj_c]
             out.body_soil[4][ii_c, jj_c] = h_new_c
+
+            # Adding new bucket soil position to body_soil_pos
+            push!(out.body_soil_pos, [3; ii_c; jj_c])
         elseif (st[2] == '3')
             ### Soil avalanche on the first bucket soil layer ###
             h_new = 0.5 * (dh_max + out.terrain[ii, jj] + out.body_soil[2][ii_c, jj_c])
@@ -755,6 +758,9 @@ function _relax_unstable_terrain_cell!(
             out.terrain[ii, jj] = h_new
             out.body_soil[1][ii_c, jj_c] = out.body[2][ii_c, jj_c]
             out.body_soil[2][ii_c, jj_c] = h_new_c
+
+            # Adding new bucket soil position to body_soil_pos
+            push!(out.body_soil_pos, [1; ii_c; jj_c])
         end
     end
 end
@@ -863,6 +869,9 @@ function _relax_unstable_body_cell!(
             h_new = grid.cell_size_z * floor((h_new + tol) / grid.cell_size_z)
             h_new_c = out.body_soil[ind+1][ii, jj] + out.body[2][ii_c, jj_c] - h_new
 
+            # Adding new bucket soil position to body_soil_pos
+            push!(out.body_soil_pos, [1; ii_c; jj_c])
+
             if (h_new - tol > out.body_soil[ind][ii, jj])
                 ### Soil on the bucket should partially avalanche ###
                 out.body_soil[1][ii_c, jj_c] = out.body[2][ii_c, jj_c]
@@ -906,6 +915,9 @@ function _relax_unstable_body_cell!(
             h_new = 0.5 * (dh_max + out.body_soil[ind+1][ii, jj] + out.body[4][ii_c, jj_c])
             h_new = grid.cell_size_z * floor((h_new + tol) / grid.cell_size_z)
             h_new_c = out.body_soil[ind+1][ii, jj] + out.body[4][ii_c, jj_c] - h_new
+
+            # Adding new bucket soil position to body_soil_pos
+            push!(out.body_soil_pos, [3; ii_c; jj_c])
 
             if (h_new_c - tol > out.body_soil[ind][ii, jj])
                 ### Soil on the bucket should partially avalanche ###
@@ -982,6 +994,9 @@ function _relax_unstable_body_cell!(
             )
             h_new = grid.cell_size_z * floor((h_new + tol) / grid.cell_size_z)
             h_new_c = out.body_soil[ind+1][ii, jj] + out.body[4][ii_c, jj_c] - h_new
+
+            # Adding new bucket soil position to body_soil_pos
+            push!(out.body_soil_pos, [3; ii_c; jj_c])
 
             if (out.body[1][ii_c, jj_c] > out.body[3][ii_c, jj_c])
                 ### Soil should avalanche on the bottom layer ###
@@ -1088,6 +1103,9 @@ function _relax_unstable_body_cell!(
             )
             h_new = grid.cell_size_z * floor((h_new + tol) / grid.cell_size_z)
             h_new_c = out.body_soil[ind+1][ii, jj] + out.body[2][ii_c, jj_c] - h_new
+
+            # Adding new bucket soil position to body_soil_pos
+            push!(out.body_soil_pos, [1; ii_c; jj_c])
 
             if (out.body[1][ii_c, jj_c] > out.body[3][ii_c, jj_c])
                 ### Soil should avalanche on the top layer ###

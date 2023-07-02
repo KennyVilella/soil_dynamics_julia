@@ -15,7 +15,7 @@ BenchmarkTools.DEFAULT_PARAMETERS.seconds = 60
 BenchmarkTools.DEFAULT_PARAMETERS.samples = 100
 
 # Benchmarking for a simple digging scoop
-disable_logging(Logging.Info)
+disable_logging(Logging.Warn)
 println("soil_evolution")
 display(
     @benchmark soil_evolution(false, false, false, false, true)

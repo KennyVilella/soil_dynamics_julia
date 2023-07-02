@@ -363,6 +363,10 @@ Store all outputs of the simulation.
   structure of `body_soil` is identical to `body`. An additionnal restriction is that the
   minimum height of the soil resting on the bucket must correspond to the maximum height of
   a bucket wall.
+- The locations where there is soil resting on the bucket are stored in `body_soil_pos` as 
+  3-elements vectors. The first element corresponds to the index of the sparse Matrix where
+  the minimum height of the soil is stored, while the second and third element correspond to
+  the index of the X and Y position, respectively.
 
 # Note
 - Currently, only one bucket at a time is supported, but this restriction may be
@@ -380,6 +384,8 @@ Store all outputs of the simulation.
 - `body_soil::Vector{SparseMatrixCSC{Float64,Int64}}`: Store the vertical extension of all
                                                        soil resting on a bucket wall for
                                                        each XY position. [m]
+- `body_soil_pos::Vector{Vector{Int64}}`: Store the indices of locations where there is
+                                          soil resting on the bucket.
 
 # Inner constructor
 
@@ -406,6 +412,7 @@ struct SimOut{B<:Bool,I<:Int64,T<:Float64}
     terrain::Matrix{T}
     body::Vector{SparseMatrixCSC{T,I}}
     body_soil::Vector{SparseMatrixCSC{T,I}}
+    body_soil_pos::Vector{Vector{I}}
     function SimOut(
         terrain::Matrix{T},
         grid::GridParam{I,T}
@@ -436,6 +443,9 @@ struct SimOut{B<:Bool,I<:Int64,T<:Float64}
             push!(body_soil, spzeros(2*grid.half_length_x+1, 2*grid.half_length_y+1))
         end
 
-        new{Bool,I,T}([false], terrain, body, body_soil)
+        # Initalizing body_soil_pos
+        body_soil_pos = Vector{Vector{I}}()
+
+        new{Bool,I,T}([false], terrain, body, body_soil, body_soil_pos)
     end
 end
