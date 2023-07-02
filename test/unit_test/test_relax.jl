@@ -5121,7 +5121,7 @@ end
     # Testing the case where there are two bucket layers with bucket soil, the first layer
     # being lower and soil should partially avalanche on it but there is not enough space
     # for all the soil
-    set_RNG_seed!(3000)
+    set_RNG_seed!(2100)
     out.terrain[10, 14] = -0.4
     out.body[1][10, 14] = -0.4
     out.body[2][10, 14] = -0.3
@@ -5144,7 +5144,7 @@ end
     @test (out.body_soil[1][10, 14] == -0.3) && (out.body_soil[2][10, 14] ≈ 0.1)
     @test (out.body_soil[1][10, 15] == -0.5) && (out.body_soil[2][10, 15] ≈ -0.2)
     @test (out.body_soil[3][10, 15] == 0.0) && (out.body_soil[4][10, 15] == 0.1)
-    @test (out.body_soil_pos == [[1; 10; 15], [1; 10; 14], [3; 10; 15]])
+    @test (out.body_soil_pos == [[3; 10; 15], [1; 10; 14], [1; 10; 15]])
     # Resetting values
     out.terrain[10, 14] = 0.0
     out.terrain[10, 15] = 0.0
