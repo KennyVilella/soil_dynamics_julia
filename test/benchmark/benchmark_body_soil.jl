@@ -71,12 +71,3 @@ display(
     @benchmark _update_body_soil!(out, pos_2, ori_1, grid, bucket)
 )
 println("")
-
-# Benchmarking for _body_to_terrain! function
-out.body_soil[1][10, 15] = 0.2
-out.body_soil[2][10, 15] = 0.5
-println("_body_to_terrain!")
-display(
-    @benchmark _body_to_terrain!(out, 10, 15, 1, 5, 7, grid)
-)
-println("")

@@ -20,7 +20,6 @@ export _decompose_vector_rectangle, _decompose_vector_triangle
 
 # body_soil.jl
 export _update_body_soil!
-export _body_to_terrain!
 
 # intersecting_cells.jl
 export _move_intersecting_cells!
