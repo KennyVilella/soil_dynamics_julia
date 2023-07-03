@@ -48,7 +48,7 @@ to reach a state closer to equilibrium.
     b = [0.0, 0.0, -0.5]
     t = [1.0, 0.0, -0.5]
     bucket = BucketParam(o, j, b, t, 0.5)
-    sim = SimParam(0.85, 3)
+    sim = SimParam(0.85, 3, 4)
     terrain = zeros(2 * grid.half_length_x + 1, 2 * grid.half_length_y + 1)
     out = SimOut(terrain, grid)
 
@@ -69,7 +69,7 @@ function soil_dynamics!(
     end
 
     # Updating bucket position
-    _calc_bucket_pos!(out, pos, ori, grid, bucket, 0.5, tol)
+    _calc_bucket_pos!(out, pos, ori, grid, bucket, sim, 0.5, tol)
 
     # Updating position of soil resting on the bucket
     _update_body_soil!(out, pos, ori, grid, bucket, tol)
@@ -84,6 +84,12 @@ function soil_dynamics!(
     it = 0
     while (!out.equilibrium[1] && it < sim.max_iterations)
         it += 1
+
+        # Updating impact_area
+        out.impact_area[1, 1] = min(out.bucket_area[1, 1], out.relax_area[1, 1])
+        out.impact_area[2, 1] = min(out.bucket_area[2, 1], out.relax_area[2, 1])
+        out.impact_area[1, 2] = max(out.bucket_area[1, 2], out.relax_area[1, 2])
+        out.impact_area[2, 2] = max(out.bucket_area[2, 2], out.relax_area[2, 2])
 
         # Relaxing the terrain
         _relax_terrain!(out, grid, sim, tol)

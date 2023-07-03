@@ -20,4 +20,5 @@ println("soil_evolution")
 display(
     @benchmark soil_evolution(false, false, false, false, true)
 )
+disable_logging(Logging.Debug)
 println("")

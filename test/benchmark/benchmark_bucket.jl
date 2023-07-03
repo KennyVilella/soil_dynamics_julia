@@ -22,6 +22,12 @@ t_pos_init = Vector{Float64}([0.7, 0.0, -0.5])
 bucket_width = 0.5
 bucket = BucketParam(o_pos_init, j_pos_init, b_pos_init, t_pos_init, bucket_width)
 
+# Simulation properties
+repose_angle = 0.85
+max_iterations = 3
+cell_buffer = 4
+sim = SimParam(repose_angle, max_iterations, cell_buffer)
+
 # Terrain properties
 terrain = zeros(2 * grid.half_length_x + 1, 2 * grid.half_length_y + 1)
 out = SimOut(terrain, grid)
@@ -43,7 +49,7 @@ ori = angle_to_quat(0.0, -pi / 2, 0.0, :ZYX)
 pos = Vector{Float64}([0.0, 0.0, -0.1])
 println("_calc_bucket_pos!")
 display(
-    @benchmark _calc_bucket_pos!(out, pos, ori, grid, bucket)
+    @benchmark _calc_bucket_pos!(out, pos, ori, grid, bucket, sim)
 )
 println("")
 

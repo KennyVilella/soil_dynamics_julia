@@ -31,9 +31,11 @@ bucket_width = 0.5
 # Simulation properties
 repose_angle = 0.85
 max_iterations = 3
+cell_buffer = 4
 
 # Terrain properties
 terrain = zeros(2 * grid_half_length_x + 1, 2 * grid_half_length_y + 1)
+area = zeros(Int64, 2, 2)
 
 
 #==========================================================================================#
@@ -162,8 +164,8 @@ end
 
 @testset "SimParam struct" begin
     # Creating dummy SimParam by using the inner constructor
-    @test_nowarn SimParam(repose_angle, max_iterations)
-    sim_param = SimParam(repose_angle, max_iterations)
+    @test_nowarn SimParam(repose_angle, max_iterations, cell_buffer)
+    sim_param = SimParam(repose_angle, max_iterations, cell_buffer)
 
     # Testing the type of the struct
     @test sim_param isa SimParam
@@ -171,21 +173,30 @@ end
     # Testing properties of the struct
     @test sim_param.repose_angle == repose_angle
     @test sim_param.max_iterations == max_iterations
+    @test sim_param.cell_buffer == cell_buffer
 
     # Testing that repose_angle outside the allowed range throws an error
-    @test_throws DomainError SimParam(-0.1, max_iterations)
-    @test_throws DomainError SimParam(3.14, max_iterations)
+    @test_throws DomainError SimParam(-0.1, max_iterations, cell_buffer)
+    @test_throws DomainError SimParam(3.14, max_iterations, cell_buffer)
  
     # Testing that repose_angle on the edge of the allowed range does not throw an error
-    @test_nowarn SimParam(0.0, max_iterations)
-    @test_nowarn SimParam(pi / 2, max_iterations)
+    @test_nowarn SimParam(0.0, max_iterations, cell_buffer)
+    @test_nowarn SimParam(pi / 2, max_iterations, cell_buffer)
 
     # Testing that max_iterations lower than zero throws an error
-    @test_throws DomainError SimParam(repose_angle, -1)
-    @test_throws DomainError SimParam(repose_angle, -10)
+    @test_throws DomainError SimParam(repose_angle, -1, cell_buffer)
+    @test_throws DomainError SimParam(repose_angle, -10, cell_buffer)
 
     # Testing that max_iterations equal to zero does not throw an error
-    @test_nowarn SimParam(repose_angle, 0)
+    @test_nowarn SimParam(repose_angle, 0, cell_buffer)
+
+    # Testing that cell_buffer lower than 2 throws a warning
+    warning_message = "cell_buffer too low, setting to 2"
+    @test_logs (:warn, warning_message) SimParam(repose_angle, max_iterations, 1)
+    @test_logs (:warn, warning_message) SimParam(repose_angle, max_iterations, 0)
+
+    # Testing that cell_buffer equal to 2 does not throw a warning
+    @test_nowarn SimParam(repose_angle, max_iterations, 2)
 end
 
 @testset "SimOut struct" begin
@@ -206,6 +217,9 @@ end
     @test out.body isa Vector{SparseMatrixCSC{Float64,Int64}}
     @test out.body_soil isa Vector{SparseMatrixCSC{Float64,Int64}}
     @test out.body_soil_pos isa Vector{Vector{Int64}}
+    @test out.bucket_area == area
+    @test out.relax_area == area
+    @test out.impact_area == area
 
     # Testing that incorrect terrain size throws an error
     @test_throws DimensionMismatch SimOut(zeros(10, 3), grid)

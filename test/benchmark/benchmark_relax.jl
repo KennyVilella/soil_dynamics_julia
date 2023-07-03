@@ -17,7 +17,8 @@ grid = GridParam(grid_size_x, grid_size_y, grid_size_z, cell_size_xy, cell_size_
 # Simulation properties
 repose_angle = 0.85
 max_iterations = 3
-sim = SimParam(repose_angle, max_iterations)
+cell_buffer = 4
+sim = SimParam(repose_angle, max_iterations, cell_buffer)
 
 # Terrain properties
 terrain = zeros(2 * grid.half_length_x + 1, 2 * grid.half_length_y + 1)
@@ -40,6 +41,8 @@ out.terrain[50:65, 50:65] .= 0.4
 out.body[1][49, 50:65] .= 0.0
 out.body[2][49, 50:60] .= 0.1
 out.body[2][49, 61:65] .= 0.4
+out.relax_area[:, :] .= Int64[[45, 46] [69, 69]]
+out.impact_area[:, :] .= Int64[[45, 46] [69, 69]]
 println("_relax_terrain!")
 display(
     @benchmark _relax_terrain!(out, grid, sim)

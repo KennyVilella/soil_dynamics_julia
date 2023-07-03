@@ -88,9 +88,10 @@ function soil_evolution(
     # Initializing the simulation properties
     repose_angle = 0.85
     max_iterations = 10
+    cell_buffer = 4
 
     # SimParam struct
-    sim = SimParam(repose_angle, max_iterations)
+    sim = SimParam(repose_angle, max_iterations, cell_buffer)
 
     # Initializing terrain array to zero height
     terrain = zeros(2 * grid.half_length_x + 1, 2 * grid.half_length_y + 1)
@@ -166,6 +167,9 @@ function soil_evolution(
     time_vec = []
     dt_i = dt
     time = dt
+
+    # Initializing relax_area as the full grid
+    out.relax_area[:, :] .= Int64[[2, 2] [2 * grid.half_length_x, 2 * grid.half_length_y]]
 
     # Creating time evolution
     while (time + dt_i < total_time)

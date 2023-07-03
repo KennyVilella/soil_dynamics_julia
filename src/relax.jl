@@ -53,7 +53,7 @@ avalanche on the bucket.
 
 # Example
     grid = GridParam(4.0, 4.0, 3.0, 0.05, 0.01)
-    sim = SimParam(0.85, 3)
+    sim = SimParam(0.85, 3, 4)
     terrain = zeros(2 * grid.half_length_x + 1, 2 * grid.half_length_y + 1)
     out = SimOut(terrain, grid)
 
@@ -89,10 +89,22 @@ function _relax_terrain!(
     # Storing all possible directions for relaxation
     directions = [[1, 0], [-1, 0], [0, 1], [0, -1]]
 
+    # Initializing the 2D bounding box of the unstable cells
+    relax_min_x = 2 * grid.half_length_x
+    relax_max_x = 0
+    relax_min_y = 2 * grid.half_length_x
+    relax_max_y = 0
+
     # Iterating over all unstable cells
     for cell in unstable_cells
         ii = cell[1]
         jj = cell[2]
+
+        # Updating the 2D bounding box of the unstable cells
+        relax_min_x = min(relax_min_x, ii)
+        relax_max_x = max(relax_max_x, ii)
+        relax_min_y = min(relax_min_y, jj)
+        relax_max_y = max(relax_max_y, jj)
 
         # Randomizing direction to avoid asymmetry
         shuffle!(directions)
@@ -122,6 +134,12 @@ function _relax_terrain!(
             )
         end
     end
+
+    # Updating relax_area
+    out.relax_area[1, 1] = max(relax_min_x - sim.cell_buffer, 2)
+    out.relax_area[1, 2] = min(relax_max_x + sim.cell_buffer, 2 * grid.half_length_x)
+    out.relax_area[2, 1] = max(relax_min_y - sim.cell_buffer, 2)
+    out.relax_area[2, 2] = min(relax_max_y + sim.cell_buffer, 2 * grid.half_length_y)
 end
 
 """
@@ -165,7 +183,7 @@ This function only moves the soil when the following conditions are met:
 
 # Example
     grid = GridParam(4.0, 4.0, 3.0, 0.05, 0.01)
-    sim = SimParam(0.85, 3)
+    sim = SimParam(0.85, 3, 4)
     terrain = zeros(2 * grid.half_length_x + 1, 2 * grid.half_length_y + 1)
     out = SimOut(terrain, grid)
 
@@ -272,8 +290,8 @@ function _locate_unstable_terrain_cell(
     unstable_cells = Vector{Vector{Int64}}()
 
     # Iterating over the terrain
-    for ii in 2:size(out.terrain, 1) - 1
-        for jj in 2:size(out.terrain, 2) - 1
+    for ii in out.impact_area[1, 1]:out.impact_area[1, 2]
+        for jj in out.impact_area[2, 1]:out.impact_area[2, 2]
             # Calculating the minimum height allowed surrounding the considered soil cell
             h_min = out.terrain[ii, jj] - dh_max - tol
 

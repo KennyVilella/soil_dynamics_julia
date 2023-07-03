@@ -25,7 +25,8 @@ bucket = BucketParam(o_pos_init, j_pos_init, b_pos_init, t_pos_init, bucket_widt
 # Simulation properties
 repose_angle = 0.85
 max_iterations = 10
-sim = SimParam(repose_angle, max_iterations)
+cell_buffer = 4
+sim = SimParam(repose_angle, max_iterations, cell_buffer)
 
 # Terrain properties
 terrain = zeros(2 * grid.half_length_x + 1, 2 * grid.half_length_y + 1)
@@ -46,6 +47,7 @@ BenchmarkTools.DEFAULT_PARAMETERS.samples = 100
 # Benchmarking for soil_dynamics! function
 ori = angle_to_quat(0.0, -pi / 2, 0.0, :ZYX)
 pos = Vector{Float64}([0.0, 0.0, -0.1])
+out.relax_area[:, :] .= Int64[[67, 72] [85, 90]]
 println("soil_dynamics!")
 display(
     @benchmark soil_dynamics!(out, pos, ori, grid, bucket, sim)

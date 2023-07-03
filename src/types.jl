@@ -301,11 +301,13 @@ Store all parameters related to the simulation.
 # Fields
 - `repose_angle::Float64`: The repose angle of the considered soil. [rad]
 - `max_iterations::Int64`: The maximum number of relaxation iterations per step.
+- `cell_buffer::Int64`: The number of buffer cells surrounding the bucket and the relaxed
+                        terrain where soil equilibrium is checked.
 
 # Inner constructor
 
     SimParam(
-        repose_angle::T, max_iterations::I
+        repose_angle::T, max_iterations::I, cell_buffer::I,
     ) where {I<:Int64,T<:Float64}
 
 Create a new instance of `SimParam`.
@@ -314,17 +316,20 @@ Requirements:
 - The `repose_angle` should be between 0.0 and pi / 2. The upper limit may be extended in
   the future.
 - The `max_iterations` should be greater or equal to zero.
+- The `cell_buffer` should be greater or equal to 2.
 
 # Example
 
-    sim = SimParam(0.85, 3)
+    sim = SimParam(0.85, 3, 4)
 """
 struct SimParam{I<:Int64,T<:Float64}
     repose_angle::T
     max_iterations::I
+    cell_buffer::I
     function SimParam(
         repose_angle::T,
-        max_iterations::I
+        max_iterations::I,
+        cell_buffer::I
     ) where {I<:Int64,T<:Float64}
 
         if (
@@ -337,8 +342,12 @@ struct SimParam{I<:Int64,T<:Float64}
             throw(DomainError(max_iterations, "max_iterations should be greater or equal" *
             " to zero"))
         end
+        if ((cell_buffer < 2.0) && (cell_buffer != 2.0))
+            @warn "cell_buffer too low, setting to 2"
+            cell_buffer = 2
+        end
 
-        new{I,T}(repose_angle, max_iterations)
+        new{I,T}(repose_angle, max_iterations, cell_buffer)
     end
 end
 
@@ -367,6 +376,10 @@ Store all outputs of the simulation.
   3-elements vectors. The first element corresponds to the index of the sparse Matrix where
   the minimum height of the soil is stored, while the second and third element correspond to
   the index of the X and Y position, respectively.
+- The active areas (`bucket_area`, `relax_area` and `impact_area`) are assumed to be
+  rectangular and to follow the grid geometry. They are thus stored as 2x2 Matrices where:
+  [1, 1] corresponds to the minimum X index. [1, 2] corresponds to the maximum X index.
+  [2, 1] corresponds to the minimum Y index. [2, 2] corresponds to the maximum Y index.
 
 # Note
 - Currently, only one bucket at a time is supported, but this restriction may be
@@ -386,6 +399,14 @@ Store all outputs of the simulation.
                                                        each XY position. [m]
 - `body_soil_pos::Vector{Vector{Int64}}`: Store the indices of locations where there is
                                           soil resting on the bucket.
+- `bucket_area::Matrix{Int64}`: Store the 2D bounding box of the bucket with a buffer
+                                determined by the parameter `cell_buffer` of `SimParam`.
+- `relax_area::Matrix{Int64}`: Store the 2D bounding box of the area where soil has been
+                               relaxed with a buffer determined by the parameter
+                               `cell_buffer` of `SimParam`.
+- `impact_area::Matrix{Int64}`: Store the union of `bucket_area` and `relax_area`. It
+                                corresponds to the area where the soil equilibrium is
+                                checked.
 
 # Inner constructor
 
@@ -413,6 +434,9 @@ struct SimOut{B<:Bool,I<:Int64,T<:Float64}
     body::Vector{SparseMatrixCSC{T,I}}
     body_soil::Vector{SparseMatrixCSC{T,I}}
     body_soil_pos::Vector{Vector{I}}
+    bucket_area::Matrix{Int64}
+    relax_area::Matrix{Int64}
+    impact_area::Matrix{Int64}
     function SimOut(
         terrain::Matrix{T},
         grid::GridParam{I,T}
@@ -446,6 +470,14 @@ struct SimOut{B<:Bool,I<:Int64,T<:Float64}
         # Initalizing body_soil_pos
         body_soil_pos = Vector{Vector{I}}()
 
-        new{Bool,I,T}([false], terrain, body, body_soil, body_soil_pos)
+        # Initalizing active areas
+        bucket_area = zeros(Int64, 2, 2)
+        relax_area = zeros(Int64, 2, 2)
+        impact_area = zeros(Int64, 2, 2)
+
+        new{Bool,I,T}(
+            [false], terrain, body, body_soil, body_soil_pos, bucket_area, relax_area,
+            impact_area
+        )
     end
 end
