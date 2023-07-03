@@ -22,6 +22,12 @@ t_pos_init = Vector{Float64}([0.7, 0.0, -0.5])
 bucket_width = 0.5
 bucket = BucketParam(o_pos_init, j_pos_init, b_pos_init, t_pos_init, bucket_width)
 
+# Simulation properties
+repose_angle = 0.785
+max_iterations = 3
+cell_buffer = 4
+sim = SimParam(repose_angle, max_iterations, cell_buffer)
+
 # Terrain properties
 terrain = zeros(2 * grid.half_length_x + 1, 2 * grid.half_length_y + 1)
 out = SimOut(terrain, grid)
@@ -1137,7 +1143,7 @@ end
     pos = Vector{Float64}([0.0, 0.0, 0.0])
 
     # Testing for a bucket in the XZ plane
-    _calc_bucket_pos!(out, pos, ori, grid, bucket)
+    _calc_bucket_pos!(out, pos, ori, grid, bucket, sim)
     # Checking the bucket position
     @test (out.body[1][11, 11] ≈ -0.3) && (out.body[2][11, 11] ≈ 0.3)
     @test (out.body[1][12, 11] ≈ -0.3) && (out.body[2][12, 11] ≈ 0.3)
@@ -1145,6 +1151,8 @@ end
     @test (out.body[1][14, 11] ≈ -0.3) && (out.body[2][14, 11] ≈ 0.3)
     @test (out.body[1][15, 11] ≈ -0.3) && (out.body[2][15, 11] ≈ 0.3)
     @test (out.body[1][16, 11] ≈ -0.3) && (out.body[2][16, 11] ≈ 0.3)
+    @test (out.bucket_area[1, 1] == 7) && (out.bucket_area[1, 2] == 20)
+    @test (out.bucket_area[2, 1] == 7) && (out.bucket_area[2, 2] == 15)
     # Resetting the bucket position
     out.body[1][11:16, 11] .= 0.0
     out.body[2][11:16, 11] .= 0.0
@@ -1164,10 +1172,12 @@ end
     pos = Vector{Float64}([0.0, 0.0, 0.0])
 
     # Testing for a bucket in the XY plane
-    _calc_bucket_pos!(out, pos, ori, grid, bucket)
+    _calc_bucket_pos!(out, pos, ori, grid, bucket, sim)
     # Checking the bucket position
     @test all(out.body[1][11:16, 9:13] .≈ -0.1)
     @test all(out.body[2][11:16, 9:13] .≈ 0.0)
+    @test (out.bucket_area[1, 1] == 7) && (out.bucket_area[1, 2] == 20)
+    @test (out.bucket_area[2, 1] == 5) && (out.bucket_area[2, 2] == 17)
     # Resetting the bucket position
     out.body[1][11:16, 9:13] .= 0.0
     dropzeros!(out.body[1])
@@ -1186,7 +1196,7 @@ end
     pos = Vector{Float64}([0.0, 0.0, -0.1])
 
     # Testing for a bucket in a dummy position
-    _calc_bucket_pos!(out, pos, ori, grid, bucket)
+    _calc_bucket_pos!(out, pos, ori, grid, bucket, sim)
     # Checking the bucket position
     @test all(out.body[1][6, 9:13] .≈ -0.6)
     @test all(out.body[2][6, 9:13] .≈ -0.1)
@@ -1204,6 +1214,8 @@ end
     @test all(out.body[2][10, 9:13] .≈ -0.1)
     @test all(out.body[1][11, 9:13] .≈ -0.2)
     @test all(out.body[2][11, 9:13] .≈ -0.1)
+    @test (out.bucket_area[1, 1] == 2) && (out.bucket_area[1, 2] == 15)
+    @test (out.bucket_area[2, 1] == 5) && (out.bucket_area[2, 2] == 17)
     # Resetting the bucket position
     out.body[1][6:11, 9:13] .= 0.0
     out.body[2][6:11, 9:13] .= 0.0
