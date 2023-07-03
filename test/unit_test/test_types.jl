@@ -35,6 +35,7 @@ cell_buffer = 4
 
 # Terrain properties
 terrain = zeros(2 * grid_half_length_x + 1, 2 * grid_half_length_y + 1)
+area = zeros(Int64, 2, 2)
 
 
 #==========================================================================================#
@@ -216,6 +217,9 @@ end
     @test out.body isa Vector{SparseMatrixCSC{Float64,Int64}}
     @test out.body_soil isa Vector{SparseMatrixCSC{Float64,Int64}}
     @test out.body_soil_pos isa Vector{Vector{Int64}}
+    @test out.bucket_area == area
+    @test out.relax_area == area
+    @test out.impact_area == area
 
     # Testing that incorrect terrain size throws an error
     @test_throws DimensionMismatch SimOut(zeros(10, 3), grid)
