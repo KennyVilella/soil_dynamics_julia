@@ -22,6 +22,12 @@ t_pos_init = Vector{Float64}([0.7, 0.0, -0.5])
 bucket_width = 0.5
 bucket = BucketParam(o_pos_init, j_pos_init, b_pos_init, t_pos_init, bucket_width)
 
+# Simulation properties
+repose_angle = 0.85
+max_iterations = 3
+cell_buffer = 4
+sim = SimParam(repose_angle, max_iterations, cell_buffer)
+
 # Terrain properties
 terrain = zeros(2 * grid.half_length_x + 1, 2 * grid.half_length_y + 1)
 out = SimOut(terrain, grid)
@@ -41,7 +47,7 @@ BenchmarkTools.DEFAULT_PARAMETERS.samples = 100
 # Benchmarking for _update_body_soil! function
 pos_1 = [0.5, 0.0, 0.0]
 ori_1 = angle_to_quat(0.0, 0.0, pi / 2, :ZYX)
-_calc_bucket_pos!(out, pos_1, ori_1, grid, bucket)
+_calc_bucket_pos!(out, pos_1, ori_1, grid, bucket, sim)
 out.body_soil[1][91:105, 71] .= out.body[2][91:105, 71]
 out.body_soil[2][91:105, 71] .= out.body[2][91:105, 71] .+ 0.2
 out.body_soil[1][91:104, 72] .= out.body[2][91:104, 72]
@@ -65,7 +71,7 @@ out.body_soil[2][91:93, 80] .= out.body[2][91:93, 80] .+ 0.2
 out.body_soil[1][91:92, 81] .= out.body[2][91:92, 81]
 out.body_soil[2][91:92, 81] .= out.body[2][91:92, 81] .+ 0.2
 pos_2 = [0.5 + cell_size_xy, 0.0, 0.0]
-_calc_bucket_pos!(out, pos_2, ori_1, grid, bucket)
+_calc_bucket_pos!(out, pos_2, ori_1, grid, bucket, sim)
 println("_update_body_soil!")
 display(
     @benchmark _update_body_soil!(out, pos_2, ori_1, grid, bucket)

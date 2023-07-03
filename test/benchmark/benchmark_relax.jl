@@ -41,6 +41,8 @@ out.terrain[50:65, 50:65] .= 0.4
 out.body[1][49, 50:65] .= 0.0
 out.body[2][49, 50:60] .= 0.1
 out.body[2][49, 61:65] .= 0.4
+out.relax_area[:, :] .= Int64[[45, 46] [69, 69]]
+out.impact_area[:, :] .= Int64[[45, 46] [69, 69]]
 println("_relax_terrain!")
 display(
     @benchmark _relax_terrain!(out, grid, sim)

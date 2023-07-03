@@ -22,6 +22,12 @@ t_pos_init = Vector{Float64}([0.7, 0.0, -0.5])
 bucket_width = 0.5
 bucket = BucketParam(o_pos_init, j_pos_init, b_pos_init, t_pos_init, bucket_width)
 
+# Simulation properties
+repose_angle = 0.85
+max_iterations = 3
+cell_buffer = 4
+sim = SimParam(repose_angle, max_iterations, cell_buffer)
+
 # Terrain properties
 terrain = zeros(2 * grid.half_length_x + 1, 2 * grid.half_length_y + 1)
 out = SimOut(terrain, grid)
@@ -42,7 +48,7 @@ BenchmarkTools.DEFAULT_PARAMETERS.samples = 100
 out.terrain[:, :] .= 0.0
 pos_1 = [0.0, 0.0, 0.0]
 ori_1 = angle_to_quat(0.0, 0.0, pi / 2, :ZYX)
-_calc_bucket_pos!(out, pos_1, ori_1, grid, bucket)
+_calc_bucket_pos!(out, pos_1, ori_1, grid, bucket, sim)
 println("_move_intersecting_cells!")
 display(
     @benchmark _move_intersecting_cells!(out, grid)
@@ -53,7 +59,7 @@ println("")
 out.terrain[:, :] .= 0.0
 pos_1 = [0.0, 0.0, 0.0]
 ori_1 = angle_to_quat(0.0, 0.0, pi / 2, :ZYX)
-_calc_bucket_pos!(out, pos_1, ori_1, grid, bucket)
+_calc_bucket_pos!(out, pos_1, ori_1, grid, bucket, sim)
 println("_move_intersecting_body!")
 display(
     @benchmark _move_intersecting_body!(out, grid)
@@ -85,7 +91,7 @@ println("")
 out.terrain[:, :] .= 0.0
 pos_1 = [0.0, 0.0, 0.0]
 ori_1 = angle_to_quat(0.0, 0.0, pi / 2, :ZYX)
-_calc_bucket_pos!(out, pos_1, ori_1, grid, bucket)
+_calc_bucket_pos!(out, pos_1, ori_1, grid, bucket, sim)
 println("_locate_intersecting_cells")
 display(
     @benchmark intersecting_cells = _locate_intersecting_cells(out)

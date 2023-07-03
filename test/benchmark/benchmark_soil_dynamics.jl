@@ -47,6 +47,7 @@ BenchmarkTools.DEFAULT_PARAMETERS.samples = 100
 # Benchmarking for soil_dynamics! function
 ori = angle_to_quat(0.0, -pi / 2, 0.0, :ZYX)
 pos = Vector{Float64}([0.0, 0.0, -0.1])
+out.relax_area[:, :] .= Int64[[67, 72] [85, 90]]
 println("soil_dynamics!")
 display(
     @benchmark soil_dynamics!(out, pos, ori, grid, bucket, sim)
