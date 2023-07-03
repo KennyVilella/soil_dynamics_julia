@@ -39,6 +39,7 @@ out = SimOut(terrain, grid)
     out.terrain[7, 13] = 0.1
     out.terrain[15, 5] = -0.4
     out.terrain[15, 6] = -0.2
+    out.impact_area[:, :] .= Int64[[2, 2] [16, 14]]
 
     # Testing that all unstable cells are properly located
     unstable_cells = _locate_unstable_terrain_cell(out, 0.1)
@@ -53,6 +54,7 @@ out = SimOut(terrain, grid)
     @test (length(unstable_cells) == 15)
     # Resetting terrain
     out.terrain[:, :] .= 0.0
+    out.impact_area[:, :] .= Int64[[0, 0] [0, 0]]
 end
 
 @testset "_check_unstable_terrain_cell!" begin
@@ -1287,6 +1289,9 @@ end
 end
 
 @testset "_relax_terrain!" begin
+    # Setting impact_area
+    out.impact_area[:, :] .= Int64[[5, 10] [15, 20]]
+
     # Testing the case where there is no bucket and soil is unstable
     set_RNG_seed!(1234)
     out.terrain[10, 15] = -0.2
@@ -2379,6 +2384,9 @@ end
     @test isempty(nonzeros(out.body_soil[2]))
     @test isempty(nonzeros(out.body_soil[3]))
     @test isempty(nonzeros(out.body_soil[4]))
+
+    # Resetting impact_area
+    out.impact_area[:, :] .= Int64[[0, 0] [0, 0]]
 end
 
 @testset "_check_unstable_body_cell!" begin
