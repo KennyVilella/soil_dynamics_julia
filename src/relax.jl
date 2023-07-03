@@ -101,10 +101,10 @@ function _relax_terrain!(
         jj = cell[2]
 
         # Updating the 2D bounding box of the unstable cells
-        relax_min_x = minimum(relax_min_x, ii)
-        relax_max_x = maximum(relax_max_x, ii)
-        relax_min_y = minimum(relax_min_y, jj)
-        relax_max_y = maximum(relax_max_y, jj)
+        relax_min_x = min(relax_min_x, ii)
+        relax_max_x = max(relax_max_x, ii)
+        relax_min_y = min(relax_min_y, jj)
+        relax_max_y = max(relax_max_y, jj)
 
         # Randomizing direction to avoid asymmetry
         shuffle!(directions)
