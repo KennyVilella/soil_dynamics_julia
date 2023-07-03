@@ -290,8 +290,8 @@ function _locate_unstable_terrain_cell(
     unstable_cells = Vector{Vector{Int64}}()
 
     # Iterating over the terrain
-    for ii in 2:size(out.terrain, 1) - 1
-        for jj in 2:size(out.terrain, 2) - 1
+    for ii in out.impact_area[1, 1]:out.impact_area[1, 2]
+        for jj in out.impact_area[2, 1]:out.impact_area[2, 2]
             # Calculating the minimum height allowed surrounding the considered soil cell
             h_min = out.terrain[ii, jj] - dh_max - tol
 
