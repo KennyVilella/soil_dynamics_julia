@@ -69,7 +69,7 @@ function soil_dynamics!(
     end
 
     # Updating bucket position
-    _calc_bucket_pos!(out, pos, ori, grid, bucket, 0.5, tol)
+    _calc_bucket_pos!(out, pos, ori, grid, bucket, sim, 0.5, tol)
 
     # Updating position of soil resting on the bucket
     _update_body_soil!(out, pos, ori, grid, bucket, tol)
