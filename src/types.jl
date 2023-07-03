@@ -328,7 +328,7 @@ struct SimParam{I<:Int64,T<:Float64}
     cell_buffer::I
     function SimParam(
         repose_angle::T,
-        max_iterations::I
+        max_iterations::I,
         cell_buffer::I
     ) where {I<:Int64,T<:Float64}
 
