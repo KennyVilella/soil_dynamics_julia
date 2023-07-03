@@ -25,7 +25,8 @@ bucket = BucketParam(o_pos_init, j_pos_init, b_pos_init, t_pos_init, bucket_widt
 # Simulation properties
 repose_angle = 0.85
 max_iterations = 10
-sim = SimParam(repose_angle, max_iterations)
+cell_buffer = 4
+sim = SimParam(repose_angle, max_iterations, cell_buffer)
 
 # Terrain properties
 terrain = zeros(2 * grid.half_length_x + 1, 2 * grid.half_length_y + 1)

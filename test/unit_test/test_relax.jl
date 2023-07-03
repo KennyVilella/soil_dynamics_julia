@@ -17,7 +17,8 @@ grid = GridParam(grid_size_x, grid_size_y, grid_size_z, cell_size_xy, cell_size_
 # Simulation properties
 repose_angle = 0.785
 max_iterations = 3
-sim = SimParam(repose_angle, max_iterations)
+cell_buffer = 4
+sim = SimParam(repose_angle, max_iterations, cell_buffer)
 
 # Terrain properties
 terrain = zeros(2 * grid.half_length_x + 1, 2 * grid.half_length_y + 1)

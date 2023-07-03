@@ -48,7 +48,7 @@ to reach a state closer to equilibrium.
     b = [0.0, 0.0, -0.5]
     t = [1.0, 0.0, -0.5]
     bucket = BucketParam(o, j, b, t, 0.5)
-    sim = SimParam(0.85, 3)
+    sim = SimParam(0.85, 3, 4)
     terrain = zeros(2 * grid.half_length_x + 1, 2 * grid.half_length_y + 1)
     out = SimOut(terrain, grid)
 

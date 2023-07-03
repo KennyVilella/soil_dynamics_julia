@@ -53,7 +53,7 @@ avalanche on the bucket.
 
 # Example
     grid = GridParam(4.0, 4.0, 3.0, 0.05, 0.01)
-    sim = SimParam(0.85, 3)
+    sim = SimParam(0.85, 3, 4)
     terrain = zeros(2 * grid.half_length_x + 1, 2 * grid.half_length_y + 1)
     out = SimOut(terrain, grid)
 
@@ -165,7 +165,7 @@ This function only moves the soil when the following conditions are met:
 
 # Example
     grid = GridParam(4.0, 4.0, 3.0, 0.05, 0.01)
-    sim = SimParam(0.85, 3)
+    sim = SimParam(0.85, 3, 4)
     terrain = zeros(2 * grid.half_length_x + 1, 2 * grid.half_length_y + 1)
     out = SimOut(terrain, grid)
 
