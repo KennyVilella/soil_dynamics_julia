@@ -9,7 +9,7 @@ Copyright, 2023,  Vilella Kenny.
 """
     _calc_bucket_pos!(
         out::SimOut{B,I,T}, pos::Vector{T}, ori::Quaternion{T}, grid::GridParam{I,T},
-        bucket::BucketParam{I,T}, step_bucket_grid::T=0.5, tol::T=1e-8
+        bucket::BucketParam{I,T}, sim::SimParam{I,T}, step_bucket_grid::T=0.5, tol::T=1e-8
     ) where {B<:Bool,I<:Int64,T<:Float64}
 
 This function determines all the cells where the bucket is located.
@@ -30,6 +30,8 @@ origin. The orientation is provided using the quaternion definition.
                                     simulation grid.
 - `bucket::BucketParam{Float64}`: Struct that stores information related to the
                                   bucket object.
+- `sim::SimParam{Int64,Float64}`: Struct that stores information related to the
+                                  simulation.
 - `step_bucket_grid::Float64`: Spatial increment used to decompose the edges of the bucket.
 - `tol::Float64`: Small number used to handle numerical approximation errors.
 
@@ -46,10 +48,11 @@ origin. The orientation is provided using the quaternion definition.
     b = [0.0, 0.0, -0.5]
     t = [1.0, 0.0, -0.5]
     bucket = BucketParam(o, j, b, t, 0.5)
+    sim = SimParam(0.85, 3, 4)
     terrain = zeros(2 * grid.half_length_x + 1, 2 * grid.half_length_y + 1)
     out = SimOut(terrain, grid)
 
-    _calc_bucket_pos!(out, pos, ori, grid, bucket)
+    _calc_bucket_pos!(out, pos, ori, grid, bucket, sim)
 """
 function _calc_bucket_pos!(
     out::SimOut{B,I,T},
@@ -57,6 +60,7 @@ function _calc_bucket_pos!(
     ori::Quaternion{T},
     grid::GridParam{I,T},
     bucket::BucketParam{T},
+    sim::SimParam{I,T},
     step_bucket_grid::T=0.5,
     tol::T=1e-8
 ) where {B<:Bool,I<:Int64,T<:Float64}
@@ -91,6 +95,42 @@ function _calc_bucket_pos!(
     b_l_pos += tol * ((b_r_pos - b_l_pos) + (j_l_pos - b_l_pos) + (t_l_pos - b_l_pos))
     t_r_pos += tol * ((t_l_pos - t_r_pos) + (j_r_pos - t_r_pos) + (b_r_pos - t_r_pos))
     t_l_pos += tol * ((t_r_pos - t_l_pos) + (j_l_pos - t_l_pos) + (b_l_pos - t_l_pos))
+
+    # Calculating the 2D bounding box of the bucket
+    bucket_x_min = minimum([
+        j_r_pos[1], j_l_pos[1], b_r_pos[1], b_l_pos[1], t_r_pos[1], t_l_pos[1]
+    ])
+    bucket_x_max = maximum([
+        j_r_pos[1], j_l_pos[1], b_r_pos[1], b_l_pos[1], t_r_pos[1], t_l_pos[1]
+    ])
+    bucket_y_min = minimum([
+        j_r_pos[2], j_l_pos[2], b_r_pos[2], b_l_pos[2], t_r_pos[2], t_l_pos[2]
+    ])
+    bucket_y_max = maximum([
+        j_r_pos[2], j_l_pos[2], b_r_pos[2], b_l_pos[2], t_r_pos[2], t_l_pos[2]
+    ])
+
+    # Updating bucket_area
+    out.bucket_area[1, 1] = max(
+        round(Int64,
+            bucket_x_min / grid.cell_size_xy + grid.half_length_x + 1 - sim.cell_buffer
+        ), 2
+    )
+    out.bucket_area[1, 2] = min(
+        round(Int64,
+            bucket_x_max / grid.cell_size_xy + grid.half_length_x + 1 + sim.cell_buffer
+        ), 2 * grid.half_length_x
+    )
+    out.bucket_area[2, 1] = max(
+        round(Int64,
+            bucket_y_min / grid.cell_size_xy + grid.half_length_y + 1 - sim.cell_buffer
+        ), 2
+    )
+    out.bucket_area[2, 2] = min(
+        round(Int64,
+            bucket_y_max / grid.cell_size_xy + grid.half_length_y + 1 + sim.cell_buffer
+        ), 2 * grid.half_length_y
+    )
 
     # Determining where each surface of the bucket is located
     base_pos = _calc_rectangle_pos(
