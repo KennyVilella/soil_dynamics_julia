@@ -89,10 +89,22 @@ function _relax_terrain!(
     # Storing all possible directions for relaxation
     directions = [[1, 0], [-1, 0], [0, 1], [0, -1]]
 
+    # Initializing the 2D bounding box of the unstable cells
+    relax_min_x = 2 * grid.half_length_x
+    relax_max_x = 0
+    relax_min_y = 2 * grid.half_length_x
+    relax_max_y = 0
+
     # Iterating over all unstable cells
     for cell in unstable_cells
         ii = cell[1]
         jj = cell[2]
+
+        # Updating the 2D bounding box of the unstable cells
+        relax_min_x = minimum(relax_min_x, ii)
+        relax_max_x = maximum(relax_max_x, ii)
+        relax_min_y = minimum(relax_min_y, jj)
+        relax_max_y = maximum(relax_max_y, jj)
 
         # Randomizing direction to avoid asymmetry
         shuffle!(directions)
@@ -122,6 +134,12 @@ function _relax_terrain!(
             )
         end
     end
+
+    # Updating relax_area
+    out.relax_area[1, 1] = max(relax_min_x - sim.cell_buffer, 2)
+    out.relax_area[1, 2] = min(relax_max_x + sim.cell_buffer, 2 * grid.half_length_x)
+    out.relax_area[2, 1] = max(relax_min_y - sim.cell_buffer, 2)
+    out.relax_area[2, 2] = min(relax_max_y + sim.cell_buffer, 2 * grid.half_length_y)
 end
 
 """
