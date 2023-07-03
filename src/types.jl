@@ -301,11 +301,13 @@ Store all parameters related to the simulation.
 # Fields
 - `repose_angle::Float64`: The repose angle of the considered soil. [rad]
 - `max_iterations::Int64`: The maximum number of relaxation iterations per step.
+- `cell_buffer::Int64`: The number of buffer cells surrounding the bucket and the relaxed
+                        terrain where soil equilibrium is checked.
 
 # Inner constructor
 
     SimParam(
-        repose_angle::T, max_iterations::I
+        repose_angle::T, max_iterations::I, cell_buffer::I,
     ) where {I<:Int64,T<:Float64}
 
 Create a new instance of `SimParam`.
@@ -314,17 +316,20 @@ Requirements:
 - The `repose_angle` should be between 0.0 and pi / 2. The upper limit may be extended in
   the future.
 - The `max_iterations` should be greater or equal to zero.
+- The `cell_buffer` should be greater or equal to zero.
 
 # Example
 
-    sim = SimParam(0.85, 3)
+    sim = SimParam(0.85, 3, 4)
 """
 struct SimParam{I<:Int64,T<:Float64}
     repose_angle::T
     max_iterations::I
+    cell_buffer::I
     function SimParam(
         repose_angle::T,
         max_iterations::I
+        cell_buffer::I
     ) where {I<:Int64,T<:Float64}
 
         if (
@@ -337,8 +342,12 @@ struct SimParam{I<:Int64,T<:Float64}
             throw(DomainError(max_iterations, "max_iterations should be greater or equal" *
             " to zero"))
         end
+        if ((cell_buffer < 0.0) && (cell_buffer != 0.0))
+            throw(DomainError(max_iterations, "cell_buffer should be greater or equal to" *
+            " zero"))
+        end
 
-        new{I,T}(repose_angle, max_iterations)
+        new{I,T}(repose_angle, max_iterations, cell_buffer)
     end
 end
 
@@ -413,6 +422,7 @@ struct SimOut{B<:Bool,I<:Int64,T<:Float64}
     body::Vector{SparseMatrixCSC{T,I}}
     body_soil::Vector{SparseMatrixCSC{T,I}}
     body_soil_pos::Vector{Vector{I}}
+
     function SimOut(
         terrain::Matrix{T},
         grid::GridParam{I,T}
