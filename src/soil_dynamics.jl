@@ -85,6 +85,12 @@ function soil_dynamics!(
     while (!out.equilibrium[1] && it < sim.max_iterations)
         it += 1
 
+        # Updating impact_area
+        out.impact_area[1, 1] = min(out.bucket_area[1, 1], out.relax_area[1, 1])
+        out.impact_area[2, 1] = min(out.bucket_area[2, 1], out.relax_area[2, 1])
+        out.impact_area[1, 2] = max(out.bucket_area[1, 2], out.relax_area[1, 2])
+        out.impact_area[2, 2] = max(out.bucket_area[2, 2], out.relax_area[2, 2])
+
         # Relaxing the terrain
         _relax_terrain!(out, grid, sim, tol)
 
