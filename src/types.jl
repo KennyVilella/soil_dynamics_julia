@@ -316,7 +316,7 @@ Requirements:
 - The `repose_angle` should be between 0.0 and pi / 2. The upper limit may be extended in
   the future.
 - The `max_iterations` should be greater or equal to zero.
-- The `cell_buffer` should be greater or equal to zero.
+- The `cell_buffer` should be greater or equal to 2.
 
 # Example
 
@@ -342,9 +342,9 @@ struct SimParam{I<:Int64,T<:Float64}
             throw(DomainError(max_iterations, "max_iterations should be greater or equal" *
             " to zero"))
         end
-        if ((cell_buffer < 0.0) && (cell_buffer != 0.0))
-            throw(DomainError(max_iterations, "cell_buffer should be greater or equal to" *
-            " zero"))
+        if ((cell_buffer < 2.0) && (cell_buffer != 2.0))
+            @warn "cell_buffer too low, setting to 2"
+            cell_buffer = 2
         end
 
         new{I,T}(repose_angle, max_iterations, cell_buffer)
