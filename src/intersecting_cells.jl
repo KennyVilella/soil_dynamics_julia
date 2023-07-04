@@ -8,7 +8,7 @@ Copyright, 2023,  Vilella Kenny.
 #==========================================================================================#
 """
     _move_intersecting_cells!(
-        out::SimOut{B,I,T}, grid::GridParam{I,T}, tol::T=1e-8
+        out::SimOut{B,I,T}, tol::T=1e-8
     ) where {B<:Bool,I<:Int64,T<:Float64}
 
 This function moves all soil cells in `terrain` and in `body_soil` that intersect with the
@@ -19,8 +19,6 @@ bucket or with another soil cell.
 
 # Inputs
 - `out::SimOut{Bool,Int64,Float64}`: Struct that stores simulation outputs.
-- `grid::GridParam{Int64,Float64}`: Struct that stores information related to the
-                                    simulation grid.
 - `tol::Float64`: Small number used to handle numerical approximation errors.
 
 # Outputs
@@ -32,24 +30,23 @@ bucket or with another soil cell.
     terrain = zeros(2 * grid.half_length_x + 1, 2 * grid.half_length_y + 1)
     out = SimOut(terrain, grid)
 
-    _move_intersecting_cells!(out, grid)
+    _move_intersecting_cells!(out)
 """
 function _move_intersecting_cells!(
     out::SimOut{B,I,T},
-    grid::GridParam{I,T},
     tol::T=1e-8
 ) where {B<:Bool,I<:Int64,T<:Float64}
 
     # Moving terrain intersecting with the bucket
-    _move_intersecting_body!(out, grid, tol)
+    _move_intersecting_body!(out, tol)
 
     # Moving bucket soil intersecting with the bucket
-    _move_intersecting_body_soil!(out, grid, tol)
+    _move_intersecting_body_soil!(out, tol)
 end
 
 """
     _move_intersecting_body!(
-        out::SimOut{B,I,T}, grid::GridParam{I,T}, tol::T=1e-8
+        out::SimOut{B,I,T}, tol::T=1e-8
     ) where {B<:Bool,I<:Int64,T<:Float64}
 
 This function moves the soil cells in the `terrain` that intersect with a bucket.
@@ -71,8 +68,6 @@ all the soil has been moved. The process can be illustrated as follows
 
 # Inputs
 - `out::SimOut{Bool,Int64,Float64}`: Struct that stores simulation outputs.
-- `grid::GridParam{Int64,Float64}`: Struct that stores information related to the
-                                    simulation grid.
 - `tol::Float64`: Small number used to handle numerical approximation errors.
 
 # Outputs
@@ -84,11 +79,10 @@ all the soil has been moved. The process can be illustrated as follows
     terrain = zeros(2 * grid.half_length_x + 1, 2 * grid.half_length_y + 1)
     out = SimOut(terrain, grid)
 
-    _move_intersecting_body!(out, grid)
+    _move_intersecting_body!(out)
 """
 function _move_intersecting_body!(
     out::SimOut{B,I,T},
-    grid::GridParam{I,T},
     tol::T=1e-8
 ) where {B<:Bool,I<:Int64,T<:Float64}
 
@@ -182,7 +176,7 @@ end
 
 """
     _move_intersecting_body_soil!(
-        out::SimOut{B,I,T}, grid::GridParam{I,T}, tol::T=1e-8
+        out::SimOut{B,I,T}, tol::T=1e-8
     ) where {B<:Bool,I<:Int64,T<:Float64}
 
 This function moves the soil cells resting on the bucket that intersect with another bucket
@@ -209,8 +203,6 @@ negligible.
 
 # Inputs
 - `out::SimOut{Bool,Int64,Float64}`: Struct that stores simulation outputs.
-- `grid::GridParam{Int64,Float64}`: Struct that stores information related to the
-                                    simulation grid.
 - `tol::Float64`: Small number used to handle numerical approximation errors.
 
 # Outputs
@@ -222,11 +214,10 @@ negligible.
     terrain = zeros(2 * grid.half_length_x + 1, 2 * grid.half_length_y + 1)
     out = SimOut(terrain, grid)
 
-    _move_intersecting_body_soil!(out, grid)
+    _move_intersecting_body_soil!(out)
 """
 function _move_intersecting_body_soil!(
     out::SimOut{B,I,T},
-    grid::GridParam{I,T},
     tol::T=1e-8
 ) where {B<:Bool,I<:Int64,T<:Float64}
 
@@ -356,7 +347,7 @@ end
 
 function _move_body_soil!(
     out::SimOut{B,I,T},
-    grid::GridParam{I,T},
+
     tol::T=1e-8
 ) where {B<:Bool,I<:Int64,T<:Float64}
 
