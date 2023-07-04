@@ -277,7 +277,7 @@ function _move_intersecting_body_soil!(
                 ii_n = ii + nn * xy[1]
                 jj_n = jj + nn * xy[2]
 
-                _move_body_soil!(
+                ind_p, ii_p, jj_p, max_h, h_soil, wall_presence = _move_body_soil!(
                     out, ind_p, ii_p, jj_p, max_h, ii_n, jj_n, h_soil, wall_presence, tol
                 )
             end
@@ -370,6 +370,7 @@ function _move_body_soil!(
         ### No bucket ###
         out.terrain[ii_n, jj_n] += h_soil
         h_soil = 0.0
+        return ind_p, ii_p, jj_p, max_h, h_soil, wall_presence
     elseif (bucket_absence_1)
         ### Only the second bucket layer ###
         if (out.body[3][ii_n, jj_n] - tol > out.body[ind_p+1][ii_p, jj_p])
@@ -379,11 +380,11 @@ function _move_body_soil!(
             # with the bucket and later be moved by the _move_intersecting_body! function
             out.terrain[ii_n, jj_n] += h_soil
             h_soil = 0.0
-            return
+            return ind_p, ii_p, jj_p, max_h, h_soil, wall_presence
         elseif (out.body[4][ii_n, jj_n] + tol > max_h)
             ### Bucket is blocking the movement ###
             wall_presence = true
-            return
+            return ind_p, ii_p, jj_p, max_h, h_soil, wall_presence
         end
 
         bucket_soil_presence_3 = (
@@ -393,7 +394,11 @@ function _move_body_soil!(
         if (bucket_soil_presence_3 && (out.body_soil[4][ii_n, jj_n] + tol > max_h))
             ### Soil is blocking the movement ###
 ##
-            return
+            # Updating previous position
+            ii_p = ii_n
+            jj_p = jj_n
+            ind_p = 3
+            return ind_p, ii_p, jj_p, max_h, h_soil, wall_presence
         end
 
         # The only option left is that there is space for the intersecting soil
@@ -421,11 +426,11 @@ function _move_body_soil!(
             # with the bucket and later be moved by the _move_intersecting_body! function
             out.terrain[ii_n, jj_n] += h_soil
             h_soil = 0.0
-            return
+            return ind_p, ii_p, jj_p, max_h, h_soil, wall_presence
         elseif (out.body[2][ii_n, jj_n] + tol > max_h)
             ### Bucket is blocking the movement ###
             wall_presence = true
-            return
+            return ind_p, ii_p, jj_p, max_h, h_soil, wall_presence
         end
 
         bucket_soil_presence_1 = (
@@ -434,8 +439,12 @@ function _move_body_soil!(
 
         if (bucket_soil_presence_1 && (out.body_soil[2][ii_n, jj_n] + tol > max_h))
             ### Soil is blocking the movement ###
+            # Updating previous position
+            ii_p = ii_n
+            jj_p = jj_n
+            ind_p = 1
 ##
-            return
+            return ind_p, ii_p, jj_p, max_h, h_soil, wall_presence
         end
 
         # The only option left is that there is space for the intersecting soil
@@ -480,7 +489,7 @@ function _move_body_soil!(
                 jj_p = jj_n
                 ind_p = ind_b_n
                 max_h = out.body[ind_t_n][ii_n, jj_n]
-                return
+                return ind_p, ii_p, jj_p, max_h, h_soil, wall_presence
             elseif (out.body_soil[ind_b_n+1][ii_n, jj_n] + tol > max_h)
                 ### Bucket and soil blocking the movement ###
                 # Updating previous position
@@ -488,13 +497,13 @@ function _move_body_soil!(
                 jj_p = jj_n
                 ind_p = ind_b_n
                 max_h = out.body[ind_t_n][ii_n, jj_n]
-                return
+                return ind_p, ii_p, jj_p, max_h, h_soil, wall_presence
             end
         else
             if (out.body[ind_b_n+1][ii_n, jj_n] + tol > max_h)
                 ### Bucket is blocking the movement ###
                 wall_presence = true
-                return
+                return ind_p, ii_p, jj_p, max_h, h_soil, wall_presence
             end
         end
 
@@ -561,4 +570,6 @@ function _move_body_soil!(
             end
         end
     end
+
+    return  ind_p, ii_p, jj_p, max_h, h_soil, wall_presence
 end
