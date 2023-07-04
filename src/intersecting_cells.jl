@@ -268,8 +268,7 @@ function _move_intersecting_body_soil!(
             ii_p = ii
             jj_p = jj
             ind_p = ind
-            ind_t_p = ind_t
-            
+            max_h = out.body[ind_t][ii, jj]
 
             # Exploring the direction until reaching a wall or all soil has been moved
             while (!wall_presence && h_soil > tol)
@@ -279,7 +278,7 @@ function _move_intersecting_body_soil!(
                 jj_n = jj + nn * xy[2]
 
                 _move_body_soil!(
-                    out, ind_p, ind_t_p, ii_p, jj_p, ii_n, jj_n, h_soil, wall_presence, tol
+                    out, ind_p, ii_p, jj_p, max_h, ii_n, jj_n, h_soil, wall_presence, tol
                 )
             end
             if (h_soil < tol)
@@ -349,9 +348,9 @@ end
 function _move_body_soil!(
     out::SimOut{B,I,T},
     ind_p::I,
-    ind_t_p::I,
     ii_p::I,
     jj_p::I,
+    max_h::T,
     ii_n::I,
     jj_n::I,
     h_soil::T,
@@ -381,7 +380,7 @@ function _move_body_soil!(
             out.terrain[ii_n, jj_n] += h_soil
             h_soil = 0.0
             return
-        elseif (out.body[4][ii_n, jj_n] + tol > out.body[ind_t_p][ii_p, jj_p])
+        elseif (out.body[4][ii_n, jj_n] + tol > max_h)
             ### Bucket is blocking the movement ###
             wall_presence = true
             return
@@ -391,10 +390,7 @@ function _move_body_soil!(
             (out.body_soil[3][ii_n, jj_n] != 0.0) || (out.body_soil[4][ii_n, jj_n] != 0.0)
         )
 
-        if (
-            bucket_soil_presence_3 &&
-            (out.body_soil[4][ii_n, jj_n] + tol > out.body[ind_t_p][ii_p, jj_p])
-        )
+        if (bucket_soil_presence_3 && (out.body_soil[4][ii_n, jj_n] + tol > max_h))
             ### Soil is blocking the movement ###
 ##
             return
@@ -426,7 +422,7 @@ function _move_body_soil!(
             out.terrain[ii_n, jj_n] += h_soil
             h_soil = 0.0
             return
-        elseif (out.body[2][ii_n, jj_n] + tol > out.body[ind_t_p][ii_p, jj_p])
+        elseif (out.body[2][ii_n, jj_n] + tol > max_h)
             ### Bucket is blocking the movement ###
             wall_presence = true
             return
@@ -436,10 +432,7 @@ function _move_body_soil!(
             (out.body_soil[1][ii_n, jj_n] != 0.0) || (out.body_soil[2][ii_n, jj_n] != 0.0)
         )
 
-        if (
-            bucket_soil_presence_1 &&
-            (out.body_soil[2][ii_n, jj_n] + tol > out.body[ind_t_p][ii_p, jj_p])
-        )
+        if (bucket_soil_presence_1 && (out.body_soil[2][ii_n, jj_n] + tol > max_h))
             ### Soil is blocking the movement ###
 ##
             return
@@ -486,21 +479,19 @@ function _move_body_soil!(
                 ii_p = ii_n
                 jj_p = jj_n
                 ind_p = ind_b_n
-                ind_t_p = ind_t_n
+                max_h = out.body[ind_t_n][ii_n, jj_n]
                 return
-            elseif (
-                out.body_soil[ind_b_n+1][ii_n, jj_n] + tol > out.body[ind_t_p][ii_p, jj_p]
-            )
+            elseif (out.body_soil[ind_b_n+1][ii_n, jj_n] + tol > max_h)
                 ### Bucket and soil blocking the movement ###
                 # Updating previous position
                 ii_p = ii_n
                 jj_p = jj_n
                 ind_p = ind_b_n
-                ind_t_p = ind_t_n
+                max_h = out.body[ind_t_n][ii_n, jj_n]
                 return
             end
         else
-            if (out.body[ind_b_n+1][ii_n, jj_n] + tol > out.body[ind_t_p][ii_p, jj_p])
+            if (out.body[ind_b_n+1][ii_n, jj_n] + tol > max_h)
                 ### Bucket is blocking the movement ###
                 wall_presence = true
                 return
@@ -524,7 +515,7 @@ function _move_body_soil!(
                 ii_p = ii_n
                 jj_p = jj_n
                 ind_p = ind_b_n
-                ind_t_p = ind_t_n
+                max_h = out.body[ind_t_n][ii_n, jj_n]
             else
                 ### More space than soil ###
                 # Adding soil to the bucket soil layer
@@ -554,7 +545,7 @@ function _move_body_soil!(
                 ii_p = ii_n
                 jj_p = jj_n
                 ind_p = ind_b_n
-                ind_t_p = ind_t_n
+                max_h = out.body[ind_t_n][ii_n, jj_n]
             else
                 ### More space than soil ###
                 # Creating a new bucket soil layer
