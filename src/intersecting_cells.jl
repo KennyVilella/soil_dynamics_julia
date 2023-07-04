@@ -482,13 +482,21 @@ function _move_body_soil!(
             ### Bucket soil is present between the two bucket layers ###
             if (out.body_soil[ind_b_n+1][ii_n, jj_n] + tol > out.body[ind_t_n][ii_n, jj_n])
                 ### Bucket and soil blocking the movement ###
-##
+                # Updating previous position
+                ii_p = ii_n
+                jj_p = jj_n
+                ind_p = ind_b_n
+                ind_t_p = ind_t_n
                 return
             elseif (
                 out.body_soil[ind_b_n+1][ii_n, jj_n] + tol > out.body[ind_t_p][ii_p, jj_p]
             )
                 ### Bucket and soil blocking the movement ###
-##
+                # Updating previous position
+                ii_p = ii_n
+                jj_p = jj_n
+                ind_p = ind_b_n
+                ind_t_p = ind_t_n
                 return
             end
         else
@@ -511,7 +519,12 @@ function _move_body_soil!(
 
                 # Adding soil to the bucket soil layer
                 out.body_soil[ind_b_n+1][ii_n, jj_n] += delta_h
-##
+
+                # Updating previous position
+                ii_p = ii_n
+                jj_p = jj_n
+                ind_p = ind_b_n
+                ind_t_p = ind_t_n
             else
                 ### More space than soil ###
                 # Adding soil to the bucket soil layer
@@ -536,7 +549,12 @@ function _move_body_soil!(
 
                 # Adding new bucket soil position to body_soil_pos
                 push!(out.body_soil_pos, [ind_b_n; ii_n; jj_n])
-##
+
+                # Updating previous position
+                ii_p = ii_n
+                jj_p = jj_n
+                ind_p = ind_b_n
+                ind_t_p = ind_t_n
             else
                 ### More space than soil ###
                 # Creating a new bucket soil layer
