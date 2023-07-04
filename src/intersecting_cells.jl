@@ -37,11 +37,11 @@ function _move_intersecting_cells!(
     tol::T=1e-8
 ) where {B<:Bool,I<:Int64,T<:Float64}
 
-    # Moving terrain intersecting with the bucket
-    _move_intersecting_body!(out, tol)
-
     # Moving bucket soil intersecting with the bucket
     _move_intersecting_body_soil!(out, tol)
+
+    # Moving terrain intersecting with the bucket
+    _move_intersecting_body!(out, tol)
 end
 
 """
@@ -262,8 +262,11 @@ function _move_intersecting_body_soil!(
 
         # Iterating over the eight lateral directions
         for xy in directions
+            # Initializing loop properties
             nn = 0
             wall_presence = false
+            ii_p = ii
+            jj_p = jj
             ind_p = ind
             ind_t_p = ind_t
             
@@ -274,11 +277,6 @@ function _move_intersecting_body_soil!(
                 nn += 1
                 ii_n = ii + nn * xy[1]
                 jj_n = jj + nn * xy[2]
-
-                # Calculating previous position
-                ii_p = ii + (nn - 1) * xy[1]
-                jj_p = jj + (nn - 1) * xy[2]
-                # Need to update ind_t_p and ind_p as well...
 
                 _move_body_soil!(
                     out, ind_p, ind_t_p, ii_p, jj_p, ii_n, jj_n, h_soil, wall_presence, tol
@@ -377,20 +375,12 @@ function _move_body_soil!(
         ### Only the second bucket layer ###
         if (out.body[3][ii_n, jj_n] - tol > out.body[ind_p+1][ii_p, jj_p])
             ### Soil avalanche below the second bucket layer to the terrain ###
-            # Calculating available space
-            delta_h = out.body[3][ii_n, jj_n] - out.terrain[ii_n, jj_n]
-
-            if (delta_h < h_soil)
-                ### Not enough space ###
-                h_soil -= delta_h
-                out.terrain[ii_n, jj_n] += delta_h
-                return
-            else
-                ### More space than soil ###
-                out.terrain[ii_n, jj_n] += h_soil
-                h_soil = 0.0
-                return
-            end
+            # Note that all soil is going to the terrain without considering the space 
+            # available. If there is not enough space available, the soil would intersect
+            # with the bucket and later be moved by the _move_intersecting_body! function
+            out.terrain[ii_n, jj_n] += h_soil
+            h_soil = 0.0
+            return
         elseif (out.body[4][ii_n, jj_n] + tol > out.body[ind_t_p][ii_p, jj_p])
             ### Bucket is blocking the movement ###
             wall_presence = true
@@ -406,6 +396,7 @@ function _move_body_soil!(
             (out.body_soil[4][ii_n, jj_n] + tol > out.body[ind_t_p][ii_p, jj_p])
         )
             ### Soil is blocking the movement ###
+##
             return
         end
 
@@ -429,19 +420,12 @@ function _move_body_soil!(
         ### Only the first bucket layer ###
         if (out.body[1][ii_n, jj_n] - tol > out.body[ind_p+1][ii_p, jj_p])
             ### Soil avalanche below the first bucket layer to the terrain ###
-            # Calculating available space
-            delta_h = out.body[1][ii_n, jj_n] - out.terrain[ii_n, jj_n]
-
-            if (delta_h < h_soil)
-                ### Not enough space ###
-                h_soil -= delta_h
-                out.terrain[ii_n, jj_n] += delta_h
-            else
-                ### More space than soil ###
-                out.terrain[ii_n, jj_n] += h_soil
-                h_soil = 0.0
-                return
-            end
+            # Note that all soil is going to the terrain without considering the space 
+            # available. If there is not enough space available, the soil would intersect
+            # with the bucket and later be moved by the _move_intersecting_body! function
+            out.terrain[ii_n, jj_n] += h_soil
+            h_soil = 0.0
+            return
         elseif (out.body[2][ii_n, jj_n] + tol > out.body[ind_t_p][ii_p, jj_p])
             ### Bucket is blocking the movement ###
             wall_presence = true
@@ -457,6 +441,7 @@ function _move_body_soil!(
             (out.body_soil[2][ii_n, jj_n] + tol > out.body[ind_t_p][ii_p, jj_p])
         )
             ### Soil is blocking the movement ###
+##
             return
         end
 
@@ -497,11 +482,13 @@ function _move_body_soil!(
             ### Bucket soil is present between the two bucket layers ###
             if (out.body_soil[ind_b_n+1][ii_n, jj_n] + tol > out.body[ind_t_n][ii_n, jj_n])
                 ### Bucket and soil blocking the movement ###
+##
                 return
             elseif (
                 out.body_soil[ind_b_n+1][ii_n, jj_n] + tol > out.body[ind_t_p][ii_p, jj_p]
             )
                 ### Bucket and soil blocking the movement ###
+##
                 return
             end
         else
@@ -524,6 +511,7 @@ function _move_body_soil!(
 
                 # Adding soil to the bucket soil layer
                 out.body_soil[ind_b_n+1][ii_n, jj_n] += delta_h
+##
             else
                 ### More space than soil ###
                 # Adding soil to the bucket soil layer
@@ -548,6 +536,7 @@ function _move_body_soil!(
 
                 # Adding new bucket soil position to body_soil_pos
                 push!(out.body_soil_pos, [ind_b_n; ii_n; jj_n])
+##
             else
                 ### More space than soil ###
                 # Creating a new bucket soil layer
