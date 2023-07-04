@@ -86,7 +86,7 @@ end
     out.body[1][10, 18] = 0.0
     out.body[2][10, 18] = 0.5
     out.terrain[11, 17] = 0.1
-    _move_intersecting_body!(out, grid)
+    _move_intersecting_body!(out)
     # Checking terrain
     @test (out.terrain[11, 17] ≈ 0.0) && (out.terrain[10, 17] ≈ 0.1)
     out.terrain[10, 17] = 0.0
@@ -103,7 +103,7 @@ end
     out.body[1][12, 18] = 0.0
     out.body[2][12, 18] = 0.5
     out.terrain[11, 17] = 0.2
-    _move_intersecting_body!(out, grid)
+    _move_intersecting_body!(out)
     # Checking terrain
     @test (out.terrain[11, 17] ≈ 0.0) && (out.terrain[12, 17] ≈ 0.2)
     out.terrain[12, 17] = 0.0
@@ -120,7 +120,7 @@ end
     out.body[1][12, 16] = 0.0
     out.body[2][12, 16] = 0.5
     out.terrain[11, 17] = 0.05
-    _move_intersecting_body!(out, grid)
+    _move_intersecting_body!(out)
     # Checking terrain
     @test (out.terrain[11, 17] ≈ 0.0) && (out.terrain[11, 16] ≈ 0.05)
     out.terrain[11, 16] = 0.0
@@ -137,7 +137,7 @@ end
     out.body[1][12, 18] = 0.0
     out.body[2][12, 18] = 0.5
     out.terrain[11, 17] = 0.25
-    _move_intersecting_body!(out, grid)
+    _move_intersecting_body!(out)
     # Checking terrain
     @test (out.terrain[11, 17] ≈ 0.0) && (out.terrain[11, 18] ≈ 0.25)
     out.terrain[11, 18] = 0.0
@@ -154,7 +154,7 @@ end
     out.body[1][12, 16] = 0.0
     out.body[2][12, 16] = 0.5
     out.terrain[11, 17] = 0.4
-    _move_intersecting_body!(out, grid)
+    _move_intersecting_body!(out)
     # Checking terrain
     @test (out.terrain[11, 17] ≈ 0.0) && (out.terrain[10, 16] ≈ 0.4)
     out.terrain[10, 16] = 0.0
@@ -171,7 +171,7 @@ end
     out.body[1][11, 16] = 0.0
     out.body[2][11, 16] = 0.5
     out.terrain[11, 17] = 0.1
-    _move_intersecting_body!(out, grid)
+    _move_intersecting_body!(out)
     # Checking terrain
     @test (out.terrain[11, 17] ≈ 0.0) && (out.terrain[12, 16] ≈ 0.1)
     out.terrain[12, 16] = 0.0
@@ -188,7 +188,7 @@ end
     out.body[1][12, 18] = 0.0
     out.body[2][12, 18] = 0.5
     out.terrain[11, 17] = 0.5
-    _move_intersecting_body!(out, grid)
+    _move_intersecting_body!(out)
     # Checking terrain
     @test (out.terrain[11, 17] ≈ 0.0) && (out.terrain[10, 18] ≈ 0.5)
     out.terrain[10, 18] = 0.0
@@ -205,7 +205,7 @@ end
     out.body[1][11, 18] = 0.0
     out.body[2][11, 18] = 0.5
     out.terrain[11, 17] = 0.8
-    _move_intersecting_body!(out, grid)
+    _move_intersecting_body!(out)
     # Checking terrain
     @test (out.terrain[11, 17] ≈ 0.0) && (out.terrain[12, 18] ≈ 0.8)
     out.terrain[12, 18] = 0.0
@@ -222,7 +222,7 @@ end
     out.body[3][12, 18] = 0.0
     out.body[4][12, 18] = 0.5
     out.terrain[11, 17] = 0.5
-    _move_intersecting_body!(out, grid)
+    _move_intersecting_body!(out)
     # Checking terrain
     @test (out.terrain[11, 17] ≈ 0.0) && (out.terrain[10, 18] ≈ 0.5)
     out.terrain[10, 18] = 0.0
@@ -245,7 +245,7 @@ end
     out.body[3][12, 18] = 0.0
     out.body[4][12, 18] = 0.5
     out.terrain[11, 17] = 0.5
-    _move_intersecting_body!(out, grid)
+    _move_intersecting_body!(out)
     # Checking terrain
     @test (out.terrain[11, 17] ≈ 0.0) && (out.terrain[10, 18] ≈ 0.5)
     out.terrain[10, 18] = 0.0
@@ -266,7 +266,7 @@ end
     out.body[3][11, 17] = -0.2
     out.body[4][11, 17] = 0.3
     out.terrain[11, 17] = 0.8
-    _move_intersecting_body!(out, grid)
+    _move_intersecting_body!(out)
     # Checking terrain
     @test (out.terrain[11, 17] ≈ -0.2) && (out.terrain[12, 18] ≈ 1.0)
     out.terrain[12, 18] = 0.0
@@ -286,7 +286,7 @@ end
     out.body[1][8, 17] = 0.0
     out.body[2][8, 17] = 0.0
     out.terrain[11, 17] = 0.5
-    _move_intersecting_body!(out, grid)
+    _move_intersecting_body!(out)
     # Checking terrain
     @test (out.terrain[11, 17] ≈ -0.4) && (out.terrain[8, 17] ≈ 0.9)
     out.terrain[8, 17] = 0.0
@@ -320,7 +320,7 @@ end
     out.body[1][14, 20] = 0.0
     out.body[2][14, 20] = 0.0
     out.terrain[11, 17] = 0.5
-    _move_intersecting_body!(out, grid)
+    _move_intersecting_body!(out)
     # Checking terrain
     @test (out.terrain[11, 17] ≈ -0.5) && (out.terrain[10, 17] ≈ 0.1)
     @test (out.terrain[8, 17] ≈ 0.15) && (out.terrain[12, 17] ≈ 0.2)
@@ -364,7 +364,7 @@ end
     out.body[1][14, 20] = 0.0
     out.body[2][14, 20] = 0.0
     out.terrain[11, 17] = 0.8
-    _move_intersecting_body!(out, grid)
+    _move_intersecting_body!(out)
     # Checking terrain
     @test (out.terrain[11, 17] ≈ -0.5) && (out.terrain[10, 17] ≈ 0.1)
     @test (out.terrain[8, 17] ≈ 0.25) && (out.terrain[12, 17] ≈ 0.2)
@@ -409,7 +409,7 @@ end
     out.body[1][14, 20] = 0.0
     out.body[2][14, 20] = 0.0
     out.terrain[11, 17] = 0.6
-    _move_intersecting_body!(out, grid)
+    _move_intersecting_body!(out)
     # Checking terrain
     @test (out.terrain[11, 17] ≈ -0.5) && (out.terrain[10, 17] ≈ 0.1)
     @test (out.terrain[8, 17] ≈ 0.25) && (out.terrain[12, 17] ≈ 0.2)
@@ -432,7 +432,7 @@ end
     # Testing when there is nothing to move
     out.body[1][8:14, 14:20] .= 0.0
     out.body[2][8:14, 14:20] .= 0.2
-    _move_intersecting_body!(out, grid)
+    _move_intersecting_body!(out)
     # Checking terrain
     @test all(out.terrain[:, :] .== 0.0)
     # Resetting body
@@ -444,7 +444,7 @@ end
     out.body[1][11, 17] = -0.4
     out.body[2][11, 17] = 0.6
     out.terrain[11, 17] = 0.5
-    _move_intersecting_body!(out, grid)
+    _move_intersecting_body!(out)
     # Checking terrain
     @test (out.terrain[11, 17] ≈ -0.4) && (out.terrain[12, 16] ≈ 0.9)
     out.terrain[12, 16] = 0.0
@@ -452,7 +452,7 @@ end
     @test all(out.terrain[:, :] .== 0.0)
     # Second call
     out.terrain[11, 17] = 0.5
-    _move_intersecting_body!(out, grid)
+    _move_intersecting_body!(out)
     # Checking terrain
     @test (out.terrain[11, 17] ≈ -0.4) && (out.terrain[10, 17] ≈ 0.9)
     out.terrain[10, 17] = 0.0
@@ -478,7 +478,7 @@ end
     out.body_soil[4][10, 15] = 0.7
     push!(out.body_soil_pos, [1; 10; 15])
     push!(out.body_soil_pos, [3; 10; 15])
-    _move_intersecting_body_soil!(out, grid)
+    _move_intersecting_body_soil!(out)
     @test (out.body_soil[1][10, 15] == 0.3) && (out.body_soil[2][10, 15] ≈ 0.5)
     @test (out.body_soil[3][10, 15] == 0.6) && (out.body_soil[4][10, 15] == 0.7)
     @test (out.terrain[11, 14] ≈ 0.3)
@@ -508,7 +508,7 @@ end
     out.body_soil[4][10, 15] = 0.8
     push!(out.body_soil_pos, [1; 10; 15])
     push!(out.body_soil_pos, [3; 10; 15])
-    _move_intersecting_body_soil!(out, grid)
+    _move_intersecting_body_soil!(out)
     @test (out.body_soil[1][10, 15] == 0.6) && (out.body_soil[2][10, 15] == 0.7)
     @test (out.body_soil[3][10, 15] == 0.3) && (out.body_soil[4][10, 15] ≈ 0.5)
     @test (out.terrain[11, 14] ≈ 0.3)
@@ -538,7 +538,7 @@ end
     out.body_soil[4][10, 15] = 0.1
     push!(out.body_soil_pos, [1; 10; 15])
     push!(out.body_soil_pos, [3; 10; 15])
-    _move_intersecting_body_soil!(out, grid)
+    _move_intersecting_body_soil!(out)
     @test (out.body_soil[1][10, 15] == -0.5) && (out.body_soil[2][10, 15] ≈ -0.3)
     @test (out.body_soil[3][10, 15] == 0.0) && (out.body_soil[4][10, 15] == 0.1)
     @test (out.terrain[11, 14] ≈ 0.3)
@@ -569,7 +569,7 @@ end
     out.body[2][11, 14] = 1.0
     push!(out.body_soil_pos, [1; 10; 15])
     push!(out.body_soil_pos, [3; 10; 15])
-    _move_intersecting_body_soil!(out, grid)
+    _move_intersecting_body_soil!(out)
     @test (out.body_soil[1][10, 15] == 0.3) && (out.body_soil[2][10, 15] ≈ 0.5)
     @test (out.body_soil[3][10, 15] == 0.6) && (out.body_soil[4][10, 15] == 0.7)
     @test (out.terrain[11, 14] ≈ 0.3)
@@ -602,7 +602,7 @@ end
     out.body[2][11, 14] = 0.5
     push!(out.body_soil_pos, [1; 10; 15])
     push!(out.body_soil_pos, [3; 10; 15])
-    _move_intersecting_body_soil!(out, grid)
+    _move_intersecting_body_soil!(out)
     @test (out.body_soil[1][10, 15] == 0.3) && (out.body_soil[2][10, 15] ≈ 0.5)
     @test (out.body_soil[3][10, 15] == 0.6) && (out.body_soil[4][10, 15] == 0.7)
     @test (out.terrain[11, 14] ≈ 0.3)
@@ -635,7 +635,7 @@ end
     out.body[2][11, 14] = 1.0
     push!(out.body_soil_pos, [1; 10; 15])
     push!(out.body_soil_pos, [3; 10; 15])
-    _move_intersecting_body_soil!(out, grid)
+    _move_intersecting_body_soil!(out)
     @test (out.body_soil[1][10, 15] == 0.6) && (out.body_soil[2][10, 15] == 0.7)
     @test (out.body_soil[3][10, 15] == 0.3) && (out.body_soil[4][10, 15] ≈ 0.5)
     @test (out.terrain[11, 14] ≈ 0.3)
@@ -668,7 +668,7 @@ end
     out.body[4][11, 14] = 1.0
     push!(out.body_soil_pos, [1; 10; 15])
     push!(out.body_soil_pos, [3; 10; 15])
-    _move_intersecting_body_soil!(out, grid)
+    _move_intersecting_body_soil!(out)
     @test (out.body_soil[1][10, 15] == 0.3) && (out.body_soil[2][10, 15] ≈ 0.5)
     @test (out.body_soil[3][10, 15] == 0.6) && (out.body_soil[4][10, 15] == 0.7)
     @test (out.terrain[11, 14] ≈ 0.3)
@@ -701,7 +701,7 @@ end
     out.body[4][11, 14] = 0.5
     push!(out.body_soil_pos, [1; 10; 15])
     push!(out.body_soil_pos, [3; 10; 15])
-    _move_intersecting_body_soil!(out, grid)
+    _move_intersecting_body_soil!(out)
     @test (out.body_soil[1][10, 15] == 0.3) && (out.body_soil[2][10, 15] ≈ 0.5)
     @test (out.body_soil[3][10, 15] == 0.6) && (out.body_soil[4][10, 15] == 0.7)
     @test (out.terrain[11, 14] ≈ 0.3)
@@ -734,7 +734,7 @@ end
     out.body[4][11, 14] = 1.0
     push!(out.body_soil_pos, [1; 10; 15])
     push!(out.body_soil_pos, [3; 10; 15])
-    _move_intersecting_body_soil!(out, grid)
+    _move_intersecting_body_soil!(out)
     @test (out.body_soil[1][10, 15] == 0.6) && (out.body_soil[2][10, 15] == 0.7)
     @test (out.body_soil[3][10, 15] == 0.3) && (out.body_soil[4][10, 15] ≈ 0.5)
     @test (out.terrain[11, 14] ≈ 0.3)
@@ -767,7 +767,7 @@ end
     out.body[2][11, 14] = 0.2
     push!(out.body_soil_pos, [1; 10; 15])
     push!(out.body_soil_pos, [3; 10; 15])
-    _move_intersecting_body_soil!(out, grid)
+    _move_intersecting_body_soil!(out)
     @test (out.body_soil[1][10, 15] == 0.3) && (out.body_soil[2][10, 15] ≈ 0.5)
     @test (out.body_soil[3][10, 15] == 0.6) && (out.body_soil[4][10, 15] == 0.7)
     @test (out.body_soil[1][11, 14] ≈ 0.2) && (out.body_soil[2][11, 14] ≈ 0.5)
@@ -801,7 +801,7 @@ end
     out.body[2][11, 14] = 0.2
     push!(out.body_soil_pos, [1; 10; 15])
     push!(out.body_soil_pos, [3; 10; 15])
-    _move_intersecting_body_soil!(out, grid)
+    _move_intersecting_body_soil!(out)
     @test (out.body_soil[1][10, 15] == 0.6) && (out.body_soil[2][10, 15] == 0.7)
     @test (out.body_soil[3][10, 15] == 0.3) && (out.body_soil[4][10, 15] ≈ 0.5)
     @test (out.body_soil[1][11, 14] ≈ 0.2) && (out.body_soil[2][11, 14] ≈ 0.5)
@@ -835,7 +835,7 @@ end
     out.body[4][11, 14] = 0.2
     push!(out.body_soil_pos, [1; 10; 15])
     push!(out.body_soil_pos, [3; 10; 15])
-    _move_intersecting_body_soil!(out, grid)
+    _move_intersecting_body_soil!(out)
     @test (out.body_soil[1][10, 15] == 0.3) && (out.body_soil[2][10, 15] ≈ 0.5)
     @test (out.body_soil[3][10, 15] == 0.6) && (out.body_soil[4][10, 15] == 0.7)
     @test (out.body_soil[3][11, 14] ≈ 0.2) && (out.body_soil[4][11, 14] ≈ 0.5)
@@ -869,7 +869,7 @@ end
     out.body[4][11, 14] = 0.2
     push!(out.body_soil_pos, [1; 10; 15])
     push!(out.body_soil_pos, [3; 10; 15])
-    _move_intersecting_body_soil!(out, grid)
+    _move_intersecting_body_soil!(out)
     @test (out.body_soil[1][10, 15] == 0.6) && (out.body_soil[2][10, 15] == 0.7)
     @test (out.body_soil[3][10, 15] == 0.3) && (out.body_soil[4][10, 15] ≈ 0.5)
     @test (out.body_soil[3][11, 14] ≈ 0.2) && (out.body_soil[4][11, 14] ≈ 0.5)
@@ -906,7 +906,7 @@ end
     push!(out.body_soil_pos, [1; 10; 15])
     push!(out.body_soil_pos, [3; 10; 15])
     push!(out.body_soil_pos, [1; 11; 14])
-    _move_intersecting_body_soil!(out, grid)
+    _move_intersecting_body_soil!(out)
     @test (out.body_soil[1][10, 15] == 0.3) && (out.body_soil[2][10, 15] ≈ 0.5)
     @test (out.body_soil[3][10, 15] == 0.6) && (out.body_soil[4][10, 15] == 0.7)
     @test (out.body_soil[1][11, 14] == 0.1) && (out.body_soil[2][11, 14] ≈ 0.5)
@@ -943,7 +943,7 @@ end
     push!(out.body_soil_pos, [1; 10; 15])
     push!(out.body_soil_pos, [3; 10; 15])
     push!(out.body_soil_pos, [1; 11; 14])
-    _move_intersecting_body_soil!(out, grid)
+    _move_intersecting_body_soil!(out)
     @test (out.body_soil[1][10, 15] == 0.6) && (out.body_soil[2][10, 15] == 0.7)
     @test (out.body_soil[3][10, 15] == 0.3) && (out.body_soil[4][10, 15] ≈ 0.5)
     @test (out.body_soil[1][11, 14] == 0.1) && (out.body_soil[2][11, 14] ≈ 0.5)
@@ -980,7 +980,7 @@ end
     push!(out.body_soil_pos, [1; 10; 15])
     push!(out.body_soil_pos, [3; 10; 15])
     push!(out.body_soil_pos, [3; 11; 14])
-    _move_intersecting_body_soil!(out, grid)
+    _move_intersecting_body_soil!(out)
     @test (out.body_soil[1][10, 15] == 0.3) && (out.body_soil[2][10, 15] ≈ 0.5)
     @test (out.body_soil[3][10, 15] == 0.6) && (out.body_soil[4][10, 15] == 0.7)
     @test (out.body_soil[3][11, 14] == 0.1) && (out.body_soil[4][11, 14] ≈ 0.5)
@@ -1017,7 +1017,7 @@ end
     push!(out.body_soil_pos, [1; 10; 15])
     push!(out.body_soil_pos, [3; 10; 15])
     push!(out.body_soil_pos, [3; 11; 14])
-    _move_intersecting_body_soil!(out, grid)
+    _move_intersecting_body_soil!(out)
     @test (out.body_soil[1][10, 15] == 0.6) && (out.body_soil[2][10, 15] == 0.7)
     @test (out.body_soil[3][10, 15] == 0.3) && (out.body_soil[4][10, 15] ≈ 0.5)
     @test (out.body_soil[3][11, 14] == 0.1) && (out.body_soil[4][11, 14] ≈ 0.5)
@@ -1054,7 +1054,7 @@ end
     out.body[4][11, 14] = 0.7
     push!(out.body_soil_pos, [1; 10; 15])
     push!(out.body_soil_pos, [3; 10; 15])
-    _move_intersecting_body_soil!(out, grid)
+    _move_intersecting_body_soil!(out)
     @test (out.body_soil[1][10, 15] == 0.3) && (out.body_soil[2][10, 15] ≈ 0.5)
     @test (out.body_soil[3][10, 15] == 0.6) && (out.body_soil[4][10, 15] == 0.7)
     @test (out.body_soil[1][11, 14] ≈ 0.2) && (out.body_soil[2][11, 14] ≈ 0.5)
@@ -1093,7 +1093,7 @@ end
     out.body[4][11, 14] = 0.7
     push!(out.body_soil_pos, [1; 10; 15])
     push!(out.body_soil_pos, [3; 10; 15])
-    _move_intersecting_body_soil!(out, grid)
+    _move_intersecting_body_soil!(out)
     @test (out.body_soil[1][10, 15] == 0.6) && (out.body_soil[2][10, 15] == 0.7)
     @test (out.body_soil[3][10, 15] == 0.3) && (out.body_soil[4][10, 15] ≈ 0.5)
     @test (out.body_soil[1][11, 14] ≈ 0.2) && (out.body_soil[2][11, 14] ≈ 0.5)
@@ -1132,7 +1132,7 @@ end
     out.body[4][11, 14] = 0.2
     push!(out.body_soil_pos, [1; 10; 15])
     push!(out.body_soil_pos, [3; 10; 15])
-    _move_intersecting_body_soil!(out, grid)
+    _move_intersecting_body_soil!(out)
     @test (out.body_soil[1][10, 15] == 0.3) && (out.body_soil[2][10, 15] ≈ 0.5)
     @test (out.body_soil[3][10, 15] == 0.6) && (out.body_soil[4][10, 15] == 0.7)
     @test (out.body_soil[3][11, 14] ≈ 0.2) && (out.body_soil[4][11, 14] ≈ 0.5)
@@ -1171,7 +1171,7 @@ end
     out.body[4][11, 14] = 0.2
     push!(out.body_soil_pos, [1; 10; 15])
     push!(out.body_soil_pos, [3; 10; 15])
-    _move_intersecting_body_soil!(out, grid)
+    _move_intersecting_body_soil!(out)
     @test (out.body_soil[1][10, 15] == 0.6) && (out.body_soil[2][10, 15] == 0.7)
     @test (out.body_soil[3][10, 15] == 0.3) && (out.body_soil[4][10, 15] ≈ 0.5)
     @test (out.body_soil[3][11, 14] ≈ 0.2) && (out.body_soil[4][11, 14] ≈ 0.5)
@@ -1213,7 +1213,7 @@ end
     push!(out.body_soil_pos, [1; 10; 15])
     push!(out.body_soil_pos, [3; 10; 15])
     push!(out.body_soil_pos, [1; 11; 14])
-    _move_intersecting_body_soil!(out, grid)
+    _move_intersecting_body_soil!(out)
     @test (out.body_soil[1][10, 15] == 0.3) && (out.body_soil[2][10, 15] ≈ 0.5)
     @test (out.body_soil[3][10, 15] == 0.6) && (out.body_soil[4][10, 15] == 0.7)
     @test (out.body_soil[1][11, 14] == 0.1) && (out.body_soil[2][11, 14] ≈ 0.5)
@@ -1255,7 +1255,7 @@ end
     push!(out.body_soil_pos, [1; 10; 15])
     push!(out.body_soil_pos, [3; 10; 15])
     push!(out.body_soil_pos, [1; 11; 14])
-    _move_intersecting_body_soil!(out, grid)
+    _move_intersecting_body_soil!(out)
     @test (out.body_soil[1][10, 15] == 0.6) && (out.body_soil[2][10, 15] == 0.7)
     @test (out.body_soil[3][10, 15] == 0.3) && (out.body_soil[4][10, 15] ≈ 0.5)
     @test (out.body_soil[1][11, 14] ≈ 0.1) && (out.body_soil[2][11, 14] ≈ 0.5)
@@ -1297,7 +1297,7 @@ end
     push!(out.body_soil_pos, [1; 10; 15])
     push!(out.body_soil_pos, [3; 10; 15])
     push!(out.body_soil_pos, [3; 11; 14])
-    _move_intersecting_body_soil!(out, grid)
+    _move_intersecting_body_soil!(out)
     @test (out.body_soil[1][10, 15] == 0.3) && (out.body_soil[2][10, 15] ≈ 0.5)
     @test (out.body_soil[3][10, 15] == 0.6) && (out.body_soil[4][10, 15] == 0.7)
     @test (out.body_soil[3][11, 14] ≈ 0.1) && (out.body_soil[4][11, 14] ≈ 0.5)
@@ -1339,7 +1339,7 @@ end
     push!(out.body_soil_pos, [1; 10; 15])
     push!(out.body_soil_pos, [3; 10; 15])
     push!(out.body_soil_pos, [3; 11; 14])
-    _move_intersecting_body_soil!(out, grid)
+    _move_intersecting_body_soil!(out)
     @test (out.body_soil[1][10, 15] == 0.6) && (out.body_soil[2][10, 15] == 0.7)
     @test (out.body_soil[3][10, 15] == 0.3) && (out.body_soil[4][10, 15] ≈ 0.5)
     @test (out.body_soil[3][11, 14] ≈ 0.1) && (out.body_soil[4][11, 14] ≈ 0.5)
@@ -1378,7 +1378,7 @@ end
     out.body[4][11, 14] = 0.7
     push!(out.body_soil_pos, [1; 10; 15])
     push!(out.body_soil_pos, [3; 10; 15])
-    _move_intersecting_body_soil!(out, grid)
+    _move_intersecting_body_soil!(out)
     @test (out.body_soil[1][10, 15] == 0.3) && (out.body_soil[2][10, 15] ≈ 0.5)
     @test (out.body_soil[3][10, 15] == 0.6) && (out.body_soil[4][10, 15] == 0.7)
     @test (out.body_soil[1][11, 14] ≈ 0.2) && (out.body_soil[2][11, 14] ≈ 0.4)
@@ -1419,7 +1419,7 @@ end
     out.body[4][11, 14] = 0.7
     push!(out.body_soil_pos, [1; 10; 15])
     push!(out.body_soil_pos, [3; 10; 15])
-    _move_intersecting_body_soil!(out, grid)
+    _move_intersecting_body_soil!(out)
     @test (out.body_soil[1][10, 15] == 0.6) && (out.body_soil[2][10, 15] == 0.7)
     @test (out.body_soil[3][10, 15] == 0.3) && (out.body_soil[4][10, 15] ≈ 0.5)
     @test (out.body_soil[1][11, 14] ≈ 0.2) && (out.body_soil[2][11, 14] ≈ 0.4)
@@ -1460,7 +1460,7 @@ end
     out.body[4][11, 14] = 0.2
     push!(out.body_soil_pos, [1; 10; 15])
     push!(out.body_soil_pos, [3; 10; 15])
-    _move_intersecting_body_soil!(out, grid)
+    _move_intersecting_body_soil!(out)
     @test (out.body_soil[1][10, 15] == 0.3) && (out.body_soil[2][10, 15] ≈ 0.5)
     @test (out.body_soil[3][10, 15] == 0.6) && (out.body_soil[4][10, 15] == 0.7)
     @test (out.body_soil[3][11, 14] ≈ 0.2) && (out.body_soil[4][11, 14] ≈ 0.4)
@@ -1501,7 +1501,7 @@ end
     out.body[4][11, 14] = 0.2
     push!(out.body_soil_pos, [1; 10; 15])
     push!(out.body_soil_pos, [3; 10; 15])
-    _move_intersecting_body_soil!(out, grid)
+    _move_intersecting_body_soil!(out)
     @test (out.body_soil[1][10, 15] == 0.6) && (out.body_soil[2][10, 15] == 0.7)
     @test (out.body_soil[3][10, 15] == 0.3) && (out.body_soil[4][10, 15] ≈ 0.5)
     @test (out.body_soil[3][11, 14] ≈ 0.2) && (out.body_soil[4][11, 14] ≈ 0.4)
@@ -1545,7 +1545,7 @@ end
     push!(out.body_soil_pos, [1; 10; 15])
     push!(out.body_soil_pos, [3; 10; 15])
     push!(out.body_soil_pos, [1; 11; 14])
-    _move_intersecting_body_soil!(out, grid)
+    _move_intersecting_body_soil!(out)
     @test (out.body_soil[1][10, 15] == 0.3) && (out.body_soil[2][10, 15] ≈ 0.5)
     @test (out.body_soil[3][10, 15] == 0.6) && (out.body_soil[4][10, 15] == 0.7)
     @test (out.body_soil[1][11, 14] == 0.1) && (out.body_soil[2][11, 14] ≈ 0.4)
@@ -1589,7 +1589,7 @@ end
     push!(out.body_soil_pos, [1; 10; 15])
     push!(out.body_soil_pos, [3; 10; 15])
     push!(out.body_soil_pos, [1; 11; 14])
-    _move_intersecting_body_soil!(out, grid)
+    _move_intersecting_body_soil!(out)
     @test (out.body_soil[1][10, 15] == 0.6) && (out.body_soil[2][10, 15] == 0.7)
     @test (out.body_soil[3][10, 15] == 0.3) && (out.body_soil[4][10, 15] ≈ 0.5)
     @test (out.body_soil[1][11, 14] ≈ 0.1) && (out.body_soil[2][11, 14] ≈ 0.4)
@@ -1633,7 +1633,7 @@ end
     push!(out.body_soil_pos, [1; 10; 15])
     push!(out.body_soil_pos, [3; 10; 15])
     push!(out.body_soil_pos, [3; 11; 14])
-    _move_intersecting_body_soil!(out, grid)
+    _move_intersecting_body_soil!(out)
     @test (out.body_soil[1][10, 15] == 0.3) && (out.body_soil[2][10, 15] ≈ 0.5)
     @test (out.body_soil[3][10, 15] == 0.6) && (out.body_soil[4][10, 15] == 0.7)
     @test (out.body_soil[3][11, 14] ≈ 0.1) && (out.body_soil[4][11, 14] ≈ 0.4)
@@ -1677,7 +1677,7 @@ end
     push!(out.body_soil_pos, [1; 10; 15])
     push!(out.body_soil_pos, [3; 10; 15])
     push!(out.body_soil_pos, [3; 11; 14])
-    _move_intersecting_body_soil!(out, grid)
+    _move_intersecting_body_soil!(out)
     @test (out.body_soil[1][10, 15] == 0.6) && (out.body_soil[2][10, 15] == 0.7)
     @test (out.body_soil[3][10, 15] == 0.3) && (out.body_soil[4][10, 15] ≈ 0.5)
     @test (out.body_soil[3][11, 14] ≈ 0.1) && (out.body_soil[4][11, 14] ≈ 0.4)
@@ -1717,7 +1717,7 @@ end
     push!(out.body_soil_pos, [1; 10; 15])
     push!(out.body_soil_pos, [3; 10; 15])
     push!(out.body_soil_pos, [3; 11; 14])
-    _move_intersecting_body_soil!(out, grid)
+    _move_intersecting_body_soil!(out)
     @test (out.body_soil[1][10, 15] == 0.6) && (out.body_soil[2][10, 15] == 0.9)
     @test (out.body_soil[3][10, 15] == 0.3) && (out.body_soil[4][10, 15] == 0.5)
     @test (out.body_soil[3][11, 14] == 0.1) && (out.body_soil[4][11, 14] == 0.9)
@@ -1749,7 +1749,7 @@ end
     out.body_soil[4][10, 15] = 0.7
     push!(out.body_soil_pos, [1; 10; 15])
     push!(out.body_soil_pos, [3; 10; 15])
-    _move_intersecting_body_soil!(out, grid)
+    _move_intersecting_body_soil!(out)
     @test (out.body_soil[1][10, 15] == 0.3) && (out.body_soil[2][10, 15] ≈ 0.5)
     @test (out.body_soil[3][10, 15] == 0.6) && (out.body_soil[4][10, 15] == 0.7)
     @test (out.terrain[11, 14] ≈ 0.3)
@@ -1758,7 +1758,7 @@ end
     out.body_soil[1][10, 15] = 0.3
     out.body_soil[2][10, 15] = 0.8
     set_RNG_seed!(1236)
-    _move_intersecting_body_soil!(out, grid)
+    _move_intersecting_body_soil!(out)
     @test (out.body_soil[1][10, 15] == 0.3) && (out.body_soil[2][10, 15] ≈ 0.5)
     @test (out.body_soil[3][10, 15] == 0.6) && (out.body_soil[4][10, 15] == 0.7)
     @test (out.terrain[9, 16] ≈ 0.3)
@@ -1850,9 +1850,7 @@ end
     push!(out.body_soil_pos, [3; 10; 16])
     push!(out.body_soil_pos, [3; 11; 16])
     push!(out.body_soil_pos, [3; 12; 17])
-    @test_logs (:warn, warning_message) match_mode=:any _move_intersecting_body_soil!(
-            out, grid
-        )
+    @test_logs (:warn, warning_message) match_mode=:any _move_intersecting_body_soil!(out)
     @test (out.body_soil[1][10, 15] == 0.6) && (out.body_soil[2][10, 15] == 0.7)
     @test (out.body_soil[3][10, 15] == 0.3) && (out.body_soil[4][10, 15] ≈ 0.7)
     @test (out.body_soil[1][11, 15] == 0.2) && (out.body_soil[2][11, 15] == 0.7)

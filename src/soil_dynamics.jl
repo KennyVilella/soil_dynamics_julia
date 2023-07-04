@@ -75,7 +75,7 @@ function soil_dynamics!(
     _update_body_soil!(out, pos, ori, grid, bucket, tol)
 
     # Moving intersecting soil cells
-    _move_intersecting_cells!(out, grid, tol)
+    _move_intersecting_cells!(out, tol)
 
     # Assuming that the terrain is not at equilibrium
     out.equilibrium[1] = false
