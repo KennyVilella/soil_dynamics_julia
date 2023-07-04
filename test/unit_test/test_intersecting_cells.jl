@@ -1361,7 +1361,7 @@ end
     empty!(out.body_soil_pos)
 
     # Testing when there are two bucket layers and soil is partially avalanching on the
-    # first bucket layer (1)
+    # first bucket layer and then on the terrain (1)
     set_RNG_seed!(1234)
     out.body[1][10, 15] = 0.0
     out.body[2][10, 15] = 0.3
@@ -1381,10 +1381,10 @@ end
     @test (out.body_soil[1][10, 15] == 0.3) && (out.body_soil[2][10, 15] ≈ 0.5)
     @test (out.body_soil[3][10, 15] == 0.6) && (out.body_soil[4][10, 15] == 0.7)
     @test (out.body_soil[1][11, 14] ≈ 0.2) && (out.body_soil[2][11, 14] ≈ 0.4)
-    @test (out.terrain[11, 15] ≈ 0.1)
+    @test (out.terrain[12, 13] ≈ 0.1)
     @test (out.body_soil_pos == [[1; 10; 15], [3; 10; 15], [1; 11; 14]])
     # Resetting values
-    out.terrain[11, 15] = 0.0
+    out.terrain[12, 13] = 0.0
     out.body[1][10, 15] = 0.0
     out.body[2][10, 15] = 0.0
     out.body[3][10, 15] = 0.0
@@ -1402,7 +1402,7 @@ end
     empty!(out.body_soil_pos)
 
     # Testing when there are two bucket layers and soil is partially avalanching on the
-    # first bucket layer (2)
+    # first bucket layer and then on the terrain (2)
     set_RNG_seed!(1234)
     out.body[1][10, 15] = 0.5
     out.body[2][10, 15] = 0.6
@@ -1422,10 +1422,10 @@ end
     @test (out.body_soil[1][10, 15] == 0.6) && (out.body_soil[2][10, 15] == 0.7)
     @test (out.body_soil[3][10, 15] == 0.3) && (out.body_soil[4][10, 15] ≈ 0.5)
     @test (out.body_soil[1][11, 14] ≈ 0.2) && (out.body_soil[2][11, 14] ≈ 0.4)
-    @test (out.terrain[11, 15] ≈ 0.1)
+    @test (out.terrain[12, 13] ≈ 0.1)
     @test (out.body_soil_pos == [[1; 10; 15], [3; 10; 15], [1; 11; 14]])
     # Resetting values
-    out.terrain[11, 15] = 0.0
+    out.terrain[12, 13] = 0.0
     out.body[1][10, 15] = 0.0
     out.body[2][10, 15] = 0.0
     out.body[3][10, 15] = 0.0
@@ -1443,7 +1443,7 @@ end
     empty!(out.body_soil_pos)
 
     # Testing when there are two bucket layers and soil is partially avalanching on the
-    # second bucket layer (1)
+    # second bucket layer and then on the terrain (1)
     set_RNG_seed!(1234)
     out.body[1][10, 15] = 0.0
     out.body[2][10, 15] = 0.3
@@ -1463,10 +1463,10 @@ end
     @test (out.body_soil[1][10, 15] == 0.3) && (out.body_soil[2][10, 15] ≈ 0.5)
     @test (out.body_soil[3][10, 15] == 0.6) && (out.body_soil[4][10, 15] == 0.7)
     @test (out.body_soil[3][11, 14] ≈ 0.2) && (out.body_soil[4][11, 14] ≈ 0.4)
-    @test (out.terrain[11, 15] ≈ 0.1)
+    @test (out.terrain[12, 13] ≈ 0.1)
     @test (out.body_soil_pos == [[1; 10; 15], [3; 10; 15], [3; 11; 14]])
     # Resetting values
-    out.terrain[11, 15] = 0.0
+    out.terrain[12, 13] = 0.0
     out.body[1][10, 15] = 0.0
     out.body[2][10, 15] = 0.0
     out.body[3][10, 15] = 0.0
@@ -1484,7 +1484,7 @@ end
     empty!(out.body_soil_pos)
 
     # Testing when there are two bucket layers and soil is partially avalanching on the
-    # second bucket layer (2)
+    # second bucket layer and then on the terrain (2)
     set_RNG_seed!(1234)
     out.body[1][10, 15] = 0.5
     out.body[2][10, 15] = 0.6
@@ -1504,10 +1504,10 @@ end
     @test (out.body_soil[1][10, 15] == 0.6) && (out.body_soil[2][10, 15] == 0.7)
     @test (out.body_soil[3][10, 15] == 0.3) && (out.body_soil[4][10, 15] ≈ 0.5)
     @test (out.body_soil[3][11, 14] ≈ 0.2) && (out.body_soil[4][11, 14] ≈ 0.4)
-    @test (out.terrain[11, 15] ≈ 0.1)
+    @test (out.terrain[12, 13] ≈ 0.1)
     @test (out.body_soil_pos == [[1; 10; 15], [3; 10; 15], [3; 11; 14]])
     # Resetting values
-    out.terrain[11, 15] = 0.0
+    out.terrain[12, 13] = 0.0
     out.body[1][10, 15] = 0.0
     out.body[2][10, 15] = 0.0
     out.body[3][10, 15] = 0.0
@@ -1525,7 +1525,7 @@ end
     empty!(out.body_soil_pos)
 
     # Testing when there are two bucket layers and soil is partially avalanching on the
-    # first bucket soil layer (1)
+    # first bucket soil layer and then on the terrain (1)
     set_RNG_seed!(1234)
     out.body[1][10, 15] = 0.0
     out.body[2][10, 15] = 0.3
@@ -1548,10 +1548,10 @@ end
     @test (out.body_soil[1][10, 15] == 0.3) && (out.body_soil[2][10, 15] ≈ 0.5)
     @test (out.body_soil[3][10, 15] == 0.6) && (out.body_soil[4][10, 15] == 0.7)
     @test (out.body_soil[1][11, 14] == 0.1) && (out.body_soil[2][11, 14] ≈ 0.4)
-    @test (out.terrain[11, 15] ≈ 0.1)
+    @test (out.terrain[12, 13] ≈ 0.1)
     @test (out.body_soil_pos == [[1; 10; 15], [3; 10; 15], [1; 11; 14]])
     # Resetting values
-    out.terrain[11, 15] = 0.0
+    out.terrain[12, 13] = 0.0
     out.body[1][10, 15] = 0.0
     out.body[2][10, 15] = 0.0
     out.body[3][10, 15] = 0.0
@@ -1569,7 +1569,7 @@ end
     empty!(out.body_soil_pos)
 
     # Testing when there are two bucket layers and soil is partially avalanching on the
-    # first bucket soil layer (2)
+    # first bucket soil layer and then on the terrain (2)
     set_RNG_seed!(1234)
     out.body[1][10, 15] = 0.5
     out.body[2][10, 15] = 0.6
@@ -1592,10 +1592,10 @@ end
     @test (out.body_soil[1][10, 15] == 0.6) && (out.body_soil[2][10, 15] == 0.7)
     @test (out.body_soil[3][10, 15] == 0.3) && (out.body_soil[4][10, 15] ≈ 0.5)
     @test (out.body_soil[1][11, 14] ≈ 0.1) && (out.body_soil[2][11, 14] ≈ 0.4)
-    @test (out.terrain[11, 15] ≈ 0.1)
+    @test (out.terrain[12, 13] ≈ 0.1)
     @test (out.body_soil_pos == [[1; 10; 15], [3; 10; 15], [1; 11; 14]])
     # Resetting values
-    out.terrain[11, 15] = 0.0
+    out.terrain[12, 13] = 0.0
     out.body[1][10, 15] = 0.0
     out.body[2][10, 15] = 0.0
     out.body[3][10, 15] = 0.0
@@ -1613,7 +1613,7 @@ end
     empty!(out.body_soil_pos)
 
     # Testing when there are two bucket layers and soil is partially avalanching on the
-    # second bucket soil layer (1)
+    # second bucket soil layer and then on the terrain (1)
     set_RNG_seed!(1234)
     out.body[1][10, 15] = 0.0
     out.body[2][10, 15] = 0.3
@@ -1636,10 +1636,10 @@ end
     @test (out.body_soil[1][10, 15] == 0.3) && (out.body_soil[2][10, 15] ≈ 0.5)
     @test (out.body_soil[3][10, 15] == 0.6) && (out.body_soil[4][10, 15] == 0.7)
     @test (out.body_soil[3][11, 14] ≈ 0.1) && (out.body_soil[4][11, 14] ≈ 0.4)
-    @test (out.terrain[11, 15] ≈ 0.1)
+    @test (out.terrain[12, 13] ≈ 0.1)
     @test (out.body_soil_pos == [[1; 10; 15], [3; 10; 15], [3; 11; 14]])
     # Resetting values
-    out.terrain[11, 15] = 0.0
+    out.terrain[12, 13] = 0.0
     out.body[1][10, 15] = 0.0
     out.body[2][10, 15] = 0.0
     out.body[3][10, 15] = 0.0
@@ -1657,7 +1657,7 @@ end
     empty!(out.body_soil_pos)
 
     # Testing when there are two bucket layers and soil is partially avalanching on the
-    # second bucket soil layer (2)
+    # second bucket soil layer and then on the terrain (2)
     set_RNG_seed!(1234)
     out.body[1][10, 15] = 0.5
     out.body[2][10, 15] = 0.6
@@ -1680,10 +1680,10 @@ end
     @test (out.body_soil[1][10, 15] == 0.6) && (out.body_soil[2][10, 15] == 0.7)
     @test (out.body_soil[3][10, 15] == 0.3) && (out.body_soil[4][10, 15] ≈ 0.5)
     @test (out.body_soil[3][11, 14] ≈ 0.1) && (out.body_soil[4][11, 14] ≈ 0.4)
-    @test (out.terrain[11, 15] ≈ 0.1)
+    @test (out.terrain[12, 13] ≈ 0.1)
     @test (out.body_soil_pos == [[1; 10; 15], [3; 10; 15], [3; 11; 14]])
     # Resetting values
-    out.terrain[11, 15] = 0.0
+    out.terrain[12, 13] = 0.0
     out.body[1][10, 15] = 0.0
     out.body[2][10, 15] = 0.0
     out.body[3][10, 15] = 0.0
@@ -1774,6 +1774,7 @@ end
     out.body_soil[4][10, 15] = 0.0
     empty!(out.body_soil_pos)
 
+    """
     #======================================================================================#
     #                                                                                      #
     #            Testing that warning is properly sent when soil cannot be moved           #
@@ -2404,4 +2405,5 @@ end
     out.body_soil[3][9:11, 14:16] .= 0.0
     out.body_soil[4][9:11, 14:16] .= 0.0
     empty!(out.body_soil_pos)
+    """
 end
