@@ -296,7 +296,7 @@ function _move_intersecting_body_soil!(
                     break
                 elseif (bucket_absence_1)
                     ### Only the second bucket layer ###
-                    if (out.body[3][ii_n, jj_n] - tol > out.body[ind][ii, jj])
+                    if (out.body[3][ii_n, jj_n] - tol > out.body[ind+1][ii, jj])
                         ### Soil avalanche below the second bucket layer to the terrain ###
                         # Calculating available space
                         delta_h = out.body[3][ii_n, jj_n] - out.terrain[ii_n, jj_n]
@@ -349,7 +349,7 @@ function _move_intersecting_body_soil!(
                     break
                 elseif (bucket_absence_3)
                     ### Only the first bucket layer ###
-                    if (out.body[1][ii_n, jj_n] - tol > out.body[ind][ii, jj])
+                    if (out.body[1][ii_n, jj_n] - tol > out.body[ind+1][ii, jj])
                         ### Soil avalanche below the first bucket layer to the terrain ###
                         # Calculating available space
                         delta_h = out.body[1][ii_n, jj_n] - out.terrain[ii_n, jj_n]
