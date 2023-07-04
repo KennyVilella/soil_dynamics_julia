@@ -278,8 +278,11 @@ function _move_intersecting_body_soil!(
                 # Calculating previous position
                 ii_p = ii + (nn - 1) * xy[1]
                 jj_p = jj + (nn - 1) * xy[2]
-Need to have ind_t_p and ind_p as well...
+                # Need to update ind_t_p and ind_p as well...
 
+                _move_body_soil!(
+                    out, ind_p, ind_t_p, ii_p, jj_p, ii_n, jj_n, h_soil, wall_presence, tol
+                )
             end
             if (h_soil < tol)
                 ### No more soil to move ###
@@ -347,7 +350,14 @@ end
 
 function _move_body_soil!(
     out::SimOut{B,I,T},
-
+    ind_p::I,
+    ind_t_p::I,
+    ii_p::I,
+    jj_p::I,
+    ii_n::I,
+    jj_n::I,
+    h_soil::T,
+    wall_presence::B,
     tol::T=1e-8
 ) where {B<:Bool,I<:Int64,T<:Float64}
 
