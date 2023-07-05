@@ -350,6 +350,64 @@ function _locate_intersecting_cells(
     return intersecting_cells
 end
 
+"""
+    _move_body_soil!(
+        out::SimOut{B,I,T}, ind_p::I, ii_p::I, jj_p::I, max_h::T, ii_n::I, jj_n::I,
+        h_soil::T, wall_presence::B, tol::T=1e-8
+    ) where {B<:Bool,I<:Int64,T<:Float64}
+
+This function tries to move the soil cells resting on the bucket layer `ind_p` at the
+location (`ii_p`, `jj_p`) to a new location at (`ii_n`, `jj_n`).
+
+This function can be separated into three main scenarios:
+- If all the soil can be moved to the new location (either on the terrain or on the bucket),
+  the soil is moved and the value of `h_soil` is set to zero.
+- If a bucket wall is blocking the movement, the `wall_presence` parameter is set to `true`.
+- If there is insufficient space to move all the soil but no bucket wall is blocking the
+  movement, the function updates the values for the new location and adjusts `h_soil`
+  accordingly.
+
+This function is designed to be used iteratively by `_move_intersecting_body_soil!` until
+all intersecting soil cells are moved.
+
+# Note
+- This function is intended for internal use only.
+- By convention, the soil can be moved from the bucket to the terrain even if the bucket is
+  underground.
+- In cases where the soil should be moved to the terrain, all soil is moved regardless of
+  the available space. If this movement induces intersecting soil cells, it will be resolved
+  by the `_move_intersecting_body!` function.
+
+# Inputs
+- `out::SimOut{Bool,Int64,Float64}`: Struct that stores simulation outputs.
+- `ind_p::Int64`: Index of the previous considered bucket layer.
+- `ii_p::Int64`: Index of the previous considered position in the X direction.
+- `jj_p::Int64`: Index of the previous considered position in the Y direction.
+- `max_h::Float64`: Maximum height authorized for the movement. [m]
+- `ii_n::Int64`: Index of the new considered position in the X direction.
+- `jj_n::Int64`: Index of the new considered position in the Y direction.
+- `h_soil::Float64`: Height of the soil column left to be moved. [m]
+- `wall_presence::Bool`: Indicates whether a bucket wall is blocking the movement.
+- `tol::Float64`: Small number used to handle numerical approximation errors.
+
+# Outputs
+- `ind_p::Int64`: Index of the new considered bucket layer.
+- `ii_p::Int64`: Index of the new considered position in the X direction.
+- `jj_p::Int64`: Index of the new considered position in the Y direction.
+- `max_h::Float64`: Maximum height authorized for the next movement. [m]
+- `h_soil::Float64`: Height of the soil column left to be moved. [m]
+- `wall_presence::Bool`: Indicates whether a bucket wall is blocking the movement.
+
+# Example
+
+    grid = GridParam(4.0, 4.0, 3.0, 0.05, 0.01)
+    terrain = zeros(2 * grid.half_length_x + 1, 2 * grid.half_length_y + 1)
+    out = SimOut(terrain, grid)
+
+     ind_p, ii_p, jj_p, max_h, h_soil, wall_presence = _move_body_soil!(
+         out, 1, 10, 15, 0.2, 10, 16, 0.2, true
+     )
+"""
 function _move_body_soil!(
     out::SimOut{B,I,T},
     ind_p::I,
