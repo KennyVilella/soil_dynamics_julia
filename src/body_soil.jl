@@ -63,6 +63,9 @@ function _update_body_soil!(
     tol::T=1e-8
 ) where {B<:Bool,I<:Int64,T<:Float64}
 
+    # Removing duplicates in body_soil_pos
+    unique!(out.body_soil_pos)
+
     # Copying previous body_soil locations
     old_body_soil = deepcopy(out.body_soil)
     old_body_soil_pos = deepcopy(out.body_soil_pos)
