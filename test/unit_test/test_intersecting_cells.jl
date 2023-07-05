@@ -24,6 +24,10 @@ out = SimOut(terrain, grid)
 #                                         Testing                                          #
 #                                                                                          #
 #==========================================================================================#
+@testset "_move_body_soil!" begin
+
+end
+
 @testset "_move_intersecting_body_soil!" begin
     # Testing when soil is avalanching on the terrain (1)
     # First bucket layer at bottom
