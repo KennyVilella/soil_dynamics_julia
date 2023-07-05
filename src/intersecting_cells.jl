@@ -16,6 +16,8 @@ bucket or with another soil cell.
 
 # Note
 - This function is intended for internal use only.
+- `_move_intersecting_body_soil!` must be called before `_move_intersecting_body!`,
+  otherwise some intersecting soil cells may remain.
 
 # Inputs
 - `out::SimOut{Bool,Int64,Float64}`: Struct that stores simulation outputs.
@@ -183,19 +185,22 @@ This function moves the soil cells resting on the bucket that intersect with ano
 layer. It checks the eight lateral directions surrounding the intersecting soil column and
 moves the soil to available spaces.
 
-It is assumed that the adjacent neighbors always have enough space to accomodate the
-intersecting soil. This is to avoid the complexity of checking farther cells, which would
-require considering the potential presence of bucket walls blocking the movement.
+The algorithm follows an incremental approach, checking directions farther from the 
+intersecting soil column until it reaches a bucket wall blocking the movement or until all
+the soil has been moved. If the movement is blocked by a bucket wall, the algorithm explores
+another direction.
 
-In situations where there is insufficient space to accommodate all the intersecting soil,
-the algorithm currently handles it by allowing the excess soil to simply disappear.
+In cases where the soil should be moved to the terrain, all soil is moved regardless of the
+available space. If this movement induces intersecting soil cells, it will be resolved by
+the `_move_intersecting_body!` function.
+
+In rare situations where there is insufficient space to accommodate all the intersecting
+soil, the algorithm currently handles it by allowing the excess soil to simply disappear.
 This compromise seems to be reasonable as long as the amount of soil disappearing remains
 negligible.
 
 # Note
 - This function is intended for internal use only.
-- This function is a work in progress. Additional modifications may be required to improve
-  efficiency and simplicity.
 - The order in which the directions are checked is randomized in order to avoid
   asymmetrical results.
 - By convention, the soil can be moved from the bucket to the terrain even if the bucket is
@@ -393,7 +398,6 @@ function _move_body_soil!(
 
         if (bucket_soil_presence_3 && (out.body_soil[4][ii_n, jj_n] + tol > max_h))
             ### Soil is blocking the movement ###
-##
             # Updating previous position
             ii_p = ii_n
             jj_p = jj_n
@@ -443,7 +447,6 @@ function _move_body_soil!(
             ii_p = ii_n
             jj_p = jj_n
             ind_p = 1
-##
             return ind_p, ii_p, jj_p, max_h, h_soil, wall_presence
         end
 
