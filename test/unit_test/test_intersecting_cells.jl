@@ -1750,25 +1750,6 @@ out = SimOut(terrain, grid)
     out.body_soil[2][13, 12] = 0.0
     empty!(out.body_soil_pos)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     # Testing when there is nothing to move
     out.body[1][10, 15] = 0.5
     out.body[2][10, 15] = 0.6
