@@ -51,7 +51,7 @@ ori_1 = angle_to_quat(0.0, 0.0, pi / 2, :ZYX)
 _calc_bucket_pos!(out, pos_1, ori_1, grid, bucket, sim)
 println("_move_intersecting_cells!")
 display(
-    @benchmark _move_intersecting_cells!(out, grid)
+    @benchmark _move_intersecting_cells!(out)
 )
 println("")
 
@@ -62,7 +62,7 @@ ori_1 = angle_to_quat(0.0, 0.0, pi / 2, :ZYX)
 _calc_bucket_pos!(out, pos_1, ori_1, grid, bucket, sim)
 println("_move_intersecting_body!")
 display(
-    @benchmark _move_intersecting_body!(out, grid)
+    @benchmark _move_intersecting_body!(out)
 )
 println("")
 
@@ -83,7 +83,7 @@ out.body_soil[2][25, 24:41] .= 0.9
 out.body_soil[2][20:38, 40] .= 0.7
 println("_move_intersecting_body_soil!")
 display(
-    @benchmark _move_intersecting_body_soil!(out, grid)
+    @benchmark _move_intersecting_body_soil!(out)
 )
 println("")
 
