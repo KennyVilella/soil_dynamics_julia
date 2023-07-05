@@ -47,6 +47,132 @@ function _move_intersecting_cells!(
 end
 
 """
+    _move_intersecting_body_soil!(
+        out::SimOut{B,I,T}, tol::T=1e-8
+    ) where {B<:Bool,I<:Int64,T<:Float64}
+
+This function moves the soil cells resting on the bucket that intersect with another bucket
+layer. It checks the eight lateral directions surrounding the intersecting soil column and
+moves the soil to available spaces.
+
+The algorithm follows an incremental approach, checking directions farther from the 
+intersecting soil column until it reaches a bucket wall blocking the movement or until all
+the soil has been moved. If the movement is blocked by a bucket wall, the algorithm explores
+another direction.
+
+In cases where the soil should be moved to the terrain, all soil is moved regardless of the
+available space. If this movement induces intersecting soil cells, it will be resolved by
+the `_move_intersecting_body!` function.
+
+In rare situations where there is insufficient space to accommodate all the intersecting
+soil, the algorithm currently handles it by allowing the excess soil to simply disappear.
+This compromise seems to be reasonable as long as the amount of soil disappearing remains
+negligible.
+
+# Note
+- This function is intended for internal use only.
+- The order in which the directions are checked is randomized in order to avoid
+  asymmetrical results.
+- By convention, the soil can be moved from the bucket to the terrain even if the bucket is
+  underground.
+
+# Inputs
+- `out::SimOut{Bool,Int64,Float64}`: Struct that stores simulation outputs.
+- `tol::Float64`: Small number used to handle numerical approximation errors.
+
+# Outputs
+- None
+
+# Example
+
+    grid = GridParam(4.0, 4.0, 3.0, 0.05, 0.01)
+    terrain = zeros(2 * grid.half_length_x + 1, 2 * grid.half_length_y + 1)
+    out = SimOut(terrain, grid)
+
+    _move_intersecting_body_soil!(out)
+"""
+function _move_intersecting_body_soil!(
+    out::SimOut{B,I,T},
+    tol::T=1e-8
+) where {B<:Bool,I<:Int64,T<:Float64}
+
+    # Storing all possible directions
+    directions = [
+        [1, 0], [-1, 0], [0, 1], [0, -1],
+        [1, 1], [1, -1], [-1, 1], [-1, -1]
+    ]
+
+    # Iterating over bucket soil cells
+    for cell in out.body_soil_pos
+        ind = cell[1]
+        ii = cell[2]
+        jj = cell[3]
+
+        if (ind == 1)
+            ### First bucket soil layer ###
+            ind_t = 3
+        else
+            ### Second bucket soil layer ###
+            ind_t = 1
+        end
+
+        if (out.body[ind_t][ii, jj] == 0.0) && (out.body[ind_t+1][ii, jj] == 0.0)
+            ### No additionnal bucket layer ###
+            continue
+        end
+
+        if (
+            (out.body_soil[ind+1][ii, jj] - tol > out.body[ind_t][ii, jj]) &&
+            (out.body[ind_t+1][ii, jj] - tol > out.body_soil[ind][ii, jj])
+        )
+            ### Bucket soil intersects with bucket ###
+            h_soil = out.body_soil[ind+1][ii, jj] - out.body[ind_t][ii, jj]
+        else
+            ### No intersection between bucket soil and bucket ###
+            continue
+        end
+
+        # Randomizing direction to avoid asymmetry
+        shuffle!(directions)
+
+        # Iterating over the eight lateral directions
+        for xy in directions
+            # Initializing loop properties
+            nn = 0
+            wall_presence = false
+            ii_p = ii
+            jj_p = jj
+            ind_p = ind
+            max_h = out.body[ind_t][ii, jj]
+
+            # Exploring the direction until reaching a wall or all soil has been moved
+            while (!wall_presence && h_soil > tol)
+                # Calculating considered position
+                nn += 1
+                ii_n = ii + nn * xy[1]
+                jj_n = jj + nn * xy[2]
+
+                ind_p, ii_p, jj_p, max_h, h_soil, wall_presence = _move_body_soil!(
+                    out, ind_p, ii_p, jj_p, max_h, ii_n, jj_n, h_soil, wall_presence, tol
+                )
+            end
+            if (h_soil < tol)
+                ### No more soil to move ###
+                break
+            end
+        end
+
+        if (h_soil > tol)
+            @warn "Not all soil intersecting with a bucket layer could be moved\n" *
+                "The extra soil has been arbitrarily removed"
+        end
+
+        # Updating bucket soil
+        out.body_soil[ind+1][ii, jj] = out.body[ind_t][ii, jj]
+    end
+end
+
+"""
     _move_intersecting_body!(
         out::SimOut{B,I,T}, tol::T=1e-8
     ) where {B<:Bool,I<:Int64,T<:Float64}
@@ -174,180 +300,6 @@ function _move_intersecting_body!(
         # Removing intersecting soil
         out.terrain[ii, jj] = out.body[ind][ii, jj]
     end
-end
-
-"""
-    _move_intersecting_body_soil!(
-        out::SimOut{B,I,T}, tol::T=1e-8
-    ) where {B<:Bool,I<:Int64,T<:Float64}
-
-This function moves the soil cells resting on the bucket that intersect with another bucket
-layer. It checks the eight lateral directions surrounding the intersecting soil column and
-moves the soil to available spaces.
-
-The algorithm follows an incremental approach, checking directions farther from the 
-intersecting soil column until it reaches a bucket wall blocking the movement or until all
-the soil has been moved. If the movement is blocked by a bucket wall, the algorithm explores
-another direction.
-
-In cases where the soil should be moved to the terrain, all soil is moved regardless of the
-available space. If this movement induces intersecting soil cells, it will be resolved by
-the `_move_intersecting_body!` function.
-
-In rare situations where there is insufficient space to accommodate all the intersecting
-soil, the algorithm currently handles it by allowing the excess soil to simply disappear.
-This compromise seems to be reasonable as long as the amount of soil disappearing remains
-negligible.
-
-# Note
-- This function is intended for internal use only.
-- The order in which the directions are checked is randomized in order to avoid
-  asymmetrical results.
-- By convention, the soil can be moved from the bucket to the terrain even if the bucket is
-  underground.
-
-# Inputs
-- `out::SimOut{Bool,Int64,Float64}`: Struct that stores simulation outputs.
-- `tol::Float64`: Small number used to handle numerical approximation errors.
-
-# Outputs
-- None
-
-# Example
-
-    grid = GridParam(4.0, 4.0, 3.0, 0.05, 0.01)
-    terrain = zeros(2 * grid.half_length_x + 1, 2 * grid.half_length_y + 1)
-    out = SimOut(terrain, grid)
-
-    _move_intersecting_body_soil!(out)
-"""
-function _move_intersecting_body_soil!(
-    out::SimOut{B,I,T},
-    tol::T=1e-8
-) where {B<:Bool,I<:Int64,T<:Float64}
-
-    # Storing all possible directions
-    directions = [
-        [1, 0], [-1, 0], [0, 1], [0, -1],
-        [1, 1], [1, -1], [-1, 1], [-1, -1]
-    ]
-
-    # Iterating over bucket soil cells
-    for cell in out.body_soil_pos
-        ind = cell[1]
-        ii = cell[2]
-        jj = cell[3]
-
-        if (ind == 1)
-            ### First bucket soil layer ###
-            ind_t = 3
-        else
-            ### Second bucket soil layer ###
-            ind_t = 1
-        end
-
-        if (out.body[ind_t][ii, jj] == 0.0) && (out.body[ind_t+1][ii, jj] == 0.0)
-            ### No additionnal bucket layer ###
-            continue
-        end
-
-        if (
-            (out.body_soil[ind+1][ii, jj] - tol > out.body[ind_t][ii, jj]) &&
-            (out.body[ind_t+1][ii, jj] - tol > out.body_soil[ind][ii, jj])
-        )
-            ### Bucket soil intersects with bucket ###
-            h_soil = out.body_soil[ind+1][ii, jj] - out.body[ind_t][ii, jj]
-        else
-            ### No intersection between bucket soil and bucket ###
-            continue
-        end
-
-        # Randomizing direction to avoid asymmetry
-        shuffle!(directions)
-
-        # Iterating over the eight lateral directions
-        for xy in directions
-            # Initializing loop properties
-            nn = 0
-            wall_presence = false
-            ii_p = ii
-            jj_p = jj
-            ind_p = ind
-            max_h = out.body[ind_t][ii, jj]
-
-            # Exploring the direction until reaching a wall or all soil has been moved
-            while (!wall_presence && h_soil > tol)
-                # Calculating considered position
-                nn += 1
-                ii_n = ii + nn * xy[1]
-                jj_n = jj + nn * xy[2]
-
-                ind_p, ii_p, jj_p, max_h, h_soil, wall_presence = _move_body_soil!(
-                    out, ind_p, ii_p, jj_p, max_h, ii_n, jj_n, h_soil, wall_presence, tol
-                )
-            end
-            if (h_soil < tol)
-                ### No more soil to move ###
-                break
-            end
-        end
-
-        if (h_soil > tol)
-            @warn "Not all soil intersecting with a bucket layer could be moved\n" *
-                "The extra soil has been arbitrarily removed"
-        end
-
-        # Updating bucket soil
-        out.body_soil[ind+1][ii, jj] = out.body[ind_t][ii, jj]
-    end
-end
-
-"""
-    _locate_intersecting_cells(
-        out::SimOut{B,I,T}, tol::T=1e-8
-    ) where {B<:Bool,I<:Int64,T<:Float64}
-
-This function identifies all the soil cells in the `terrain` that intersect with the bucket.
-
-# Note
-- This function is intended for internal use only.
-
-# Inputs
-- `out::SimOut{Bool,Int64,Float64}`: Struct that stores simulation outputs.
-- `tol::Float64`: Small number used to handle numerical approximation errors.
-
-# Outputs
-- `Vector{Vector{Int64}}`: Collection of cells indices from the terrain intersecting with
-                           the bucket.
-
-# Example
-
-    grid = GridParam(4.0, 4.0, 3.0, 0.05, 0.01)
-    terrain = zeros(2 * grid.half_length_x + 1, 2 * grid.half_length_y + 1)
-    out = SimOut(terrain, grid)
-
-    _locate_intersecting_cells(out)
-"""
-function _locate_intersecting_cells(
-    out::SimOut{B,I,T},
-    tol::T=1e-8
-) where {B<:Bool,I<:Int64,T<:Float64}
-
-    # Initializing
-    intersecting_cells = Vector{Vector{I}}()
-
-    # Locating all non-zero values in body
-    body_pos = _locate_all_non_zeros(out.body)
-
-    # Iterating over all bucket position
-    for cell in body_pos
-        if (out.terrain[cell[2], cell[3]] - tol > out.body[cell[1]][cell[2], cell[3]])
-            ### Soil intersecting with the bucket ###
-            push!(intersecting_cells, cell)
-        end
-    end
-
-    return intersecting_cells
 end
 
 """
@@ -633,4 +585,52 @@ function _move_body_soil!(
     end
 
     return  ind_p, ii_p, jj_p, max_h, h_soil, wall_presence
+end
+
+"""
+    _locate_intersecting_cells(
+        out::SimOut{B,I,T}, tol::T=1e-8
+    ) where {B<:Bool,I<:Int64,T<:Float64}
+
+This function identifies all the soil cells in the `terrain` that intersect with the bucket.
+
+# Note
+- This function is intended for internal use only.
+
+# Inputs
+- `out::SimOut{Bool,Int64,Float64}`: Struct that stores simulation outputs.
+- `tol::Float64`: Small number used to handle numerical approximation errors.
+
+# Outputs
+- `Vector{Vector{Int64}}`: Collection of cells indices from the terrain intersecting with
+                           the bucket.
+
+# Example
+
+    grid = GridParam(4.0, 4.0, 3.0, 0.05, 0.01)
+    terrain = zeros(2 * grid.half_length_x + 1, 2 * grid.half_length_y + 1)
+    out = SimOut(terrain, grid)
+
+    _locate_intersecting_cells(out)
+"""
+function _locate_intersecting_cells(
+    out::SimOut{B,I,T},
+    tol::T=1e-8
+) where {B<:Bool,I<:Int64,T<:Float64}
+
+    # Initializing
+    intersecting_cells = Vector{Vector{I}}()
+
+    # Locating all non-zero values in body
+    body_pos = _locate_all_non_zeros(out.body)
+
+    # Iterating over all bucket position
+    for cell in body_pos
+        if (out.terrain[cell[2], cell[3]] - tol > out.body[cell[1]][cell[2], cell[3]])
+            ### Soil intersecting with the bucket ###
+            push!(intersecting_cells, cell)
+        end
+    end
+
+    return intersecting_cells
 end
