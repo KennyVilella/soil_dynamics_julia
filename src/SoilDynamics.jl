@@ -23,7 +23,8 @@ export _update_body_soil!
 
 # intersecting_cells.jl
 export _move_intersecting_cells!
-export _move_intersecting_body!, _move_intersecting_body_soil!, _locate_intersecting_cells
+export _move_intersecting_body_soil!, _move_body_soil!
+export _move_intersecting_body!, _locate_intersecting_cells
 
 # relax.jl
 export _relax_terrain!, _relax_body_soil!
