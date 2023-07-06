@@ -3112,11 +3112,240 @@ end
     # the first bucket layer is blocking the movement. New direction, two bucket layers and
     # the soil on the second bucket layer is blocking the movement, then two bucket layers
     # and the soil is fully avalanching on the first bucket layer
+    set_RNG_seed!(1234)
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.3
+    out.body[3][10, 15] = 0.5
+    out.body[4][10, 15] = 0.6
+    out.body_soil[1][10, 15] = 0.3
+    out.body_soil[2][10, 15] = 1.5
+    out.body_soil[3][10, 15] = 0.6
+    out.body_soil[4][10, 15] = 0.7
+    out.body[1][11, 14] = 0.0
+    out.body[2][11, 14] = 0.2
+    out.body_soil[1][11, 14] = 0.2
+    out.body_soil[2][11, 14] = 0.5
+    out.body[3][11, 14] = 0.5
+    out.body[4][11, 14] = 0.7
+    out.body[3][12, 13] = 0.1
+    out.body[4][12, 13] = 0.2
+    out.body_soil[3][12, 13] = 0.2
+    out.body_soil[4][12, 13] = 0.5
+    out.body[3][13, 12] = 0.1
+    out.body[4][13, 12] = 0.5
+    out.body[1][11, 15] = 0.7
+    out.body[2][11, 15] = 0.8
+    out.body[3][11, 15] = 0.0
+    out.body[4][11, 15] = 0.1
+    out.body_soil[3][11, 15] = 0.1
+    out.body_soil[4][11, 15] = 0.5
+    out.body[3][12, 15] = 0.0
+    out.body[4][12, 15] = 0.4
+    out.body_soil[3][12, 15] = 0.4
+    out.body_soil[4][12, 15] = 0.5
+    out.body[3][13, 15] = 0.4
+    out.body[4][13, 15] = 0.5
+    out.body[1][9, 14] = 0.0
+    out.body[2][9, 14] = 0.1
+    out.body_soil[1][9, 14] = 0.1
+    out.body_soil[2][9, 14] = 0.2
+    out.body[3][9, 14] = 0.4
+    out.body[4][9, 14] = 1.0
+    out.body[3][8, 13] = 0.1
+    out.body[4][8, 13] = 0.4
+    out.body_soil[3][8, 13] = 0.4
+    out.body_soil[4][8, 13] = 0.7
+    out.body[3][7, 12] = 0.0
+    out.body[4][7, 12] = 0.5
+    out.body[1][10, 16] = 0.5
+    out.body[2][10, 16] = 0.7
+    out.body[3][10, 16] = 0.0
+    out.body[4][10, 16] = 0.3
+    out.body_soil[3][10, 16] = 0.3
+    out.body_soil[4][10, 16] = 0.4
+    out.body[3][10, 17] = -0.2
+    out.body[4][10, 17] = 0.0
+    out.body_soil[3][10, 17] = 0.0
+    out.body_soil[4][10, 17] = 0.5
+    out.body[3][10, 18] = 0.0
+    out.body[4][10, 18] = 0.5
+    out.body[1][11, 16] = 0.4
+    out.body[2][11, 16] = 0.7
+    out.body[3][11, 16] = 0.0
+    out.body[4][11, 16] = 0.3
+    out.body_soil[3][11, 16] = 0.3
+    out.body_soil[4][11, 16] = 0.4
+    out.body[1][12, 17] = 0.0
+    out.body[2][12, 17] = 0.2
+    out.body_soil[1][12, 17] = 0.2
+    out.body_soil[2][12, 17] = 0.3
+    out.body[3][12, 17] = 1.4
+    out.body[4][12, 17] = 1.5
+    push!(out.body_soil_pos, [1; 10; 15])
+    push!(out.body_soil_pos, [3; 10; 15])
+    push!(out.body_soil_pos, [1; 11; 14])
+    push!(out.body_soil_pos, [3; 12; 13])
+    push!(out.body_soil_pos, [3; 11; 15])
+    push!(out.body_soil_pos, [3; 12; 15])
+    push!(out.body_soil_pos, [1; 9; 14])
+    push!(out.body_soil_pos, [3; 8; 13])
+    push!(out.body_soil_pos, [3; 10; 16])
+    push!(out.body_soil_pos, [3; 10; 17])
+    push!(out.body_soil_pos, [3; 11; 16])
+    push!(out.body_soil_pos, [1; 12; 17])
+    _move_intersecting_body_soil!(out)
+    @test (out.body_soil[1][10, 15] == 0.3) && (out.body_soil[2][10, 15] ≈ 0.5)
+    @test (out.body_soil[3][10, 15] == 0.6) && (out.body_soil[4][10, 15] == 0.7)
+    @test (out.body_soil[1][11, 14] == 0.2) && (out.body_soil[2][11, 14] == 0.5)
+    @test (out.body_soil[3][12, 13] == 0.2) && (out.body_soil[4][12, 13] == 0.5)
+    @test (out.body_soil[3][11, 15] == 0.1) && (out.body_soil[4][11, 15] == 0.5)
+    @test (out.body_soil[3][12, 15] == 0.4) && (out.body_soil[4][12, 15] == 0.5)
+    @test (out.body_soil[1][9, 14] == 0.1) && (out.body_soil[2][9, 14] ≈ 0.4)
+    @test (out.body_soil[3][8, 13] == 0.4) && (out.body_soil[4][8, 13] == 0.7)
+    @test (out.body_soil[3][10, 16] == 0.3) && (out.body_soil[4][10, 16] ≈ 0.5)
+    @test (out.body_soil[3][10, 17] == 0.0) && (out.body_soil[4][10, 17] == 0.5)
+    @test (out.body_soil[3][11, 16] == 0.3) && (out.body_soil[4][11, 16] == 0.4)
+    @test (out.body_soil[1][12, 17] == 0.2) && (out.body_soil[2][12, 17] ≈ 1.0)
+    res_body_soil_pos = [
+        [1; 10; 15], [3; 10; 15], [1; 11; 14], [3; 12; 13], [3; 11; 15], [3; 12; 15],
+        [1; 9; 14], [3; 8; 13], [3; 10; 16], [3; 10; 17], [3; 11; 16], [1; 12; 17]
+    ]
+    @test (out.body_soil_pos == res_body_soil_pos)
+    # Resetting values
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+    out.body[1][11, 14] = 0.0
+    out.body[2][11, 14] = 0.0
+    out.body[3][11, 14] = 0.0
+    out.body[4][11, 14] = 0.0
+    out.body[3][12, 13] = 0.0
+    out.body[4][12, 13] = 0.0
+    out.body[3][13, 12] = 0.0
+    out.body[4][13, 12] = 0.0
+    out.body[1][11, 15] = 0.0
+    out.body[2][11, 15] = 0.0
+    out.body[3][11, 15] = 0.0
+    out.body[4][11, 15] = 0.0
+    out.body[3][12, 15] = 0.0
+    out.body[4][12, 15] = 0.0
+    out.body[3][13, 15] = 0.0
+    out.body[4][13, 15] = 0.0
+    out.body[1][9, 14] = 0.0
+    out.body[2][9, 14] = 0.0
+    out.body[3][9, 14] = 0.0
+    out.body[4][9, 14] = 0.0
+    out.body[3][8, 13] = 0.0
+    out.body[4][8, 13] = 0.0
+    out.body[3][7, 12] = 0.0
+    out.body[4][7, 12] = 0.0
+    out.body[1][10, 16] = 0.0
+    out.body[2][10, 16] = 0.0
+    out.body[3][10, 16] = 0.0
+    out.body[4][10, 16] = 0.0
+    out.body[3][10, 17] = 0.0
+    out.body[4][10, 17] = 0.0
+    out.body[3][10, 18] = 0.0
+    out.body[4][10, 18] = 0.0
+    out.body[1][11, 16] = 0.0
+    out.body[2][11, 16] = 0.0
+    out.body[3][11, 16] = 0.0
+    out.body[4][11, 16] = 0.0
+    out.body[1][12, 17] = 0.0
+    out.body[2][12, 17] = 0.0
+    out.body[3][12, 17] = 0.0
+    out.body[4][12, 17] = 0.0
+    out.body_soil[1][10, 15] = 0.0
+    out.body_soil[2][10, 15] = 0.0
+    out.body_soil[3][10, 15] = 0.0
+    out.body_soil[4][10, 15] = 0.0
+    out.body_soil[1][11, 14] = 0.0
+    out.body_soil[2][11, 14] = 0.0
+    out.body_soil[3][12, 13] = 0.0
+    out.body_soil[4][12, 13] = 0.0
+    out.body_soil[3][11, 15] = 0.0
+    out.body_soil[4][11, 15] = 0.0
+    out.body_soil[3][12, 15] = 0.0
+    out.body_soil[4][12, 15] = 0.0
+    out.body_soil[1][9, 14] = 0.0
+    out.body_soil[2][9, 14] = 0.0
+    out.body_soil[3][8, 13] = 0.0
+    out.body_soil[4][8, 13] = 0.0
+    out.body_soil[3][10, 16] = 0.0
+    out.body_soil[4][10, 16] = 0.0
+    out.body_soil[3][10, 17] = 0.0
+    out.body_soil[4][10, 17] = 0.0
+    out.body_soil[3][11, 16] = 0.0
+    out.body_soil[4][11, 16] = 0.0
+    out.body_soil[1][12, 17] = 0.0
+    out.body_soil[2][12, 17] = 0.0
+    empty!(out.body_soil_pos)
+
+
+    # Testing when there are two bucket layers and the soil on the first bucket layer is
+    # blocking the movement, then two bucket layers and the first bucket layer is blocking
+    # the movement. New direction, two bucket layers and the soil on the first bucket layer
+    # is blocking the movement, then two bucket layers and the second bucket layer is
+    # blocking the movement. New direction, two bucket layers and the soil on the second
+    # bucket layer is blocking the movement, then two bucket layers and the first bucket
+    # layer is blocking the movement. New direction, two bucket layers and the soil on the
+    # second bucket layer is blocking the movement, then two bucket layers and the second
+    # bucket layer is blocking the movement. New direction, two bucket layers and the soil
+    # on the second bucket layer is blocking the movement, then two bucket layers and the
+    # soil is fully avalanching on the second bucket layer
 
 
 
+    # Testing when there are two bucket layers and the soil is partially avalanching on the
+    # first bucket layer, then two bucket layers and the first bucket layer is blocking the
+    # movement. New direction, two bucket layers and the soil is partially avalanching on
+    # the first bucket layer, then two bucket layers and the second bucket layer is blocking
+    # the movement. New direction, two bucket layers and the soil is partially avalanching
+    # on the second bucket layer, then two bucket layers and the first bucket layer is
+    # blocking the movement. New direction, two bucket layers and the soil is partially
+    # avalanching on the second bucket layer, then two bucket layers and the second bucket
+    # layer is blocking the movement. New direction, two bucket layers and the soil is
+    # partially avalanching on the second bucket layer, then two bucket layers and the soil
+    # is fully avalanching on the first bucket layer
 
 
+
+    # Testing when there are two bucket layers and the soil on the first bucket layer is
+    # blocking the movement, then two bucket layers and the soil on the first bucket layer
+    # is blocking the movement, then two bucket layers and the soil on the second bucket
+    # layer is blocking the movement, then two bucket layers and the soil on the second
+    # bucket layer is blocking the movement, then two bucket layers and the soil on the
+    # first bucket layer is blocking the movement, then two bucket layers and the soil is
+    # fully avalanching on the first bucket layer
+
+
+
+    # Testing when there are two bucket layers and the soil is partially avalanching on the
+    # first bucket layer, then two bucket layers and the soil is partially avalanching on
+    # the first bucket layer, then two bucket layers and the soil is partially avalanching
+    # on the second bucket layer, then two bucket layers and the soil is partially
+    # avalanching on the second bucket layer, then two bucket layers and the soil is
+    # partially avalanching on the first bucket layer, then two bucket layers and the soil
+    # is fully avalanching on the second bucket layer
+
+
+    # Testing when there are two bucket layers and the soil is partially avalanching on the
+    # first bucket layer, then two bucket layers and the soil on the first bucket layer is
+    # blocking the movement, then two bucket layers and the soil is partially avalanching
+    # on the first bucket layer, then two bucket layers and the soil on the second bucket
+    # layer is blocking the movement, then two bucket layers and the soil is partially
+    # avalanching on the second bucket layer, then two bucket layers and the soil on the
+    # first bucket layer is blocking the movement, then two bucket layers and the soil is
+    # partially avalanching on the second bucket layer, then two bucket layers and the soil
+    # on the second bucket layer is blocking the movement, then two bucket layers and the
+    # soil is partially avalanching on the first bucket layer, then two bucket layers and
+    # the soil is fully avalanching on the first bucket layer
+
+
+    # Testing when there are two bucket layers and the soil is partially avalanching on the
+    # second bucket layer, then two bucket layers and the soil is fully avalanching on the
+    # second bucket layer
 
 
 
@@ -3126,8 +3355,6 @@ end
 #println(out.terrain[8, 15], " ", out.terrain[9, 15], " ", out.terrain[10, 15], " ", out.terrain[11, 15], " ", out.terrain[12, 15])
 #println(out.terrain[8, 14], " ", out.terrain[9, 14], " ", out.terrain[10, 14], " ", out.terrain[11, 14], " ", out.terrain[12, 14])
 #println(out.terrain[8, 13], " ", out.terrain[9, 13], " ", out.terrain[10, 13], " ", out.terrain[11, 13], " ", out.terrain[12, 13])
-
-
 
 
 
