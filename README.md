@@ -5,7 +5,7 @@
 
 
 <code><b>Note:
-This is still a work in progress and the first fully working version has not yet been released.</b></code>
+A version has not yet been released. The simulator should be working properly, but a proper documentation is still missing</b></code>
 
 This soil dynamics simulator is a fast first-order model designed to simulate soil displacement caused by the movement of an excavator bucket.
 It employs a cellular automata approach to model the behavior of the soil.
@@ -19,8 +19,6 @@ The primary objective of the simulator is to provide terrain updates in less tha
 There are several important features that are yet to be implemented.
 These include, in order of priority:
 
-- Bucket soil relaxation: Implement the relaxation of soil on the bucket.
-- Code optimization: Enhance the overall performance and efficiency of the codebase.
 - Documentation: Provide comprehensive and user-friendly documentation for the simulator.
 - Integration testing: Conduct thorough integration tests to ensure the functionality of the simulator.
 - Multiple digging buckets: Add support for simulating the behavior of multiple digging buckets simultaneously.
