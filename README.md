@@ -54,11 +54,10 @@ The following options can be enabled to write the results at each time-step:
 - `writing_soil_files`: Write the terrain and the soil resting on the bucket.
 
 [ParaView][] can be used to visualize the results.
-To do so, follow these steps
-- Import the CSV files.
-- Right click on the data -> Add filter -> Table to points (make sure to adjust the XYZ columns accordingly).
-- Right click on the TableToPoints data -> Add filter -> Delaunay 2D (or use Delaunay 3D for the bucket).
-- Customize the visualization by adjusting colors, opacity, and other parameters to enhance the visualization.
+To do so, follow these steps in Paraview
+- File -> Load state -> select the file `paraview_state.pvsm` in the `test/example` folder.
+- In the pop-up window, select appropiately the three group of files to visualize.
+Note that some warnings/errors may appear when visualizing.
 
 [docs-main]: https://kennyvilella.github.io/soil_dynamics_julia/
 [ParaView]: https://www.paraview.org
