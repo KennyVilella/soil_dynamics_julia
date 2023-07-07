@@ -820,21 +820,21 @@ function _update_body!(
     max_h = grid.vect_z[area_pos[1][3]]
 
     # Iterating over all cells in area_pos
-    for nn in 1:length(area_pos)
-        if ((ii != area_pos[nn][1]) || (jj != area_pos[nn][2]))
+    for cell in area_pos
+        if ((ii != cell[1]) || (jj != cell[2]))
             ### New XY position ###
             # Updating bucket position for the previous XY position
             _include_new_body_pos!(out, ii, jj, min_h, max_h, tol)
 
             # Initializing new cell position and height
-            min_h = grid.vect_z[area_pos[nn][3]] - grid.cell_size_z
-            max_h = grid.vect_z[area_pos[nn][3]]
-            ii = area_pos[nn][1]
-            jj = area_pos[nn][2]
+            min_h = grid.vect_z[cell[3]] - grid.cell_size_z
+            max_h = grid.vect_z[cell[3]]
+            ii = cell[1]
+            jj = cell[2]
         else
             ### New height for the XY position ###
             # Updating maximum height
-            max_h = grid.vect_z[area_pos[nn][3]]
+            max_h = grid.vect_z[cell[3]]
         end
     end
 
