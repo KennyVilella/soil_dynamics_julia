@@ -485,13 +485,18 @@ function write_soil(
     open(filename, "a") do io
         writedlm(io, ["x, y, z"])
 
+        if isempty(body_soil_pos)
+            ### No soil is resting on the bucket ###
+            # Writing a dummy position for paraview
+            _write_vector(io, grid.vect_x[1], grid.vect_y[1], grid.vect_z[1])
+        end
+
         # Iterating over all bucket soil
         for cell in body_soil_pos
             ii = cell[2]
             jj = cell[3]
             ind = cell[1]
 
-            _write_vector(io, grid.vect_x[ii], grid.vect_y[jj], out.body_soil[ind][ii, jj])
             _write_vector(
                 io, grid.vect_x[ii], grid.vect_y[jj], out.body_soil[ind+1][ii, jj]
             )
