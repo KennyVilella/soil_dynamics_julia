@@ -5,7 +5,7 @@
 
 
 <code><b>Note:
-This is still a work in progress and the first fully working version has not yet been released.</b></code>
+A version has not yet been released. The simulator should be working properly, but a proper documentation is still missing</b></code>
 
 This soil dynamics simulator is a fast first-order model designed to simulate soil displacement caused by the movement of an excavator bucket.
 It employs a cellular automata approach to model the behavior of the soil.
@@ -19,8 +19,6 @@ The primary objective of the simulator is to provide terrain updates in less tha
 There are several important features that are yet to be implemented.
 These include, in order of priority:
 
-- Bucket soil relaxation: Implement the relaxation of soil on the bucket.
-- Code optimization: Enhance the overall performance and efficiency of the codebase.
 - Documentation: Provide comprehensive and user-friendly documentation for the simulator.
 - Integration testing: Conduct thorough integration tests to ensure the functionality of the simulator.
 - Multiple digging buckets: Add support for simulating the behavior of multiple digging buckets simultaneously.
@@ -56,11 +54,10 @@ The following options can be enabled to write the results at each time-step:
 - `writing_soil_files`: Write the terrain and the soil resting on the bucket.
 
 [ParaView][] can be used to visualize the results.
-To do so, follow these steps
-- Import the CSV files.
-- Right click on the data -> Add filter -> Table to points (make sure to adjust the XYZ columns accordingly).
-- Right click on the TableToPoints data -> Add filter -> Delaunay 2D (or use Delaunay 3D for the bucket).
-- Customize the visualization by adjusting colors, opacity, and other parameters to enhance the visualization.
+To do so, follow these steps in Paraview
+- File -> Load state -> select the file `paraview_state.pvsm` in the `test/example` folder.
+- In the pop-up window, select appropiately the three group of files to visualize.
+Note that some warnings/errors may appear when visualizing.
 
 [docs-main]: https://kennyvilella.github.io/soil_dynamics_julia/
 [ParaView]: https://www.paraview.org
