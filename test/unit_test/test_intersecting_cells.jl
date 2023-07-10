@@ -25,7 +25,602 @@ out = SimOut(terrain, grid)
 #                                                                                          #
 #==========================================================================================#
 @testset "_move_body_soil!" begin
+    # Setting dummy bucket
+    out.body[1][10, 15] = 0.3
+    out.body[2][10, 15] = 0.7
+    out.body[3][10, 15] = -0.2
+    out.body[4][10, 15] = 0.0
+    out.body_soil[1][10, 15] = 0.7
+    out.body_soil[2][10, 15] = 0.9
+    out.body_soil[3][10, 15] = 0.0
+    out.body_soil[4][10, 15] = 0.9
 
+    # Testing when soil is avalanching on the terrain
+    push!(out.body_soil_pos, [1; 10; 15])
+    push!(out.body_soil_pos, [3; 10; 15])
+    ind, ii, jj, h_soil, wall_presence = _move_body_soil!(
+        out, 3, 10, 15, 0.3, 5, 7, 0.6, false
+    )
+    @test (h_soil == 0.0) && (wall_presence == false)
+    @test (out.terrain[5, 7] ≈ 0.6)
+    @test (out.body_soil_pos == [[1; 10; 15], [3; 10; 15]])
+    # Resetting values
+    out.terrain[5, 7] = 0.0
+    empty!(out.body_soil_pos)
+
+    # Testing when soil is avalanching below the first bucket layer
+    out.body[1][5, 7] = 0.1
+    out.body[2][5, 7] = 0.2
+    push!(out.body_soil_pos, [1; 10; 15])
+    push!(out.body_soil_pos, [3; 10; 15])
+    ind, ii, jj, h_soil, wall_presence = _move_body_soil!(
+        out, 3, 10, 15, 0.3, 5, 7, 0.6, false
+    )
+    @test (h_soil == 0.0) && (wall_presence == false)
+    @test (out.terrain[5, 7] ≈ 0.6)
+    @test (out.body_soil_pos == [[1; 10; 15], [3; 10; 15]])
+    # Resetting values
+    out.terrain[5, 7] = 0.0
+    out.body[1][5, 7] = 0.0
+    out.body[2][5, 7] = 0.0
+    empty!(out.body_soil_pos)
+
+    # Testing when the first bucket layer is blocking the movement
+    out.body[1][5, 7] = 0.0
+    out.body[2][5, 7] = 0.3
+    push!(out.body_soil_pos, [1; 10; 15])
+    push!(out.body_soil_pos, [3; 10; 15])
+    ind, ii, jj, h_soil, wall_presence = _move_body_soil!(
+        out, 3, 10, 15, 0.3, 5, 7, 0.6, false
+    )
+    @test (h_soil == 0.6) && (wall_presence == true)
+    @test (out.body_soil_pos == [[1; 10; 15], [3; 10; 15]])
+    # Resetting values
+    out.body[1][5, 7] = 0.0
+    out.body[2][5, 7] = 0.0
+    empty!(out.body_soil_pos)
+
+    # Testing when the first bucket soil layer is blocking the movement
+    out.body[1][5, 7] = 0.0
+    out.body[2][5, 7] = 0.1
+    out.body_soil[1][5, 7] = 0.1
+    out.body_soil[2][5, 7] = 0.4
+    push!(out.body_soil_pos, [1; 10; 15])
+    push!(out.body_soil_pos, [3; 10; 15])
+    push!(out.body_soil_pos, [1; 5; 7])
+    ind, ii, jj, h_soil, wall_presence = _move_body_soil!(
+        out, 3, 10, 15, 0.3, 5, 7, 0.6, false
+    )
+    @test (h_soil == 0.6) && (wall_presence == false)
+    @test (ind == 1) && (ii == 5) && (jj == 7)
+    @test (out.body_soil[1][5, 7] == 0.1) && (out.body_soil[2][5, 7] == 0.4)
+    @test (out.body_soil_pos == [[1; 10; 15], [3; 10; 15], [1; 5; 7]])
+    # Resetting values
+    out.body[1][5, 7] = 0.0
+    out.body[2][5, 7] = 0.0
+    out.body_soil[1][5, 7] = 0.0
+    out.body_soil[2][5, 7] = 0.0
+    empty!(out.body_soil_pos)
+
+    # Testing when the soil is fully avalanching on the first bucket layer
+    out.body[1][5, 7] = 0.0
+    out.body[2][5, 7] = 0.2
+    push!(out.body_soil_pos, [1; 10; 15])
+    push!(out.body_soil_pos, [3; 10; 15])
+    ind, ii, jj, h_soil, wall_presence = _move_body_soil!(
+        out, 3, 10, 15, 0.3, 5, 7, 0.6, false
+    )
+    @test (h_soil == 0.0) && (wall_presence == false)
+    @test (out.body_soil[1][5, 7] == 0.2) && (out.body_soil[2][5, 7] ≈ 0.8)
+    @test (out.body_soil_pos == [[1; 10; 15], [3; 10; 15], [1; 5; 7]])
+    # Resetting values
+    out.body[1][5, 7] = 0.0
+    out.body[2][5, 7] = 0.0
+    out.body_soil[1][5, 7] = 0.0
+    out.body_soil[2][5, 7] = 0.0
+    empty!(out.body_soil_pos)
+
+    # Testing when the soil is fully avalanching on the first bucket soil layer
+    out.body[1][5, 7] = 0.0
+    out.body[2][5, 7] = 0.1
+    out.body_soil[1][5, 7] = 0.1
+    out.body_soil[2][5, 7] = 0.2
+    push!(out.body_soil_pos, [1; 10; 15])
+    push!(out.body_soil_pos, [3; 10; 15])
+    push!(out.body_soil_pos, [1; 5; 7])
+    ind, ii, jj, h_soil, wall_presence = _move_body_soil!(
+        out, 3, 10, 15, 0.3, 5, 7, 0.6, false
+    )
+    @test (h_soil == 0.0) && (wall_presence == false)
+    @test (out.body_soil[1][5, 7] == 0.1) && (out.body_soil[2][5, 7] ≈ 0.8)
+    @test (out.body_soil_pos == [[1; 10; 15], [3; 10; 15], [1; 5; 7]])
+    # Resetting values
+    out.body[1][5, 7] = 0.0
+    out.body[2][5, 7] = 0.0
+    out.body_soil[1][5, 7] = 0.0
+    out.body_soil[2][5, 7] = 0.0
+    empty!(out.body_soil_pos)
+
+    # Testing when soil is avalanching below the second bucket layer
+    out.body[3][5, 7] = 0.3
+    out.body[4][5, 7] = 0.6
+    push!(out.body_soil_pos, [1; 10; 15])
+    push!(out.body_soil_pos, [3; 10; 15])
+    ind, ii, jj, h_soil, wall_presence = _move_body_soil!(
+        out, 3, 10, 15, 0.3, 5, 7, 0.6, false
+    )
+    @test (h_soil == 0.0) && (wall_presence == false)
+    @test (out.terrain[5, 7] ≈ 0.6)
+    @test (out.body_soil_pos == [[1; 10; 15], [3; 10; 15]])
+    # Resetting values
+    out.terrain[5, 7] = 0.0
+    out.body[3][5, 7] = 0.0
+    out.body[4][5, 7] = 0.0
+    empty!(out.body_soil_pos)
+
+    # Testing when the second bucket layer is blocking the movement
+    out.body[3][5, 7] = 0.0
+    out.body[4][5, 7] = 0.6
+    out.body_soil[3][5, 7] = 0.6
+    out.body_soil[4][5, 7] = 0.7
+    push!(out.body_soil_pos, [1; 10; 15])
+    push!(out.body_soil_pos, [3; 10; 15])
+    push!(out.body_soil_pos, [3; 5; 7])
+    ind, ii, jj, h_soil, wall_presence = _move_body_soil!(
+        out, 3, 10, 15, 0.3, 5, 7, 0.6, false
+    )
+    @test (h_soil == 0.6) && (wall_presence == true)
+    @test (out.body_soil[3][5, 7] == 0.6) && (out.body_soil[4][5, 7] == 0.7)
+    @test (out.body_soil_pos == [[1; 10; 15], [3; 10; 15], [3; 5; 7]])
+    # Resetting values
+    out.terrain[5, 7] = 0.0
+    out.body[3][5, 7] = 0.0
+    out.body[4][5, 7] = 0.0
+    out.body_soil[3][5, 7] = 0.0
+    out.body_soil[4][5, 7] = 0.0
+    empty!(out.body_soil_pos)
+
+    # Testing when the second bucket soil layer is blocking the movement
+    out.body[3][5, 7] = -0.2
+    out.body[4][5, 7] = 0.0
+    out.body_soil[3][5, 7] = 0.0
+    out.body_soil[4][5, 7] = 0.3
+    push!(out.body_soil_pos, [1; 10; 15])
+    push!(out.body_soil_pos, [3; 10; 15])
+    push!(out.body_soil_pos, [3; 5; 7])
+    ind, ii, jj, h_soil, wall_presence = _move_body_soil!(
+        out, 3, 10, 15, 0.3, 5, 7, 0.6, false
+    )
+    @test (h_soil == 0.6) && (wall_presence == false)
+    @test (ind == 3) && (ii == 5) && (jj == 7)
+    @test (out.body_soil[3][5, 7] == 0.0) && (out.body_soil[4][5, 7] == 0.3)
+    @test (out.body_soil_pos == [[1; 10; 15], [3; 10; 15], [3; 5; 7]])
+    # Resetting values
+    out.terrain[5, 7] = 0.0
+    out.body[3][5, 7] = 0.0
+    out.body[4][5, 7] = 0.0
+    out.body_soil[3][5, 7] = 0.0
+    out.body_soil[4][5, 7] = 0.0
+    empty!(out.body_soil_pos)
+
+    # Testing when the soil is fully avalanching on the second bucket layer
+    out.body[3][5, 7] = -0.2
+    out.body[4][5, 7] = 0.0
+    push!(out.body_soil_pos, [1; 10; 15])
+    push!(out.body_soil_pos, [3; 10; 15])
+    ind, ii, jj, h_soil, wall_presence = _move_body_soil!(
+        out, 3, 10, 15, 0.3, 5, 7, 0.6, false
+    )
+    @test (h_soil == 0.0) && (wall_presence == false)
+    @test (out.body_soil[3][5, 7] == 0.0) && (out.body_soil[4][5, 7] ≈ 0.6)
+    @test (out.body_soil_pos == [[1; 10; 15], [3; 10; 15], [3; 5; 7]])
+    # Resetting values
+    out.terrain[5, 7] = 0.0
+    out.body[3][5, 7] = 0.0
+    out.body[4][5, 7] = 0.0
+    out.body_soil[3][5, 7] = 0.0
+    out.body_soil[4][5, 7] = 0.0
+    empty!(out.body_soil_pos)
+
+    # Testing when the soil is fully avalanching on the second bucket soil layer
+    out.body[3][5, 7] = -0.2
+    out.body[4][5, 7] = 0.0
+    out.body_soil[3][5, 7] = 0.0
+    out.body_soil[4][5, 7] = 0.2
+    push!(out.body_soil_pos, [1; 10; 15])
+    push!(out.body_soil_pos, [3; 10; 15])
+    push!(out.body_soil_pos, [3; 5; 7])
+    ind, ii, jj, h_soil, wall_presence = _move_body_soil!(
+        out, 3, 10, 15, 0.3, 5, 7, 0.6, false
+    )
+    @test (h_soil == 0.0) && (wall_presence == false)
+    @test (out.body_soil[3][5, 7] == 0.0) && (out.body_soil[4][5, 7] ≈ 0.8)
+    @test (out.body_soil_pos == [[1; 10; 15], [3; 10; 15], [3; 5; 7]])
+    # Resetting values
+    out.terrain[5, 7] = 0.0
+    out.body[3][5, 7] = 0.0
+    out.body[4][5, 7] = 0.0
+    out.body_soil[3][5, 7] = 0.0
+    out.body_soil[4][5, 7] = 0.0
+    empty!(out.body_soil_pos)
+
+    # Testing when there are two bucket layers and soil is fully filling the space (1)
+    out.body[1][5, 7] = 0.0
+    out.body[2][5, 7] = 0.1
+    out.body_soil[1][5, 7] = 0.1
+    out.body_soil[2][5, 7] = 0.2
+    out.body[3][5, 7] = 0.2
+    out.body[4][5, 7] = 0.4
+    push!(out.body_soil_pos, [1; 10; 15])
+    push!(out.body_soil_pos, [3; 10; 15])
+    push!(out.body_soil_pos, [1; 5; 7])
+    ind, ii, jj, h_soil, wall_presence = _move_body_soil!(
+        out, 3, 10, 15, 0.3, 5, 7, 0.6, false
+    )
+    @test (h_soil == 0.6) && (wall_presence == false)
+    @test (ind == 1) && (ii == 5) && (jj == 7)
+    @test (out.body_soil[1][5, 7] == 0.1) && (out.body_soil[2][5, 7] == 0.2)
+    @test (out.body_soil_pos == [[1; 10; 15], [3; 10; 15], [1; 5; 7]])
+    # Resetting values
+    out.body[1][5, 7] = 0.0
+    out.body[2][5, 7] = 0.0
+    out.body_soil[1][5, 7] = 0.0
+    out.body_soil[2][5, 7] = 0.0
+    out.body[3][5, 7] = 0.0
+    out.body[4][5, 7] = 0.0
+    empty!(out.body_soil_pos)
+
+    # Testing when there are two bucket layers and soil is fully filling the space (2)
+    out.body[1][5, 7] = 0.6
+    out.body[2][5, 7] = 0.7
+    out.body[3][5, 7] = 0.0
+    out.body[4][5, 7] = 0.1
+    out.body_soil[3][5, 7] = 0.1
+    out.body_soil[4][5, 7] = 0.6
+    push!(out.body_soil_pos, [1; 10; 15])
+    push!(out.body_soil_pos, [3; 10; 15])
+    push!(out.body_soil_pos, [3; 5; 7])
+    ind, ii, jj, h_soil, wall_presence = _move_body_soil!(
+        out, 3, 10, 15, 0.3, 5, 7, 0.6, false
+    )
+    @test (h_soil == 0.6) && (wall_presence == false)
+    @test (ind == 3) && (ii == 5) && (jj == 7)
+    @test (out.body_soil[3][5, 7] == 0.1) && (out.body_soil[4][5, 7] == 0.6)
+    @test (out.body_soil_pos == [[1; 10; 15], [3; 10; 15], [3; 5; 7]])
+    # Resetting values
+    out.body[1][5, 7] = 0.0
+    out.body[2][5, 7] = 0.0
+    out.body[3][5, 7] = 0.0
+    out.body[4][5, 7] = 0.0
+    out.body_soil[3][5, 7] = 0.0
+    out.body_soil[4][5, 7] = 0.0
+    empty!(out.body_soil_pos)
+
+    # Testing when there are two bucket layers and bucket soil is blocking the movement (1)
+    out.body[1][5, 7] = 0.0
+    out.body[2][5, 7] = 0.2
+    out.body_soil[1][5, 7] = 0.2
+    out.body_soil[2][5, 7] = 0.3
+    out.body[3][5, 7] = 0.4
+    out.body[4][5, 7] = 0.5
+    push!(out.body_soil_pos, [1; 10; 15])
+    push!(out.body_soil_pos, [3; 10; 15])
+    push!(out.body_soil_pos, [1; 5; 7])
+    ind, ii, jj, h_soil, wall_presence = _move_body_soil!(
+        out, 3, 10, 15, 0.3, 5, 7, 0.6, false
+    )
+    @test (h_soil == 0.6) && (wall_presence == false)
+    @test (ind == 1) && (ii == 5) && (jj == 7)
+    @test (out.body_soil[1][5, 7] == 0.2) && (out.body_soil[2][5, 7] == 0.3)
+    @test (out.body_soil_pos == [[1; 10; 15], [3; 10; 15], [1; 5; 7]])
+    # Resetting values
+    out.body[1][5, 7] = 0.0
+    out.body[2][5, 7] = 0.0
+    out.body_soil[1][5, 7] = 0.0
+    out.body_soil[2][5, 7] = 0.0
+    out.body[3][5, 7] = 0.0
+    out.body[4][5, 7] = 0.0
+    empty!(out.body_soil_pos)
+
+    # Testing when there are two bucket layers and bucket soil is blocking the movement (2)
+    out.body[1][5, 7] = 0.7
+    out.body[2][5, 7] = 0.8
+    out.body[3][5, 7] = 0.0
+    out.body[4][5, 7] = 0.1
+    out.body_soil[3][5, 7] = 0.1
+    out.body_soil[4][5, 7] = 0.6
+    push!(out.body_soil_pos, [1; 10; 15])
+    push!(out.body_soil_pos, [3; 10; 15])
+    push!(out.body_soil_pos, [3; 5; 7])
+    ind, ii, jj, h_soil, wall_presence = _move_body_soil!(
+        out, 3, 10, 15, 0.3, 5, 7, 0.6, false
+    )
+    @test (h_soil == 0.6) && (wall_presence == false)
+    @test (ind == 3) && (ii == 5) && (jj == 7)
+    @test (out.body_soil[3][5, 7] == 0.1) && (out.body_soil[4][5, 7] == 0.6)
+    @test (out.body_soil_pos == [[1; 10; 15], [3; 10; 15], [3; 5; 7]])
+    # Resetting values
+    out.body[1][5, 7] = 0.0
+    out.body[2][5, 7] = 0.0
+    out.body[3][5, 7] = 0.0
+    out.body[4][5, 7] = 0.0
+    out.body_soil[3][5, 7] = 0.0
+    out.body_soil[4][5, 7] = 0.0
+    empty!(out.body_soil_pos)
+
+    # Testing when there are two bucket layers and the bucket is blocking the movement (1)
+    out.body[1][5, 7] = 0.0
+    out.body[2][5, 7] = 0.3
+    out.body_soil[1][5, 7] = 0.3
+    out.body_soil[2][5, 7] = 0.4
+    out.body[3][5, 7] = 0.6
+    out.body[4][5, 7] = 0.7
+    push!(out.body_soil_pos, [1; 10; 15])
+    push!(out.body_soil_pos, [3; 10; 15])
+    push!(out.body_soil_pos, [1; 5; 7])
+    ind, ii, jj, h_soil, wall_presence = _move_body_soil!(
+        out, 3, 10, 15, 0.3, 5, 7, 0.6, false
+    )
+    @test (h_soil == 0.6) && (wall_presence == true)
+    @test (out.body_soil_pos == [[1; 10; 15], [3; 10; 15], [1; 5; 7]])
+    # Resetting values
+    out.body[1][5, 7] = 0.0
+    out.body[2][5, 7] = 0.0
+    out.body_soil[1][5, 7] = 0.0
+    out.body_soil[2][5, 7] = 0.0
+    out.body[3][5, 7] = 0.0
+    out.body[4][5, 7] = 0.0
+    empty!(out.body_soil_pos)
+
+    # Testing when there are two bucket layers and the bucket is blocking the movement (2)
+    out.body[1][5, 7] = 0.7
+    out.body[2][5, 7] = 0.8
+    out.body[3][5, 7] = -0.1
+    out.body[4][5, 7] = 0.4
+    push!(out.body_soil_pos, [1; 10; 15])
+    push!(out.body_soil_pos, [3; 10; 15])
+    ind, ii, jj, h_soil, wall_presence = _move_body_soil!(
+        out, 3, 10, 15, 0.3, 5, 7, 0.6, false
+    )
+    @test (h_soil == 0.6) && (wall_presence == true)
+    @test (out.body_soil_pos == [[1; 10; 15], [3; 10; 15]])
+    # Resetting values
+    out.body[1][5, 7] = 0.0
+    out.body[2][5, 7] = 0.0
+    out.body[3][5, 7] = 0.0
+    out.body[4][5, 7] = 0.0
+    empty!(out.body_soil_pos)
+
+    # Testing when there are two bucket layers and the soil is fully avalanching on the
+    # bucket (1)
+    out.body[1][5, 7] = 0.0
+    out.body[2][5, 7] = 0.2
+    out.body[3][5, 7] = 0.8
+    out.body[4][5, 7] = 0.9
+    push!(out.body_soil_pos, [1; 10; 15])
+    push!(out.body_soil_pos, [3; 10; 15])
+    ind, ii, jj, h_soil, wall_presence = _move_body_soil!(
+        out, 3, 10, 15, 0.3, 5, 7, 0.6, false
+    )
+    @test (h_soil == 0.0) && (wall_presence == false)
+    @test (out.body_soil[1][5, 7] == 0.2) && (out.body_soil[2][5, 7] ≈ 0.8)
+    @test (out.body_soil_pos == [[1; 10; 15], [3; 10; 15], [1; 5; 7]])
+    # Resetting values
+    out.body[1][5, 7] = 0.0
+    out.body[2][5, 7] = 0.0
+    out.body_soil[1][5, 7] = 0.0
+    out.body_soil[2][5, 7] = 0.0
+    out.body[3][5, 7] = 0.0
+    out.body[4][5, 7] = 0.0
+    empty!(out.body_soil_pos)
+
+    # Testing when there are two bucket layers and the soil is fully avalanching on the
+    # bucket (2)
+    out.body[1][5, 7] = 0.8
+    out.body[2][5, 7] = 0.9
+    out.body[3][5, 7] = -0.1
+    out.body[4][5, 7] = 0.0
+    push!(out.body_soil_pos, [1; 10; 15])
+    push!(out.body_soil_pos, [3; 10; 15])
+    ind, ii, jj, h_soil, wall_presence = _move_body_soil!(
+        out, 3, 10, 15, 0.3, 5, 7, 0.6, false
+    )
+    @test (h_soil == 0.0) && (wall_presence == false)
+    @test (out.body_soil[3][5, 7] == 0.0) && (out.body_soil[4][5, 7] ≈ 0.6)
+    @test (out.body_soil_pos == [[1; 10; 15], [3; 10; 15], [3; 5; 7]])
+    # Resetting values
+    out.body[1][5, 7] = 0.0
+    out.body[2][5, 7] = 0.0
+    out.body[3][5, 7] = 0.0
+    out.body[4][5, 7] = 0.0
+    out.body_soil[3][5, 7] = 0.0
+    out.body_soil[4][5, 7] = 0.0
+    empty!(out.body_soil_pos)
+
+    # Testing when there are two bucket layers and the soil is fully avalanching on the
+    # bucket soil (1)
+    out.body[1][5, 7] = 0.0
+    out.body[2][5, 7] = 0.1
+    out.body_soil[1][5, 7] = 0.1
+    out.body_soil[2][5, 7] = 0.2
+    out.body[3][5, 7] = 0.9
+    out.body[4][5, 7] = 1.0
+    push!(out.body_soil_pos, [1; 10; 15])
+    push!(out.body_soil_pos, [3; 10; 15])
+    push!(out.body_soil_pos, [1; 5; 7])
+    ind, ii, jj, h_soil, wall_presence = _move_body_soil!(
+        out, 3, 10, 15, 0.3, 5, 7, 0.6, false
+    )
+    @test (h_soil == 0.0) && (wall_presence == false)
+    @test (out.body_soil[1][5, 7] == 0.1) && (out.body_soil[2][5, 7] ≈ 0.8)
+    @test (out.body_soil_pos == [[1; 10; 15], [3; 10; 15], [1; 5; 7]])
+    # Resetting values
+    out.body[1][5, 7] = 0.0
+    out.body[2][5, 7] = 0.0
+    out.body_soil[1][5, 7] = 0.0
+    out.body_soil[2][5, 7] = 0.0
+    out.body[3][5, 7] = 0.0
+    out.body[4][5, 7] = 0.0
+    empty!(out.body_soil_pos)
+
+    # Testing when there are two bucket layers and the soil is fully avalanching on the
+    # bucket soil (2)
+    out.body[1][5, 7] = 0.8
+    out.body[2][5, 7] = 0.9
+    out.body[3][5, 7] = -0.1
+    out.body[4][5, 7] = 0.0
+    out.body_soil[3][5, 7] = 0.0
+    out.body_soil[4][5, 7] = 0.2
+    push!(out.body_soil_pos, [1; 10; 15])
+    push!(out.body_soil_pos, [3; 10; 15])
+    push!(out.body_soil_pos, [3; 5; 7])
+    ind, ii, jj, h_soil, wall_presence = _move_body_soil!(
+        out, 3, 10, 15, 0.3, 5, 7, 0.6, false
+    )
+    @test (h_soil == 0.0) && (wall_presence == false)
+    @test (out.body_soil[3][5, 7] == 0.0) && (out.body_soil[4][5, 7] ≈ 0.8)
+    @test (out.body_soil_pos == [[1; 10; 15], [3; 10; 15], [3; 5; 7]])
+    # Resetting values
+    out.body[1][5, 7] = 0.0
+    out.body[2][5, 7] = 0.0
+    out.body[3][5, 7] = 0.0
+    out.body[4][5, 7] = 0.0
+    out.body_soil[3][5, 7] = 0.0
+    out.body_soil[4][5, 7] = 0.0
+    empty!(out.body_soil_pos)
+
+    # Testing when there are two bucket layers and the soil is partially avalanching on the
+    # bucket (1)
+    out.body[1][5, 7] = 0.0
+    out.body[2][5, 7] = 0.1
+    out.body[3][5, 7] = 0.4
+    out.body[4][5, 7] = 0.9
+    push!(out.body_soil_pos, [1; 10; 15])
+    push!(out.body_soil_pos, [3; 10; 15])
+    ind, ii, jj, h_soil, wall_presence = _move_body_soil!(
+        out, 3, 10, 15, 0.3, 5, 7, 0.6, false
+    )
+    @test (h_soil ≈ 0.3) && (wall_presence == false)
+    @test (ind == 1) && (ii == 5) && (jj == 7)
+    @test (out.body_soil[1][5, 7] == 0.1) && (out.body_soil[2][5, 7] ≈ 0.4)
+    @test (out.body_soil_pos == [[1; 10; 15], [3; 10; 15], [1; 5; 7]])
+    # Resetting values
+    out.body[1][5, 7] = 0.0
+    out.body[2][5, 7] = 0.0
+    out.body_soil[1][5, 7] = 0.0
+    out.body_soil[2][5, 7] = 0.0
+    out.body[3][5, 7] = 0.0
+    out.body[4][5, 7] = 0.0
+    empty!(out.body_soil_pos)
+
+    # Testing when there are two bucket layers and the soil is partially avalanching on the
+    # bucket (2)
+    out.body[1][5, 7] = 0.3
+    out.body[2][5, 7] = 0.9
+    out.body[3][5, 7] = -0.1
+    out.body[4][5, 7] = 0.2
+    push!(out.body_soil_pos, [1; 10; 15])
+    push!(out.body_soil_pos, [3; 10; 15])
+    ind, ii, jj, h_soil, wall_presence = _move_body_soil!(
+        out, 3, 10, 15, 0.3, 5, 7, 0.6, false
+    )
+    @test (h_soil ≈ 0.5) && (wall_presence == false)
+    @test (ind == 3) && (ii == 5) && (jj == 7)
+    @test (out.body_soil[3][5, 7] == 0.2) && (out.body_soil[4][5, 7] ≈ 0.3)
+    @test (out.body_soil_pos == [[1; 10; 15], [3; 10; 15], [3; 5; 7]])
+    # Resetting values
+    out.body[1][5, 7] = 0.0
+    out.body[2][5, 7] = 0.0
+    out.body[3][5, 7] = 0.0
+    out.body[4][5, 7] = 0.0
+    out.body_soil[3][5, 7] = 0.0
+    out.body_soil[4][5, 7] = 0.0
+    empty!(out.body_soil_pos)
+
+    # Testing when there are two bucket layers and the soil is partially avalanching on the
+    # bucket soil (1)
+    out.body[1][5, 7] = 0.0
+    out.body[2][5, 7] = 0.1
+    out.body_soil[1][5, 7] = 0.1
+    out.body_soil[2][5, 7] = 0.2
+    out.body[3][5, 7] = 0.4
+    out.body[4][5, 7] = 0.5
+    push!(out.body_soil_pos, [1; 10; 15])
+    push!(out.body_soil_pos, [3; 10; 15])
+    push!(out.body_soil_pos, [1; 5; 7])
+    ind, ii, jj, h_soil, wall_presence = _move_body_soil!(
+        out, 3, 10, 15, 0.3, 5, 7, 0.6, false
+    )
+    @test (h_soil ≈ 0.4) && (wall_presence == false)
+    @test (ind == 1) && (ii == 5) && (jj == 7)
+    @test (out.body_soil[1][5, 7] == 0.1) && (out.body_soil[2][5, 7] ≈ 0.4)
+    @test (out.body_soil_pos == [[1; 10; 15], [3; 10; 15], [1; 5; 7]])
+    # Resetting values
+    out.body[1][5, 7] = 0.0
+    out.body[2][5, 7] = 0.0
+    out.body_soil[1][5, 7] = 0.0
+    out.body_soil[2][5, 7] = 0.0
+    out.body[3][5, 7] = 0.0
+    out.body[4][5, 7] = 0.0
+    empty!(out.body_soil_pos)
+
+    # Testing when there are two bucket layers and the soil is partially avalanching on the
+    # bucket soil (2)
+    out.body[1][5, 7] = 0.6
+    out.body[2][5, 7] = 0.9
+    out.body[3][5, 7] = -0.1
+    out.body[4][5, 7] = 0.0
+    out.body_soil[3][5, 7] = 0.0
+    out.body_soil[4][5, 7] = 0.2
+    push!(out.body_soil_pos, [1; 10; 15])
+    push!(out.body_soil_pos, [3; 10; 15])
+    push!(out.body_soil_pos, [3; 5; 7])
+    ind, ii, jj, h_soil, wall_presence = _move_body_soil!(
+        out, 3, 10, 15, 0.3, 5, 7, 0.6, false
+    )
+    @test (h_soil ≈ 0.2) && (wall_presence == false)
+    @test (ind == 3) && (ii == 5) && (jj == 7)
+    @test (out.body_soil[3][5, 7] == 0.0) && (out.body_soil[4][5, 7] ≈ 0.6)
+    @test (out.body_soil_pos == [[1; 10; 15], [3; 10; 15], [3; 5; 7]])
+    # Resetting values
+    out.body[1][5, 7] = 0.0
+    out.body[2][5, 7] = 0.0
+    out.body[3][5, 7] = 0.0
+    out.body[4][5, 7] = 0.0
+    out.body_soil[3][5, 7] = 0.0
+    out.body_soil[4][5, 7] = 0.0
+    empty!(out.body_soil_pos)
+
+    # Resetting dummy bucket value
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+    out.body_soil[1][10, 15] = 0.0
+    out.body_soil[2][10, 15] = 0.0
+    out.body_soil[3][10, 15] = 0.0
+    out.body_soil[4][10, 15] = 0.0
+
+    # Removing zeros from Sparse matrices
+    dropzeros!(out.body[1])
+    dropzeros!(out.body[2])
+    dropzeros!(out.body[3])
+    dropzeros!(out.body[4])
+    dropzeros!(out.body_soil[1])
+    dropzeros!(out.body_soil[2])
+    dropzeros!(out.body_soil[3])
+    dropzeros!(out.body_soil[4])
+
+    # Checking that nothing has been unexpectedly modified
+    @test all(out.terrain[:, :] .== 0.0)
+    @test isempty(nonzeros(out.body[1]))
+    @test isempty(nonzeros(out.body[2]))
+    @test isempty(nonzeros(out.body[3]))
+    @test isempty(nonzeros(out.body[4]))
+    @test isempty(nonzeros(out.body_soil[1]))
+    @test isempty(nonzeros(out.body_soil[2]))
+    @test isempty(nonzeros(out.body_soil[3]))
+    @test isempty(nonzeros(out.body_soil[4]))
 end
 
 @testset "_move_intersecting_body_soil!" begin
