@@ -1,5 +1,6 @@
 # Documentation for types.jl
 
+## Introductory remarks
 The simulator relies on `structs` to organize and manage the various parameters and properties.
 These `structs` are designed to provide a clear and efficient way of passing input arguments to the simulator's public functions. 
 
@@ -20,6 +21,7 @@ The current implementation includes four distinct types of `structs`:
 
 These `structs` play a crucial role in organizing and encapsulating the various aspects of the simulator, providing a convenient and structured way to work with the simulation inputs and outputs.
 
+## API
 ```@autodocs
 Modules = [SoilDynamics]
 Pages   = ["types.jl"]
