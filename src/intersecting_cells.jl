@@ -492,6 +492,13 @@ function _move_body_soil!(
             (out.body_soil[ind_b_n+1][ii_n, jj_n] != 0.0)
         )
 
+        if (out.body[ind_b_n+1][ii_n, jj_n] + tol > max_h)
+            ### Bucket is blocking the movement ###
+            wall_presence = true
+            return ind_p, ii_p, jj_p, h_soil, wall_presence
+        end
+
+
         if (bucket_soil_presence)
             ### Bucket soil is present between the two bucket layers ###
             if (out.body_soil[ind_b_n+1][ii_n, jj_n] + tol > out.body[ind_t_n][ii_n, jj_n])
@@ -507,12 +514,6 @@ function _move_body_soil!(
                 ii_p = ii_n
                 jj_p = jj_n
                 ind_p = ind_b_n
-                return ind_p, ii_p, jj_p, h_soil, wall_presence
-            end
-        else
-            if (out.body[ind_b_n+1][ii_n, jj_n] + tol > max_h)
-                ### Bucket is blocking the movement ###
-                wall_presence = true
                 return ind_p, ii_p, jj_p, h_soil, wall_presence
             end
         end
