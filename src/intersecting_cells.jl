@@ -405,15 +405,6 @@ function _move_body_soil!(
             (out.body_soil[3][ii_n, jj_n] != 0.0) || (out.body_soil[4][ii_n, jj_n] != 0.0)
         )
 
-        if (bucket_soil_presence_3 && (out.body_soil[4][ii_n, jj_n] + tol > max_h))
-            ### Soil is blocking the movement ###
-            # Updating previous position
-            ii_p = ii_n
-            jj_p = jj_n
-            ind_p = 3
-            return ind_p, ii_p, jj_p, h_soil, wall_presence
-        end
-
         # The only option left is that there is space for the intersecting soil
         # Note that there is necessarily enough space for all the soil, otherwise the soil
         # column would block the movement
@@ -449,15 +440,6 @@ function _move_body_soil!(
         bucket_soil_presence_1 = (
             (out.body_soil[1][ii_n, jj_n] != 0.0) || (out.body_soil[2][ii_n, jj_n] != 0.0)
         )
-
-        if (bucket_soil_presence_1 && (out.body_soil[2][ii_n, jj_n] + tol > max_h))
-            ### Soil is blocking the movement ###
-            # Updating previous position
-            ii_p = ii_n
-            jj_p = jj_n
-            ind_p = 1
-            return ind_p, ii_p, jj_p, h_soil, wall_presence
-        end
 
         # The only option left is that there is space for the intersecting soil
         # Note that there is necessarily enough space for all the soil, otherwise the soil
