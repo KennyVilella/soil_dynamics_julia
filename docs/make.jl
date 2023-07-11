@@ -7,6 +7,7 @@ makedocs(
   pages    = [
     "Home" => "index.md",
     "types.jl" => "types.md",
+    "Grid" => "grid.md",
     "bucket.jl" => "bucket.md",
     "body_soil.jl" => "body_soil.md",
     "intersecting_cells.jl" => "intersecting_cells.md",
