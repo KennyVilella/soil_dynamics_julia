@@ -97,3 +97,29 @@ display(
     @benchmark intersecting_cells = _locate_intersecting_cells(out)
 )
 println("")
+
+# Benchmarking for _move_body_soil! function
+out.terrain[:, :] .= 0.0
+_init_sparse_array!(out.body, grid)
+_init_sparse_array!(out.body_soil, grid)
+out.body[1][5, 7] = 0.1
+out.body[2][5, 7] = 0.3
+out.body[3][5, 7] = 0.6
+out.body[4][5, 7] = 0.8
+out.body_soil[1][5, 7] = 0.3
+out.body_soil[2][5, 7] = 1.1
+out.body_soil[3][5, 7] = 0.8
+out.body_soil[4][5, 7] = 0.9
+out.body[1][5, 11] = 0.0
+out.body[2][5, 11] = 0.2
+out.body[3][5, 11] = 0.4
+out.body[4][5, 11] = 0.8
+out.body_soil[1][5, 11] = 0.2
+out.body_soil[2][5, 11] = 0.3
+println("_move_body_soil!")
+display(
+    @benchmark ind_p, ii_p, jj_p, h_soil, wall_presence = _move_body_soil!(
+                    out, 1, 5, 7, 0.4, 5, 11, 0.5, true
+               )
+)
+println("")
