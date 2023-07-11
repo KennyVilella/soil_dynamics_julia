@@ -64,7 +64,29 @@ The intersecting soil cells are moved to this position.
 
 ### Movement of soil cells on the terrain intersecting with the bucket
 #### General description
+The eight cells surrounding the intersecting soil cells are investigated in a random order to determine if soil can be moved to that position.
+If there is insufficient space for all the soil, it incrementally checks the eight directions farther from the intersecting soil column until all the soil has been moved.
 
+Note:
+- The investigated directions are randomized in order to avoid asymmetrical results.
+- Soil is necessarily moved to the terrain.
+
+#### Description of the different cases
+There are only three different cases possible as illustrated below.
+
+![Intersecting bucket soil cells](../assets/intersecting_cells_3.png "Intersecting bucket soil cells")
+
+(a) In this case, no bucket is present in the new position and all the soil is moved to that position.
+This is done even if the bucket is buried deep underground.
+
+(b) In this case, no space is available below the bucket so no movement is made.
+
+(c) In this case, some space is available below the bucket and enough soil is moved to that position in order to fill the gap.
+
+### Concluding remarks
+
+When the simulator will have the ability to handle multiple buckets, it would probably be necessary to handle separately the movement of soil resting on a bucket and intersecting with a different bucket.
+It would also be necessary to handle the case where a different bucket is blocking the movement of soil to the terrain.
 
 ## API
 ```@autodocs
