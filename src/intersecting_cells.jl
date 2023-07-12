@@ -73,8 +73,6 @@ negligible.
 - This function is intended for internal use only.
 - The order in which the directions are checked is randomized in order to avoid
   asymmetrical results.
-- By convention, the soil can be moved from the bucket to the terrain even if the bucket is
-  underground.
 
 # Inputs
 - `out::SimOut{Bool,Int64,Float64}`: Struct that stores simulation outputs.
@@ -405,15 +403,6 @@ function _move_body_soil!(
             (out.body_soil[3][ii_n, jj_n] != 0.0) || (out.body_soil[4][ii_n, jj_n] != 0.0)
         )
 
-        if (bucket_soil_presence_3 && (out.body_soil[4][ii_n, jj_n] + tol > max_h))
-            ### Soil is blocking the movement ###
-            # Updating previous position
-            ii_p = ii_n
-            jj_p = jj_n
-            ind_p = 3
-            return ind_p, ii_p, jj_p, h_soil, wall_presence
-        end
-
         # The only option left is that there is space for the intersecting soil
         # Note that there is necessarily enough space for all the soil, otherwise the soil
         # column would block the movement
@@ -450,15 +439,6 @@ function _move_body_soil!(
             (out.body_soil[1][ii_n, jj_n] != 0.0) || (out.body_soil[2][ii_n, jj_n] != 0.0)
         )
 
-        if (bucket_soil_presence_1 && (out.body_soil[2][ii_n, jj_n] + tol > max_h))
-            ### Soil is blocking the movement ###
-            # Updating previous position
-            ii_p = ii_n
-            jj_p = jj_n
-            ind_p = 1
-            return ind_p, ii_p, jj_p, h_soil, wall_presence
-        end
-
         # The only option left is that there is space for the intersecting soil
         # Note that there is necessarily enough space for all the soil, otherwise the soil
         # column would block the movement
@@ -492,23 +472,9 @@ function _move_body_soil!(
             (out.body_soil[ind_b_n+1][ii_n, jj_n] != 0.0)
         )
 
-        if (out.body[ind_b_n+1][ii_n, jj_n] + tol > max_h)
-            ### Bucket is blocking the movement ###
-            wall_presence = true
-            return ind_p, ii_p, jj_p, h_soil, wall_presence
-        end
-
-
         if (bucket_soil_presence)
             ### Bucket soil is present between the two bucket layers ###
             if (out.body_soil[ind_b_n+1][ii_n, jj_n] + tol > out.body[ind_t_n][ii_n, jj_n])
-                ### Bucket and soil blocking the movement ###
-                # Updating previous position
-                ii_p = ii_n
-                jj_p = jj_n
-                ind_p = ind_b_n
-                return ind_p, ii_p, jj_p, h_soil, wall_presence
-            elseif (out.body_soil[ind_b_n+1][ii_n, jj_n] + tol > max_h)
                 ### Bucket and soil blocking the movement ###
                 # Updating previous position
                 ii_p = ii_n
