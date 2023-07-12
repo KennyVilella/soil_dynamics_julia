@@ -483,13 +483,6 @@ function _move_body_soil!(
                 jj_p = jj_n
                 ind_p = ind_b_n
                 return ind_p, ii_p, jj_p, h_soil, wall_presence
-            elseif (out.body_soil[ind_b_n+1][ii_n, jj_n] + tol > max_h)
-                ### Bucket and soil blocking the movement ###
-                # Updating previous position
-                ii_p = ii_n
-                jj_p = jj_n
-                ind_p = ind_b_n
-                return ind_p, ii_p, jj_p, h_soil, wall_presence
             end
         end
 
