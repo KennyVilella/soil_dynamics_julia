@@ -73,8 +73,6 @@ negligible.
 - This function is intended for internal use only.
 - The order in which the directions are checked is randomized in order to avoid
   asymmetrical results.
-- By convention, the soil can be moved from the bucket to the terrain even if the bucket is
-  underground.
 
 # Inputs
 - `out::SimOut{Bool,Int64,Float64}`: Struct that stores simulation outputs.
