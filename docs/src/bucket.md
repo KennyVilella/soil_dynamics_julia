@@ -44,6 +44,7 @@ The position of the bucket wall is determined using a three-steps process:
 - (3) An issue of this algorithm is that it does not handle the case where the bucket wall is either not fully intersecting the cell or intersecting vertically the cell.
   Those cases are handled separately by identifying all the cells where the edges of the bucket wall are located. This is simply done by decomposing each edges into a certain number of equally spaced points, and then determining where each points is located.
 
+
 ## API
 ```@autodocs
 Modules = [SoilDynamics]
