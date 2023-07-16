@@ -252,7 +252,9 @@ function _relax_body_soil!(
     end
 
     # Adding new body_soil_pos
-    push!(out.body_soil_pos, new_body_soil_pos)
+    for cell in new_body_soil_pos
+        push!(out.body_soil_pos, cell)
+    end
 end
 
 """
