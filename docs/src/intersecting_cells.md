@@ -55,9 +55,6 @@ No soil is moved to this position, but the exploration in this direction can con
 (b) In this case, the combination of the bucket soil and the bottom bucket layer in the new position extends over the two bucket layers from the previous position.
 The intersecting cells are still moved to the available space, and the exploration in this direction continues.
 
-(b) In this case, there is some space available between the two bucket layers, but not enough for all the intersecting soil cells.
-The intersecting cells are moved to the available space, and the exploration in this direction continues.
-
 (c) In this case, the combination of the bucket soil and the bottom bucket layer in the new position extends over the two bucket layers from the previous position.
 The intersecting cells are still moved to the available space, and the exploration in this direction continues.
 
@@ -73,12 +70,13 @@ If there is insufficient space for all the soil, the algorithm incrementally exp
 Note:
 - The investigated directions are randomized in order to avoid asymmetrical results.
 - Soil is necessarily moved to the terrain.
-  The digging is therefore a two-step process. Intersecting cells are first moved to the terrain just outside the bucket, then avalanche on the bucket during the relaxation step.
+  The digging is therefore a two-step process.
+  Intersecting cells are first moved to the terrain just outside the bucket, then avalanche on the bucket during the relaxation step.
 
 #### Description of the different cases
 Three different cases are possible, as illustrated in the vertical slice diagram below:
 
-![Intersecting bucket soil cells](assets/intersecting_cells_3.png "Intersecting bucket soil cells")
+![Intersecting terrain soil cells](assets/intersecting_cells_3.png "Intersecting terrain soil cells")
 
 (a) In this case, no bucket is present in the new position, and all the soil is moved to that position.
 This is done regardless of whether the bucket is buried deep underground.
@@ -89,7 +87,7 @@ This is done regardless of whether the bucket is buried deep underground.
 
 ### Concluding remarks
 
-When the simulator has the ability to handle multiple buckets, it may be necessary to handle the movement of soil resting on a bucket that intersects with a different bucket separately.
+When the simulator would have the ability to handle multiple buckets, it may be necessary to handle the movement of soil resting on a bucket that intersects with a different bucket separately.
 Additionally, the case where a different bucket blocks the movement of soil to the terrain would need to be addressed.
 
 ## API
