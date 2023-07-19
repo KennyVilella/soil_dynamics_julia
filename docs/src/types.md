@@ -11,7 +11,7 @@ If incorrect parameters are provided, the user will be alerted through appropria
 In Julia, the default behavior for `float`, `bool`, and `int` fields in `structs` is immutability.
 While immutability is desirable in some cases, it may not always align with the intended behavior of the simulator.
 To address this, the approach taken here is to use `Vectors` containing a single element when mutability is required.
-By using `Vectors`, `Matrices`, or `Arrays`, the mutability of the corresponding fields in the `structs` can be ensured, while maintaining performance efficiency.
+By using `Vectors`, `Matrices`, or `Arrays`, the mutability of the corresponding fields in the `structs` can be ensured.
 
 The current implementation includes four distinct types of `structs`:
 - `GridParam`: Aggregates all the properties related to the simulation grid.
