@@ -29,7 +29,7 @@ In this case, the intersecting soil cells are simply moved to the terrain.
 ##### One bucket layer
 Three different cases are possible, as illustrated in the vertical slice diagram below:
 
-![Intersecting bucket soil cells](assets/intersecting_cells_1.png "Intersecting bucket soil cells")
+![Intersecting bucket soil cells](./assets/intersecting_cells_1.png "Intersecting bucket soil cells")
 
 (a) In this case, there is an open space below the bucket layer, and the remaining intersecting soil cells are moved to the terrain.
 This movement is independent of the available space below the bucket.
@@ -47,7 +47,7 @@ That also means that the previous position has necessarily two bucket layers.
 ##### Two bucket layers
 Four different cases are possible, as illustrated in the vertical slice diagram below:
 
-![Intersecting bucket soil cells](assets/intersecting_cells_2.png "Intersecting bucket soil cells")
+![Intersecting bucket soil cells](./assets/intersecting_cells_2.png "Intersecting bucket soil cells")
 
 (a) In this case, the soil fully fills the space between the two bucket layers in the new position.
 No soil is moved to this position, but the exploration in this direction can continue.
@@ -76,7 +76,7 @@ Note:
 #### Description of the different cases
 Three different cases are possible, as illustrated in the vertical slice diagram below:
 
-![Intersecting terrain soil cells](assets/intersecting_cells_3.png "Intersecting terrain soil cells")
+![Intersecting terrain soil cells](./assets/intersecting_cells_3.png "Intersecting terrain soil cells")
 
 (a) In this case, no bucket is present in the new position, and all the soil is moved to that position.
 This is done regardless of whether the bucket is buried deep underground.

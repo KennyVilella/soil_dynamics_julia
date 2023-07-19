@@ -5,7 +5,7 @@ The excavator's bucket has usually a complex shape that is not suitable for firs
 In this simulator, the bucket is approximated as a triangular prism to simplify its representation.
 An illustration of the simulated bucket is provided below.
 
-![Approximated bucket](assets/bucket.png "Approximated bucket")
+![Approximated bucket](./assets/bucket.png "Approximated bucket")
 
 The different parts of the bucket are labeled as follows:
 - `J` represents the bucket joint.
