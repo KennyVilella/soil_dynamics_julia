@@ -96,7 +96,8 @@ println("")
 
 # Benchmarking for _relax_unstable_body_cell! function
 println("_relax_unstable_body_cell!")
+new_body_soil_pos = Vector{Vector{Int64}}()
 display(
-    @benchmark _relax_unstable_body_cell!(out, 13, 0.1, 50, 55, 1, 49, 55, grid)
+    @benchmark _relax_unstable_body_cell!(out, 13, new_body_soil_pos, 0.1, 50, 55, 1, 49, 55, grid)
 )
 println("")

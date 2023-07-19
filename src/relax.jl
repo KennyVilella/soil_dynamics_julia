@@ -211,6 +211,9 @@ function _relax_body_soil!(
     # Storing all possible directions for relaxation
     directions = [[1, 0], [-1, 0], [0, 1], [0, -1]]
 
+    # Initializing queue for new body_soil_pos
+    new_body_soil_pos = Vector{Vector{I}}()
+
     # Iterating over all body_soil cells
     for cell in out.body_soil_pos
         ii = cell[2]
@@ -243,9 +246,14 @@ function _relax_body_soil!(
 
             # Relaxing the soil cell
             _relax_unstable_body_cell!(
-                out, status, dh_max, ii, jj, ind, ii_c, jj_c, grid,  tol
+                out, status, new_body_soil_pos, dh_max, ii, jj, ind, ii_c, jj_c, grid, tol
             )
         end
+    end
+
+    # Adding new body_soil_pos
+    for cell in new_body_soil_pos
+        push!(out.body_soil_pos, cell)
     end
 end
 
@@ -785,8 +793,8 @@ end
 
 """
     _relax_unstable_body_cell!(
-        out::SimOut{B,I,T}, status::I, dh_max::T, ii::I, jj::I, ind::I, ii_c::I, jj_c::I,
-        grid::GridParam{I,T}, tol::T=1e-8
+        out::SimOut{B,I,T}, status::I, new_body_soil_pos::Vector{Vector{I}}, dh_max::T,
+        ii::I, jj::I, ind::I, ii_c::I, jj_c::I, grid::GridParam{I,T}, tol::T=1e-8
     ) where {B<:Bool,I<:Int64,T<:Float64}
 
 This function moves the soil from the soil layer `ind` of `body_soil` at (`ii`, `jj`) to
@@ -803,6 +811,7 @@ the `repose_angle`, provided that the bucket is not preventing this configuratio
 # Inputs
 - `out::SimOut{Bool,Int64,Float64}`: Struct that stores simulation outputs.
 - `status::Int64`: Three-digit number indicating how the soil should avalanche.
+- `new_body_soil_pos::Vector{Vector{Int64}}`: Queue to append new body_soil_pos.
 - `dh_max::Float64`: Maximum height difference allowed between two neighboring cells. [m]
 - `ii::Int64`: Index of the considered cell in the X direction.
 - `jj::Int64`: Index of the considered cell in the Y direction.
@@ -818,15 +827,17 @@ the `repose_angle`, provided that the bucket is not preventing this configuratio
 
 # Example
 
+    new_body_soil_pos = Vector{Vector{Int64}}()
     grid = GridParam(4.0, 4.0, 3.0, 0.05, 0.01)
     terrain = zeros(2 * grid.half_length_x + 1, 2 * grid.half_length_y + 1)
     out = SimOut(terrain, grid)
 
-    _relax_unstable_body_cell!(out, 40, 0.1, 10, 15, 1, 10, 14, grid)
+    _relax_unstable_body_cell!(out, 40, new_body_soil_pos, 0.1, 10, 15, 1, 10, 14, grid)
 """
 function _relax_unstable_body_cell!(
     out::SimOut{B,I,T},
     status::I,
+    new_body_soil_pos::Vector{Vector{I}},
     dh_max::T,
     ii::I,
     jj::I,
@@ -888,7 +899,7 @@ function _relax_unstable_body_cell!(
             h_new_c = out.body_soil[ind+1][ii, jj] + out.body[2][ii_c, jj_c] - h_new
 
             # Adding new bucket soil position to body_soil_pos
-            push!(out.body_soil_pos, [1; ii_c; jj_c])
+            push!(new_body_soil_pos, [1; ii_c; jj_c])
 
             if (h_new - tol > out.body_soil[ind][ii, jj])
                 ### Soil on the bucket should partially avalanche ###
@@ -935,7 +946,7 @@ function _relax_unstable_body_cell!(
             h_new_c = out.body_soil[ind+1][ii, jj] + out.body[4][ii_c, jj_c] - h_new
 
             # Adding new bucket soil position to body_soil_pos
-            push!(out.body_soil_pos, [3; ii_c; jj_c])
+            push!(new_body_soil_pos, [3; ii_c; jj_c])
 
             if (h_new_c - tol > out.body_soil[ind][ii, jj])
                 ### Soil on the bucket should partially avalanche ###
@@ -1014,7 +1025,7 @@ function _relax_unstable_body_cell!(
             h_new_c = out.body_soil[ind+1][ii, jj] + out.body[4][ii_c, jj_c] - h_new
 
             # Adding new bucket soil position to body_soil_pos
-            push!(out.body_soil_pos, [3; ii_c; jj_c])
+            push!(new_body_soil_pos, [3; ii_c; jj_c])
 
             if (out.body[1][ii_c, jj_c] > out.body[3][ii_c, jj_c])
                 ### Soil should avalanche on the bottom layer ###
@@ -1123,7 +1134,7 @@ function _relax_unstable_body_cell!(
             h_new_c = out.body_soil[ind+1][ii, jj] + out.body[2][ii_c, jj_c] - h_new
 
             # Adding new bucket soil position to body_soil_pos
-            push!(out.body_soil_pos, [1; ii_c; jj_c])
+            push!(new_body_soil_pos, [1; ii_c; jj_c])
 
             if (out.body[1][ii_c, jj_c] > out.body[3][ii_c, jj_c])
                 ### Soil should avalanche on the top layer ###
