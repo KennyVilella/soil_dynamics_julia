@@ -52,7 +52,7 @@ Mainly four different cases are possible, as illustrated in the vertical slice d
 Note that, for illustration purposes, it is assumed that the repose angle allows only for one cell difference between
 neighboring cells.
 
-![Terrain relaxation](../assets/relax_terrain.png "Terrain relaxation")
+![Terrain relaxation](assets/relax_terrain.png)
 
 (a) In this case, there is no bucket, the soil can freely avalanche to the neighboring cell, reaching a stable configuration.
 
@@ -82,7 +82,7 @@ Mainly four different cases are possible, as illustrated in the vertical slice d
 Note that, for illustration purposes, it is assumed that the repose angle allows only for one cell difference between
 neighboring cells.
 
-![Bucket soil relaxation](../assets/relax_body_soil.png "Bucket soil relaxation")
+![Bucket soil relaxation](assets/relax_body_soil.png)
 
 (a) In this case, there is no bucket, the soil can freely avalanche to the neighboring cell, reaching a stable configuration.
 

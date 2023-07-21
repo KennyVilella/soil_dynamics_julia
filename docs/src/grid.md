@@ -3,7 +3,7 @@
 The simulation takes place on a rectangular 3D grid made of rectangular prism cells.
 An illustration of the 3D grid is given below along with the representation of a grid element.
 
-![Simulation grid](./assets/grid.png "Simulation grid")
+![Simulation grid](assets/grid.png)
 
 The grid is created by the `GridParam` struct by providing the maximum size in the XYZ directions (`grid_size_x`, `grid_size_y`, and `grid_size_z`, respectively) and the size of a grid element (`cell_size_xy` and `cell_size_z`).
 
