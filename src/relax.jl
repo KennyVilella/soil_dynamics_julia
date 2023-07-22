@@ -613,6 +613,7 @@ function _check_unstable_body_cell(
             ind_n_top = 1
         end
 
+        column_top = 1e-8
         if (out.body[ind+1][ii, jj] + tol < out.body[ind_n_top][ii_c, jj_c])
             ### Soil may avalanche on the bottom layer ###
             if (
@@ -620,15 +621,25 @@ function _check_unstable_body_cell(
                 (out.body_soil[ind_n_bot+1][ii_c, jj_c] != 0.0)
             )
                 ### Bucket soil is present ###
-                status += ind_n_top
-                column_top = out.body_soil[ind_n_bot+1][ii_c, jj_c]
+                if (
+                    out.body_soil[ind_n_bot+1][ii_c, jj_c] + tol <
+                    out.body[ind_n_top][ii_c, jj_c]
+                )
+                    ### Some space is avilable ###
+                    status += ind_n_top
+                    column_top = out.body_soil[ind_n_bot+1][ii_c, jj_c]
+                end
             else
                 ### Bucket soil is not present ###
-
                 status += ind_n_top + 1
                 column_top = out.body[ind_n_bot+1][ii_c, jj_c]
             end
-        else
+        end
+
+        if (
+            (out.body[ind+1][ii, jj] + tol > out.body[ind_n_top][ii_c, jj_c]) ||
+            (column_top == 1e-8)
+        )
             ### Soil may avalanche on the top layer ###
             if (
                 (out.body_soil[ind_n_top][ii_c, jj_c] != 0.0) ||
