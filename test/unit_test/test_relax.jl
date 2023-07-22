@@ -6070,7 +6070,7 @@ end
     out.body[1][10, 15] = -0.4
     out.body[2][10, 15] = -0.3
     out.body_soil[1][10, 15] = -0.3
-    out.body_soil[2][10, 15] = -0.2
+    out.body_soil[2][10, 15] = -0.1
     out.body[3][10, 15] = -0.8
     out.body[4][10, 15] = -0.7
     out.body_soil[3][10, 15] = -0.7
@@ -6081,7 +6081,7 @@ end
     _relax_body_soil!(out, grid, sim)
     @test (out.terrain[10, 15] == -0.8) && (out.terrain[10, 14] == -0.8)
     @test (out.body_soil[1][10, 14] == -0.7) && (out.body_soil[2][10, 14] == 0.0)
-    @test (out.body_soil[1][10, 15] == -0.3) && (out.body_soil[2][10, 15] == -0.2)
+    @test (out.body_soil[1][10, 15] == -0.3) && (out.body_soil[2][10, 15] == -0.1)
     @test (out.body_soil[3][10, 15] == -0.7) && (out.body_soil[4][10, 15] == -0.4)
     @test (out.body_soil_pos == [[1; 10; 14], [1; 10; 15], [3; 10; 15]])
     # Resetting values
