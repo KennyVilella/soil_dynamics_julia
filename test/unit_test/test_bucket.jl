@@ -531,7 +531,6 @@ end
     area_min_y = 9
     area_length_x = 15
     area_length_y = 15
-    delta = 0.01
     c_ab, c_ac, in_triangle, n_cell = _decompose_vector_triangle(
         ab_ind, ac_ind, a_ind, area_min_x, area_min_y, area_length_x, area_length_y
     )
@@ -618,7 +617,6 @@ end
     area_min_y = 9
     area_length_x = 15
     area_length_y = 15
-    delta = 0.01
     c_ab, c_ac, in_triangle, n_cell = _decompose_vector_triangle(
         ab_ind, ac_ind, a_ind, area_min_x, area_min_y, area_length_x, area_length_y
     )
@@ -653,7 +651,6 @@ end
     area_min_y = 9
     area_length_x = 8
     area_length_y = 8
-    delta = 0.01
     c_ab, c_ac, in_triangle, n_cell = _decompose_vector_triangle(
         ab_ind, ac_ind, a_ind, area_min_x, area_min_y, area_length_x, area_length_y
     )
@@ -683,7 +680,6 @@ end
     area_min_y = 9
     area_length_x = 8
     area_length_y = 8
-    delta = 0.01
     c_ab, c_ac, in_triangle, n_cell = _decompose_vector_triangle(
         ab_ind, ac_ind, a_ind, area_min_x, area_min_y, area_length_x, area_length_y
     )
@@ -701,7 +697,6 @@ end
     area_min_y = 9
     area_length_x = 8
     area_length_y = 8
-    delta = 0.01
     c_ab, c_ac, in_triangle, n_cell = _decompose_vector_triangle(
         ab_ind, ac_ind, a_ind, area_min_x, area_min_y, area_length_x, area_length_y
     )
