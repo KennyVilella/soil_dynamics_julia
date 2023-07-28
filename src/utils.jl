@@ -221,7 +221,7 @@ end
     ) where {B<:Bool,I<:Int64,T<:Float64}
 
 This function checks that the volume of soil is conserved.
-The intial volume of soil (`init_volume`) has to be provided.
+The initial volume of soil (`init_volume`) has to be provided.
 
 # Inputs
 - `out::SimOut{Bool,Int64,Float64}`: Struct that stores simulation outputs.
@@ -596,7 +596,7 @@ a file.
 - This function is intended for internal use only.
 
 # Inputs
-- `io`: Used as a refrence to the writing file.
+- `io`: Used as a reference to the writing file.
 - `x::Float64`: X coordinate of the position to write.
 - `y::Float64`: Y coordinate of the position to write.
 - `z::Float64`: Z coordinate of the position to write.
