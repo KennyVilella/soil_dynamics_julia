@@ -174,7 +174,7 @@ defined by providing the Cartesian coordinates of its four vertices in the prope
 To optimize performance, the function iterates over a portion of the horizontal grid where
 the rectangle is located. For each cell, the function calculates the height of the plane
 formed by the rectangle at the top right corner of the cell. If the cell is within the
-rectangle area, the calcualted height is added to the results for the four neighboring
+rectangle area, the calculated height is added to the results for the four neighboring
 cells.
 
 This method works because when a plane intersects with a rectangular cell, the minimum and
@@ -437,7 +437,7 @@ defined by providing the Cartesian coordinates of its three vertices in the prop
 To optimize performance, the function iterates over a portion of the horizontal grid where
 the triangle is located. For each cell, the function calculates the height of the plane
 formed by the triangle at the top right corner of the cell. If the cell is within the
-triangle area, the calcualted height is added to the results for the four neighboring
+triangle area, the calculated height is added to the results for the four neighboring
 cells.
 
 This method works because when a plane intersects with a rectangular cell, the minimum and
