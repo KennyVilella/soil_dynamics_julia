@@ -52,8 +52,8 @@ Four different cases are possible, as illustrated in the vertical slice diagram 
 (a) In this case, the soil fully fills the space between the two bucket layers in the new position.
 No soil is moved to this position, but the exploration in this direction can continue.
 
-(b) In this case, the combination of the bucket soil and the bottom bucket layer in the new position extends over the two bucket layers from the previous position.
-The intersecting cells are still moved to the available space, and the exploration in this direction continues.
+(b) In this case, some space is available between the two bucket layers.
+The intersecting cells are moved to the available space, and the exploration in this direction continues.
 
 (c) In this case, the combination of the bucket soil and the bottom bucket layer in the new position extends over the two bucket layers from the previous position.
 The intersecting cells are still moved to the available space, and the exploration in this direction continues.
