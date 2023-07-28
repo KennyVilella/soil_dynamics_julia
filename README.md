@@ -3,10 +3,6 @@
 [![Build status](https://github.com/KennyVilella/soil_dynamics_julia/workflows/CI/badge.svg)](https://github.com/KennyVilella/soil_dynamics_julia/actions)
 [![](https://img.shields.io/badge/docs-main-blue.svg)][docs-main]
 
-
-<code><b>Note:
-A version has not yet been released. The simulator should be working properly, but a proper documentation is still missing</b></code>
-
 This soil dynamics simulator is a fast first-order model designed to simulate soil displacement caused by the movement of an excavator bucket.
 It employs a cellular automata approach to model the behavior of the soil.
 The bucket geometry is assumed to be a simple triangular prism, and the simulator operates on a grid composed of rectangular cells with equal length in the X and Y directions, and a height that is less than or equal to the cell's length.
