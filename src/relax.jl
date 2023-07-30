@@ -262,7 +262,7 @@ end
         out::SimOut{B,I,T}, dh_max::T, tol::T=1e-8
     ) where {B<:Bool,I<:Int64,T<:Float64}
 
-This function locates all the cells in `terrain `that have a height difference larger than
+This function locates all the cells in `terrain` that have a height difference larger than
 `dh_max` with at least one neighboring cell. Such height difference may indicate that the
 soil column is unstable. However, it is important to note that this condition is not
 necessarily indicative of an actual soil instability, as a bucket or the soil resting on it

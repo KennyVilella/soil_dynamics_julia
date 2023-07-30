@@ -369,7 +369,7 @@ Store all outputs of the simulation.
   XY position. As a result, the number of sparse Matrices in the `body` vector should be
   equal to four times the number of bucket.
 - Similarly, `body_soil` stores the location of the soil resting on a bucket wall. The
-  structure of `body_soil` is identical to `body`. An additionnal restriction is that the
+  structure of `body_soil` is identical to `body`. An additional restriction is that the
   minimum height of the soil resting on the bucket must correspond to the maximum height of
   a bucket wall.
 - The locations where there is soil resting on the bucket are stored in `body_soil_pos` as 

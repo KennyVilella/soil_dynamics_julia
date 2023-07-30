@@ -13,9 +13,6 @@ makedocs(
     "intersecting_cells.jl" => "intersecting_cells.md",
     "relax.jl" => "relax.md",
     "utils.jl" => "utils.md",
-#   "Section 1" => ["Subsection 1" => "subsection1.md",
-#                   "Subsection 2" => "subsection2.md",
-#                   "Subsection 3" => "subsection3.md",],
   ]
 )
 

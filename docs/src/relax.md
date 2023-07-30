@@ -7,7 +7,7 @@ As this simulator focuses on performance, a simplified model is therefore employ
 The model assumes that when the local slope of the soil exceeds its repose angle, the soil becomes unstable and needs to avalanche to neighboring cells to achieve a stable state where the local slope matches the repose angle.
 This action is referred to as "relaxation" in this simulator.
 
-In this simulator, the soil relaxation process consists of two main steps: terrain relaxation and bucket soil relaxation.
+This soil relaxation process consists of two main steps: terrain relaxation and bucket soil relaxation.
 In the terrain relaxation, the unstable soil cells on the terrain are relaxed, potentially causing avalanches onto the bucket.
 Similarly, in the bucket soil relaxation, the unstable soil cells on the bucket are relaxed, potentially causing avalanches onto the terrain.
 It is important to note that the relaxation of soil cells can sometimes trigger instability in neighboring cells.

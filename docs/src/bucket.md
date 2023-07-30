@@ -27,7 +27,7 @@ The pose of the bucket is provided to the simulator as the Cartesian position of
 ## Determination of the bucket position
 The purpose of the functions in this file is to determine the position of the excavator bucket within the 3D grid.
 Specifically, it aims to identify, for each XY position in the grid, the minimum and maximum height of the bucket if it is present at that location.
-The algorithm used for this task has been optimized for performance, resulting in a highly efficient implementation.
+The algorithm used for this task has been optimized for performance, resulting in an efficient implementation.
 However, due to the optimization, the algorithm may appear complex or unintuitive.
 
 The basic idea under the implementation is to decompose the bucket into its 4 surfaces (base, back, left side, right side), and to identify for each XY position of the grid the minimum and maximum height of the given bucket wall.
@@ -40,7 +40,7 @@ The position of the bucket wall is determined using a three-steps process:
   This allows to easily determine whether a given XY position falls inside or outside the projection of the bucket wall into the horizontal plane.
 - (2) For each XY position (`ii`, `jj`) within the projection of the bucket wall into the horizontal plane, the height of the bucket wall at the cell corner (`ii + 0.5`, `jj + 0.5`) is calculated and added to the tally.
   By iterating over all the cells, the algorithm ensures that the height of the bucket is calculated at the 4 corners of each cell within the projection of the bucket wall into the horizontal plane.
-  This is crucial because the minimum and maximum height of a plane intersecting laterally a cell is occuring necesserarily at one of the cell's corner.
+  This is crucial because the minimum and maximum height of a plane intersecting laterally a cell is occurring necessarily at one of the cell's corner.
 - (3) An issue of this algorithm is that it does not handle the case where the bucket wall is either not fully intersecting the cell or intersecting vertically the cell.
   Those cases are handled separately by identifying all the cells where the edges of the bucket wall are located. This is simply done by decomposing each edges into a certain number of equally spaced points, and then determining where each points is located.
 
