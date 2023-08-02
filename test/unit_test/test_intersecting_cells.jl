@@ -563,6 +563,7 @@ out = SimOut(terrain, grid)
         out, 3, 10, 15, 0.3, 5, 7, 0.3, false
     )
     @test (h_soil ≈ 0.2) && (wall_presence == false)
+    @test (ind == 1) && (ii == 5) && (jj == 7)
     @test (out.body_soil[1][5, 7] == 0.2) && (out.body_soil[2][5, 7] ≈ 0.4)
     @test (out.body_soil_pos == [[1; 10; 15], [3; 10; 15], [1; 5; 7]])
     # Resetting values
@@ -589,6 +590,7 @@ out = SimOut(terrain, grid)
         out, 3, 10, 15, 0.3, 5, 7, 0.3, false
     )
     @test (h_soil ≈ 0.2) && (wall_presence == false)
+    @test (ind == 3) && (ii == 5) && (jj == 7)
     @test (out.body_soil[3][5, 7] == 0.1) && (out.body_soil[4][5, 7] ≈ 0.7)
     @test (out.body_soil_pos == [[1; 10; 15], [3; 10; 15], [3; 5; 7]])
     # Resetting values
