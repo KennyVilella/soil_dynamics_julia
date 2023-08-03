@@ -975,6 +975,7 @@ end
     out.body_soil[2][10, 15] = 0.8
     out.body_soil[3][10, 15] = 0.6
     out.body_soil[4][10, 15] = 0.7
+    out.terrain[11, 14] = 0.4
     out.body[3][11, 14] = 0.4
     out.body[4][11, 14] = 0.5
     push!(out.body_soil_pos, [1; 10; 15])
@@ -982,7 +983,7 @@ end
     _move_intersecting_body_soil!(out)
     @test (out.body_soil[1][10, 15] == 0.3) && (out.body_soil[2][10, 15] ≈ 0.5)
     @test (out.body_soil[3][10, 15] == 0.6) && (out.body_soil[4][10, 15] == 0.7)
-    @test (out.terrain[11, 14] ≈ 0.3)
+    @test (out.terrain[11, 14] ≈ 0.7)
     @test (out.body_soil_pos == [[1; 10; 15], [3; 10; 15]])
     # Resetting values
     out.terrain[11, 14] = 0.0
