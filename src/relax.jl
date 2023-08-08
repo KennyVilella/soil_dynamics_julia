@@ -92,7 +92,7 @@ function _relax_terrain!(
     # Initializing the 2D bounding box of the unstable cells
     relax_min_x = 2 * grid.half_length_x
     relax_max_x = 0
-    relax_min_y = 2 * grid.half_length_x
+    relax_min_y = 2 * grid.half_length_y
     relax_max_y = 0
 
     # Iterating over all unstable cells
