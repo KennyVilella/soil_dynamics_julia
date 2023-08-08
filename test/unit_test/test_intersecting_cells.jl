@@ -2272,7 +2272,7 @@ end
     out.body[2][11, 14] = 1.0
     out.body[3][11, 14] = 0.1
     out.body[4][11, 14] = 0.2
-    out.body_soil[1][11, 14] = 0.9
+    out.body_soil[1][11, 14] = 1.0
     out.body_soil[2][11, 14] = 1.2
     out.body_soil[3][11, 14] = 0.2
     out.body_soil[4][11, 14] = 0.8
@@ -2288,7 +2288,7 @@ end
     _move_intersecting_body_soil!(out)
     @test (out.body_soil[1][10, 15] == 0.3) && (out.body_soil[2][10, 15] ≈ 0.5)
     @test (out.body_soil[3][10, 15] == 0.6) && (out.body_soil[4][10, 15] == 0.7)
-    @test (out.body_soil[1][11, 14] == 0.9) && (out.body_soil[2][11, 14] == 1.2)
+    @test (out.body_soil[1][11, 14] == 1.0) && (out.body_soil[2][11, 14] == 1.2)
     @test (out.body_soil[3][11, 14] == 0.2) && (out.body_soil[4][11, 14] ≈ 0.9)
     @test (out.body_soil[1][12, 13] == 0.6) && (out.body_soil[2][12, 13] == 0.8)
     @test (out.terrain[12, 13] ≈ 0.2)
