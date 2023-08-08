@@ -2994,7 +2994,7 @@ end
     out.body[4][10, 15] = -0.3
     out.body_soil[3][10, 15] = -0.3
     out.body_soil[4][10, 15] = -0.2
-    out.terrain[10, 14] = -0.2
+    out.terrain[10, 14] = -0.4
     out.body[1][10, 14] = -0.4
     out.body[2][10, 14] = -0.3
     out.body_soil[1][10, 14] = -0.3
@@ -3027,7 +3027,7 @@ end
     out.body[4][10, 15] = -0.3
     out.body_soil[3][10, 15] = -0.3
     out.body_soil[4][10, 15] = -0.2
-    out.terrain[10, 14] = -0.2
+    out.terrain[10, 14] = -0.4
     out.body[1][10, 14] = -0.4
     out.body[2][10, 14] = -0.3
     out.body_soil[1][10, 14] = -0.3
@@ -3060,7 +3060,7 @@ end
     out.body_soil[2][10, 15] = -0.1
     out.body[3][10, 15] = -0.1
     out.body[4][10, 15] = 0.5
-    out.terrain[10, 14] = -0.2
+    out.terrain[10, 14] = -0.4
     out.body[1][10, 14] = -0.4
     out.body[2][10, 14] = -0.3
     out.body_soil[1][10, 14] = -0.3
@@ -3093,7 +3093,7 @@ end
     out.body[4][10, 15] = 0.0
     out.body_soil[3][10, 15] = 0.0
     out.body_soil[4][10, 15] = 0.1
-    out.terrain[10, 14] = -0.2
+    out.terrain[10, 14] = -0.4
     out.body[1][10, 14] = -0.4
     out.body[2][10, 14] = -0.3
     out.body_soil[1][10, 14] = -0.3
@@ -3126,7 +3126,7 @@ end
     out.body[4][10, 15] = -0.3
     out.body_soil[3][10, 15] = -0.3
     out.body_soil[4][10, 15] = -0.2
-    out.terrain[10, 14] = -0.2
+    out.terrain[10, 14] = -0.4
     out.body[1][10, 14] = -0.4
     out.body[2][10, 14] = -0.3
     out.body_soil[1][10, 14] = -0.3
@@ -3159,7 +3159,7 @@ end
     out.body[4][10, 15] = -0.3
     out.body_soil[3][10, 15] = -0.3
     out.body_soil[4][10, 15] = -0.2
-    out.terrain[10, 14] = -0.2
+    out.terrain[10, 14] = -0.4
     out.body[1][10, 14] = -0.4
     out.body[2][10, 14] = -0.3
     out.body_soil[1][10, 14] = -0.3
@@ -3192,7 +3192,7 @@ end
     out.body_soil[2][10, 15] = -0.2
     out.body[3][10, 15] = -0.2
     out.body[4][10, 15] = -0.1
-    out.terrain[10, 14] = -0.2
+    out.terrain[10, 14] = -0.4
     out.body[1][10, 14] = -0.4
     out.body[2][10, 14] = -0.3
     out.body_soil[1][10, 14] = -0.3
@@ -3225,7 +3225,7 @@ end
     out.body[4][10, 15] = -0.1
     out.body_soil[3][10, 15] = -0.1
     out.body_soil[4][10, 15] = 0.0
-    out.terrain[10, 14] = -0.2
+    out.terrain[10, 14] = -0.4
     out.body[1][10, 14] = -0.4
     out.body[2][10, 14] = -0.3
     out.body_soil[1][10, 14] = -0.3
@@ -3430,7 +3430,7 @@ end
     out.body[2][10, 14] = 0.0
     out.body_soil[1][10, 14] = 0.0
     out.body_soil[2][10, 14] = 0.4
-    status = _check_unstable_body_cell(out, 10, 14, 1, 10, 15, 0.3)
+    status = _check_unstable_body_cell(out, 10, 14, 1, 10, 15, 0.1)
     @test (status == 0)
     # Resetting values
     out.terrain[10, 15] = 0.0
