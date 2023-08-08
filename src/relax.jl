@@ -613,7 +613,6 @@ function _check_unstable_body_cell(
             ind_n_top = 1
         end
 
-        column_top = 1e-8
         if (out.body[ind+1][ii, jj] + tol < out.body[ind_n_top][ii_c, jj_c])
             ### Soil may avalanche on the bottom layer ###
             if (
@@ -638,7 +637,7 @@ function _check_unstable_body_cell(
 
         if (
             (out.body[ind+1][ii, jj] + tol > out.body[ind_n_top][ii_c, jj_c]) ||
-            (column_top == 1e-8)
+            (status == 30)
         )
             ### Soil may avalanche on the top layer ###
             if (
