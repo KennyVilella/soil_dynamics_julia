@@ -345,9 +345,9 @@ function _calc_trajectory(
 
     # Calculating factor of the parabolic function
     if (x_min == 0)
-        a = (zi - zm) / (xi * xi)
+        a = (z_i - z_min) / (x_i * x_i)
         b = 0.0
-        c = zm
+        c = z_min
     else
         b = 2 * x_min * (z_min - z_i) / ((x_i - x_min) * (x_i - x_min))
         a = -b / (2 * x_min)
