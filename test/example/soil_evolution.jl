@@ -344,8 +344,6 @@ function _calc_trajectory(
     x_vec = range(x_i, x_i + 2 * (x_min - x_i), nn)
 
     # Calculating factor of the parabolic function
-    b = 2 * x_min * (z_min - z_i) / ((x_i - x_min) * (x_i - x_min))
-
     if (x_min == 0)
         a = (zi - zm) / (xi * xi)
         b = 0.0
