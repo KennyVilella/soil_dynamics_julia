@@ -820,7 +820,7 @@ the `repose_angle`, provided that the bucket is not preventing this configuratio
 
 # Inputs
 - `out::SimOut{Bool,Int64,Float64}`: Struct that stores simulation outputs.
-- `status::Int64`: Three-digit number indicating how the soil should avalanche.
+- `status::Int64`: Two-digit number indicating how the soil should avalanche.
 - `new_body_soil_pos::Vector{Vector{Int64}}`: Queue to append new body_soil_pos.
 - `dh_max::Float64`: Maximum height difference allowed between two neighboring cells. [m]
 - `ii::Int64`: Index of the considered cell in the X direction.
