@@ -168,7 +168,6 @@ This function only moves the soil when the following conditions are met:
 
 # Note
 - This function is intended for internal use only.
-- This function is a work in progress.
 
 # Inputs
 - `out::SimOut{Bool,Int64,Float64}`: Struct that stores simulation outputs.
