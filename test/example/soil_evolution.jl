@@ -356,7 +356,7 @@ function _calc_trajectory(
 
     # Initializing trajectory vector
     pos = [[x_i, 0.0, z_i]]
-    ori = [[0.0, atan(2 * a), 0.0]]
+    ori = [[0.0, atan(2 * a * x_i + b), 0.0]]
 
     # Creating trajectory
     for x in x_vec
@@ -364,7 +364,7 @@ function _calc_trajectory(
         append!(pos, [[x, 0.0, a * x * x + b * x + c]])
 
         # Calculating orientation following the gradient of the trajectory
-        append!(ori, [[0.0, atan(2 * a), 0.0]])
+        append!(ori, [[0.0, atan(2 * a * x + b), 0.0]])
     end
 
     return pos, ori
