@@ -561,7 +561,10 @@ function _check_unstable_body_cell(
         ### Only the second bucket layer ###
         status = 20
 
-        if (
+        if (out.body[ind+1][ii, jj] + tol < out.body[3][ii_c, jj_c])
+           ### Soil should avalanche to the terrain ###
+           column_top = out.terrain[ii_c, jj_c]
+        elseif (
             (out.body_soil[3][ii_c, jj_c] != 0.0) ||
             (out.body_soil[4][ii_c, jj_c] != 0.0)
         )
@@ -582,7 +585,10 @@ function _check_unstable_body_cell(
         ### Only the first bucket layer ###
         status = 10
 
-        if (
+        if (out.body[ind+1][ii, jj] + tol < out.body[1][ii_c, jj_c])
+           ### Soil should avalanche to the terrain ###
+           column_top = out.terrain[ii_c, jj_c]
+        elseif (
             (out.body_soil[1][ii_c, jj_c] != 0.0) ||
             (out.body_soil[2][ii_c, jj_c] != 0.0)
         )
@@ -862,12 +868,34 @@ function _relax_unstable_body_cell!(
     # Converting status into a string for convenience
     st = string(status)
 
-    if (status == 40)
+    if (st[2] == '0')
         ### No Bucket ###
         # Calculating new height values
         h_new = 0.5 * (dh_max + out.body_soil[ind+1][ii, jj] + out.terrain[ii_c, jj_c])
         h_new = grid.cell_size_z * floor((h_new + tol) / grid.cell_size_z)
         h_new_c = out.body_soil[ind+1][ii, jj] + out.terrain[ii_c, jj_c] - h_new
+
+        if (st[1] == '1')
+            ### First bucket layer is present ###
+            if (h_new_c - tol > out.body[1][ii_c, jj_c])
+                ### Not enough space for all the soil ###
+                h_new_c = out.body[1][ii_c, jj_c]
+                h_new = (
+                    out.body_soil[ind+1][ii, jj] -
+                    (out.body[1][ii_c, jj_c] - out.terrain[ii_c, jj_c])
+                )
+            end
+        elseif (st[1] == '2')
+            ### Second bucket layer is present ###
+            if (h_new_c - tol > out.body[3][ii_c, jj_c])
+                ### Not enough space for all the soil ###
+                h_new_c = out.body[3][ii_c, jj_c]
+                h_new = (
+                    out.body_soil[ind+1][ii, jj] -
+                    (out.body[3][ii_c, jj_c] - out.terrain[ii_c, jj_c])
+                )
+            end
+        end
 
         if (h_new - tol > out.body_soil[ind][ii, jj])
             ### Soil on the bucket should partially avalanche ###
