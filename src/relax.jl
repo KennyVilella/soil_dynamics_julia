@@ -324,9 +324,10 @@ end
     ) where {B<:Bool,I<:Int64,T<:Float64}
 
 This function checks the stability of a soil column in `terrain` compared to one of its
-neighbor (`ii_c`, `jj_c`). In case of instability, the function returns a three-digit
-number (`status`) that provides information on how the soil should avalanche.
-The interpretation of the three-digit number is described below.
+neighbor (`ii_c`, `jj_c`).
+In case of instability, the function returns a two-digit number (`status`) that provides
+information on how the soil should avalanche. The interpretation of the two-digit number
+is described below.
 
 The first digit indicates the potential presence of the bucket:
 - 1 when the first bucket layer is present.
@@ -334,25 +335,20 @@ The first digit indicates the potential presence of the bucket:
 - 3 when the two bucket layers are present.
 - 4 when no bucket layer is present.
 
-The second digit indicates the layer at the top where the soil should avalanche:
-- 0 when it is the `terrain` (no bucket is present).
+The second digit indicates the layer where the soil should avalanche:
+- 0 when it is the terrain (no bucket is present).
 - 1 when it is the second bucket soil layer.
 - 2 when it is the second bucket layer.
 - 3 when it is the first bucket soil layer.
 - 4 when it is the first bucket layer.
 
-The third digit indicates whether the soil should avalanche below or above the bucket:
-- 0 when there is no bucket.
-- 1 when the soil should avalanche below the bucket.
-- 2 when the soil should avalanche on the top of the bucket.
-
-The combination of these three digits provides a comprehensive description of how the soil
+The combination of these two digits provides a comprehensive description of how the soil
 should avalanche in different scenarios.
 
 # Note
 - This function is intended for internal use only.
-- Not all combinations for `status` are possible. Some combinations, such as `401`, `231`
-  and `220`, are impossible.
+- Not all combinations for `status` are possible. Some combinations, such as `41` or `23`
+  are impossible.
 
 # Inputs
 - `out::SimOut{Bool,Int64,Float64}`: Struct that stores simulation outputs.
@@ -362,7 +358,7 @@ should avalanche in different scenarios.
 - `tol::Float64`: Small number used to handle numerical approximation errors.
 
 # Outputs
-- `status::Int64`: Three-digit number indicating how the soil should avalanche.
+- `status::Int64`: Two-digit number indicating how the soil should avalanche.
                    `0` is returned if the soil column is stable.
 
 # Example
@@ -383,96 +379,120 @@ function _check_unstable_terrain_cell(
 
     if (out.terrain[ii_c, jj_c] + tol < h_min)
         ### Adjacent terrain is low enough ###
-        bucket_presence_1 = (
-            (out.body[1][ii_c, jj_c] != 0.0) || (out.body[2][ii_c, jj_c] != 0.0)
+        bucket_absence_1 = (
+            (out.body[1][ii_c, jj_c] == 0.0) && (out.body[2][ii_c, jj_c] == 0.0)
         )
-        bucket_presence_3 = (
-            (out.body[3][ii_c, jj_c] != 0.0) || (out.body[4][ii_c, jj_c] != 0.0)
+        bucket_absence_3 = (
+            (out.body[3][ii_c, jj_c] == 0.0) && (out.body[4][ii_c, jj_c] == 0.0)
         )
-        if (bucket_presence_1 || bucket_presence_3)
-            ### Bucket is present ###
-            # Calculating extension of bucket and soil
-            if (!bucket_presence_1)
-                ### Only the second bucket layer is present ###
-                status = 200
-                bucket_bot = out.body[3][ii_c, jj_c]
+        if (bucket_absence_1 && bucket_absence_3)
+            ### No bucket ###
+            return 40
+        elseif (bucket_absence_1)
+            ### Only the second bucket layer is present ###
+            status = 20
+            bucket_bot = out.body[3][ii_c, jj_c]
+
+            if (out.terrain[ii_c, jj_c] + tol < bucket_bot)
+                ### Space under the bucket ###
+                return status
+            else
+                ### Bucket is on the terrain ###
                 if (
                     (out.body_soil[3][ii_c, jj_c] != 0.0) ||
                     (out.body_soil[4][ii_c, jj_c] != 0.0)
                 )
                     ### Bucket soil is present ###
-                    status += 10
+                    status += 1
                     column_top = out.body_soil[4][ii_c, jj_c]
                 else
                     ### Bucket soil is not present ###
-                    status += 20
+                    status += 2
                     column_top = out.body[4][ii_c, jj_c]
                 end
-            elseif (!bucket_presence_3)
-                ### Only the first bucket layer is present ###
-                status = 100
-                bucket_bot = out.body[1][ii_c, jj_c]
+            end
+        elseif (bucket_absence_3)
+            ### Only the first bucket layer is present ###
+            status = 10
+            bucket_bot = out.body[1][ii_c, jj_c]
+
+            if (out.terrain[ii_c, jj_c] + tol < bucket_bot)
+                ### Space under the bucket ###
+                return status
+            else
+                ### Bucket is on the terrain ###
                 if (
                     (out.body_soil[1][ii_c, jj_c] != 0.0) ||
                     (out.body_soil[2][ii_c, jj_c] != 0.0)
                 )
                     ### Bucket soil is present ###
-                    status += 30
+                    status += 3
                     column_top = out.body_soil[2][ii_c, jj_c]
                 else
                     ### Bucket soil is not present ###
-                    status += 40
+                    status += 4
                     column_top = out.body[2][ii_c, jj_c]
                 end
+            end
+        else
+            ### Two bucket layers are present ###
+            status = 30
+
+            if (out.body[1][ii_c, jj_c] < out.body[3][ii_c, jj_c])
+                ### First layer at bottom ###
+                bucket_bot = out.body[1][ii_c, jj_c]
+                ind_n_bot = 1
+                ind_n_top = 3
             else
-                ### Two bucket layers are present ###
-                status = 300
-                bucket_bot, min_ind = findmin(
-                    [out.body[1][ii_c, jj_c], out.body[3][ii_c, jj_c]]
-                )
-                if (min_ind == 1)
-                    ### First bucket layer is lower ###
-                    if (
-                        (out.body_soil[3][ii_c, jj_c] != 0.0) ||
-                        (out.body_soil[4][ii_c, jj_c] != 0.0)
-                    )
-                        ### Bucket soil is present ###
-                        status += 10
-                        column_top = out.body_soil[4][ii_c, jj_c]
-                    else
-                        ### Bucket soil is not present ###
-                        status += 20
-                        column_top = out.body[4][ii_c, jj_c]
-                    end
-                else
-                    ### Second bucket layer is lower ###
-                    if (
-                        (out.body_soil[1][ii_c, jj_c] != 0.0) ||
-                        (out.body_soil[2][ii_c, jj_c] != 0.0)
-                    )
-                        ### Bucket soil is present ###
-                        status += 30
-                        column_top = out.body_soil[2][ii_c, jj_c]
-                    else
-                        ### Bucket soil is not present ###
-                        status += 40
-                        column_top = out.body[2][ii_c, jj_c]
-                    end
-                end
+                ### Second layer at bottom ###
+                bucket_bot = out.body[3][ii_c, jj_c]
+                ind_n_bot = 3
+                ind_n_top = 1
             end
 
             if (out.terrain[ii_c, jj_c] + tol < bucket_bot)
                 ### Space under the bucket ###
-                return status + 1
+                return status
+            else
+                ### Bucket is on the terrain ###
+                if (
+                    (out.body_soil[ind_n_bot][ii_c, jj_c] != 0.0) ||
+                    (out.body_soil[ind_n_bot+1][ii_c, jj_c] != 0.0)
+                )
+                    ### Bucket soil is present on the bottom bucket layer ###
+                    if (
+                        out.body_soil[ind_n_bot+1][ii_c, jj_c] + tol >
+                        out.body[ind_top][ii_c, jj_c]
+                    )
+                        ### Soil is filling the space between the bucket layers ###
+                        # Soil may avalanche on the top bucket layer
+                        if (
+                            (out.body_soil[ind_n_top][ii_c, jj_c] != 0.0) ||
+                            (out.body_soil[ind_n_top+1][ii_c, jj_c] != 0.0)
+                        )
+                            ### Bucket soil is present on the top bucket layer ###
+                            column_top = out.body_soil[ind_n_top+1][ii_c, jj_c]
+                            status += ind_n_bot
+                        else
+                            ### Bucket soil is not present on the top bucket layer ###
+                            column_top = out.body[ind_n_top+1][ii_c, jj_c]
+                            status += ind_n_bot + 1
+                        end
+                    else
+                        ### Soil may relax between the two bucket layers ###
+                        column_top = out.body_soil[ind_n_bot+1][ii_c, jj_c]
+                        status += ind_n_top
+                    end
+                else
+                    ### Bucket soil is not present on the bottom bucket layer ###
+                    column_top = out.body[ind_n_bot+1][ii_c, jj_c]
+                    status += ind_n_top + 1
+                end
             end
-
-            if (column_top + tol < h_min)
-                ### Column is low enough ###
-                return status + 2
-            end
-        else
-            ### No bucket ###
-            return 400
+        end
+        if (column_top + tol < h_min)
+            ### Column is low enough ###
+            return status
         end
     end
 
@@ -497,7 +517,7 @@ The first digit indicates the potential presence of the bucket:
 - 4 when no bucket layer is present.
 
 The second digit indicates the layer where the soil should avalanche:
-- 0 when it is the `terrain` (no bucket is present).
+- 0 when it is the terrain (no bucket is present).
 - 1 when it is the second bucket soil layer.
 - 2 when it is the second bucket layer.
 - 3 when it is the first bucket soil layer.
@@ -508,7 +528,7 @@ should avalanche in different scenarios.
 
 # Note
 - This function is intended for internal use only.
-- Not all combinations for `status` are possible. Some combinations, such as `41` and `23`
+- Not all combinations for `status` are possible. Some combinations, such as `41` or `23`
   are impossible.
 
 # Inputs
