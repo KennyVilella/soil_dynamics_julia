@@ -704,7 +704,7 @@ below the bucket to fill the space under it.
 
 # Inputs
 - `out::SimOut{Bool,Int64,Float64}`: Struct that stores simulation outputs.
-- `status::Int64`: Three-digit number indicating how the soil should avalanche.
+- `status::Int64`: Two-digit number indicating how the soil should avalanche.
 - `dh_max::Float64`: Maximum height difference allowed between two neighboring cells. [m]
 - `ii::Int64`: Index of the considered cell in the X direction.
 - `jj::Int64`: Index of the considered cell in the Y direction.
@@ -740,19 +740,19 @@ function _relax_unstable_terrain_cell!(
     # Converting status into a string for convenience
     st = string(status)
 
-    # Calculating new height values
-    h_new = 0.5 * (dh_max + out.terrain[ii, jj] + out.terrain[ii_c, jj_c])
-    h_new = grid.cell_size_z * floor((h_new + tol) / grid.cell_size_z)
-    h_new_c = out.terrain[ii, jj] + out.terrain[ii_c, jj_c] - h_new
+    if (st[2] = '0')
+        ### Soil should avalanche on the terrain ###
+        # Calculating new height values
+        h_new = 0.5 * (dh_max + out.terrain[ii, jj] + out.terrain[ii_c, jj_c])
+        h_new = grid.cell_size_z * floor((h_new + tol) / grid.cell_size_z)
+        h_new_c = out.terrain[ii, jj] + out.terrain[ii_c, jj_c] - h_new
 
-    if (status == 400)
-        ### No Bucket ###
-        # Updating terrain
-        out.terrain[ii, jj] = h_new
-        out.terrain[ii_c, jj_c] = h_new_c
-    elseif (st[3] == '1')
-        ### Space under the bucket ###
-        if (st[1] == '1')
+        if (st[1] = '4')
+            ### No bucket ###
+            out.terrain[ii, jj] = h_new
+            out.terrain[ii_c, jj_c] = h_new_c
+            return
+        elseif (st[1] == '1')
             ### Under the first bucket layer ###
             bucket_bot = out.body[1][ii_c, jj_c]
         elseif (st[1] == '2')
@@ -772,53 +772,110 @@ function _relax_unstable_terrain_cell!(
             out.terrain[ii, jj] = out.terrain[ii, jj] + out.terrain[ii_c, jj_c] - bucket_bot
             out.terrain[ii_c, jj_c] = bucket_bot
         end
-    elseif (st[3] == '2')
-        ### Soil should avalanche on the bucket ###
-        if (st[2] == '1')
-            ### Soil avalanche on the second bucket soil layer ###
-            h_new = 0.5 * (dh_max + out.terrain[ii, jj] + out.body_soil[4][ii_c, jj_c])
-            h_new = grid.cell_size_z * floor((h_new + tol) / grid.cell_size_z)
-            h_new_c = out.terrain[ii, jj] + out.body_soil[4][ii_c, jj_c] - h_new
+    elseif (st[2] == '1')
+        ### Soil avalanche on the second bucket soil layer ###
+        h_new = 0.5 * (dh_max + out.terrain[ii, jj] + out.body_soil[4][ii_c, jj_c])
+        h_new = grid.cell_size_z * floor((h_new + tol) / grid.cell_size_z)
+        h_new_c = out.terrain[ii, jj] + out.body_soil[4][ii_c, jj_c] - h_new
 
-            # Updating terrain
-            out.terrain[ii, jj] = h_new
-            out.body_soil[4][ii_c, jj_c] = h_new_c
-        elseif (st[2] == '2')
-            ### Soil avalanche on the second bucket layer ###
-            h_new = 0.5 * (dh_max + out.terrain[ii, jj] + out.body[4][ii_c, jj_c])
-            h_new = grid.cell_size_z * floor((h_new + tol) / grid.cell_size_z)
-            h_new_c = out.terrain[ii, jj] + out.body[4][ii_c, jj_c] - h_new
-
-            # Updating terrain
-            out.terrain[ii, jj] = h_new
-            out.body_soil[3][ii_c, jj_c] = out.body[4][ii_c, jj_c]
-            out.body_soil[4][ii_c, jj_c] = h_new_c
-
-            # Adding new bucket soil position to body_soil_pos
-            push!(out.body_soil_pos, [3; ii_c; jj_c])
-        elseif (st[2] == '3')
-            ### Soil avalanche on the first bucket soil layer ###
-            h_new = 0.5 * (dh_max + out.terrain[ii, jj] + out.body_soil[2][ii_c, jj_c])
-            h_new = grid.cell_size_z * floor((h_new + tol) / grid.cell_size_z)
-            h_new_c = out.terrain[ii, jj] + out.body_soil[2][ii_c, jj_c] - h_new
-
-            # Updating terrain
-            out.terrain[ii, jj] = h_new
-            out.body_soil[2][ii_c, jj_c] = h_new_c
-        elseif (st[2] == '4')
-            ### Soil avalanche on the first bucket layer ###
-            h_new = 0.5 * (dh_max + out.terrain[ii, jj] + out.body[2][ii_c, jj_c])
-            h_new = grid.cell_size_z * floor((h_new + tol) / grid.cell_size_z)
-            h_new_c = out.terrain[ii, jj] + out.body[2][ii_c, jj_c] - h_new
-
-            # Updating terrain
-            out.terrain[ii, jj] = h_new
-            out.body_soil[1][ii_c, jj_c] = out.body[2][ii_c, jj_c]
-            out.body_soil[2][ii_c, jj_c] = h_new_c
-
-            # Adding new bucket soil position to body_soil_pos
-            push!(out.body_soil_pos, [1; ii_c; jj_c])
+        if (st[0] == '3')
+            ### Two bucket layers are present ###
+            if (out.body[4][ii_c, jj_c] < out.body[1][ii_c, jj_c])
+                ### Soil should avalanche between the two bucket layer ###
+                if (h_new_c - tol > out.body[1][ii_c, jj_c])
+                    ### Not enough space for all the soil ###
+                    h_new_c = out.body[1][ii_c, jj_c]
+                    h_new = (
+                        out.terrain[ii, jj] - out.body[1][ii_c, jj_c] +
+                        out.body_soil[4][ii_c, jj_c]
+                    )
+                end
+            end
         end
+
+        # Updating terrain
+        out.terrain[ii, jj] = h_new
+        out.body_soil[4][ii_c, jj_c] = h_new_c
+    elseif (st[2] == '2')
+        ### Soil avalanche on the second bucket layer ###
+        h_new = 0.5 * (dh_max + out.terrain[ii, jj] + out.body[4][ii_c, jj_c])
+        h_new = grid.cell_size_z * floor((h_new + tol) / grid.cell_size_z)
+        h_new_c = out.terrain[ii, jj] + out.body[4][ii_c, jj_c] - h_new
+
+        if (st[0] == '3')
+            ### Two bucket layers are present ###
+            if (out.body[4][ii_c, jj_c] < out.body[1][ii_c, jj_c])
+                ### Soil should avalanche between the two bucket layer ###
+                if (h_new_c - tol > out.body[1][ii_c, jj_c])
+                    ### Not enough space for all the soil ###
+                    h_new_c = out.body[1][ii_c, jj_c]
+                    h_new = (
+                        out.terrain[ii, jj] - out.body[1][ii_c, jj_c] +
+                        out.body[4][ii_c, jj_c]
+                    )
+                end
+            end
+        end
+
+        # Updating terrain
+        out.terrain[ii, jj] = h_new
+        out.body_soil[3][ii_c, jj_c] = out.body[4][ii_c, jj_c]
+        out.body_soil[4][ii_c, jj_c] = h_new_c
+
+        # Adding new bucket soil position to body_soil_pos
+        push!(out.body_soil_pos, [3; ii_c; jj_c])
+    elseif (st[2] == '3')
+        ### Soil avalanche on the first bucket soil layer ###
+        h_new = 0.5 * (dh_max + out.terrain[ii, jj] + out.body_soil[2][ii_c, jj_c])
+        h_new = grid.cell_size_z * floor((h_new + tol) / grid.cell_size_z)
+        h_new_c = out.terrain[ii, jj] + out.body_soil[2][ii_c, jj_c] - h_new
+
+        if (st[0] == '3')
+            ### Two bucket layers are present ###
+            if (out.body[2][ii_c, jj_c] < out.body[3][ii_c, jj_c])
+                ### Soil should avalanche between the two bucket layer ###
+                if (h_new_c - tol > out.body[3][ii_c, jj_c])
+                    ### Not enough space for all the soil ###
+                    h_new_c = out.body[3][ii_c, jj_c]
+                    h_new = (
+                        out.terrain[ii, jj] - out.body[3][ii_c, jj_c] +
+                        out.body_soil[2][ii_c, jj_c]
+                    )
+                end
+            end
+        end
+
+        # Updating terrain
+        out.terrain[ii, jj] = h_new
+        out.body_soil[2][ii_c, jj_c] = h_new_c
+    elseif (st[2] == '4')
+        ### Soil avalanche on the first bucket layer ###
+        h_new = 0.5 * (dh_max + out.terrain[ii, jj] + out.body[2][ii_c, jj_c])
+        h_new = grid.cell_size_z * floor((h_new + tol) / grid.cell_size_z)
+        h_new_c = out.terrain[ii, jj] + out.body[2][ii_c, jj_c] - h_new
+
+        if (st[0] == '3')
+            ### Two bucket layers are present ###
+            if (out.body[2][ii_c, jj_c] < out.body[3][ii_c, jj_c])
+                ### Soil should avalanche between the two bucket layer ###
+                if (h_new_c - tol > out.body[3][ii_c, jj_c])
+                    ### Not enough space for all the soil ###
+                    h_new_c = out.body[3][ii_c, jj_c]
+                    h_new = (
+                        out.terrain[ii, jj] - out.body[3][ii_c, jj_c] +
+                        out.body[2][ii_c, jj_c]
+                    )
+                end
+            end
+        end
+
+        # Updating terrain
+        out.terrain[ii, jj] = h_new
+        out.body_soil[1][ii_c, jj_c] = out.body[2][ii_c, jj_c]
+        out.body_soil[2][ii_c, jj_c] = h_new_c
+
+        # Adding new bucket soil position to body_soil_pos
+        push!(out.body_soil_pos, [1; ii_c; jj_c])
     end
 end
 
