@@ -462,7 +462,7 @@ function _check_unstable_terrain_cell(
                     ### Bucket soil is present on the bottom bucket layer ###
                     if (
                         out.body_soil[ind_n_bot+1][ii_c, jj_c] + tol >
-                        out.body[ind_top][ii_c, jj_c]
+                        out.body[ind_n_top][ii_c, jj_c]
                     )
                         ### Soil is filling the space between the bucket layers ###
                         # Soil may avalanche on the top bucket layer
