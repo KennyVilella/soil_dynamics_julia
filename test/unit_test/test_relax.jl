@@ -1026,12 +1026,11 @@ end
     out.terrain[10, 15] = 0.0
 end
 
-"""
 @testset "_relax_unstable_terrain_cell!" begin
     # Testing the case where there is no bucket and soil is unstable
     out.terrain[10, 14] = 0.4
     out.terrain[10, 15] = 0.1
-    _relax_unstable_terrain_cell!(out, 400, 0.1, 10, 14, 10, 15, grid)
+    _relax_unstable_terrain_cell!(out, 40, 0.1, 10, 14, 10, 15, grid)
     @test (out.terrain[10, 14] ≈ 0.3) && (out.terrain[10, 15] ≈ 0.2)
     @test (out.body_soil[1][10, 15] == 0.0) && (out.body_soil[2][10, 15] == 0.0)
     @test (out.body_soil[3][10, 15] == 0.0) && (out.body_soil[4][10, 15] == 0.0)
@@ -1041,120 +1040,56 @@ end
     out.terrain[10, 15] = 0.0
     empty!(out.body_soil_pos)
 
-    # Testing the case where there is the second bucket layer with bucket soil and it has
-    # space under it, the soil fully avalanche
-    out.terrain[10, 15] = -0.8
-    out.body[3][10, 15] = -0.7
-    out.body[4][10, 15] = -0.5
-    out.body_soil[3][10, 15] = -0.5
-    out.body_soil[4][10, 15] = -0.3
-    _relax_unstable_terrain_cell!(out, 211, 0.1, 10, 14, 10, 15, grid)
-    @test (out.terrain[10, 14] ≈ -0.1) && (out.terrain[10, 15] ≈ -0.7)
-    @test (out.body_soil[1][10, 15] == 0.0) && (out.body_soil[2][10, 15] == 0.0)
-    @test (out.body_soil[3][10, 15] == -0.5) && (out.body_soil[4][10, 15] == -0.3)
-    @test (out.body_soil_pos == [])
-    # Resetting values
-    out.terrain[10, 14] = 0.0
-    out.terrain[10, 15] = 0.0
-    out.body[3][10, 15] = 0.0
-    out.body[4][10, 15] = 0.0
-    out.body_soil[3][10, 15] = 0.0
-    out.body_soil[4][10, 15] = 0.0
-    empty!(out.body_soil_pos)
-
-    # Testing the case where there is the second bucket layer with bucket soil and it has
-    # space under it, the soil partially avalanche
-    out.terrain[10, 15] = -0.3
-    out.body[3][10, 15] = 0.0
-    out.body[4][10, 15] = 0.3
-    out.body_soil[3][10, 15] = 0.3
-    out.body_soil[4][10, 15] = 0.5
-    _relax_unstable_terrain_cell!(out, 211, 0.1, 10, 14, 10, 15, grid)
-    @test (out.terrain[10, 14] ≈ -0.1) && (out.terrain[10, 15] ≈ -0.2)
-    @test (out.body_soil[1][10, 15] == 0.0) && (out.body_soil[2][10, 15] == 0.0)
-    @test (out.body_soil[3][10, 15] == 0.3) && (out.body_soil[4][10, 15] == 0.5)
-    @test (out.body_soil_pos == [])
-    # Resetting values
-    out.terrain[10, 14] = 0.0
-    out.terrain[10, 15] = 0.0
-    out.body[3][10, 15] = 0.0
-    out.body[4][10, 15] = 0.0
-    out.body_soil[3][10, 15] = 0.0
-    out.body_soil[4][10, 15] = 0.0
-    empty!(out.body_soil_pos)
-
-    # Testing the case where there is the second bucket layer with bucket soil and soil
-    # should avalanche on it
-    out.terrain[10, 15] = -0.8
-    out.body[3][10, 15] = -0.8
-    out.body[4][10, 15] = -0.5
-    out.body_soil[3][10, 15] = -0.5
-    out.body_soil[4][10, 15] = -0.3
-    _relax_unstable_terrain_cell!(out, 212, 0.1, 10, 14, 10, 15, grid)
-    @test (out.terrain[10, 14] ≈ -0.1) && (out.terrain[10, 15] ≈ -0.8)
-    @test (out.body_soil[3][10, 15] ≈ -0.5) && (out.body_soil[4][10, 15] ≈ -0.2)
-    @test (out.body_soil[1][10, 15] == 0.0) && (out.body_soil[2][10, 15] == 0.0)
-    @test (out.body_soil_pos == [])
-    # Resetting values
-    out.terrain[10, 14] = 0.0
-    out.terrain[10, 15] = 0.0
-    out.body[3][10, 15] = 0.0
-    out.body[4][10, 15] = 0.0
-    out.body_soil[3][10, 15] = 0.0
-    out.body_soil[4][10, 15] = 0.0
-    empty!(out.body_soil_pos)
-
-    # Testing the case where there is the second bucket layer and it has space under it,
+    # Testing the case where there is the first bucket layer and it has space under it,
     # the soil fully avalanche
-    out.terrain[10, 15] = -0.6
-    out.body[3][10, 15] = -0.4
-    out.body[4][10, 15] = 0.3
-    _relax_unstable_terrain_cell!(out, 221, 0.1, 10, 14, 10, 15, grid)
-    @test (out.terrain[10, 14] ≈ -0.2) && (out.terrain[10, 15] ≈ -0.4)
+    out.terrain[10, 15] = -0.8
+    out.body[1][10, 15] = -0.5
+    out.body[2][10, 15] = -0.2
+    _relax_unstable_terrain_cell!(out, 10, 0.1, 10, 14, 10, 15, grid)
+    @test (out.terrain[10, 14] ≈ -0.3) && (out.terrain[10, 15] ≈ -0.5)
     @test (out.body_soil[1][10, 15] == 0.0) && (out.body_soil[2][10, 15] == 0.0)
     @test (out.body_soil[3][10, 15] == 0.0) && (out.body_soil[4][10, 15] == 0.0)
     @test (out.body_soil_pos == [])
     # Resetting values
     out.terrain[10, 14] = 0.0
     out.terrain[10, 15] = 0.0
-    out.body[3][10, 15] = 0.0
-    out.body[4][10, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
     empty!(out.body_soil_pos)
 
-    # Testing the case where there is the second bucket layer and it has space under it,
+    # Testing the case where there is the first bucket layer and it has space under it,
     # the soil partially avalanche
-    out.terrain[10, 15] = -0.6
-    out.body[3][10, 15] = 0.0
-    out.body[4][10, 15] = 0.3
-    _relax_unstable_terrain_cell!(out, 221, 0.1, 10, 14, 10, 15, grid)
-    @test (out.terrain[10, 14] ≈ -0.3) && (out.terrain[10, 15] ≈ -0.3)
+    out.terrain[10, 15] = -0.8
+    out.body[1][10, 15] = -0.3
+    out.body[2][10, 15] = -0.1
+    _relax_unstable_terrain_cell!(out, 10, 0.1, 10, 14, 10, 15, grid)
+    @test (out.terrain[10, 14] ≈ -0.4) && (out.terrain[10, 15] ≈ -0.4)
     @test (out.body_soil[1][10, 15] == 0.0) && (out.body_soil[2][10, 15] == 0.0)
     @test (out.body_soil[3][10, 15] == 0.0) && (out.body_soil[4][10, 15] == 0.0)
     @test (out.body_soil_pos == [])
     # Resetting values
     out.terrain[10, 14] = 0.0
     out.terrain[10, 15] = 0.0
-    out.body[3][10, 15] = 0.0
-    out.body[4][10, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
     empty!(out.body_soil_pos)
 
-    # Testing the case where there is the second bucket layer and soil should avalanche on
-    # it
+    # Testing the case where there is the first bucket layer and soil should avalanche on it
     out.terrain[10, 15] = -0.4
-    out.body[3][10, 15] = -0.4
-    out.body[4][10, 15] = -0.3
-    _relax_unstable_terrain_cell!(out, 222, 0.1, 10, 14, 10, 15, grid)
+    out.body[1][10, 15] = -0.4
+    out.body[2][10, 15] = -0.2
+    _relax_unstable_terrain_cell!(out, 14, 0.1, 10, 14, 10, 15, grid)
     @test (out.terrain[10, 14] ≈ -0.1) && (out.terrain[10, 15] == -0.4)
-    @test (out.body_soil[1][10, 15] == 0.0) && (out.body_soil[2][10, 15] == 0.0)
-    @test (out.body_soil[3][10, 15] ≈ -0.3) && (out.body_soil[4][10, 15] ≈ -0.2)
-    @test (out.body_soil_pos == [[3; 10; 15]])
+    @test (out.body_soil[1][10, 15] ≈ -0.2) && (out.body_soil[2][10, 15] ≈ -0.1)
+    @test (out.body_soil[3][10, 15] == 0.0) && (out.body_soil[4][10, 15] == 0.0)
+    @test (out.body_soil_pos == [[1; 10; 15]])
     # Resetting values
     out.terrain[10, 14] = 0.0
     out.terrain[10, 15] = 0.0
-    out.body[3][10, 15] = 0.0
-    out.body[4][10, 15] = 0.0
-    out.body_soil[3][10, 15] = 0.0
-    out.body_soil[4][10, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body_soil[1][10, 15] = 0.0
+    out.body_soil[2][10, 15] = 0.0
     empty!(out.body_soil_pos)
 
     # Testing the case where there is the first bucket layer with bucket soil and it has
@@ -1164,7 +1099,7 @@ end
     out.body[2][10, 15] = -0.5
     out.body_soil[1][10, 15] = -0.5
     out.body_soil[2][10, 15] = -0.3
-    _relax_unstable_terrain_cell!(out, 131, 0.1, 10, 14, 10, 15, grid)
+    _relax_unstable_terrain_cell!(out, 10, 0.1, 10, 14, 10, 15, grid)
     @test (out.terrain[10, 14] ≈ -0.1) && (out.terrain[10, 15] ≈ -0.7)
     @test (out.body_soil[1][10, 15] ≈ -0.5) && (out.body_soil[2][10, 15] ≈ -0.3)
     @test (out.body_soil[3][10, 15] == 0.0) && (out.body_soil[4][10, 15] == 0.0)
@@ -1185,7 +1120,7 @@ end
     out.body[2][10, 15] = -0.1
     out.body_soil[1][10, 15] = -0.1
     out.body_soil[2][10, 15] = 0.3
-    _relax_unstable_terrain_cell!(out, 131, 0.1, 10, 14, 10, 15, grid)
+    _relax_unstable_terrain_cell!(out, 10, 0.1, 10, 14, 10, 15, grid)
     @test (out.terrain[10, 14] ≈ -0.3) && (out.terrain[10, 15] ≈ -0.4)
     @test (out.body_soil[1][10, 15] ≈ -0.1) && (out.body_soil[2][10, 15] ≈ 0.3)
     @test (out.body_soil[3][10, 15] == 0.0) && (out.body_soil[4][10, 15] == 0.0)
@@ -1206,7 +1141,7 @@ end
     out.body[2][10, 15] = -0.5
     out.body_soil[1][10, 15] = -0.5
     out.body_soil[2][10, 15] = -0.3
-    _relax_unstable_terrain_cell!(out, 132, 0.1, 10, 14, 10, 15, grid)
+    _relax_unstable_terrain_cell!(out, 13, 0.1, 10, 14, 10, 15, grid)
     @test (out.terrain[10, 14] ≈ -0.1) && (out.terrain[10, 15] == -0.8)
     @test (out.body_soil[1][10, 15] ≈ -0.5) && (out.body_soil[2][10, 15] ≈ -0.2)
     @test (out.body_soil[3][10, 15] == 0.0) && (out.body_soil[4][10, 15] == 0.0)
@@ -1220,141 +1155,118 @@ end
     out.body_soil[2][10, 15] = 0.0
     empty!(out.body_soil_pos)
 
-    # Testing the case where there is the first bucket layer and it has space under it,
+    # Testing the case where there is the second bucket layer and it has space under it,
     # the soil fully avalanche
-    out.terrain[10, 15] = -0.8
-    out.body[1][10, 15] = -0.5 
-    out.body[2][10, 15] = -0.2 
-    _relax_unstable_terrain_cell!(out, 141, 0.1, 10, 14, 10, 15, grid)
-    @test (out.terrain[10, 14] ≈ -0.3) && (out.terrain[10, 15] ≈ -0.5)
+    out.terrain[10, 15] = -0.6
+    out.body[3][10, 15] = -0.4
+    out.body[4][10, 15] = 0.3
+    _relax_unstable_terrain_cell!(out, 20, 0.1, 10, 14, 10, 15, grid)
+    @test (out.terrain[10, 14] ≈ -0.2) && (out.terrain[10, 15] ≈ -0.4)
     @test (out.body_soil[1][10, 15] == 0.0) && (out.body_soil[2][10, 15] == 0.0)
     @test (out.body_soil[3][10, 15] == 0.0) && (out.body_soil[4][10, 15] == 0.0)
     @test (out.body_soil_pos == [])
     # Resetting values
     out.terrain[10, 14] = 0.0
     out.terrain[10, 15] = 0.0
-    out.body[1][10, 15] = 0.0
-    out.body[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
     empty!(out.body_soil_pos)
 
-    # Testing the case where there is the first bucket layer and it has space under it,
+    # Testing the case where there is the second bucket layer and it has space under it,
     # the soil partially avalanche
-    out.terrain[10, 15] = -0.8
-    out.body[1][10, 15] = -0.3
-    out.body[2][10, 15] = -0.1
-    _relax_unstable_terrain_cell!(out, 141, 0.1, 10, 14, 10, 15, grid)
-    @test (out.terrain[10, 14] ≈ -0.4) && (out.terrain[10, 15] ≈ -0.4)
+    out.terrain[10, 15] = -0.6
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.3
+    _relax_unstable_terrain_cell!(out, 20, 0.1, 10, 14, 10, 15, grid)
+    @test (out.terrain[10, 14] ≈ -0.3) && (out.terrain[10, 15] ≈ -0.3)
     @test (out.body_soil[1][10, 15] == 0.0) && (out.body_soil[2][10, 15] == 0.0)
     @test (out.body_soil[3][10, 15] == 0.0) && (out.body_soil[4][10, 15] == 0.0)
     @test (out.body_soil_pos == [])
     # Resetting values
     out.terrain[10, 14] = 0.0
     out.terrain[10, 15] = 0.0
-    out.body[1][10, 15] = 0.0
-    out.body[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
     empty!(out.body_soil_pos)
 
-    # Testing the case where there is the first bucket layer and soil should avalanche on it
+    # Testing the case where there is the second bucket layer and soil should avalanche on
+    # it
     out.terrain[10, 15] = -0.4
-    out.body[1][10, 15] = -0.4
-    out.body[2][10, 15] = -0.2
-    _relax_unstable_terrain_cell!(out, 142, 0.1, 10, 14, 10, 15, grid)
-    @test (out.terrain[10, 14] ≈ -0.1) && (out.terrain[10, 15] == -0.4)
-    @test (out.body_soil[1][10, 15] ≈ -0.2) && (out.body_soil[2][10, 15] ≈ -0.1)
-    @test (out.body_soil[3][10, 15] == 0.0) && (out.body_soil[4][10, 15] == 0.0)
-    @test (out.body_soil_pos == [[1; 10; 15]])
-    # Resetting values
-    out.terrain[10, 14] = 0.0
-    out.terrain[10, 15] = 0.0
-    out.body[1][10, 15] = 0.0
-    out.body[2][10, 15] = 0.0
-    out.body_soil[1][10, 15] = 0.0
-    out.body_soil[2][10, 15] = 0.0
-    empty!(out.body_soil_pos)
-
-    # Testing the case where there are two bucket layers with bucket soil, the first layer
-    # being lower and it has space under it, the soil fully avalanche
-    out.terrain[10, 15] = -0.8
-    out.body[1][10, 15] = -0.7
-    out.body[2][10, 15] = -0.6
     out.body[3][10, 15] = -0.4
     out.body[4][10, 15] = -0.3
-    out.body_soil[1][10, 15] = -0.6
-    out.body_soil[2][10, 15] = -0.5
-    out.body_soil[3][10, 15] = -0.3
-    out.body_soil[4][10, 15] = -0.2
-    _relax_unstable_terrain_cell!(out, 311, 0.1, 10, 14, 10, 15, grid)
+    _relax_unstable_terrain_cell!(out, 22, 0.1, 10, 14, 10, 15, grid)
+    @test (out.terrain[10, 14] ≈ -0.1) && (out.terrain[10, 15] == -0.4)
+    @test (out.body_soil[1][10, 15] == 0.0) && (out.body_soil[2][10, 15] == 0.0)
+    @test (out.body_soil[3][10, 15] ≈ -0.3) && (out.body_soil[4][10, 15] ≈ -0.2)
+    @test (out.body_soil_pos == [[3; 10; 15]])
+    # Resetting values
+    out.terrain[10, 14] = 0.0
+    out.terrain[10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+    out.body_soil[3][10, 15] = 0.0
+    out.body_soil[4][10, 15] = 0.0
+    empty!(out.body_soil_pos)
+
+    # Testing the case where there is the second bucket layer with bucket soil and it has
+    # space under it, the soil fully avalanche
+    out.terrain[10, 15] = -0.8
+    out.body[3][10, 15] = -0.7
+    out.body[4][10, 15] = -0.5
+    out.body_soil[3][10, 15] = -0.5
+    out.body_soil[4][10, 15] = -0.3
+    _relax_unstable_terrain_cell!(out, 20, 0.1, 10, 14, 10, 15, grid)
     @test (out.terrain[10, 14] ≈ -0.1) && (out.terrain[10, 15] ≈ -0.7)
-    @test (out.body_soil[1][10, 15] == -0.6) && (out.body_soil[2][10, 15] == -0.5)
-    @test (out.body_soil[3][10, 15] == -0.3) && (out.body_soil[4][10, 15] == -0.2)
+    @test (out.body_soil[1][10, 15] == 0.0) && (out.body_soil[2][10, 15] == 0.0)
+    @test (out.body_soil[3][10, 15] == -0.5) && (out.body_soil[4][10, 15] == -0.3)
     @test (out.body_soil_pos == [])
     # Resetting values
     out.terrain[10, 14] = 0.0
     out.terrain[10, 15] = 0.0
-    out.body[1][10, 15] = 0.0
-    out.body[2][10, 15] = 0.0
     out.body[3][10, 15] = 0.0
     out.body[4][10, 15] = 0.0
-    out.body_soil[1][10, 15] = 0.0
-    out.body_soil[2][10, 15] = 0.0
     out.body_soil[3][10, 15] = 0.0
     out.body_soil[4][10, 15] = 0.0
     empty!(out.body_soil_pos)
 
-    # Testing the case where there are two bucket layers with bucket soil, the first layer
-    # being lower and it has space under it, the soil partially avalanche
-    out.terrain[10, 15] = -0.6
-    out.body[1][10, 15] = -0.2
-    out.body[2][10, 15] = -0.1
-    out.body[3][10, 15] = 0.3
-    out.body[4][10, 15] = 0.5
-    out.body_soil[1][10, 15] = -0.1
-    out.body_soil[2][10, 15] = 0.2
-    out.body_soil[3][10, 15] = 0.5
-    out.body_soil[4][10, 15] = 0.7
-    _relax_unstable_terrain_cell!(out, 311, 0.1, 10, 14, 10, 15, grid)
-    @test (out.terrain[10, 14] ≈ -0.3) && (out.terrain[10, 15] ≈ -0.3)
-    @test (out.body_soil[1][10, 15] == -0.1) && (out.body_soil[2][10, 15] == 0.2)
-    @test (out.body_soil[3][10, 15] == 0.5) && (out.body_soil[4][10, 15] == 0.7)
+    # Testing the case where there is the second bucket layer with bucket soil and it has
+    # space under it, the soil partially avalanche
+    out.terrain[10, 15] = -0.3
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.3
+    out.body_soil[3][10, 15] = 0.3
+    out.body_soil[4][10, 15] = 0.5
+    _relax_unstable_terrain_cell!(out, 20, 0.1, 10, 14, 10, 15, grid)
+    @test (out.terrain[10, 14] ≈ -0.1) && (out.terrain[10, 15] ≈ -0.2)
+    @test (out.body_soil[1][10, 15] == 0.0) && (out.body_soil[2][10, 15] == 0.0)
+    @test (out.body_soil[3][10, 15] == 0.3) && (out.body_soil[4][10, 15] == 0.5)
     @test (out.body_soil_pos == [])
     # Resetting values
     out.terrain[10, 14] = 0.0
     out.terrain[10, 15] = 0.0
-    out.body[1][10, 15] = 0.0
-    out.body[2][10, 15] = 0.0
     out.body[3][10, 15] = 0.0
     out.body[4][10, 15] = 0.0
-    out.body_soil[1][10, 15] = 0.0
-    out.body_soil[2][10, 15] = 0.0
     out.body_soil[3][10, 15] = 0.0
     out.body_soil[4][10, 15] = 0.0
     empty!(out.body_soil_pos)
 
-    # Testing the case where there are two bucket layers with bucket soil, the first layer
-    # being lower, and soil should avalanche on the second bucket layer
-    out.terrain[10, 15] = -0.8 
-    out.body[1][10, 15] = -0.8 
-    out.body[2][10, 15] = -0.6 
-    out.body[3][10, 15] = -0.4 
-    out.body[4][10, 15] = -0.3
-    out.body_soil[1][10, 15] = -0.6
-    out.body_soil[2][10, 15] = -0.5
-    out.body_soil[3][10, 15] = -0.3
-    out.body_soil[4][10, 15] = -0.2
-    _relax_unstable_terrain_cell!(out, 312, 0.1, 10, 14, 10, 15, grid)
-    @test (out.terrain[10, 14] ≈ -0.1) && (out.terrain[10, 15] == -0.8)
-    @test (out.body_soil[1][10, 15] == -0.6) && (out.body_soil[2][10, 15] == -0.5)
-    @test (out.body_soil[3][10, 15] == -0.3) && (out.body_soil[4][10, 15] ≈ -0.1)
+    # Testing the case where there is the second bucket layer with bucket soil and soil
+    # should avalanche on it
+    out.terrain[10, 15] = -0.8
+    out.body[3][10, 15] = -0.8
+    out.body[4][10, 15] = -0.5
+    out.body_soil[3][10, 15] = -0.5
+    out.body_soil[4][10, 15] = -0.3
+    _relax_unstable_terrain_cell!(out, 21, 0.1, 10, 14, 10, 15, grid)
+    @test (out.terrain[10, 14] ≈ -0.1) && (out.terrain[10, 15] ≈ -0.8)
+    @test (out.body_soil[3][10, 15] ≈ -0.5) && (out.body_soil[4][10, 15] ≈ -0.2)
+    @test (out.body_soil[1][10, 15] == 0.0) && (out.body_soil[2][10, 15] == 0.0)
     @test (out.body_soil_pos == [])
     # Resetting values
     out.terrain[10, 14] = 0.0
     out.terrain[10, 15] = 0.0
-    out.body[1][10, 15] = 0.0
-    out.body[2][10, 15] = 0.0
     out.body[3][10, 15] = 0.0
     out.body[4][10, 15] = 0.0
-    out.body_soil[1][10, 15] = 0.0
-    out.body_soil[2][10, 15] = 0.0
     out.body_soil[3][10, 15] = 0.0
     out.body_soil[4][10, 15] = 0.0
     empty!(out.body_soil_pos)
@@ -1366,7 +1278,7 @@ end
     out.body[2][10, 15] = -0.6 
     out.body[3][10, 15] = -0.4 
     out.body[4][10, 15] = -0.3 
-    _relax_unstable_terrain_cell!(out, 321, 0.1, 10, 14, 10, 15, grid)
+    _relax_unstable_terrain_cell!(out, 30, 0.1, 10, 14, 10, 15, grid)
     @test (out.terrain[10, 14] ≈ -0.1) && (out.terrain[10, 15] ≈ -0.7)
     @test (out.body_soil[1][10, 15] == 0.0) && (out.body_soil[2][10, 15] == 0.0)
     @test (out.body_soil[3][10, 15] == 0.0) && (out.body_soil[4][10, 15] == 0.0)
@@ -1387,7 +1299,7 @@ end
     out.body[2][10, 15] = 0.0
     out.body[3][10, 15] = 0.2
     out.body[4][10, 15] = 0.4
-    _relax_unstable_terrain_cell!(out, 321, 0.1, 10, 14, 10, 15, grid)
+    _relax_unstable_terrain_cell!(out, 30, 0.1, 10, 14, 10, 15, grid)
     @test (out.terrain[10, 14] ≈ -0.2) && (out.terrain[10, 15] ≈ -0.3)
     @test (out.body_soil[1][10, 15] == 0.0) && (out.body_soil[2][10, 15] == 0.0)
     @test (out.body_soil[3][10, 15] == 0.0) && (out.body_soil[4][10, 15] == 0.0)
@@ -1402,15 +1314,64 @@ end
     empty!(out.body_soil_pos)
 
     # Testing the case where there are two bucket layers, the first layer being lower, and
-    # soil should avalanche on the second bucket layer
+    # soil should fully avalanche on the first bucket layer
+    out.terrain[10, 15] = -0.8
+    out.body[1][10, 15] = -0.8
+    out.body[2][10, 15] = -0.6
+    out.body[3][10, 15] = 0.1
+    out.body[4][10, 15] = 0.3
+    _relax_unstable_terrain_cell!(out, 34, 0.1, 10, 14, 10, 15, grid)
+    @test (out.terrain[10, 14] ≈ -0.3) && (out.terrain[10, 15] == -0.8)
+    @test (out.body_soil[1][10, 15] == -0.6) && (out.body_soil[2][10, 15] ≈ -0.3)
+    @test (out.body_soil[3][10, 15] == 0.0) && (out.body_soil[4][10, 15] == 0.0)
+    @test (out.body_soil_pos == [[1; 10; 15]])
+    # Resetting values
+    out.terrain[10, 14] = 0.0
+    out.terrain[10, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+    out.body_soil[1][10, 15] = 0.0
+    out.body_soil[2][10, 15] = 0.0
+    empty!(out.body_soil_pos)
+
+    # Testing the case where there are two bucket layers, the first layer being lower, and
+    # soil should partially avalanche on the first bucket layer
+    out.terrain[10, 15] = -0.8
+    out.body[1][10, 15] = -0.8
+    out.body[2][10, 15] = -0.6
+    out.body[3][10, 15] = -0.4
+    out.body[4][10, 15] = 0.3
+    _relax_unstable_terrain_cell!(out, 34, 0.1, 10, 14, 10, 15, grid)
+    @test (out.terrain[10, 14] ≈ -0.2) && (out.terrain[10, 15] == -0.8)
+    @test (out.body_soil[1][10, 15] == -0.6) && (out.body_soil[2][10, 15] ≈ -0.4)
+    @test (out.body_soil[3][10, 15] == 0.0) && (out.body_soil[4][10, 15] == 0.0)
+    @test (out.body_soil_pos == [[1; 10; 15]])
+    # Resetting values
+    out.terrain[10, 14] = 0.0
+    out.terrain[10, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+    out.body_soil[1][10, 15] = 0.0
+    out.body_soil[2][10, 15] = 0.0
+    empty!(out.body_soil_pos)
+
+    # Testing the case where there are two bucket layers, the first layer being lower,
+    # soil fill the space between the two bucket layers, soil should fully avalanche on
+    # the second bucket layer
     out.terrain[10, 15] = -0.8
     out.body[1][10, 15] = -0.8
     out.body[2][10, 15] = -0.6
     out.body[3][10, 15] = -0.4
     out.body[4][10, 15] = -0.3
-    _relax_unstable_terrain_cell!(out, 322, 0.1, 10, 14, 10, 15, grid)
+    out.body_soil[1][10, 15] = -0.6
+    out.body_soil[2][10, 15] = -0.4
+    _relax_unstable_terrain_cell!(out, 32, 0.1, 10, 14, 10, 15, grid)
     @test (out.terrain[10, 14] ≈ -0.1) && (out.terrain[10, 15] == -0.8)
-    @test (out.body_soil[1][10, 15] == 0.0) && (out.body_soil[2][10, 15] == 0.0)
+    @test (out.body_soil[1][10, 15] == -0.6) && (out.body_soil[2][10, 15] == -0.4)
     @test (out.body_soil[3][10, 15] == -0.3) && (out.body_soil[4][10, 15] ≈ -0.2)
     @test (out.body_soil_pos == [[3; 10; 15]])
     # Resetting values
@@ -1420,95 +1381,108 @@ end
     out.body[2][10, 15] = 0.0
     out.body[3][10, 15] = 0.0
     out.body[4][10, 15] = 0.0
+    out.body_soil[1][10, 15] = 0.0
+    out.body_soil[2][10, 15] = 0.0
+    out.body_soil[3][10, 15] = 0.0
+    out.body_soil[4][10, 15] = 0.0
+    empty!(out.body_soil_pos)
+
+    # Testing the case where there are two bucket layers with bucket soil, the first layer
+    # being lower, soil fully avalanche on the first bucket soil layer
+    out.terrain[10, 15] = -0.8
+    out.body[1][10, 15] = -0.8
+    out.body[2][10, 15] = -0.4
+    out.body[3][10, 15] = 0.4
+    out.body[4][10, 15] = 0.7
+    out.body_soil[1][10, 15] = -0.4
+    out.body_soil[2][10, 15] = -0.3
+    out.body_soil[3][10, 15] = 0.7
+    out.body_soil[4][10, 15] = 0.9
+    _relax_unstable_terrain_cell!(out, 33, 0.1, 10, 14, 10, 15, grid)
+    @test (out.terrain[10, 14] ≈ -0.1) && (out.terrain[10, 15] ≈ -0.8)
+    @test (out.body_soil[1][10, 15] == -0.4) && (out.body_soil[2][10, 15] ≈ -0.2)
+    @test (out.body_soil[3][10, 15] == 0.7) && (out.body_soil[4][10, 15] == 0.9)
+    @test (out.body_soil_pos == [])
+    # Resetting values
+    out.terrain[10, 14] = 0.0
+    out.terrain[10, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+    out.body_soil[1][10, 15] = 0.0
+    out.body_soil[2][10, 15] = 0.0
+    out.body_soil[3][10, 15] = 0.0
+    out.body_soil[4][10, 15] = 0.0
+    empty!(out.body_soil_pos)
+
+    # Testing the case where there are two bucket layers with bucket soil, the first layer
+    # being lower, soil partially avalanche on the first bucket soil layer
+    out.terrain[10, 15] = -0.8
+    out.body[1][10, 15] = -0.8
+    out.body[2][10, 15] = -0.6
+    out.body[3][10, 15] = -0.4
+    out.body[4][10, 15] = -0.3
+    out.body_soil[1][10, 15] = -0.6
+    out.body_soil[2][10, 15] = -0.5
+    out.body_soil[3][10, 15] = -0.3
+    out.body_soil[4][10, 15] = -0.2
+    _relax_unstable_terrain_cell!(out, 33, 0.1, 10, 14, 10, 15, grid)
+    @test (out.terrain[10, 14] ≈ -0.1) && (out.terrain[10, 15] ≈ -0.8)
+    @test (out.body_soil[1][10, 15] == -0.6) && (out.body_soil[2][10, 15] ≈ -0.4)
+    @test (out.body_soil[3][10, 15] == -0.3) && (out.body_soil[4][10, 15] == -0.2)
+    @test (out.body_soil_pos == [])
+    # Resetting values
+    out.terrain[10, 14] = 0.0
+    out.terrain[10, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+    out.body_soil[1][10, 15] = 0.0
+    out.body_soil[2][10, 15] = 0.0
+    out.body_soil[3][10, 15] = 0.0
+    out.body_soil[4][10, 15] = 0.0
+    empty!(out.body_soil_pos)
+
+    # Testing the case where there are two bucket layers with bucket soil, the first layer
+    # being lower, soil fill the space between the two bucket, soil fully avalanche on the
+    # second bucket soil layer
+    out.terrain[10, 15] = -0.8
+    out.body[1][10, 15] = -0.8
+    out.body[2][10, 15] = -0.6
+    out.body[3][10, 15] = -0.4
+    out.body[4][10, 15] = -0.3
+    out.body_soil[1][10, 15] = -0.6
+    out.body_soil[2][10, 15] = -0.4
+    out.body_soil[3][10, 15] = -0.3
+    out.body_soil[4][10, 15] = -0.2
+    _relax_unstable_terrain_cell!(out, 31, 0.1, 10, 14, 10, 15, grid)
+    @test (out.terrain[10, 14] ≈ -0.1) && (out.terrain[10, 15] == -0.8)
+    @test (out.body_soil[1][10, 15] == -0.6) && (out.body_soil[2][10, 15] == -0.4)
+    @test (out.body_soil[3][10, 15] == -0.3) && (out.body_soil[4][10, 15] ≈ -0.1)
+    @test (out.body_soil_pos == [])
+    # Resetting values
+    out.terrain[10, 14] = 0.0
+    out.terrain[10, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+    out.body_soil[1][10, 15] = 0.0
+    out.body_soil[2][10, 15] = 0.0
     out.body_soil[3][10, 15] = 0.0
     out.body_soil[4][10, 15] = 0.0
     empty!(out.body_soil_pos)
 
     # Testing the case where there are two bucket layers, the second layer being lower and
-    # has space under it, while the first layer is with bucket soil, the soil fully
-    # avalanche
+    # has space under it, soil fully avalanche
     out.terrain[10, 15] = -0.8
     out.body[1][10, 15] = -0.4
     out.body[2][10, 15] = -0.3
     out.body[3][10, 15] = -0.7
     out.body[4][10, 15] = -0.6
-    out.body_soil[1][10, 15] = -0.3
-    out.body_soil[2][10, 15] = -0.2
-    _relax_unstable_terrain_cell!(out, 331, 0.1, 10, 14, 10, 15, grid)
-    @test (out.terrain[10, 14] ≈ -0.1) && (out.terrain[10, 15] ≈ -0.7)
-    @test (out.body_soil[1][10, 15] == -0.3) && (out.body_soil[2][10, 15] == -0.2)
-    @test (out.body_soil[3][10, 15] == 0.0) && (out.body_soil[4][10, 15] == 0.0)
-    @test (out.body_soil_pos == [])
-    # Resetting values
-    out.terrain[10, 14] = 0.0
-    out.terrain[10, 15] = 0.0
-    out.body[1][10, 15] = 0.0
-    out.body[2][10, 15] = 0.0
-    out.body[3][10, 15] = 0.0
-    out.body[4][10, 15] = 0.0
-    out.body_soil[1][10, 15] = 0.0
-    out.body_soil[2][10, 15] = 0.0
-    empty!(out.body_soil_pos)
-
-    # Testing the case where there are two bucket layers, the second layer being lower and
-    # has space under it, while the first layer is with bucket soil, the soil partially
-    # avalanche
-    out.terrain[10, 15] = -0.9
-    out.body[1][10, 15] = -0.2
-    out.body[2][10, 15] = -0.1
-    out.body[3][10, 15] = -0.4
-    out.body[4][10, 15] = -0.3
-    out.body_soil[1][10, 15] = -0.1
-    out.body_soil[2][10, 15] = 0.0
-    _relax_unstable_terrain_cell!(out, 331, 0.1, 10, 14, 10, 15, grid)
-    @test (out.terrain[10, 14] ≈ -0.4) && (out.terrain[10, 15] ≈ -0.5)
-    @test (out.body_soil[1][10, 15] == -0.1) && (out.body_soil[2][10, 15] == 0.0)
-    @test (out.body_soil[3][10, 15] == 0.0) && (out.body_soil[4][10, 15] == 0.0)
-    @test (out.body_soil_pos == [])
-    # Resetting values
-    out.terrain[10, 14] = 0.0
-    out.terrain[10, 15] = 0.0
-    out.body[1][10, 15] = 0.0
-    out.body[2][10, 15] = 0.0
-    out.body[3][10, 15] = 0.0
-    out.body[4][10, 15] = 0.0
-    out.body_soil[1][10, 15] = 0.0
-    out.body_soil[2][10, 15] = 0.0
-    empty!(out.body_soil_pos)
-
-    # Testing the case where there are two bucket layers, the second layer being lower, and
-    # soil should avalanche on the first bucket layer with bucket soil
-    out.terrain[10, 15] = -0.8
-    out.body[1][10, 15] = -0.4
-    out.body[2][10, 15] = -0.3
-    out.body[3][10, 15] = -0.8
-    out.body[4][10, 15] = -0.6
-    out.body_soil[1][10, 15] = -0.3
-    out.body_soil[2][10, 15] = -0.2
-    _relax_unstable_terrain_cell!(out, 332, 0.1, 10, 14, 10, 15, grid)
-    @test (out.terrain[10, 14] ≈ -0.1) && (out.terrain[10, 15] == -0.8)
-    @test (out.body_soil[1][10, 15] == -0.3) && (out.body_soil[2][10, 15] ≈ -0.1)
-    @test (out.body_soil[3][10, 15] == 0.0) && (out.body_soil[4][10, 15] == 0.0)
-    @test (out.body_soil_pos == [])
-    # Resetting values
-    out.terrain[10, 14] = 0.0
-    out.terrain[10, 15] = 0.0
-    out.body[1][10, 15] = 0.0
-    out.body[2][10, 15] = 0.0
-    out.body[3][10, 15] = 0.0
-    out.body[4][10, 15] = 0.0
-    out.body_soil[1][10, 15] = 0.0
-    out.body_soil[2][10, 15] = 0.0
-    empty!(out.body_soil_pos)
-
-    # Testing the case where there are two bucket layers, the second layer being lower and
-    # it has space under it, the soil fully avalanche
-    out.terrain[10, 15] = -0.8
-    out.body[1][10, 15] = -0.4
-    out.body[2][10, 15] = -0.3
-    out.body[3][10, 15] = -0.7
-    out.body[4][10, 15] = -0.6
-    _relax_unstable_terrain_cell!(out, 341, 0.1, 10, 14, 10, 15, grid)
+    _relax_unstable_terrain_cell!(out, 30, 0.1, 10, 14, 10, 15, grid)
     @test (out.terrain[10, 14] ≈ -0.1) && (out.terrain[10, 15] ≈ -0.7)
     @test (out.body_soil[1][10, 15] == 0.0) && (out.body_soil[2][10, 15] == 0.0)
     @test (out.body_soil[3][10, 15] == 0.0) && (out.body_soil[4][10, 15] == 0.0)
@@ -1523,13 +1497,13 @@ end
     empty!(out.body_soil_pos)
 
     # Testing the case where there are two bucket layers, the second layer being lower and
-    # it has space under it, the soil partially avalanche
+    # has space under it, soil partially avalanche
     out.terrain[10, 15] = -0.8
     out.body[1][10, 15] = -0.1
     out.body[2][10, 15] = 0.0
     out.body[3][10, 15] = -0.3
     out.body[4][10, 15] = -0.2
-    _relax_unstable_terrain_cell!(out, 341, 0.1, 10, 14, 10, 15, grid)
+    _relax_unstable_terrain_cell!(out, 30, 0.1, 10, 14, 10, 15, grid)
     @test (out.terrain[10, 14] ≈ -0.4) && (out.terrain[10, 15] ≈ -0.4)
     @test (out.body_soil[1][10, 15] == 0.0) && (out.body_soil[2][10, 15] == 0.0)
     @test (out.body_soil[3][10, 15] == 0.0) && (out.body_soil[4][10, 15] == 0.0)
@@ -1544,16 +1518,65 @@ end
     empty!(out.body_soil_pos)
 
     # Testing the case where there are two bucket layers, the second layer being lower, and
-    # soil should avalanche on the first bucket layer
-    out.terrain[10, 15] = -0.8 
-    out.body[1][10, 15] = -0.4
-    out.body[2][10, 15] = -0.3
+    # soil should fully avalanche on the second bucket layer
+    out.terrain[10, 15] = -0.8
+    out.body[1][10, 15] = -0.2
+    out.body[2][10, 15] = 0.3
     out.body[3][10, 15] = -0.8
     out.body[4][10, 15] = -0.6
-    _relax_unstable_terrain_cell!(out, 342, 0.1, 10, 14, 10, 15, grid)
-    @test (out.terrain[10, 14] ≈ -0.1) && (out.terrain[10, 15] == -0.8)
-    @test (out.body_soil[1][10, 15] ≈ -0.3) && (out.body_soil[2][10, 15] ≈ -0.2)
-    @test (out.body_soil[3][10, 15] == 0.0) && (out.body_soil[4][10, 15] == 0.0)
+    _relax_unstable_terrain_cell!(out, 32, 0.1, 10, 14, 10, 15, grid)
+    @test (out.terrain[10, 14] ≈ -0.3) && (out.terrain[10, 15] == -0.8)
+    @test (out.body_soil[1][10, 15] == 0.0) && (out.body_soil[2][10, 15] == 0.0)
+    @test (out.body_soil[3][10, 15] == -0.6) && (out.body_soil[4][10, 15] ≈ -0.3)
+    @test (out.body_soil_pos == [[3; 10; 15]])
+    # Resetting values
+    out.terrain[10, 14] = 0.0
+    out.terrain[10, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+    out.body_soil[3][10, 15] = 0.0
+    out.body_soil[4][10, 15] = 0.0
+    empty!(out.body_soil_pos)
+
+    # Testing the case where there are two bucket layers, the second layer being lower,
+    # soil should partially avalanche on the second bucket layer
+    out.terrain[10, 15] = -0.8
+    out.body[1][10, 15] = -0.3
+    out.body[2][10, 15] = 0.3
+    out.body[3][10, 15] = -0.8
+    out.body[4][10, 15] = -0.4
+    _relax_unstable_terrain_cell!(out, 32, 0.1, 10, 14, 10, 15, grid)
+    @test (out.terrain[10, 14] ≈ -0.1) && (out.terrain[10, 15] ≈ -0.8)
+    @test (out.body_soil[1][10, 15] == 0.0) && (out.body_soil[2][10, 15] == 0.0)
+    @test (out.body_soil[3][10, 15] == -0.4) && (out.body_soil[4][10, 15] ≈ -0.3)
+    @test (out.body_soil_pos == [[3; 10; 15]])
+    # Resetting values
+    out.terrain[10, 14] = 0.0
+    out.terrain[10, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+    out.body_soil[3][10, 15] = 0.0
+    out.body_soil[4][10, 15] = 0.0
+    empty!(out.body_soil_pos)
+
+    # Testing the case where there are two bucket layers, the second layer being lower,
+    # soil fill the space between the two bucket layers, soil fully avalanche on the
+    # first bucket layer
+    out.terrain[10, 15] = -0.8
+    out.body[1][10, 15] = -0.6
+    out.body[2][10, 15] = -0.4
+    out.body[3][10, 15] = -0.8
+    out.body[4][10, 15] = -0.7
+    out.body_soil[3][10, 15] = -0.7
+    out.body_soil[4][10, 15] = -0.6
+    _relax_unstable_terrain_cell!(out, 34, 0.1, 10, 14, 10, 15, grid)
+    @test (out.terrain[10, 14] ≈ -0.2) && (out.terrain[10, 15] == -0.8)
+    @test (out.body_soil[1][10, 15] == -0.4) && (out.body_soil[2][10, 15] ≈ -0.2)
+    @test (out.body_soil[3][10, 15] == -0.7) && (out.body_soil[4][10, 15] == -0.6)
     @test (out.body_soil_pos == [[1; 10; 15]])
     # Resetting values
     out.terrain[10, 14] = 0.0
@@ -1564,9 +1587,101 @@ end
     out.body[4][10, 15] = 0.0
     out.body_soil[1][10, 15] = 0.0
     out.body_soil[2][10, 15] = 0.0
+    out.body_soil[3][10, 15] = 0.0
+    out.body_soil[4][10, 15] = 0.0
+    empty!(out.body_soil_pos)
+
+    # Testing the case where there are two bucket layers with bucket soil, the second layer
+    # being lower, soil should fully avalanche on the second bucket layer
+    out.terrain[10, 15] = -0.8
+    out.body[1][10, 15] = -0.2
+    out.body[2][10, 15] = -0.1
+    out.body[3][10, 15] = -0.8
+    out.body[4][10, 15] = -0.7
+    out.body_soil[1][10, 15] = -0.1
+    out.body_soil[2][10, 15] = 0.5
+    out.body_soil[3][10, 15] = -0.7
+    out.body_soil[4][10, 15] = -0.6
+    _relax_unstable_terrain_cell!(out, 31, 0.1, 10, 14, 10, 15, grid)
+    @test (out.terrain[10, 14] ≈ -0.3) && (out.terrain[10, 15] == -0.8)
+    @test (out.body_soil[1][10, 15] == -0.1) && (out.body_soil[2][10, 15] == 0.5)
+    @test (out.body_soil[3][10, 15] == -0.7) && (out.body_soil[4][10, 15] ≈ -0.3)
+    @test (out.body_soil_pos == [])
+    # Resetting values
+    out.terrain[10, 14] = 0.0
+    out.terrain[10, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+    out.body_soil[1][10, 15] = 0.0
+    out.body_soil[2][10, 15] = 0.0
+    out.body_soil[3][10, 15] = 0.0
+    out.body_soil[4][10, 15] = 0.0
+    empty!(out.body_soil_pos)
+
+    # Testing the case where there are two bucket layers with bucket soil, the second layer
+    # being lower, soil should partially avalanche on the second bucket layer
+    out.terrain[10, 15] = -0.8
+    out.body[1][10, 15] = -0.5
+    out.body[2][10, 15] = -0.4
+    out.body[3][10, 15] = -0.8
+    out.body[4][10, 15] = -0.7
+    out.body_soil[1][10, 15] = -0.4
+    out.body_soil[2][10, 15] = 0.5
+    out.body_soil[3][10, 15] = -0.7
+    out.body_soil[4][10, 15] = -0.6
+    _relax_unstable_terrain_cell!(out, 31, 0.1, 10, 14, 10, 15, grid)
+    @test (out.terrain[10, 14] ≈ -0.1) && (out.terrain[10, 15] == -0.8)
+    @test (out.body_soil[1][10, 15] == -0.4) && (out.body_soil[2][10, 15] == 0.5)
+    @test (out.body_soil[3][10, 15] == -0.7) && (out.body_soil[4][10, 15] ≈ -0.5)
+    @test (out.body_soil_pos == [])
+    # Resetting values
+    out.terrain[10, 14] = 0.0
+    out.terrain[10, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+    out.body_soil[1][10, 15] = 0.0
+    out.body_soil[2][10, 15] = 0.0
+    out.body_soil[3][10, 15] = 0.0
+    out.body_soil[4][10, 15] = 0.0
+    empty!(out.body_soil_pos)
+
+    # Testing the case where there are two bucket layers with bucket soil, the second layer
+    # being lower, soil fill the space between the two bucket layers, soil should fully
+    # avalanche on the first bucket soil layer
+    out.terrain[10, 15] = -0.8
+    out.body[1][10, 15] = -0.5
+    out.body[2][10, 15] = -0.4
+    out.body[3][10, 15] = -0.8
+    out.body[4][10, 15] = -0.7
+    out.body_soil[1][10, 15] = -0.4
+    out.body_soil[2][10, 15] = -0.3
+    out.body_soil[3][10, 15] = -0.7
+    out.body_soil[4][10, 15] = -0.5
+    _relax_unstable_terrain_cell!(out, 33, 0.1, 10, 14, 10, 15, grid)
+    @test (out.terrain[10, 14] ≈ -0.1) && (out.terrain[10, 15] == -0.8)
+    @test (out.body_soil[1][10, 15] == -0.4) && (out.body_soil[2][10, 15] ≈ -0.2)
+    @test (out.body_soil[3][10, 15] == -0.7) && (out.body_soil[4][10, 15] == -0.5)
+    @test (out.body_soil_pos == [])
+    # Resetting values
+    out.terrain[10, 14] = 0.0
+    out.terrain[10, 15] = 0.0
+    out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
+    out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
+    out.body_soil[1][10, 15] = 0.0
+    out.body_soil[2][10, 15] = 0.0
+    out.body_soil[3][10, 15] = 0.0
+    out.body_soil[4][10, 15] = 0.0
     empty!(out.body_soil_pos)
 end
 
+
+"""
 @testset "_relax_terrain!" begin
     # Setting impact_area
     out.impact_area[:, :] .= Int64[[5, 10] [15, 20]]
