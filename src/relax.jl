@@ -740,14 +740,14 @@ function _relax_unstable_terrain_cell!(
     # Converting status into a string for convenience
     st = string(status)
 
-    if (st[2] = '0')
+    if (st[2] == '0')
         ### Soil should avalanche on the terrain ###
         # Calculating new height values
         h_new = 0.5 * (dh_max + out.terrain[ii, jj] + out.terrain[ii_c, jj_c])
         h_new = grid.cell_size_z * floor((h_new + tol) / grid.cell_size_z)
         h_new_c = out.terrain[ii, jj] + out.terrain[ii_c, jj_c] - h_new
 
-        if (st[1] = '4')
+        if (st[1] == '4')
             ### No bucket ###
             out.terrain[ii, jj] = h_new
             out.terrain[ii_c, jj_c] = h_new_c
@@ -778,7 +778,7 @@ function _relax_unstable_terrain_cell!(
         h_new = grid.cell_size_z * floor((h_new + tol) / grid.cell_size_z)
         h_new_c = out.terrain[ii, jj] + out.body_soil[4][ii_c, jj_c] - h_new
 
-        if (st[0] == '3')
+        if (st[1] == '3')
             ### Two bucket layers are present ###
             if (out.body[4][ii_c, jj_c] < out.body[1][ii_c, jj_c])
                 ### Soil should avalanche between the two bucket layer ###
@@ -802,7 +802,7 @@ function _relax_unstable_terrain_cell!(
         h_new = grid.cell_size_z * floor((h_new + tol) / grid.cell_size_z)
         h_new_c = out.terrain[ii, jj] + out.body[4][ii_c, jj_c] - h_new
 
-        if (st[0] == '3')
+        if (st[1] == '3')
             ### Two bucket layers are present ###
             if (out.body[4][ii_c, jj_c] < out.body[1][ii_c, jj_c])
                 ### Soil should avalanche between the two bucket layer ###
@@ -830,7 +830,7 @@ function _relax_unstable_terrain_cell!(
         h_new = grid.cell_size_z * floor((h_new + tol) / grid.cell_size_z)
         h_new_c = out.terrain[ii, jj] + out.body_soil[2][ii_c, jj_c] - h_new
 
-        if (st[0] == '3')
+        if (st[1] == '3')
             ### Two bucket layers are present ###
             if (out.body[2][ii_c, jj_c] < out.body[3][ii_c, jj_c])
                 ### Soil should avalanche between the two bucket layer ###
@@ -854,7 +854,7 @@ function _relax_unstable_terrain_cell!(
         h_new = grid.cell_size_z * floor((h_new + tol) / grid.cell_size_z)
         h_new_c = out.terrain[ii, jj] + out.body[2][ii_c, jj_c] - h_new
 
-        if (st[0] == '3')
+        if (st[1] == '3')
             ### Two bucket layers are present ###
             if (out.body[2][ii_c, jj_c] < out.body[3][ii_c, jj_c])
                 ### Soil should avalanche between the two bucket layer ###
