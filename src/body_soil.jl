@@ -63,11 +63,7 @@ function _update_body_soil!(
     tol::T=1e-8
 ) where {B<:Bool,I<:Int64,T<:Float64}
 
-    # Removing duplicates in body_soil_pos
-    unique!(out.body_soil_pos)
-
     # Copying previous body_soil locations
-    old_body_soil = deepcopy(out.body_soil)
     old_body_soil_pos = deepcopy(out.body_soil_pos)
 
     # Resetting body_soil
@@ -75,73 +71,139 @@ function _update_body_soil!(
     empty!(out.body_soil_pos)
 
     # Iterating over all XY positions where body_soil is present
+    min_cell_height_diff = grid.cell_size_z + tol
     for cell in old_body_soil_pos
         ind = cell[1]
         ii = cell[2]
         jj = cell[3]
+        x_b = cell[4]
+        y_b = cell[5]
+        z_b = cell[6]
+        h_soil = cell[7]
 
-        if (iszero(old_body_soil[ind][ii, jj]) && iszero(old_body_soil[ind+1][ii, jj]))
-            ### No bucket soil at that position ###
+        if (h_soil < 0.9 * grid.cell_size_z)
+            # No soil to be moved
+            # 0.9 has been chosen arbitrarily to account for potential
+            # numerical errors, another value could be used
             continue
         end
 
-        # Converting indices to position
-        cell_pos = [grid.vect_x[ii], grid.vect_y[jj], old_body_soil[ind][ii, jj]]
+        # Converting h_soil to a multiple of cell_size_z to deal with
+        # accumulating floating errors
+        h_soil = grid.cell_size_z * round(h_soil / grid.cell_size_z)
 
-        # Inversing rotation
-        inv_ori = inv_rotation(Quaternion(bucket.ori))
+        # Calculating new cell position in global frame
+        cell_local_pos = [x_b, y_b, z_b]
+        new_cell_pos = pos + Vector{T}(vect(ori \ cell_local_pos * ori))
+        old_cell_pos = bucket.pos + Vector{T}(
+            vect(bucket.ori \ cell_local_pos * bucket.ori)
+        )
 
-        # Calculating reference position of cell in bucket frame
-        cell_local_pos = vect(inv_ori \ (cell_pos - bucket.pos) * inv_ori)
-
-        # Calculating new cell position
-        new_cell_pos = pos + vect(ori \ cell_local_pos * ori)
+        # Establishing order of exploration
+        dx = new_cell_pos[1] - old_cell_pos[1]
+        dy = new_cell_pos[2] - old_cell_pos[2]
+        sx = sign(dx)
+        sy = sign(dy)
+        if (abs(dx) > abs(dy))
+            # Main direction follows X
+            directions = [
+                [0, 0], [sx, 0], [sx, sy], [0, sy], [sx, -sy],
+                [0, -sy], [-sx, sy], [-sx, 0], [-sx, -sy]]
+        else
+            # Main direction follows Y
+            directions = [
+                [0, 0], [0, sy], [sx, sy], [sx, 0], [-sx, sy],
+                [-sx, 0], [sx, -sy], [0, -sy], [-sx, -sy]];
+        end
 
         # Calculating new cell indices
         ii_n = round(Int64, new_cell_pos[1] / grid.cell_size_xy + grid.half_length_x + 1)
         jj_n = round(Int64, new_cell_pos[2] / grid.cell_size_xy + grid.half_length_y + 1)
 
-        if (
-            (!iszero(out.body[1][ii_n, jj_n]) || !iszero(out.body[2][ii_n, jj_n])) &&
-            (abs(new_cell_pos[3] - out.body[2][ii_n, jj_n]) - tol < grid.cell_size_xy)
-        )
-            ### Bucket is present ###
-            # Moving body_soil to new location
-            out.body_soil[2][ii_n, jj_n] += (
-                (out.body[2][ii_n, jj_n] - out.body_soil[1][ii_n, jj_n]) +
-                (old_body_soil[ind+1][ii, jj] - old_body_soil[ind][ii, jj])
-            )
-            out.body_soil[1][ii_n, jj_n] = out.body[2][ii_n, jj_n]
+        # Starting loop over neighbours
+        for dir in directions
+            # Determining cell to investigate
+            ii_t = ii_n + dir[1]
+            jj_t = jj_n + dir[2]
 
-            # Adding position to body_soil_pos
-            push!(out.body_soil_pos, [1, ii_n, jj_n])
-        elseif (
-            (!iszero(out.body[3][ii_n, jj_n]) || !iszero(out.body[4][ii_n, jj_n])) &&
-            (abs(new_cell_pos[3] - out.body[4][ii_n, jj_n]) - tol < grid.cell_size_xy)
-        )
-            ### Bucket is present ###
-            # Moving body_soil to new location
-            out.body_soil[4][ii_n, jj_n] += (
-                (out.body[4][ii_n, jj_n] - out.body_soil[3][ii_n, jj_n]) +
-                (old_body_soil[ind+1][ii, jj] - old_body_soil[ind][ii, jj])
+            # Detecting presence of body
+            body_presence_1 = (
+                !iszero(out.body[1][ii_t, jj_t]) || !iszero(out.body[2][ii_t, jj_t])
             )
-            out.body_soil[3][ii_n, jj_n] = out.body[4][ii_n, jj_n]
+            body_presence_3 = (
+                !iszero(out.body[3][ii_t, jj_t]) || !iszero(out.body[4][ii_t, jj_t])
+            )
 
-            # Adding position to body_soil_pos
-            push!(out.body_soil_pos, [3, ii_n, jj_n])
-        else
-            ### Bucket is not present ###
-            # Moving body_soil to terrain
-            # This may be problematic because another bucket wall may interfere,
-            # but it seems to be a very edge case
-            out.terrain[ii_n, jj_n] += (
-                old_body_soil[ind+1][ii, jj] - old_body_soil[ind][ii, jj]
-            )
+            if (body_presence_1)
+                # First body layer is present
+                dist = abs(new_cell_pos[3] - out.body[2][ii_t, jj_t])
+                if (dist < min_cell_height_diff)
+                    # Moving body_soil to new location, this implementation
+                    # works regardless of the presence of body_soil
+                    out.body_soil[2][ii_t, jj_t] += (
+                        out.body[2][ii_t, jj_t] - out.body_soil[1][ii_t, jj_t] + h_soil
+                    )
+                    out.body_soil[1][ii_t, jj_t] = out.body[2][ii_t, jj_t]
+
+                    # Adding position to body_soil_pos
+                    push!(out.body_soil_pos, [1, ii_t, jj_t, x_b, y_b, z_b, h_soil])
+                    soil_moved = true
+                    break
+                elseif (dist < dist_s)
+                    # Updating new default location
+                    dist_s = dist
+                    ii_s = ii_t
+                    jj_s = jj_t
+                    ind_s = 2
+                end
+            end
+            if (body_presence_3)
+                # Second body layer is present
+                dist = abs(new_cell_pos[3] - out.body[4][ii_t, jj_t])
+                if (dist < min_cell_height_diff)
+                    # Moving body_soil to new location, this implementation
+                    # works regardless of the presence of body_soil
+                    out.body_soil[4][ii_t, jj_t] += (
+                        out.body[4][ii_t, jj_t] - out.body_soil[3][ii_t, jj_t] + h_soil
+                    )
+                    out.body_soil[3][ii_t, jj_t] = out.body[4][ii_t, jj_t]
+
+                    # Adding position to body_soil_pos
+                    push!(out.body_soil_pos, [3, ii_t, jj_t, x_b, y_b, z_b, h_soil])
+                    soil_moved = true
+                    break
+                elseif (dist < dist_s)
+                    # Updating new default location
+                    dist_s = dist
+                    ii_s = ii_t
+                    jj_s = jj_t
+                    ind_s = 4
+                end
+            end
+        end
+
+
+        if (!soil_moved)
+            if (dist_s != 2 * grid.half_length_z)
+                # Moving body_soil to closest location, this implementation
+                # works regardless of the presence of body_soil
+                out.body_soil[ind_s][ii_s, jj_s] += (
+                    out.body[ind_s][ii_s, jj_s] - out.body_soil[ind_s-1][ii_s, jj_s] + h_soil
+                )
+                out.body_soil[ind_s-1][ii_s, jj_s] = out.body[ind_s][ii_s, jj_s]
+
+                # Adding position to body_soil_pos
+                push!(out.body_soil_pos, [ind_s-1, ii_s, jj_s, x_b, y_b, z_b, h_soil])
+            else
+                # This should normally not happen, it is only for safety
+                # Moving body_soil to terrain
+                out.terrain[ii_n, jj_n] += h_soil
+                @warn "WARNING\nBody soil could not be updated.\n" *
+                    "Soil is moved to the terrain to maintain mass " *
+                    "conservation."
+            end
         end
     end
-
-    # Removing duplicates in body_soil_pos
-    unique!(out.body_soil_pos)
 
     # Updating new bucket position
     bucket.pos[:] .= pos[:]
