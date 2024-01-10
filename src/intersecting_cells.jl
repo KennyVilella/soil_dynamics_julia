@@ -101,10 +101,10 @@ function _move_intersecting_body_soil!(
     ]
 
     # Iterating over bucket soil cells
-    for cell in out.body_soil_pos
-        ind = cell[1]
-        ii = cell[2]
-        jj = cell[3]
+    for nn in 1:length(out.body_soil_pos)
+        ind = out.body_soil_pos[nn][1]
+        ii = out.body_soil_pos[nn][2]
+        jj = out.body_soil_pos[nn][3]
 
         if (ind == 1)
             ### First bucket soil layer ###
@@ -120,15 +120,28 @@ function _move_intersecting_body_soil!(
         end
 
         if (
-            (out.body_soil[ind+1][ii, jj] - tol > out.body[ind_t][ii, jj]) &&
-            (out.body[ind_t+1][ii, jj] - tol > out.body_soil[ind][ii, jj])
+            (out.body[ind_t][ii, jj] > out.body[ind][ii, jj]) &&
+            (out.body_soil[ind+1][ii, jj] - tol > out.body[ind_t][ii, jj])
         )
             ### Bucket soil intersects with bucket ###
             h_soil = out.body_soil[ind+1][ii, jj] - out.body[ind_t][ii, jj]
+
+            # Only the intersecting soil within this body_soil_pos is moved
+            if (h_soil > out.body_soil_pos[nn][7])
+                ### All the soil would be moved ###
+                h_soil = out.body_soil_pos[nn][7]
+                out.body_soil_pos[nn][7] .= 0.0
+            else
+                ### Soil would be partially moved ###
+                out.body_soil_pos[nn][7] -= h_soil
+            end
         else
             ### No intersection between bucket soil and bucket ###
             continue
         end
+
+        # Updating bucket soil
+        out.body_soil[ind+1][ii, jj] -= h_soil
 
         # Randomizing direction to avoid asymmetry
         shuffle!(directions)
@@ -153,6 +166,12 @@ function _move_intersecting_body_soil!(
                 ind_p, ii_p, jj_p, h_soil, wall_presence = _move_body_soil!(
                     out, ind_p, ii_p, jj_p, max_h, ii_n, jj_n, h_soil, wall_presence, tol
                 )
+
+                # Updating the value used for the detection of bucket wall
+                # This is working because this value will be used only in cases
+                # where two bucket layers are present. Note however that the
+                # value is incorrect when it will not be used.
+                max_h = max(out.body[1][ii_p, jj_p], out.body[3][ii_p, jj_p])
             end
             if (h_soil < tol)
                 ### No more soil to move ###
@@ -161,12 +180,13 @@ function _move_intersecting_body_soil!(
         end
 
         if (h_soil > tol)
+            # For cases where the soil cannot be moved
+            # For instance, this happens when the bucket is going straight
+            # underground with soil trapped inside.
+            # This should not happen when soil reaction force is considered.
             @warn "Not all soil intersecting with a bucket layer could be moved\n" *
                 "The extra soil has been arbitrarily removed"
         end
-
-        # Updating bucket soil
-        out.body_soil[ind+1][ii, jj] = out.body[ind_t][ii, jj]
     end
 end
 
