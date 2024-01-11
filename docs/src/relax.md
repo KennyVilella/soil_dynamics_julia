@@ -33,7 +33,7 @@ This choice is based on initial testing, which revealed that relaxing soil in 4 
 Relaxing in 8 directions allows for convergence to full equilibrium in less iterations than when relaxing in 4 directions, while requiring more computational time to perform each iteration.
 As a result, relaxing only in the X and Y directions produces a faster and simpler code.
 To avoid asymmetrical results, the order in which neighboring soil cells are checked is randomized.
-The result of this check is a status code consisting of two or three digits, providing a detailed indication of the condition of the soil cell.
+The result of this check is a status code consisting of two digits, providing a detailed indication of the condition of the soil cell.
 
 The third step is the actual relaxation, which occurs only if the soil cell is determined to be unstable based on the status code obtained in the previous step.
 The relaxation process follows the specific instructions defined by the status code.
@@ -44,7 +44,7 @@ However, separating these two steps improves code testability and maintainabilit
 
 ## Terrain relaxation
 This corresponds to the relaxation process performed by the function `_relax_terrain!`.
-Note that the meaning of the three-digit codes given by the function `_check_unstable_terrain_cell` and used by the function `_relax_unstable_terrain_cell!` is explained in the docstring of the function `_check_unstable_terrain_cell`.
+Note that the meaning of the two-digit codes given by the function `_check_unstable_terrain_cell` and used by the function `_relax_unstable_terrain_cell!` is explained in the docstring of the function `_check_unstable_terrain_cell`.
 In this section, the main focus is to explain the physical reasoning behind the implementation of the `_relax_unstable_terrain_cell!` function.
 
 ### Description of the different cases
@@ -64,8 +64,10 @@ Note that the soil column would still be unstable after this movement, requiring
 (d) In this case, the soil can avalanche on the top of the bucket and reach a stable configuration.
 Note that this is the only case in the simulator where soil from the terrain can be transferred to the bucket.
 Consequently, all bucket soil is generated from this case.
+If the soil can avalanche onto two bucket layers, then the lowest bucket layer has the priority.
 
 It is worth mentioning that the order of these cases is important, as case (d) will only occur if cases (b) and (c) are not possible.
+
 
 ### Impact area
 For performance optimization, the simulator only checks for soil instability within the lateral area specified by the `impact_area` field of the `SimOut` struct.
