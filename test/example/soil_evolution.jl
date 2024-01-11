@@ -99,6 +99,7 @@ function soil_evolution(
     # SimOut struct
     out = SimOut(terrain, grid)
 
+    origin_angle = atan((t_pos_init[3] - b_pos_init[3]) / (t_pos_init[1] - b_pos_init[1]))
     if (random_trajectory)
         ### Random parabolic trajectory ###
         # Calculating random parameters within a certain range
@@ -108,10 +109,10 @@ function soil_evolution(
         z_min = -0.25 + 0.5 * rand() # Between [-0.25, 0.25]
 
         # Creating the trajectory
-        pos, ori = _calc_trajectory(x_i, z_i, x_min, z_min, 100)
+        pos, ori = _calc_trajectory(x_i, z_i, x_min, z_min, origin_angle, 100)
     else
         ### Default parabolic trajectory ###
-        pos, ori = _calc_trajectory(-2.0, 1.5, 0.1, 0.25, 100)
+        pos, ori = _calc_trajectory(-2.0, 1.5, 0.1, 0.25, origin_angle, 100)
     end
 
     # Initializing bucket corner position vectors
@@ -125,7 +126,7 @@ function soil_evolution(
     # Iterating over bucket trajectory
     for ii in 1:length(pos)
         # Converting orientation to quaternion
-        ori_i = angle_to_quat(-ori[ii][1], -ori[ii][2], -ori[ii][3], :ZYX)
+        ori_i = angle_to_quat(ori[ii][1], ori[ii][2], ori[ii][3], :ZYX)
 
         # Calculating position of bucket points
         j_pos = Vector{Float64}(pos[ii] + vect(ori_i \ j_pos_init * ori_i))
@@ -162,7 +163,7 @@ function soil_evolution(
 
     # Initializing
     pos_vec = [pos[1]]
-    ori_vec = [angle_to_quat(-ori[1][1], -ori[1][2], -ori[1][3], :ZYX)]
+    ori_vec = [angle_to_quat(ori[1][1], ori[1][2], ori[1][3], :ZYX)]
     time_vec = []
     dt_i = dt
     time = dt
@@ -178,7 +179,7 @@ function soil_evolution(
        # Adding position and orientation
        append!(pos_vec, [pos_interp(time)])
        ori_i = ori_interp(time)
-       append!(ori_vec, [angle_to_quat(-ori_i[1], -ori_i[2], -ori_i[3], :ZYX)])
+       append!(ori_vec, [angle_to_quat(ori_i[1], ori_i[2], ori_i[3], :ZYX)])
 
        # Calculating velocity at bucket corners
        j_l_vel = norm(_calc_vel(
@@ -225,7 +226,7 @@ function soil_evolution(
     # Adding final step
     push!(time_vec, total_time)
     append!(pos_vec, [pos[end]])
-    append!(ori_vec, [angle_to_quat(-ori[end][1], -ori[end][2], -ori[end][3], :ZYX)])
+    append!(ori_vec, [angle_to_quat(ori[end][1], ori[end][2], ori[end][3], :ZYX)])
 
     # Starting the evolution loop
     for ii in 1:length(time_vec)
@@ -289,7 +290,7 @@ end
 
 """
     _calc_trajectory(
-        x_i::T, z_i::T, x_min::T, z_min::T, nn::I
+        x_i::T, z_i::T, x_min::T, z_min::T, origin_angle::T, nn::I
     ) where {I<:Int64,T<:Float64}
 
 This function calculates a parabolic trajectory given the starting position (`x_i`, `z_i`)
@@ -320,6 +321,8 @@ actual digging scoop.
 - `z_i::Float64`: Z coordinate of the starting position of the trajectory. [m]
 - `x_min::Float64`: X coordinate of the deepest position of the trajectory. [m]
 - `z_min::Float64`: Z coordinate of the deepest position of the trajectory. [m]
+- `origin_angle::Float64` : Angle to the horizontal plane of the bucket in
+                            its reference pose. [rad]
 - `nn::Int64`: Number of increments in the trajectory.
 
 # Outputs
@@ -336,6 +339,7 @@ function _calc_trajectory(
     z_i::T,
     x_min::T,
     z_min::T,
+    origin_angle::T,
     nn::I
 ) where {I<:Int64,T<:Float64}
 
@@ -355,7 +359,7 @@ function _calc_trajectory(
 
     # Initializing trajectory vector
     pos = [[x_i, 0.0, z_i]]
-    ori = [[0.0, atan(2 * a * x_i + b), 0.0]]
+    ori = [[0.0, -origin_angle + atan(2 * a * x_i + b), 0.0]]
 
     # Creating trajectory
     for x in x_vec
@@ -363,7 +367,7 @@ function _calc_trajectory(
         append!(pos, [[x, 0.0, a * x * x + b * x + c]])
 
         # Calculating orientation following the gradient of the trajectory
-        append!(ori, [[0.0, atan(2 * a * x + b), 0.0]])
+        append!(ori, [[0.0, -origin_angle + atan(2 * a * x + b), 0.0]])
     end
 
     return pos, ori
