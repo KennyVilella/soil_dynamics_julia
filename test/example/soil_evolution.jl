@@ -25,7 +25,6 @@ the initial position (`x_i`, `z_i`) of the bucket and the deepest point of the s
 (`x_min`, `z_min`) wihtin reasonable ranges.
 
 # Note
-- This function is a work in progress.
 - The parabolic trajectory assumes that the orientation of the bucket follows the gradient
   of the trajectory. While it may not be fully accurate, it provides a good approximation
   for testing the simulator.

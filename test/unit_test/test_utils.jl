@@ -409,8 +409,6 @@ end
         "Bucket soil maximum height: 0.0"
     @test_logs (:warn, warning_message) match_mode=:any check_soil(out)
     # Resetting value
-    out.body[1][1, 1] = -0.2
-    out.body[2][1, 1] = 0.0
     out.body_soil[1][1, 1] = 0.0
     out.body_soil[2][1, 1] = 0.1
 
