@@ -438,11 +438,11 @@ end
     # Testing that warning is sent when there is a gap between bucket and bucket soil
     out.body_soil[1][1, 1] = 0.1
     warning_message = "Bucket soil is not above the bucket\nLocation: (1, 1)\n" *
-        "Terrain height: -0.2\nBucket maximum height: 0.0\nBucket soil minimum height: 0.1"
+        "Bucket maximum height: 0.0\nBucket soil minimum height: 0.1"
     @test_logs (:warn, warning_message) match_mode=:any check_soil(out)
     out.body_soil[1][1, 1] = 0.05
     warning_message = "Bucket soil is not above the bucket\nLocation: (1, 1)\n" *
-        "Terrain height: -0.2\nBucket maximum height: 0.0\nBucket soil minimum height: 0.05"
+        "Bucket maximum height: 0.0\nBucket soil minimum height: 0.05"
     @test_logs (:warn, warning_message) match_mode=:any check_soil(out)
     # Resetting value
     out.body_soil[1][1, 1] = 0.0
