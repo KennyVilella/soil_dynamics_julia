@@ -265,6 +265,7 @@ function _move_intersecting_body!(
                     ### No bucket ###
                     out.terrain[ii_n, jj_n] += h_soil
                     h_soil = 0.0
+                    break
                 else
                     ### Bucket is present ###
                     # Calculating minimum height of bucket
@@ -289,6 +290,7 @@ function _move_intersecting_body!(
                             ### More space than soil ###
                             out.terrain[ii_n, jj_n] += h_soil
                             h_soil = 0.0
+                            break
                         end
                     end
                 end

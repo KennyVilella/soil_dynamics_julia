@@ -92,7 +92,7 @@ function _relax_terrain!(
     # Initializing the 2D bounding box of the unstable cells
     relax_min_x = 2 * grid.half_length_x
     relax_max_x = 0
-    relax_min_y = 2 * grid.half_length_x
+    relax_min_y = 2 * grid.half_length_y
     relax_max_y = 0
 
     # Iterating over all unstable cells
@@ -168,7 +168,6 @@ This function only moves the soil when the following conditions are met:
 
 # Note
 - This function is intended for internal use only.
-- This function is a work in progress.
 
 # Inputs
 - `out::SimOut{Bool,Int64,Float64}`: Struct that stores simulation outputs.
@@ -639,7 +638,6 @@ function _check_unstable_body_cell(
             ind_n_top = 1
         end
 
-        column_top = 1e-8
         if (out.body[ind+1][ii, jj] + tol < out.body[ind_n_top][ii_c, jj_c])
             ### Soil may avalanche on the bottom layer ###
             if (
@@ -664,7 +662,7 @@ function _check_unstable_body_cell(
 
         if (
             (out.body[ind+1][ii, jj] + tol > out.body[ind_n_top][ii_c, jj_c]) ||
-            (column_top == 1e-8)
+            (status == 30)
         )
             ### Soil may avalanche on the top layer ###
             if (
@@ -904,7 +902,7 @@ the `repose_angle`, provided that the bucket is not preventing this configuratio
 
 # Inputs
 - `out::SimOut{Bool,Int64,Float64}`: Struct that stores simulation outputs.
-- `status::Int64`: Three-digit number indicating how the soil should avalanche.
+- `status::Int64`: Two-digit number indicating how the soil should avalanche.
 - `new_body_soil_pos::Vector{Vector{Int64}}`: Queue to append new body_soil_pos.
 - `dh_max::Float64`: Maximum height difference allowed between two neighboring cells. [m]
 - `ii::Int64`: Index of the considered cell in the X direction.
