@@ -401,7 +401,6 @@ function check_soil(
         if (out.body_soil[ind][ii, jj] != out.body[ind+1][ii, jj])
             @warn "Bucket soil is not above the bucket\n" *
                 "Location: (" * string(ii) * ", " * string(jj) * ")\n" *
-                "Terrain height: " * string(out.terrain[ii, jj]) * "\n" *
                 "Bucket maximum height: " * string(out.body[ind+1][ii, jj]) * "\n" *
                 "Bucket soil minimum height: " * string(out.body_soil[ind][ii, jj])
         end
@@ -410,7 +409,7 @@ function check_soil(
     # Collecting all cells where the bucket soil is located
     body_soil_pos = _locate_all_non_zeros(out.body_soil)
 
-    # Iterating over all cells where the bucket is located
+    # Iterating over all cells where bucket soil is located
     for cell in body_soil_pos
         ii = cell[2]
         jj = cell[3]

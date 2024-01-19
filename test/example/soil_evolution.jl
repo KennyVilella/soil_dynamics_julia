@@ -25,7 +25,6 @@ the initial position (`x_i`, `z_i`) of the bucket and the deepest point of the s
 (`x_min`, `z_min`) wihtin reasonable ranges.
 
 # Note
-- This function is a work in progress.
 - The parabolic trajectory assumes that the orientation of the bucket follows the gradient
   of the trajectory. While it may not be fully accurate, it provides a good approximation
   for testing the simulator.
@@ -348,12 +347,10 @@ function _calc_trajectory(
     x_vec = range(x_i, x_i + 2 * (x_min - x_i), nn)
 
     # Calculating factor of the parabolic function
-    b = 2 * x_min * (z_min - z_i) / ((x_i - x_min) * (x_i - x_min))
-
     if (x_min == 0)
-        a = (zi - zm) / (xi * xi)
+        a = (z_i - z_min) / (x_i * x_i)
         b = 0.0
-        c = zm
+        c = z_min
     else
         b = 2 * x_min * (z_min - z_i) / ((x_i - x_min) * (x_i - x_min))
         a = -b / (2 * x_min)

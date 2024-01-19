@@ -78,6 +78,7 @@ end
     # Resetting values
     out.terrain[10, 15] = 0.0
     out.body[1][10, 15] = 0.0
+    out.body[2][10, 15] = 0.0
 
     # Testing the case where there is the first bucket layer and soil should avalanche on it
     out.terrain[10, 15] = -0.4
@@ -159,6 +160,7 @@ end
     # Resetting values
     out.terrain[10, 15] = 0.0
     out.body[3][10, 15] = 0.0
+    out.body[4][10, 15] = 0.0
 
     # Testing the case where there is the second bucket layer and soil should avalanche on
     # it
@@ -3517,7 +3519,7 @@ end
     out.body_soil[2][10, 14] = 0.0
 
     # Testing the case where there are two bucket layers, the second layer being lower and
-    # soil fully cover the space between the two layers, the first bucket layer it too high
+    # soil fully cover the space between the two layers, the first bucket layer is too high
     # for soil to avalanche
     out.terrain[10, 15] = -0.4
     out.body[1][10, 15] = -0.2
@@ -3526,7 +3528,7 @@ end
     out.body[4][10, 15] = -0.3
     out.body_soil[3][10, 15] = -0.3
     out.body_soil[4][10, 15] = -0.2
-    out.terrain[10, 14] = -0.2
+    out.terrain[10, 14] = -0.4
     out.body[1][10, 14] = -0.4
     out.body[2][10, 14] = -0.3
     out.body_soil[1][10, 14] = -0.3
@@ -3549,7 +3551,7 @@ end
 
     # Testing the case where there are two bucket layers with soil, the second layer being
     # lower and soil fully cover the space between the two layers, the first bucket soil
-    # layer it too high for soil to avalanche
+    # layer is too high for soil to avalanche
     out.terrain[10, 15] = -0.4
     out.body[1][10, 15] = -0.2
     out.body[2][10, 15] = -0.1
@@ -3559,7 +3561,7 @@ end
     out.body[4][10, 15] = -0.3
     out.body_soil[3][10, 15] = -0.3
     out.body_soil[4][10, 15] = -0.2
-    out.terrain[10, 14] = -0.2
+    out.terrain[10, 14] = -0.4
     out.body[1][10, 14] = -0.4
     out.body[2][10, 14] = -0.3
     out.body_soil[1][10, 14] = -0.3
@@ -3583,7 +3585,7 @@ end
     out.body_soil[2][10, 14] = 0.0
 
     # Testing the case where there are two bucket layers, the first layer being lower and
-    # soil fully cover the space between the two layers, the second bucket layer it too high
+    # soil fully cover the space between the two layers, the second bucket layer is too high
     # for soil to avalanche
     out.terrain[10, 15] = -0.4
     out.body[1][10, 15] = -0.4
@@ -3592,7 +3594,7 @@ end
     out.body_soil[2][10, 15] = -0.1
     out.body[3][10, 15] = -0.1
     out.body[4][10, 15] = 0.5
-    out.terrain[10, 14] = -0.2
+    out.terrain[10, 14] = -0.4
     out.body[1][10, 14] = -0.4
     out.body[2][10, 14] = -0.3
     out.body_soil[1][10, 14] = -0.3
@@ -3615,7 +3617,7 @@ end
 
     # Testing the case where there are two bucket layers with soil, the first layer being
     # lower and soil fully cover the space between the two layers, the second bucket soil
-    # layer it too high for soil to avalanche
+    # layer is too high for soil to avalanche
     out.terrain[10, 15] = -0.4
     out.body[1][10, 15] = -0.4
     out.body[2][10, 15] = -0.3
@@ -3625,7 +3627,7 @@ end
     out.body[4][10, 15] = 0.0
     out.body_soil[3][10, 15] = 0.0
     out.body_soil[4][10, 15] = 0.1
-    out.terrain[10, 14] = -0.2
+    out.terrain[10, 14] = -0.4
     out.body[1][10, 14] = -0.4
     out.body[2][10, 14] = -0.3
     out.body_soil[1][10, 14] = -0.3
@@ -3658,7 +3660,7 @@ end
     out.body[4][10, 15] = -0.3
     out.body_soil[3][10, 15] = -0.3
     out.body_soil[4][10, 15] = -0.2
-    out.terrain[10, 14] = -0.2
+    out.terrain[10, 14] = -0.4
     out.body[1][10, 14] = -0.4
     out.body[2][10, 14] = -0.3
     out.body_soil[1][10, 14] = -0.3
@@ -3691,7 +3693,7 @@ end
     out.body[4][10, 15] = -0.3
     out.body_soil[3][10, 15] = -0.3
     out.body_soil[4][10, 15] = -0.2
-    out.terrain[10, 14] = -0.2
+    out.terrain[10, 14] = -0.4
     out.body[1][10, 14] = -0.4
     out.body[2][10, 14] = -0.3
     out.body_soil[1][10, 14] = -0.3
@@ -3724,7 +3726,7 @@ end
     out.body_soil[2][10, 15] = -0.2
     out.body[3][10, 15] = -0.2
     out.body[4][10, 15] = -0.1
-    out.terrain[10, 14] = -0.2
+    out.terrain[10, 14] = -0.4
     out.body[1][10, 14] = -0.4
     out.body[2][10, 14] = -0.3
     out.body_soil[1][10, 14] = -0.3
@@ -3757,7 +3759,7 @@ end
     out.body[4][10, 15] = -0.1
     out.body_soil[3][10, 15] = -0.1
     out.body_soil[4][10, 15] = 0.0
-    out.terrain[10, 14] = -0.2
+    out.terrain[10, 14] = -0.4
     out.body[1][10, 14] = -0.4
     out.body[2][10, 14] = -0.3
     out.body_soil[1][10, 14] = -0.3
@@ -3962,7 +3964,7 @@ end
     out.body[2][10, 14] = 0.0
     out.body_soil[1][10, 14] = 0.0
     out.body_soil[2][10, 14] = 0.4
-    status = _check_unstable_body_cell(out, 10, 14, 1, 10, 15, 0.3)
+    status = _check_unstable_body_cell(out, 10, 14, 1, 10, 15, 0.1)
     @test (status == 0)
     # Resetting values
     out.terrain[10, 15] = 0.0
