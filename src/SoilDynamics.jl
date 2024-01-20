@@ -10,7 +10,7 @@ import SparseArrays: SparseMatrixCSC, spzeros, droptol!, nzrange, rowvals
 export soil_dynamics!
 
 # types.jl
-export GridParam, BucketParam, SimParam, SimOut
+export GridParam, BucketParam, SimParam, SimOut, BodySoil
 
 # bucket.jl
 export _calc_bucket_pos!
