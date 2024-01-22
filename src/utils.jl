@@ -7,6 +7,228 @@ Copyright, 2023,  Vilella Kenny.
 #                                                                                          #
 #==========================================================================================#
 """
+    _calc_bucket_corner_pos(
+        pos::Vector{T}, ori::Vector{T}, bucket::BucketParam{T}
+    ) where {T<:Float64}
+
+This function calculates the global position of the six corners of the bucket.
+
+# Note
+- This function is intended for internal use only.
+
+# Inputs
+- `pos::Vector{Float64}`: Cartesian coordinates of the bucket origin. [m]
+- `ori::Vector{Float64}`: Orientation of the bucket. [Quaternion]
+- `bucket::BucketParam{Float64}`: Struct that stores information related to the
+                                  bucket object.
+
+# Outputs
+- `Vector{Float64}`: Cartesian coordinates of the right side of the bucket joint. [m]
+- `Vector{Float64}`: Cartesian coordinates of the left side of the bucket joint. [m]
+- `Vector{Float64}`: Cartesian coordinates of the right side of the bucket base. [m]
+- `Vector{Float64}`: Cartesian coordinates of the left side of the bucket base. [m]
+- `Vector{Float64}`: Cartesian coordinates of the right side of the bucket teeth. [m]
+- `Vector{Float64}`: Cartesian coordinates of the left side of the bucket teeth. [m]
+
+# Example
+
+    pos = [0.1, 0.0, 0.2]
+    ori = angle_to_quat(0.0, -pi / 2, 0.0, :ZYX)
+    o = [0.0, 0.0, 0.0]
+    j = [0.0, 0.0, 0.0]
+    b = [0.0, 0.0, -0.5]
+    t = [1.0, 0.0, -0.5]
+    bucket = BucketParam(o, j, b, t, 0.5)
+
+    j_r_pos, j_l_pos, b_r_pos, b_l_pos, t_r_pos, t_l_pos = _calc_bucket_corner_pos(
+        pos, ori, bucket
+    )
+"""
+function _calc_bucket_corner_pos(
+    pos::Vector{T},
+    ori::Vector{T},
+    bucket::BucketParam{T}
+) where {T<:Float64}
+    # Calculating position of the bucket vertices
+    j_pos = Vector{T}(vect(ori \ bucket.j_pos_init * ori))
+    b_pos = Vector{T}(vect(ori \ bucket.b_pos_init * ori))
+    t_pos = Vector{T}(vect(ori \ bucket.t_pos_init * ori))
+
+    # Unit vector normal to the side of the bucket
+    normal_side = calc_normal(j_pos, b_pos, t_pos)
+
+    # Adding position of the bucket origin
+    j_pos += pos
+    b_pos += pos
+    t_pos += pos
+
+    # Position of each vertex of the bucket
+    j_r_pos = j_pos + 0.5 * bucket.width * normal_side
+    j_l_pos = j_pos - 0.5 * bucket.width * normal_side
+    b_r_pos = b_pos + 0.5 * bucket.width * normal_side
+    b_l_pos = b_pos - 0.5 * bucket.width * normal_side
+    t_r_pos = t_pos + 0.5 * bucket.width * normal_side
+    t_l_pos = t_pos - 0.5 * bucket.width * normal_side
+
+    return j_r_pos, j_l_pos, b_r_pos, b_l_pos, t_r_pos, t_l_pos
+end
+
+"""
+    check_bucket_movement(
+        pos::Vector{T}, ori::Vector{T}, grid::GridParam{I,T}, bucket::BucketParam{T}
+    ) where {I<:Int64,T<:Float64}
+
+This function calculates the maximum distance travelled by any part of the bucket since the
+last soil update. The position of the bucket during the last soil update is stored in the
+`BucketParam` struct.
+
+# Note
+- If the maximum distance travelled is lower than 50% of the cell size, the function
+  returns `false` otherwise it returns `true`.
+- If the distance travelled exceeds twice the cell size, a warning is issued to indicate
+  a potential problem with the soil update.
+
+# Inputs
+- `pos::Vector{Float64}`: Cartesian coordinates of the bucket origin. [m]
+- `ori::Vector{Float64}`: Orientation of the bucket. [Quaternion]
+- `grid::GridParam{Int64,Float64}`: Struct that stores information related to the
+                                    simulation grid.
+- `bucket::BucketParam{Float64}`: Struct that stores information related to the
+                                  bucket object.
+
+# Outputs
+- `Bool`: Flag indicating whether the bucket has moved enough for conducting a soil update.
+
+# Example
+
+    pos = [0.1, 0.0, 0.2]
+    ori = angle_to_quat(0.0, -pi / 2, 0.0, :ZYX)
+    o = [0.0, 0.0, 0.0]
+    j = [0.0, 0.0, 0.0]
+    b = [0.0, 0.0, -0.5]
+    t = [1.0, 0.0, -0.5]
+    bucket = BucketParam(o, j, b, t, 0.5)
+    grid = GridParam(4.0, 4.0, 3.0, 0.05, 0.01)
+
+    soil_update = check_bucket_movement(pos, ori, grid, bucket)
+"""
+function check_bucket_movement(
+    pos::Vector{T},
+    ori::Vector{T},
+    grid::GridParam{I,T},
+    bucket::BucketParam{T}
+) where {I<:Int64,T<:Float64}
+    # Calculating new position of bucket corners
+    j_r_pos_n, j_l_pos_n, b_r_pos_n, b_l_pos_n, t_r_pos_n, t_l_pos_n = (
+        _calc_bucket_corner_pos(pos, ori, bucket)
+    )
+
+    # Calculating former position of bucket corners
+    j_r_pos_f, j_l_pos_f, b_r_pos_f, b_l_pos_f, t_r_pos_f, t_l_pos_f = (
+        _calc_bucket_corner_pos(bucket.pos, bucket.ori, bucket)
+    )
+
+    # Calculating distance travelled
+    j_r_dist = sqrt(
+        (j_r_pos_f[1] - j_r_pos_n[1])^2 + (j_r_pos_f[2] - j_r_pos_n[2])^2 +
+        (j_r_pos_f[3] - j_r_pos_n[3])^2
+    )
+    j_l_dist = sqrt(
+        (j_l_pos_f[1] - j_l_pos_n[1])^2 + (j_l_pos_f[2] - j_l_pos_n[2])^2 +
+        (j_l_pos_f[3] - j_l_pos_n[3])^2
+    )
+    b_r_dist = sqrt(
+        (b_r_pos_f[1] - b_r_pos_n[1])^2 + (b_r_pos_f[2] - b_r_pos_n[2])^2 +
+        (b_r_pos_f[3] - b_r_pos_n[3])^2
+    )
+    b_l_dist = sqrt(
+        (b_l_pos_f[1] - b_l_pos_n[1])^2 + (b_l_pos_f[2] - b_l_pos_n[2])^2 +
+        (b_l_pos_f[3] - b_l_pos_n[3])^2
+    )
+    t_r_dist = sqrt(
+        (t_r_pos_f[1] - t_r_pos_n[1])^2 + (t_r_pos_f[2] - t_r_pos_n[2])^2 +
+        (t_r_pos_f[3] - t_r_pos_n[3])^2
+    )
+    t_l_dist = sqrt(
+        (t_l_pos_f[1] - t_l_pos_n[1])^2 + (t_l_pos_f[2] - t_l_pos_n[2])^2 +
+        (t_l_pos_f[3] - t_l_pos_n[3])^2
+    )
+
+    # Calculating max distance travelled
+    max_dist = maximum(
+        [j_r_dist, j_l_dist, b_r_dist, b_l_dist, t_r_dist, t_l_dist]
+    )
+
+    # Calculating min cell size
+    min_cell_size = min(grid.cell_size_xy_, grid.cell_size_z_)
+
+    if (max_dist < 0.5 * min_cell_size)
+        # Bucket has only slightly moved since last update
+        return false
+    else if (max_dist > 2 * min_cell_size)
+        @warn  "Movement made by the bucket is larger than two cell size.\n"
+               "The validity of the soil update is not ensured."
+
+    return true
+end
+
+"""
+    _calc_bucket_frame_pos(
+        ii::I, jj::I, z::T, grid::GridParam{I,T}, bucket::BucketParam{T}
+    ) where {I<:Int64,T<:Float64}
+
+This function calculates the position of a considered cell in the bucket frame assuming
+that the bucket is in its reference position.
+
+# Note
+- This function is intended for internal use only.
+
+# Inputs
+- `ii::Int64`: Index of the considered cell in the X direction.
+- `jj::Int64`: Index of the considered cell in the Y direction.
+- `z::Float64`: Height of the considered position. [m]
+- `grid::GridParam{Int64,Float64}`: Struct that stores information related to the
+                                    simulation grid.
+- `bucket::BucketParam{Float64}`: Struct that stores information related to the
+                                  bucket object.
+
+# Outputs
+- `Vector{Float64}`: Cartesian coordinates of the considered position in the reference
+                     bucket frame. [m]
+
+# Example
+
+    o = [0.0, 0.0, 0.0]
+    j = [0.0, 0.0, 0.0]
+    b = [0.0, 0.0, -0.5]
+    t = [1.0, 0.0, -0.5]
+    bucket = BucketParam(o, j, b, t, 0.5)
+    grid = GridParam(4.0, 4.0, 3.0, 0.05, 0.01)
+
+    cell_local_pos = _calc_bucket_frame_pos(10, 15, 0.5, grid, bucket)
+"""
+function _calc_bucket_frame_pos(
+    ii::I,
+    jj::I,
+    z::T,
+    grid::GridParam{I,T},
+    bucket::BucketParam{T}
+) where {I<:Int64,T<:Float64}
+    # Calculating cell's position in bucket frame
+    cell_pos = [
+        grid.vect_x[ii] - bucket.pos[1], grid.vect_y[jj] - bucket.pos[2], z - bucket.pos[3]
+    ]
+
+    # Inversing rotation
+    inv_ori = [bucket.ori[1], -bucket.ori[2], -bucket.ori[3], -bucket.ori[4]]
+
+    # Calculating reference position of cell in bucket frame
+    cell_local_pos = Vector{T}(vect(inv_ori \ cell_pos * inv_ori))
+
+    return cell_local_pos
+end
+
+"""
     _init_sparse_array!(
         sparse_array::Vector{SparseMatrixCSC{T,I}}, grid::GridParam{I,T}
     ) where {I<:Int64,T<:Float64}
