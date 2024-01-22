@@ -979,9 +979,32 @@ function _include_new_body_pos!(
         out.body[4][ii, jj] = max_h
     else
         ### New position is not overlapping with the two existing positions ###
-        # This should not happen and indicates a problem in the workflow
-        throw(ErrorException(
-            "Try to update body, but given position does not overlap with two existing ones"
-        ))
+        # This may be due to an edge case, in that case we try to fix the issue
+        # Calculating distance to the two bucket layers
+        dist_1b = abs(out.body[1][ii, jj] - max_h)
+        dist_1t = abs(min_h - out.body[2][ii, jj])
+        dist_3b = abs(out.body[3][ii, jj] - max_h)
+        dist_3t = abs(min_h - out.body[4][ii, jj])
+
+        # Checking what bucket layer is closer
+        if (min(dist_1b, dist_1t) < min(dist_3b, dist_3t))
+            # Merging with first bucket layer
+            if (dist_1b < dist_1t)
+                # Merging down
+                out.body[1][ii, jj] = min_h
+            else
+                # Merging up
+                out.body[2][ii, jj] = max_h
+            end
+        else
+            # Merging with second bucket layer
+            if (dist_3b < dist_3t)
+                # Merging down
+                out.body[3][ii, jj] = min_h
+            else
+                # Merging up
+                out.body[4][ii, jj] = max_h
+            end
+        end
     end
 end
