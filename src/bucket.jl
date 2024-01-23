@@ -65,26 +65,13 @@ function _calc_bucket_pos!(
     tol::T=1e-8
 ) where {B<:Bool,I<:Int64,T<:Float64}
 
-    # Calculating position of the bucker vertices
-    j_pos = Vector{T}(vect(ori \ bucket.j_pos_init * ori))
-    b_pos = Vector{T}(vect(ori \ bucket.b_pos_init * ori))
-    t_pos = Vector{T}(vect(ori \ bucket.t_pos_init * ori))
+    # Reinitializing bucket position
+    _init_sparse_array!(out.body, grid)
 
-    # Adding position of the bucket origin
-    j_pos += pos
-    b_pos += pos
-    t_pos += pos
-
-    # Unit vector normal to the side of the bucket
-    normal_side = calc_normal(j_pos, b_pos, t_pos)
-
-    # Position of each vertex of the bucket
-    j_r_pos = j_pos + 0.5 * bucket.width * normal_side
-    j_l_pos = j_pos - 0.5 * bucket.width * normal_side
-    b_r_pos = b_pos + 0.5 * bucket.width * normal_side
-    b_l_pos = b_pos - 0.5 * bucket.width * normal_side
-    t_r_pos = t_pos + 0.5 * bucket.width * normal_side
-    t_l_pos = t_pos - 0.5 * bucket.width * normal_side
+    # Calculating position of the bucket corners
+    j_r_pos, j_l_pos, b_r_pos, b_l_pos, t_r_pos, t_l_pos = _calc_bucket_corner_pos(
+        pos, ori, bucket
+    )
 
     # Adding a small increment to all vertices
     # This is to account for the edge case where one of the vertex is at cell border
@@ -151,9 +138,6 @@ function _calc_bucket_pos!(
     sort!(back_pos)
     sort!(right_side_pos)
     sort!(left_side_pos)
-
-    # Reinitializing bucket position
-    _init_sparse_array!(out.body, grid)
 
     # Updating the bucket position
     _update_body!(base_pos, out, grid, tol)
@@ -741,29 +725,83 @@ function _calc_line_pos(
     grid::GridParam{I,T}
 ) where {I<:Int64,T<:Float64}
 
-    # Line vector
-    ab = b - a
+    # Converting to indices
+    x1 = a[1] / grid.cell_size_xy + grid.half_length_x + 1.0
+    y1 = a[2] / grid.cell_size_xy + grid.half_length_y + 1.0
+    z1 = a[3] / grid.cell_size_z + grid.half_length_z
+    x2 = b[1] / grid.cell_size_xy + grid.half_length_x + 1.0
+    y2 = b[2] / grid.cell_size_xy + grid.half_length_y + 1.0
+    z2 = b[3] / grid.cell_size_z + grid.half_length_z
 
-    # Creating the unit vector
-    nn = max(2, round(Int64, norm(ab) / delta) + 1)
-    unit_vec = LinRange(0.0, 1.0, nn)
+    # Determining direction of line
+    step_x = (x1 < x2) ? 1 : -1
+    step_y = (y1 < y2) ? 1 : -1
+    step_z = (z1 < z2) ? 1 : -1
 
-    # Allocating memory
-    line_pos = [Vector{Int64}(undef,3) for _ in 1:nn]
+    # Spatial difference between a and b
+    dx = x2 - x1
+    dy = y2 - y1
+    dz = z2 - z1
 
-    # Setting constants used for the vectorial decomposition
-    c_x = a[1] / grid.cell_size_xy + grid.half_length_x + 1
-    c_y = a[2] / grid.cell_size_xy + grid.half_length_y + 1
-    c_z = a[3] / grid.cell_size_z + grid.half_length_z + 1
-    d_x = ab[1] / grid.cell_size_xy
-    d_y = ab[2] / grid.cell_size_xy
-    d_z = ab[3] / grid.cell_size_z
+    # Avoiding issue when line is 2D
+    if (dx == 0.0)
+        dx = 1e-10
+    if (dy == 0.0)
+        dy = 1e-10
+    if (dz == 0.0)
+        dz = 1e-10
 
-    # Determining the cells where the line is located
-    for ii in 1:nn
-        line_pos[ii][1] = round(Int64, c_x + d_x * unit_vec[ii])
-        line_pos[ii][2] = round(Int64, c_y + d_y * unit_vec[ii])
-        line_pos[ii][3] = ceil(Int64, c_z + d_z * unit_vec[ii])
+    # Determining the offset to first cell boundary
+    if (step_x == 1)
+        t_max_x = round(Float64, x1) + 0.5 - x1
+    else
+        t_max_x = x1 - round(Float64, x1) + 0.5
+    if (step_y == 1)
+        t_max_y = round(Float64, y1) + 0.5 - y1
+    else
+        t_max_y = y1 - round(Float64, y1) + 0.5
+    if (step_z == 1)
+        t_max_z = ceil(Float64, z1) - z1
+    else
+        t_max_z = z1 - floor(Float64, z1)
+
+    # Determining how long on the line to cross the cell
+    t_delta_x = sqrt(1.0 + (dy * dy + dz * dz) / (dx * dx))
+    t_delta_y = sqrt(1.0 + (dx * dx + dz * dz) / (dy * dy))
+    t_delta_z = sqrt(1.0 + (dx * dx + dy * dy) / (dz * dz))
+
+    # Determining the distance along the line until the first cell boundary
+    t_max_x *= t_delta_x
+    t_max_y *= t_delta_y
+    t_max_z *= t_delta_z
+
+    # Calculating norm of the vector AB
+    ab_norm = sqrt(dx * dx + dy * dy + dz * dz)
+
+    # Creating line_pos and adding the starting point
+    line_pos = Vector{Vector{I}}()
+    push!(line_pos, [round(Int64, x1), round(Int64, y1), ceil(Int64, z1)])
+
+    # Iterating along the line until reaching the end
+    while ((t_max_x < ab_norm) || (t_max_y < ab_norm) || (t_max_z < ab_norm))
+        if (t_max_x < t_max_y)
+            if (t_max_x < t_max_z)
+                x1 = x1 + step_x
+                t_max_x += t_delta_x
+            else
+                z1 = z1 + step_z
+                t_max_z += t_delta_z
+            end
+        else
+            if (t_max_y < t_max_z)
+                y1 = y1 + step_y
+                t_max_y += t_delta_y
+            else
+                z1 = z1 + step_z
+                t_max_z += t_delta_z
+            end
+        end
+        push!(line_pos, [round(Int64, x1), round(Int64, y1), ceil(Int64, z1)])
     end
 
     return line_pos
@@ -943,28 +981,28 @@ function _include_new_body_pos!(
         ### New position is not overlapping with the two existing positions ###
         # This may be due to an edge case, in that case we try to fix the issue
         # Calculating distance to the two bucket layers
-        dist_0b = abs(out.body[1][ii, jj] - max_h)
-        dist_0t = abs(min_h - out.body[2][ii, jj])
-        dist_2b = abs(out.body[3][ii, jj] - max_h)
-        dist_2t = abs(min_h - out.body[4][ii, jj])
+        dist_1b = abs(out.body[1][ii, jj] - max_h)
+        dist_1t = abs(min_h - out.body[2][ii, jj])
+        dist_3b = abs(out.body[3][ii, jj] - max_h)
+        dist_3t = abs(min_h - out.body[4][ii, jj])
 
         # Checking what bucket layer is closer
-        if (min(dist_0b, dist_0t) < min(dist_2b, dist_2t))
-            ### Merging with first bucket layer ###
-            if (dist_0b < dist_0t)
-                ### Merging down ###
+        if (min(dist_1b, dist_1t) < min(dist_3b, dist_3t))
+            # Merging with first bucket layer
+            if (dist_1b < dist_1t)
+                # Merging down
                 out.body[1][ii, jj] = min_h
             else
-                ### Merging up ###
+                # Merging up
                 out.body[2][ii, jj] = max_h
             end
         else
-            ### Merging with second bucket layer ###
-            if (dist_2b < dist_2t)
-                ### Merging down ###
+            # Merging with second bucket layer
+            if (dist_3b < dist_3t)
+                # Merging down
                 out.body[3][ii, jj] = min_h
             else
-                ### Merging up ###
+                # Merging up
                 out.body[4][ii, jj] = max_h
             end
         end
