@@ -299,8 +299,7 @@ could be supporting the soil column.
 - `tol::Float64`: Small number used to handle numerical approximation errors.
 
 # Outputs
-- `unstable_cells::Vector{Vector{Int64}}`: Collection of cells indices that are possibly
-                                           unstable.
+- `Vector{Vector{Int64}}`: Collection of cells indices that are possibly unstable.
 
 # Example
 
@@ -380,8 +379,8 @@ should avalanche in different scenarios.
 - `tol::Float64`: Small number used to handle numerical approximation errors.
 
 # Outputs
-- `status::Int64`: Two-digit number indicating how the soil should avalanche.
-                   `0` is returned if the soil column is stable.
+- `Int64`: Two-digit number indicating how the soil should avalanche.
+           `0` is returned if the soil column is stable.
 
 # Example
 
@@ -564,8 +563,8 @@ should avalanche in different scenarios.
 - `tol::Float64`: Small number used to handle numerical approximation errors.
 
 # Outputs
-- `status::Int64`: Two-digit number indicating how the soil should avalanche.
-                   `0` is returned if the soil column is stable.
+- `Int64`: Two-digit number indicating how the soil should avalanche.
+           `0` is returned if the soil column is stable.
 
 # Example
 
