@@ -79,14 +79,14 @@ function soil_evolution(
     grid_size_y = 4.0
     grid_size_z = 4.0
     cell_size_xy = 0.05
-    cell_size_z = 0.05
+    cell_size_z = 0.01
 
     # GridParam struct
     grid = GridParam(grid_size_x, grid_size_y, grid_size_z, cell_size_xy, cell_size_z)
 
     # Initializing the simulation properties
     repose_angle = 0.85
-    max_iterations = 10
+    max_iterations = 3
     cell_buffer = 4
 
     # SimParam struct
@@ -109,10 +109,10 @@ function soil_evolution(
         z_min = -0.25 + 0.5 * rand() # Between [-0.25, 0.25]
 
         # Creating the trajectory
-        pos, ori = _calc_trajectory(x_i, z_i, x_min, z_min, origin_angle, 100)
+        pos, ori = _calc_trajectory(x_i, z_i, x_min, z_min, origin_angle, 10000)
     else
         ### Default parabolic trajectory ###
-        pos, ori = _calc_trajectory(-2.0, 1.5, 0.1, 0.25, origin_angle, 100)
+        pos, ori = _calc_trajectory(-2.0, 1.5, 0.1, 0.25, origin_angle, 10000)
     end
 
     # Initializing bucket corner position vectors
@@ -202,13 +202,13 @@ function soil_evolution(
        ))
 
        # Calculating the maximum velocity of the bucket
-       max_bucket_vel = maximum([
+       max_bucket_vel = 1.25 * maximum([
            j_l_vel, j_r_vel, b_l_vel, b_r_vel, t_l_vel, t_r_vel
        ])
 
        if (max_bucket_vel != 0.0)
            ### Bucket is moving ###
-           dt_i = grid.cell_size_xy / max_bucket_vel
+           dt_i = min(grid.cell_size_xy, grid.cell_size_z) / max_bucket_vel
        else
            ### No bucket movement ###
            dt_i = dt
