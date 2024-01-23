@@ -352,6 +352,43 @@ struct SimParam{I<:Int64,T<:Float64}
 end
 
 """
+    BodySoil{I<:Int64,T<:Float64}
+
+Store information related to the position of the body soil.
+
+# Note
+This struct is used in the `body_soil_pos` field of the `SimOut` struct.
+
+# Fields
+- `ind::Int64`: Index of the bucket soil layer.
+- `ii::Int64`: Index of the bucket soil position in the X direction.
+- `jj::Int64`: Index of the bucket soil position in the Y direction.
+- `x_b::Float64`: Cartesian coordinate in the X direction of the bucket soil in the
+                  reference bucket frame. [m]
+- `y_b::Float64`: Cartesian coordinate in the Y direction of the bucket soil in the
+                  reference bucket frame. [m]
+- `z_b::Float64`: Cartesian coordinate in the Z direction of the bucket soil in the
+                  reference bucket frame. [m]
+- `h_soil::Float64`: Vertical extent of the soil column. [m]
+
+# Example
+
+    body_soil_pos = BodySoil(1, 10, 15, 0.1, 0.0, 0.2, 0.5)
+
+This would indicate that 0.5m of soil is present on the first body layer at (10, 15),
+which corresponds to the coordinates (0.1, 0.0, 0.2) in the reference bucket frame.
+"""
+struct BodySoil{I<:Int64,T<:Float64}
+    ind::I
+    ii::I
+    jj::I
+    x_b::T
+    y_b::T
+    z_b::T
+    h_soil::T
+end
+
+"""
     SimOut{B<:Bool,I<:Int64,T<:Float64}
 
 Store all outputs of the simulation.
@@ -433,7 +470,7 @@ struct SimOut{B<:Bool,I<:Int64,T<:Float64}
     terrain::Matrix{T}
     body::Vector{SparseMatrixCSC{T,I}}
     body_soil::Vector{SparseMatrixCSC{T,I}}
-    body_soil_pos::Vector{Vector{I}}
+    body_soil_pos::Vector{BodySoil{I,T}}
     bucket_area::Matrix{Int64}
     relax_area::Matrix{Int64}
     impact_area::Matrix{Int64}
@@ -468,12 +505,12 @@ struct SimOut{B<:Bool,I<:Int64,T<:Float64}
         end
 
         # Initalizing body_soil_pos
-        body_soil_pos = Vector{Vector{I}}()
+        body_soil_pos = Vector{BodySoil{I,T}}()
 
         # Initalizing active areas
-        bucket_area = zeros(Int64, 2, 2)
-        relax_area = zeros(Int64, 2, 2)
-        impact_area = zeros(Int64, 2, 2)
+        bucket_area = [[1 2*grid.half_length_x] [1 2*grid.half_length_y]]
+        relax_area = [[1 2*grid.half_length_x] [1 2*grid.half_length_y]]
+        impact_area = [[1 2*grid.half_length_x] [1 2*grid.half_length_y]]
 
         new{Bool,I,T}(
             [false], terrain, body, body_soil, body_soil_pos, bucket_area, relax_area,
