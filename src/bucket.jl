@@ -9,7 +9,7 @@ Copyright, 2023,  Vilella Kenny.
 """
     _calc_bucket_pos!(
         out::SimOut{B,I,T}, pos::Vector{T}, ori::Quaternion{T}, grid::GridParam{I,T},
-        bucket::BucketParam{I,T}, sim::SimParam{I,T}, step_bucket_grid::T=0.5, tol::T=1e-8
+        bucket::BucketParam{I,T}, sim::SimParam{I,T}, tol::T=1e-8
     ) where {B<:Bool,I<:Int64,T<:Float64}
 
 This function determines all the cells where the bucket is located.
@@ -32,7 +32,6 @@ origin. The orientation is provided using the quaternion definition.
                                   bucket object.
 - `sim::SimParam{Int64,Float64}`: Struct that stores information related to the
                                   simulation.
-- `step_bucket_grid::Float64`: Spatial increment used to decompose the edges of the bucket.
 - `tol::Float64`: Small number used to handle numerical approximation errors.
 
 # Outputs
@@ -61,7 +60,6 @@ function _calc_bucket_pos!(
     grid::GridParam{I,T},
     bucket::BucketParam{T},
     sim::SimParam{I,T},
-    step_bucket_grid::T=0.5,
     tol::T=1e-8
 ) where {B<:Bool,I<:Int64,T<:Float64}
 
@@ -120,18 +118,10 @@ function _calc_bucket_pos!(
     )
 
     # Determining where each surface of the bucket is located
-    base_pos = _calc_rectangle_pos(
-        b_r_pos, b_l_pos, t_l_pos, t_r_pos, step_bucket_grid * grid.cell_size_z, grid, tol
-    )
-    back_pos = _calc_rectangle_pos(
-        b_r_pos, b_l_pos, j_l_pos, j_r_pos, step_bucket_grid * grid.cell_size_z, grid, tol
-    )
-    right_side_pos = _calc_triangle_pos(
-        j_r_pos, b_r_pos, t_r_pos, step_bucket_grid * grid.cell_size_z, grid, tol
-    )
-    left_side_pos = _calc_triangle_pos(
-        j_l_pos, b_l_pos, t_l_pos, step_bucket_grid * grid.cell_size_z, grid, tol
-    )
+    base_pos = _calc_rectangle_pos(b_r_pos, b_l_pos, t_l_pos, t_r_pos, grid, tol)
+    back_pos = _calc_rectangle_pos(b_r_pos, b_l_pos, j_l_pos, j_r_pos, grid, tol)
+    right_side_pos = _calc_triangle_pos(j_r_pos, b_r_pos, t_r_pos, grid, tol)
+    left_side_pos = _calc_triangle_pos(j_l_pos, b_l_pos, t_l_pos, grid, tol)
 
     # Sorting all list of cells indices where the bucket is located
     sort!(base_pos)
@@ -149,7 +139,7 @@ end
 """
     _calc_rectangle_pos(
         a::Vector{T}, b::Vector{T}, c::Vector{T}, d::Vector{T},
-        delta::T, grid::GridParam{I,T}, tol::T=1e-8
+        grid::GridParam{I,T}, tol::T=1e-8
     ) where {I<:Int64,T<:Float64}
 
 This function determines the cells where a rectangle surface is located. The rectangle is
@@ -184,7 +174,6 @@ that lie on the four edges of the rectangle.
 - `b::Vector{Float64}`: Cartesian coordinates of one vertex of the rectangle. [m]
 - `c::Vector{Float64}`: Cartesian coordinates of one vertex of the rectangle. [m]
 - `d::Vector{Float64}`: Cartesian coordinates of one vertex of the rectangle. [m]
-- `delta::Float64`: Spatial increment used to decompose the edges of the rectangle. [m]
 - `grid::GridParam{Int64,Float64}`: Struct that stores information related to the
                                     simulation grid.
 - `tol::Float64`: Small number used to handle numerical approximation errors.
@@ -201,14 +190,13 @@ that lie on the four edges of the rectangle.
     c = [0.0, 1.0, 0.9]
     d = [1.0, 0.0, 0.9]
 
-    rect_pos = _calc_rectangle_pos(a, b, c, d, 0.01, grid)
+    rect_pos = _calc_rectangle_pos(a, b, c, d, grid)
 """
 function _calc_rectangle_pos(
     a::Vector{T},
     b::Vector{T},
     c::Vector{T},
     d::Vector{T},
-    delta::T,
     grid::GridParam{I,T},
     tol::T=1e-8
 ) where {I<:Int64,T<:Float64}
@@ -283,10 +271,10 @@ function _calc_rectangle_pos(
     end
 
     # Determining the cells where the four edges of the rectangle are located
-    ab_pos = _calc_line_pos(a, b, delta, grid)
-    bc_pos = _calc_line_pos(b, c, delta, grid)
-    cd_pos = _calc_line_pos(c, d, delta, grid)
-    da_pos = _calc_line_pos(d, a, delta, grid)
+    ab_pos = _calc_line_pos(a, b, grid)
+    bc_pos = _calc_line_pos(b, c, grid)
+    cd_pos = _calc_line_pos(c, d, grid)
+    da_pos = _calc_line_pos(d, a, grid)
 
     return [rect_pos; ab_pos; bc_pos; cd_pos; da_pos]
 end
@@ -412,7 +400,7 @@ end
 """
     _calc_triangle_pos(
         a::Vector{T}, b::Vector{T}, c::Vector{T},
-        delta::T, grid::GridParam{I,T}, tol::T=1e-8
+        grid::GridParam{I,T}, tol::T=1e-8
     ) where {I<:Int64,T<:Float64}
 
 This function determines the cells where a triangle surface is located. The triangle is
@@ -446,7 +434,6 @@ that lie on the three edges of the triangle.
 - `a::Vector{Float64}`: Cartesian coordinates of one vertex of the triangle. [m]
 - `b::Vector{Float64}`: Cartesian coordinates of one vertex of the triangle. [m]
 - `c::Vector{Float64}`: Cartesian coordinates of one vertex of the triangle. [m]
-- `delta::Float64`: Spatial increment used to decompose the edges of the triangle. [m]
 - `grid::GridParam{Int64,Float64}`: Struct that stores information related to the
                                     simulation grid.
 - `tol::Float64`: Small number used to handle numerical approximation errors.
@@ -462,13 +449,12 @@ that lie on the three edges of the triangle.
     b = [0.0, 1.0, 0.7]
     c = [0.0, 1.0, 0.9]
 
-    tri_pos = _calc_triangle_pos(a, b, c, 0.01, grid)
+    tri_pos = _calc_triangle_pos(a, b, c, grid)
 """
 function _calc_triangle_pos(
     a::Vector{T},
     b::Vector{T},
     c::Vector{T},
-    delta::T,
     grid::GridParam{I,T},
     tol::T=1e-8
 ) where {I<:Int64,T<:Float64}
@@ -542,9 +528,9 @@ function _calc_triangle_pos(
     end
 
     # Determining the cells where the three edges of the triangle are located
-    ab_pos = _calc_line_pos(a, b, delta, grid)
-    bc_pos = _calc_line_pos(b, c, delta, grid)
-    ca_pos = _calc_line_pos(c, a, delta, grid)
+    ab_pos = _calc_line_pos(a, b, grid)
+    bc_pos = _calc_line_pos(b, c, grid)
+    ca_pos = _calc_line_pos(c, a, grid)
 
     return [tri_pos; ab_pos; bc_pos; ca_pos]
 end
