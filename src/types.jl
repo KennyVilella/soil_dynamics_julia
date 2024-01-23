@@ -508,9 +508,9 @@ struct SimOut{B<:Bool,I<:Int64,T<:Float64}
         body_soil_pos = Vector{BodySoil{I,T}}()
 
         # Initalizing active areas
-        bucket_area = [[1 2*grid.half_length_x] [1 2*grid.half_length_y]]
-        relax_area = [[1 2*grid.half_length_x] [1 2*grid.half_length_y]]
-        impact_area = [[1 2*grid.half_length_x] [1 2*grid.half_length_y]]
+        bucket_area = Int64[[2, 2] [2 * grid.half_length_x, 2 * grid.half_length_y]]
+        relax_area = Int64[[2, 2] [2 * grid.half_length_x, 2 * grid.half_length_y]]
+        impact_area = Int64[[2, 2] [2 * grid.half_length_x, 2 * grid.half_length_y]]
 
         new{Bool,I,T}(
             [false], terrain, body, body_soil, body_soil_pos, bucket_area, relax_area,

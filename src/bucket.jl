@@ -732,24 +732,30 @@ function _calc_line_pos(
     # Avoiding issue when line is 2D
     if (dx == 0.0)
         dx = 1e-10
+    end
     if (dy == 0.0)
         dy = 1e-10
+    end
     if (dz == 0.0)
         dz = 1e-10
+    end
 
     # Determining the offset to first cell boundary
     if (step_x == 1)
         t_max_x = round(Float64, x1) + 0.5 - x1
     else
         t_max_x = x1 - round(Float64, x1) + 0.5
+    end
     if (step_y == 1)
         t_max_y = round(Float64, y1) + 0.5 - y1
     else
         t_max_y = y1 - round(Float64, y1) + 0.5
+    end
     if (step_z == 1)
         t_max_z = ceil(Float64, z1) - z1
     else
         t_max_z = z1 - floor(Float64, z1)
+    end
 
     # Determining how long on the line to cross the cell
     t_delta_x = sqrt(1.0 + (dy * dy + dz * dz) / (dx * dx))

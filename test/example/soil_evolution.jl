@@ -168,9 +168,6 @@ function soil_evolution(
     dt_i = dt
     time = dt
 
-    # Initializing relax_area as the full grid
-    out.relax_area[:, :] .= Int64[[2, 2] [2 * grid.half_length_x, 2 * grid.half_length_y]]
-
     # Creating time evolution
     while (time + dt_i < total_time)
        # Adding time to time vector
