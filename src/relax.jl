@@ -8,7 +8,8 @@ Copyright, 2023,  Vilella Kenny.
 #==========================================================================================#
 """
     _relax_terrain!(
-        out::SimOut{B,I,T}, grid::GridParam{I,T}, sim::SimParam{I,T}, tol::T=1e-8
+        out::SimOut{B,I,T}, grid::GridParam{I,T}, bucket::BucketParam{I,T},
+        sim::SimParam{I,T}, tol::T=1e-8
     ) where {B<:Bool,I<:Int64,T<:Float64}
 
 This function moves the soil in `terrain` towards a state closer to equilibrium.
@@ -44,6 +45,8 @@ avalanche on the bucket.
 - `out::SimOut{Bool,Int64,Float64}`: Struct that stores simulation outputs.
 - `grid::GridParam{Int64,Float64}`: Struct that stores information related to the
                                     simulation grid.
+- `bucket::BucketParam{Float64}`: Struct that stores information related to the
+                                  bucket object.
 - `sim::SimParam{Int64,Float64}`: Struct that stores information related to the
                                   simulation.
 - `tol::Float64`: Small number used to handle numerical approximation errors.
@@ -53,11 +56,16 @@ avalanche on the bucket.
 
 # Example
     grid = GridParam(4.0, 4.0, 3.0, 0.05, 0.01)
+    o = [0.0, 0.0, 0.0]
+    j = [0.0, 0.0, 0.0]
+    b = [0.0, 0.0, -0.5]
+    t = [1.0, 0.0, -0.5]
+    bucket = BucketParam(o, j, b, t, 0.5)
     sim = SimParam(0.85, 3, 4)
     terrain = zeros(2 * grid.half_length_x + 1, 2 * grid.half_length_y + 1)
     out = SimOut(terrain, grid)
 
-    _relax_terrain!(out, grid, sim)
+    _relax_terrain!(out, grid, bucket, sim)
 """
 function _relax_terrain!(
     out::SimOut{B,I,T},
@@ -145,7 +153,8 @@ end
 
 """
     _relax_body_soil!(
-        out::SimOut{B,I,T}, grid::GridParam{I,T}, sim::SimParam{I,T}, tol::T=1e-8
+        out::SimOut{B,I,T}, grid::GridParam{I,T}, bucket::BucketParam{I,T},
+        sim::SimParam{I,T}, tol::T=1e-8
     ) where {B<:Bool,I<:Int64,T<:Float64}
 
 This function moves the soil in `body_soil` towards a state closer to equilibrium.
@@ -174,6 +183,8 @@ This function only moves the soil when the following conditions are met:
 - `out::SimOut{Bool,Int64,Float64}`: Struct that stores simulation outputs.
 - `grid::GridParam{Int64,Float64}`: Struct that stores information related to the
                                     simulation grid.
+- `bucket::BucketParam{Float64}`: Struct that stores information related to the
+                                  bucket object.
 - `sim::SimParam{Int64,Float64}`: Struct that stores information related to the
                                   simulation.
 - `tol::Float64`: Small number used to handle numerical approximation errors.
@@ -183,11 +194,16 @@ This function only moves the soil when the following conditions are met:
 
 # Example
     grid = GridParam(4.0, 4.0, 3.0, 0.05, 0.01)
+    o = [0.0, 0.0, 0.0]
+    j = [0.0, 0.0, 0.0]
+    b = [0.0, 0.0, -0.5]
+    t = [1.0, 0.0, -0.5]
+    bucket = BucketParam(o, j, b, t, 0.5)
     sim = SimParam(0.85, 3, 4)
     terrain = zeros(2 * grid.half_length_x + 1, 2 * grid.half_length_y + 1)
     out = SimOut(terrain, grid)
 
-    _relax_body_soil!(out, grid, sim)
+    _relax_body_soil!(out, grid, bucket, sim)
 """
 function _relax_body_soil!(
     out::SimOut{B,I,T},
@@ -698,7 +714,7 @@ end
 """
     _relax_unstable_terrain_cell!(
         out::SimOut{B,I,T}, status::I, dh_max::T, ii::I, jj::I, ii_c::I, jj_c::I,
-        grid::GridParam{I,T}, tol::T=1e-8
+        grid::GridParam{I,T}, bucket::BucketParam{I,T}, tol::T=1e-8
     ) where {B<:Bool,I<:Int64,T<:Float64}
 
 This function moves the soil from the `terrain` at (`ii`, `jj`) to the soil column in
@@ -723,6 +739,8 @@ below the bucket to fill the space under it.
 - `jj_c::Int64`: Index of the neighboring cell in the Y direction.
 - `grid::GridParam{Int64,Float64}`: Struct that stores information related to the
                                     simulation grid.
+- `bucket::BucketParam{Float64}`: Struct that stores information related to the
+                                  bucket object.
 - `tol::Float64`: Small number used to handle numerical approximation errors.
 
 # Outputs
@@ -731,10 +749,15 @@ below the bucket to fill the space under it.
 # Example
 
     grid = GridParam(4.0, 4.0, 3.0, 0.05, 0.01)
+    o = [0.0, 0.0, 0.0]
+    j = [0.0, 0.0, 0.0]
+    b = [0.0, 0.0, -0.5]
+    t = [1.0, 0.0, -0.5]
+    bucket = BucketParam(o, j, b, t, 0.5)
     terrain = zeros(2 * grid.half_length_x + 1, 2 * grid.half_length_y + 1)
     out = SimOut(terrain, grid)
 
-    _relax_unstable_terrain_cell!(out, 131, 0.1, 10, 15, 10, 14, grid)
+    _relax_unstable_terrain_cell!(out, 131, 0.1, 10, 15, 10, 14, grid, bucket)
 """
 function _relax_unstable_terrain_cell!(
     out::SimOut{B,I,T},
@@ -916,7 +939,8 @@ end
 """
     _relax_unstable_body_cell!(
         out::SimOut{B,I,T}, status::I, new_body_soil_pos::Vector{Vector{I}}, dh_max::T,
-        ii::I, jj::I, ind::I, ii_c::I, jj_c::I, grid::GridParam{I,T}, tol::T=1e-8
+        ii::I, jj::I, ind::I, ii_c::I, jj_c::I, grid::GridParam{I,T},
+        bucket::BucketParam{I,T}, tol::T=1e-8
     ) where {B<:Bool,I<:Int64,T<:Float64}
 
 This function moves the soil from the soil layer `ind` of `body_soil` at (`ii`, `jj`) to
@@ -942,6 +966,8 @@ the `repose_angle`, provided that the bucket is not preventing this configuratio
 - `jj_c::Int64`: Index of the neighboring cell in the Y direction.
 - `grid::GridParam{Int64,Float64}`: Struct that stores information related to the
                                     simulation grid.
+- `bucket::BucketParam{Float64}`: Struct that stores information related to the
+                                  bucket object.
 - `tol::Float64`: Small number used to handle numerical approximation errors.
 
 # Outputs
@@ -951,10 +977,15 @@ the `repose_angle`, provided that the bucket is not preventing this configuratio
 
     new_body_soil_pos = Vector{Vector{Int64}}()
     grid = GridParam(4.0, 4.0, 3.0, 0.05, 0.01)
+    o = [0.0, 0.0, 0.0]
+    j = [0.0, 0.0, 0.0]
+    b = [0.0, 0.0, -0.5]
+    t = [1.0, 0.0, -0.5]
+    bucket = BucketParam(o, j, b, t, 0.5)
     terrain = zeros(2 * grid.half_length_x + 1, 2 * grid.half_length_y + 1)
     out = SimOut(terrain, grid)
 
-    _relax_unstable_body_cell!(out, 40, new_body_soil_pos, 0.1, 10, 15, 1, 10, 14, grid)
+    _relax_unstable_body_cell!(out, 40, new_body_soil_pos, 0.1, 5, 7, 1, 5, 6, grid, bucket)
 """
 function _relax_unstable_body_cell!(
     out::SimOut{B,I,T},
