@@ -8,7 +8,7 @@ Copyright, 2023,  Vilella Kenny.
 #==========================================================================================#
 """
     _calc_bucket_corner_pos(
-        pos::Vector{T}, ori::Vector{T}, bucket::BucketParam{T}
+        pos::Vector{T}, ori::Quaternion{T}, bucket::BucketParam{T}
     ) where {T<:Float64}
 
 This function calculates the global position of the six corners of the bucket.
@@ -18,7 +18,7 @@ This function calculates the global position of the six corners of the bucket.
 
 # Inputs
 - `pos::Vector{Float64}`: Cartesian coordinates of the bucket origin. [m]
-- `ori::Vector{Float64}`: Orientation of the bucket. [Quaternion]
+- `ori::Quaternion{Float64}`: Orientation of the bucket. [Quaternion]
 - `bucket::BucketParam{Float64}`: Struct that stores information related to the
                                   bucket object.
 
@@ -46,7 +46,7 @@ This function calculates the global position of the six corners of the bucket.
 """
 function _calc_bucket_corner_pos(
     pos::Vector{T},
-    ori::Vector{T},
+    ori::Quaternion{T},
     bucket::BucketParam{T}
 ) where {T<:Float64}
     # Calculating position of the bucket vertices
@@ -75,7 +75,7 @@ end
 
 """
     check_bucket_movement(
-        pos::Vector{T}, ori::Vector{T}, grid::GridParam{I,T}, bucket::BucketParam{T}
+        pos::Vector{T}, ori::Quaternion{T}, grid::GridParam{I,T}, bucket::BucketParam{T}
     ) where {I<:Int64,T<:Float64}
 
 This function calculates the maximum distance travelled by any part of the bucket since the
@@ -90,7 +90,7 @@ last soil update. The position of the bucket during the last soil update is stor
 
 # Inputs
 - `pos::Vector{Float64}`: Cartesian coordinates of the bucket origin. [m]
-- `ori::Vector{Float64}`: Orientation of the bucket. [Quaternion]
+- `ori::Quaternion{Float64}`: Orientation of the bucket. [Quaternion]
 - `grid::GridParam{Int64,Float64}`: Struct that stores information related to the
                                     simulation grid.
 - `bucket::BucketParam{Float64}`: Struct that stores information related to the
@@ -114,7 +114,7 @@ last soil update. The position of the bucket during the last soil update is stor
 """
 function check_bucket_movement(
     pos::Vector{T},
-    ori::Vector{T},
+    ori::Quaternion{T},
     grid::GridParam{I,T},
     bucket::BucketParam{T}
 ) where {I<:Int64,T<:Float64}
@@ -165,9 +165,10 @@ function check_bucket_movement(
     if (max_dist < 0.5 * min_cell_size)
         # Bucket has only slightly moved since last update
         return false
-    else if (max_dist > 2 * min_cell_size)
+    elseif (max_dist > 2 * min_cell_size)
         @warn  "Movement made by the bucket is larger than two cell size.\n"
                "The validity of the soil update is not ensured."
+    end
 
     return true
 end

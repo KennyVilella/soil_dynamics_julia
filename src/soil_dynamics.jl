@@ -36,7 +36,7 @@ to reach a state closer to equilibrium.
 - `tol::Float64`: Small number used to handle numerical approximation errors.
 
 # Outputs
-- None
+- `Bool`: A flag indicating whether the soil has been updated.
 
 # Example
 
@@ -68,14 +68,22 @@ function soil_dynamics!(
         throw(DimensionMismatch("position should be a vector of size 3"))
     end
 
+    # Checking movement made by the bucket
+    soil_update = check_bucket_movement(pos, ori, grid, bucket)
+
+    if (!soil_update)
+        # Bucket has not moved enough
+        return false
+    end
+
     # Updating bucket position
-    _calc_bucket_pos!(out, pos, ori, grid, bucket, sim, 0.5, tol)
+    _calc_bucket_pos!(out, pos, ori, grid, bucket, sim, tol)
 
     # Updating position of soil resting on the bucket
     _update_body_soil!(out, pos, ori, grid, bucket, tol)
 
     # Moving intersecting soil cells
-    _move_intersecting_cells!(out, tol)
+    _move_intersecting_cells!(out, grid, bucket, tol)
 
     # Assuming that the terrain is not at equilibrium
     out.equilibrium[1] = false
@@ -92,9 +100,14 @@ function soil_dynamics!(
         out.impact_area[2, 2] = max(out.bucket_area[2, 2], out.relax_area[2, 2])
 
         # Relaxing the terrain
-        _relax_terrain!(out, grid, sim, tol)
+        _relax_terrain!(out, grid, bucket, sim, tol)
+
+        # Randomizing body_soil_pos to reduce asymmetry
+        shuffle!(out.body_soil_pos)
 
         # Relaxing the soil resting on the bucket
-        _relax_body_soil!(out, grid, sim, tol)
+        _relax_body_soil!(out, grid, bucket, sim, tol)
     end
+
+    return true
 end
