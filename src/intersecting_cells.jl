@@ -124,9 +124,9 @@ function _move_intersecting_body_soil!(
 
     # Iterating over bucket soil cells
     for nn in 1:length(out.body_soil_pos)
-        ind = out.body_soil_pos[nn][1]
-        ii = out.body_soil_pos[nn][2]
-        jj = out.body_soil_pos[nn][3]
+        ind = out.body_soil_pos[nn].ind[1]
+        ii = out.body_soil_pos[nn].ii[1]
+        jj = out.body_soil_pos[nn].jj[1]
 
         if (ind == 1)
             ### First bucket soil layer ###
@@ -149,13 +149,13 @@ function _move_intersecting_body_soil!(
             h_soil = out.body_soil[ind+1][ii, jj] - out.body[ind_t][ii, jj]
 
             # Only the intersecting soil within this body_soil_pos is moved
-            if (h_soil > out.body_soil_pos[nn][7])
+            if (h_soil > out.body_soil_pos[nn].h_soil[1])
                 ### All the soil would be moved ###
-                h_soil = out.body_soil_pos[nn][7]
-                out.body_soil_pos[nn][7] .= 0.0
+                h_soil = out.body_soil_pos[nn].h_soil[1]
+                out.body_soil_pos[nn].h_soil[1] = 0.0
             else
                 ### Soil would be partially moved ###
-                out.body_soil_pos[nn][7] -= h_soil
+                out.body_soil_pos[nn].h_soil[1] -= h_soil
             end
         else
             ### No intersection between bucket soil and bucket ###
@@ -471,10 +471,10 @@ function _move_body_soil!(
 
         # Calculating pos of cell in bucket frame
         pos = _calc_bucket_frame_pos(
-            ii_n, jj_n, out->body[4][ii_n, jj_n], grid, bucket)
+            ii_n, jj_n, out.body[4][ii_n, jj_n], grid, bucket)
 
         # Adding new bucket soil position to body_soil_pos
-        push!(out.body_soil_pos, [3; ii_n; jj_n; pos[1]; pos[2]; pos[3]; h_soil])
+        push!(out.body_soil_pos, BodySoil(3, ii_n, jj_n, pos[1], pos[2], pos[3], h_soil))
         h_soil = 0.0
     elseif (bucket_absence_3)
         ### Only the first bucket layer ###
@@ -508,10 +508,10 @@ function _move_body_soil!(
 
         # Calculating pos of cell in bucket frame
         pos = _calc_bucket_frame_pos(
-            ii_n, jj_n, out->body[2][ii_n, jj_n], grid, bucket)
+            ii_n, jj_n, out.body[2][ii_n, jj_n], grid, bucket)
 
         # Adding new bucket soil position to body_soil_pos
-        push!(out.body_soil_pos, [1; ii_n; jj_n; pos[1]; pos[2]; pos[3]; h_soil])
+        push!(out.body_soil_pos, BodySoil(1, ii_n, jj_n, pos[1], pos[2], pos[3], h_soil))
         h_soil = 0.0
     else
         ### Both bucket layers are present ###
@@ -540,7 +540,7 @@ function _move_body_soil!(
 
         # Calculating pos of cell in bucket frame
         pos = _calc_bucket_frame_pos(
-            ii_n, jj_n, out->body[ind_b_n+1][ii_n, jj_n], grid, bucket)
+            ii_n, jj_n, out.body[ind_b_n+1][ii_n, jj_n], grid, bucket)
 
         # Only option left is that there is some space for the intersecting soil
         if (bucket_soil_presence)
@@ -557,7 +557,7 @@ function _move_body_soil!(
 
                 # Adding new bucket soil position to body_soil_pos
                 push!(out.body_soil_pos,
-                    [ind_b_n; ii_n; jj_n; pos[1]; pos[2]; pos[3]; delta_h]
+                    BodySoil(ind_b_n, ii_n, jj_n, pos[1], pos[2], pos[3], delta_h)
                 )
 
                 # Updating previous position
@@ -571,7 +571,7 @@ function _move_body_soil!(
 
                 # Adding new bucket soil position to body_soil_pos
                 push!(out.body_soil_pos,
-                    [ind_b_n; ii_n; jj_n; pos[1]; pos[2]; pos[3]; h_soil]
+                    BodySoil(ind_b_n, ii_n, jj_n, pos[1], pos[2], pos[3], h_soil)
                 )
                 h_soil = 0.0
             end
@@ -592,7 +592,7 @@ function _move_body_soil!(
 
                 # Adding new bucket soil position to body_soil_pos
                 push!(out.body_soil_pos,
-                    [ind_b_n; ii_n; jj_n; pos[1]; pos[2]; pos[3]; delta_h]
+                    BodySoil(ind_b_n, ii_n, jj_n, pos[1], pos[2], pos[3], delta_h)
                 )
 
                 # Updating previous position
@@ -609,7 +609,7 @@ function _move_body_soil!(
 
                 # Adding new bucket soil position to body_soil_pos
                 push!(out.body_soil_pos,
-                    [ind_b_n; ii_n; jj_n; pos[1]; pos[2]; pos[3]; h_soil]
+                    BodySoil(ind_b_n, ii_n, jj_n, pos[1], pos[2], pos[3], h_soil)
                 )
                 h_soil = 0.0
             end
