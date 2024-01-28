@@ -226,14 +226,14 @@ function _relax_body_soil!(
     directions = [[1, 0], [-1, 0], [0, 1], [0, -1]]
 
     # Initializing queue for new body_soil_pos
-    new_body_soil_pos = Vector{Vector{I}}()
+    new_body_soil_pos = Vector{BodySoil{I,T}}()
 
     # Iterating over all body_soil cells
     for nn in 1:length(out.body_soil_pos)
-        ind = out.body_soil_pos[nn][1]
-        ii = out.body_soil_pos[nn][2]
-        jj = out.body_soil_pos[nn][3]
-        h_soil = out.body_soil_pos[nn][7]
+        ind = out.body_soil_pos[nn].ind[1]
+        ii = out.body_soil_pos[nn].ii[1]
+        jj = out.body_soil_pos[nn].jj[1]
+        h_soil = out.body_soil_pos[nn].h_soil[1]
 
         # Checking if soil is present
         if (h_soil < tol)
@@ -832,10 +832,10 @@ function _relax_unstable_terrain_cell!(
 
         # Calculating pos of cell in bucket frame
         pos = _calc_bucket_frame_pos(
-            ii_c, jj_c, out->body[4][ii_c, jj_c], grid, bucket)
+            ii_c, jj_c, out.body[4][ii_c, jj_c], grid, bucket)
 
         # Adding new bucket soil position to body_soil_pos
-        push!(out.body_soil_pos, [3; ii_c; jj_c; pos[1]; pos[2]; pos[3]; h_soil])
+        push!(out.body_soil_pos, BodySoil(3, ii_c, jj_c, pos[1], pos[2], pos[3], h_soil))
     elseif (st[2] == '2')
         ### Soil avalanche on the second bucket layer ###
         h_new = 0.5 * (dh_max + out.terrain[ii, jj] + out.body[4][ii_c, jj_c])
@@ -864,11 +864,11 @@ function _relax_unstable_terrain_cell!(
 
         # Calculating pos of cell in bucket frame
         pos = _calc_bucket_frame_pos(
-            ii_c, jj_c, out->body[4][ii_c, jj_c], grid, bucket)
+            ii_c, jj_c, out.body[4][ii_c, jj_c], grid, bucket)
 
         # Adding new bucket soil position to body_soil_pos
         h_soil = h_new_c - out.body[4][ii_c, jj_c];
-        push!(out.body_soil_pos, [3; ii_c; jj_c; pos[1]; pos[2]; pos[3]; h_soil])
+        push!(out.body_soil_pos, BodySoil(3, ii_c, jj_c, pos[1], pos[2], pos[3], h_soil))
     elseif (st[2] == '3')
         ### Soil avalanche on the first bucket soil layer ###
         h_new = 0.5 * (dh_max + out.terrain[ii, jj] + out.body_soil[2][ii_c, jj_c])
@@ -895,10 +895,10 @@ function _relax_unstable_terrain_cell!(
 
         # Calculating pos of cell in bucket frame
         pos = _calc_bucket_frame_pos(
-            ii_c, jj_c, out->body[2][ii_c, jj_c], grid, bucket)
+            ii_c, jj_c, out.body[2][ii_c, jj_c], grid, bucket)
 
         # Adding new bucket soil position to body_soil_pos
-        push!(out.body_soil_pos, [1; ii_c; jj_c; pos[1]; pos[2]; pos[3]; h_soil])
+        push!(out.body_soil_pos, BodySoil(1, ii_c, jj_c, pos[1], pos[2], pos[3], h_soil))
     elseif (st[2] == '4')
         ### Soil avalanche on the first bucket layer ###
         h_new = 0.5 * (dh_max + out.terrain[ii, jj] + out.body[2][ii_c, jj_c])
@@ -927,17 +927,17 @@ function _relax_unstable_terrain_cell!(
 
         # Calculating pos of cell in bucket frame
         pos = _calc_bucket_frame_pos(
-            ii_c, jj_c, out->body[2][ii_c, jj_c], grid, bucket)
+            ii_c, jj_c, out.body[2][ii_c, jj_c], grid, bucket)
 
         # Adding new bucket soil position to body_soil_pos
         h_soil = h_new_c - out.body[2][ii_c, jj_c];
-        push!(out.body_soil_pos, [1; ii_c; jj_c; pos[1]; pos[2]; pos[3]; h_soil])
+        push!(out.body_soil_pos, BodySoil(1, ii_c, jj_c, pos[1], pos[2], pos[3], h_soil))
     end
 end
 
 """
     _relax_unstable_body_cell!(
-        out::SimOut{B,I,T}, status::I, new_body_soil_pos::Vector{Vector{I}}, dh_max::T,
+        out::SimOut{B,I,T}, status::I, new_body_soil_pos::Vector{BodySoil{I,T}}, dh_max::T,
         ii::I, jj::I, ind::I, ii_c::I, jj_c::I, grid::GridParam{I,T},
         bucket::BucketParam{I,T}, tol::T=1e-8
     ) where {B<:Bool,I<:Int64,T<:Float64}
@@ -956,7 +956,7 @@ the `repose_angle`, provided that the bucket is not preventing this configuratio
 # Inputs
 - `out::SimOut{Bool,Int64,Float64}`: Struct that stores simulation outputs.
 - `status::Int64`: Two-digit number indicating how the soil should avalanche.
-- `new_body_soil_pos::Vector{Vector{Int64}}`: Queue to append new body_soil_pos.
+- `new_body_soil_pos::Vector{BodySoil{Int64, Float64}}`: Queue to append new body_soil_pos.
 - `dh_max::Float64`: Maximum height difference allowed between two neighboring cells. [m]
 - `ii::Int64`: Index of the considered cell in the X direction.
 - `jj::Int64`: Index of the considered cell in the Y direction.
@@ -974,7 +974,7 @@ the `repose_angle`, provided that the bucket is not preventing this configuratio
 
 # Example
 
-    new_body_soil_pos = Vector{Vector{Int64}}()
+    new_body_soil_pos = Vector{BodySoil{Int64,Float64}}()
     grid = GridParam(4.0, 4.0, 3.0, 0.05, 0.01)
     o = [0.0, 0.0, 0.0]
     j = [0.0, 0.0, 0.0]
@@ -989,7 +989,7 @@ the `repose_angle`, provided that the bucket is not preventing this configuratio
 function _relax_unstable_body_cell!(
     out::SimOut{B,I,T},
     status::I,
-    new_body_soil_pos::Vector{Vector{I}},
+    new_body_soil_pos::Vector{BodySoil{I,T}},
     dh_max::T,
     nn::I,
     ii::I,
@@ -1013,9 +1013,9 @@ function _relax_unstable_body_cell!(
         h_soil = out.body_soil[ind+1][ii, jj] - h_new
 
         # Checking amount of soil in body_soil_pos
-        if (h_soil > out.body_soil_pos[nn][7])
+        if (h_soil > out.body_soil_pos[nn].h_soil[1])
             ### Not enough soil in body_soil_pos ###
-            h_soil = out.body_soil_pos[nn][7]
+            h_soil = out.body_soil_pos[nn].h_soil[1]
         end
         h_new_c = out.terrain[ii_c, jj_c] + h_soil
 
@@ -1040,13 +1040,13 @@ function _relax_unstable_body_cell!(
             ### Soil on the bucket should partially avalanche ###
             out.terrain[ii_c, jj_c] = h_new_c
             out.body_soil[ind+1][ii, jj] = h_new
-            out.body_soil_pos[nn][7] -= h_soil
+            out.body_soil_pos[nn].h_soil[1] -= h_soil
         else
             ### All soil on the bucket should avalanche ###
             out.terrain[ii_c, jj_c] += h_soil
             out.body_soil[ind][ii, jj] = 0.0
             out.body_soil[ind+1][ii, jj] = 0.0
-            out.body_soil_pos[nn][7] = 0.0
+            out.body_soil_pos[nn].h_soil[1] = 0.0
         end
     elseif (st[1] == '1')
         ### Only the first bucket layer ###
@@ -1059,30 +1059,30 @@ function _relax_unstable_body_cell!(
             h_soil = out.body_soil[ind+1][ii, jj] - h_new
 
             # Checking amount of soil in body_soil_pos
-            if (h_soil > out.body_soil_pos[nn][7])
+            if (h_soil > out.body_soil_pos[nn].h_soil[1])
                 ### Not enough soil in body_soil_pos ###
-                h_soil = out.body_soil_pos[nn][7]
+                h_soil = out.body_soil_pos[nn].h_soil[1]
                 h_new = out.body_soil[ind+1][ii, jj] - h_soil
             end
 
             if (h_new - tol > out.body_soil[ind][ii, jj])
                 ### Soil on the bucket should partially avalanche ###
                 out.body_soil[ind+1][ii, jj] = h_new
-                out.body_soil_pos[nn][7] -= h_soil
+                out.body_soil_pos[nn].h_soil[1] -= h_soil
             else
                 ### All soil on the bucket should avalanche ###
                 out.body_soil[ind][ii, jj] = 0.0
                 out.body_soil[ind+1][ii, jj] = 0.0
-                out.body_soil_pos[nn][7] = 0.0
+                out.body_soil_pos[nn].h_soil[1] = 0.0
             end
             out.body_soil[2][ii_c, jj_c] += h_soil
 
             # Calculating pos of cell in bucket frame
             pos = _calc_bucket_frame_pos(
-                ii_c, jj_c, out->body[2][ii_c, jj_c], grid, bucket)
+                ii_c, jj_c, out.body[2][ii_c, jj_c], grid, bucket)
 
             # Adding new bucket soil position to body_soil_pos
-            push!(new_body_soil_pos, [1; ii_c; jj_c; pos[1]; pos[2]; pos[3]; h_soil])
+            push!(new_body_soil_pos, BodySoil(1, ii_c, jj_c, pos[1], pos[2], pos[3], h_soil))
         elseif (st[2] == '4')
             ### Bucket soil is not present ###
             h_new = 0.5 * (dh_max + out.body_soil[ind+1][ii, jj] + out.body[2][ii_c, jj_c])
@@ -1090,9 +1090,9 @@ function _relax_unstable_body_cell!(
             h_soil = out.body_soil[ind+1][ii, jj] - h_new
 
             # Checking amount of soil in body_soil_pos
-            if (h_soil > out.body_soil_pos[nn][7])
+            if (h_soil > out.body_soil_pos[nn].h_soil[1])
                 ### Not enough soil in body_soil_pos ###
-                h_soil = out.body_soil_pos[nn][7]
+                h_soil = out.body_soil_pos[nn].h_soil[1]
                 h_new = out.body_soil[ind+1][ii, jj] - h_soil
             end
 
@@ -1100,21 +1100,21 @@ function _relax_unstable_body_cell!(
             if (h_new - tol > out.body_soil[ind][ii, jj])
                 ### Soil on the bucket should partially avalanche ###
                 out.body_soil[ind+1][ii, jj] = h_new
-                out.body_soil_pos[nn][7] -= h_soil
+                out.body_soil_pos[nn].h_soil[1] -= h_soil
             else
                 ### All soil on the bucket should avalanche ###
                 out.body_soil[ind][ii, jj] = 0.0
                 out.body_soil[ind+1][ii, jj] = 0.0
-                out.body_soil_pos[nn][7] = 0.0
+                out.body_soil_pos[nn].h_soil[1] = 0.0
             end
             out.body_soil[2][ii_c, jj_c] = out.body[2][ii_c, jj_c] + h_soil
 
             # Calculating pos of cell in bucket frame
             pos = _calc_bucket_frame_pos(
-                ii_c, jj_c, out->body[2][ii_c, jj_c], grid, bucket)
+                ii_c, jj_c, out.body[2][ii_c, jj_c], grid, bucket)
 
             # Adding new bucket soil position to body_soil_pos
-            push!(new_body_soil_pos, [1; ii_c; jj_c; pos[1]; pos[2]; pos[3]; h_soil])
+            push!(new_body_soil_pos, BodySoil(1, ii_c, jj_c, pos[1], pos[2], pos[3], h_soil))
         end
     elseif (st[1] == '2')
         ### Only the second bucket layer ###
@@ -1127,30 +1127,30 @@ function _relax_unstable_body_cell!(
             h_soil = out.body_soil[ind+1][ii, jj] - h_new
 
             # Checking amount of soil in body_soil_pos
-            if (h_soil > out.body_soil_pos[nn][7])
+            if (h_soil > out.body_soil_pos[nn].h_soil[1])
                 ### Not enough soil in body_soil_pos ###
-                h_soil = out.body_soil_pos[nn][7]
+                h_soil = out.body_soil_pos[nn].h_soil[1]
                 h_new = out.body_soil[ind+1][ii, jj] - h_soil
             end
 
             if (h_new_c - tol > out.body_soil[ind][ii, jj])
                 ### Soil on the bucket should partially avalanche ###
                 out.body_soil[ind+1][ii, jj] = h_new
-                out.body_soil_pos[nn][7] -= h_soil
+                out.body_soil_pos[nn].h_soil[1] -= h_soil
             else
                 ### All soil on the bucket should avalanche ###
                 out.body_soil[ind][ii, jj] = 0.0
                 out.body_soil[ind+1][ii, jj] = 0.0
-                out.body_soil_pos[nn][7] = 0.0
+                out.body_soil_pos[nn].h_soil[1] = 0.0
             end
             out.body_soil[4][ii_c, jj_c] += h_soil
 
             # Calculating pos of cell in bucket frame
             pos = _calc_bucket_frame_pos(
-                ii_c, jj_c, out->body[4][ii_c, jj_c], grid, bucket)
+                ii_c, jj_c, out.body[4][ii_c, jj_c], grid, bucket)
 
             # Adding new bucket soil position to body_soil_pos
-            push!(new_body_soil_pos, [3; ii_c; jj_c; pos[1]; pos[2]; pos[3]; h_soil])
+            push!(new_body_soil_pos, BodySoil(3, ii_c, jj_c, pos[1], pos[2], pos[3], h_soil))
         elseif (st[2] == '2')
             ### Bucket soil is not present ###
             h_new = 0.5 * (dh_max + out.body_soil[ind+1][ii, jj] + out.body[4][ii_c, jj_c])
@@ -1158,9 +1158,9 @@ function _relax_unstable_body_cell!(
             h_soil = out.body_soil[ind+1][ii, jj] - h_new
 
             # Checking amount of soil in body_soil_pos
-            if (h_soil > out.body_soil_pos[nn][7])
+            if (h_soil > out.body_soil_pos[nn].h_soil[1])
                 ### Not enough soil in body_soil_pos ###
-                h_soil = out.body_soil_pos[nn][7]
+                h_soil = out.body_soil_pos[nn].h_soil[1]
                 h_new = out.body_soil[ind+1][ii, jj] - h_soil
             end
 
@@ -1168,21 +1168,21 @@ function _relax_unstable_body_cell!(
             if (h_new - tol > out.body_soil[ind][ii, jj])
                 ### Soil on the bucket should partially avalanche ###
                 out.body_soil[ind+1][ii, jj] = h_new
-                out.body_soil_pos[nn][7] -= h_soil
+                out.body_soil_pos[nn].h_soil[1] -= h_soil
             else
                 ### All soil on the bucket should avalanche ###
                 out.body_soil[ind][ii, jj] = 0.0
                 out.body_soil[ind+1][ii, jj] = 0.0
-                out.body_soil_pos[nn][7] = 0.0
+                out.body_soil_pos[nn].h_soil[1] = 0.0
             end
             out.body_soil[4][ii_c, jj_c] = out.body[4][ii_c, jj_c] + h_soil
 
             # Calculating pos of cell in bucket frame
             pos = _calc_bucket_frame_pos(
-                ii_c, jj_c, out->body[4][ii_c, jj_c], grid, bucket)
+                ii_c, jj_c, out.body[4][ii_c, jj_c], grid, bucket)
 
             # Adding new bucket soil position to body_soil_pos
-            push!(new_body_soil_pos, [3; ii_c; jj_c; pos[1]; pos[2]; pos[3]; h_soil])
+            push!(new_body_soil_pos, BodySoil(3, ii_c, jj_c, pos[1], pos[2], pos[3], h_soil))
         end
     elseif (st[1] == '3')
         ### Both bucket layer ###
@@ -1195,9 +1195,9 @@ function _relax_unstable_body_cell!(
             h_soil = out.body_soil[ind+1][ii, jj] - h_new
 
             # Checking amount of soil in body_soil_pos
-            if (h_soil > out.body_soil_pos[nn][7])
+            if (h_soil > out.body_soil_pos[nn].h_soil[1])
                 ### Not enough soil in body_soil_pos ###
-                h_soil = out.body_soil_pos[nn][7]
+                h_soil = out.body_soil_pos[nn].h_soil[1]
                 h_new = out.body_soil[ind+1][ii, jj] - h_soil
             end
             h_new_c = out.body_soil[4][ii_c, jj_c] + h_soil
@@ -1216,14 +1216,14 @@ function _relax_unstable_body_cell!(
                         out.body_soil[4][ii_c, jj_c] = h_new_c
                         out.body_soil[ind+1][ii, jj] = h_new
                     end
-                    out.body_soil_pos[nn][7] -= h_soil
+                    out.body_soil_pos[nn].h_soil[1] -= h_soil
                 else
                     ### All soil on the bucket may avalanche ###
                     # By construction, it must have enough space for the full avalanche
                     out.body_soil[4][ii_c, jj_c] += h_soil
                     out.body_soil[ind][ii, jj] = 0.0
                     out.body_soil[ind+1][ii, jj] = 0.0
-                    out.body_soil_pos[nn][7] = 0.0
+                    out.body_soil_pos[nn].h_soil[1] = 0.0
                 end
             else
                 ### Soil should avalanche on the top layer ###
@@ -1231,22 +1231,22 @@ function _relax_unstable_body_cell!(
                     ### Soil on the bucket should partially avalanche ###
                     out.body_soil[4][ii_c, jj_c] = h_new_c
                     out.body_soil[ind+1][ii, jj] = h_new
-                    out.body_soil_pos[nn][7] -= h_soil
+                    out.body_soil_pos[nn].h_soil[1] -= h_soil
                 else
                     ### All soil on the bucket should avalanche ###
                     out.body_soil[4][ii_c, jj_c] += h_soil
                     out.body_soil[ind][ii, jj] = 0.0
                     out.body_soil[ind+1][ii, jj] = 0.0
-                    out.body_soil_pos[nn][7] = 0.0
+                    out.body_soil_pos[nn].h_soil[1] = 0.0
                 end
             end
             if (h_soil > tol)
                 # Calculating pos of cell in bucket frame
                 pos = _calc_bucket_frame_pos(
-                    ii_c, jj_c, out->body[4][ii_c, jj_c], grid, bucket)
+                    ii_c, jj_c, out.body[4][ii_c, jj_c], grid, bucket)
 
                 # Adding new bucket soil position to body_soil_pos
-                push!(new_body_soil_pos, [3; ii_c; jj_c; pos[1]; pos[2]; pos[3]; h_soil])
+                push!(new_body_soil_pos, BodySoil(3, ii_c, jj_c, pos[1], pos[2], pos[3], h_soil))
             end
         elseif (st[2] == '2')
             ### Soil should avalanche on the second bucket layer ###
@@ -1257,9 +1257,9 @@ function _relax_unstable_body_cell!(
             h_soil = out.body_soil[ind+1][ii, jj] - h_new
 
             # Checking amount of soil in body_soil_pos
-            if (h_soil > out.body_soil_pos[nn][7])
+            if (h_soil > out.body_soil_pos[nn].h_soil[1])
                 ### Not enough soil in body_soil_pos ###
-                h_soil = out.body_soil_pos[nn][7]
+                h_soil = out.body_soil_pos[nn].h_soil[1]
                 h_new = out.body_soil[ind+1][ii, jj] - h_soil
             end
             h_new_c = out.body[4][ii_c, jj_c] + h_soil
@@ -1279,14 +1279,14 @@ function _relax_unstable_body_cell!(
                         out.body_soil[4][ii_c, jj_c] = h_new_c
                         out.body_soil[ind+1][ii, jj] = h_new
                     end
-                    out.body_soil_pos[nn][7] -= h_soil
+                    out.body_soil_pos[nn].h_soil[1] -= h_soil
                 else
                     ### All soil on the bucket may avalanche ###
                     # By construction, it must have enough space for the full avalanche
                     out.body_soil[4][ii_c, jj_c] = h_new_c
                     out.body_soil[ind][ii, jj] = 0.0
                     out.body_soil[ind+1][ii, jj] = 0.0
-                    out.body_soil_pos[nn][7] = 0.0
+                    out.body_soil_pos[nn].h_soil[1] = 0.0
                 end
             else
                 ### Soil should avalanche on the top layer ###
@@ -1294,21 +1294,21 @@ function _relax_unstable_body_cell!(
                 if (h_new - tol > out.body_soil[ind][ii, jj])
                     ### Soil on the bucket should partially avalanche ###
                     out.body_soil[ind+1][ii, jj] = h_new
-                    out.body_soil_pos[nn][7] -= h_soil
+                    out.body_soil_pos[nn].h_soil[1] -= h_soil
                 else
                     ### All soil on the bucket should avalanche ###
                     out.body_soil[ind][ii, jj] = 0.0
                     out.body_soil[ind+1][ii, jj] = 0.0
-                    out.body_soil_pos[nn][7] = 0.0
+                    out.body_soil_pos[nn].h_soil[1] = 0.0
                 end
             end
 
             # Calculating pos of cell in bucket frame
             pos = _calc_bucket_frame_pos(
-                ii_c, jj_c, out->body[4][ii_c, jj_c], grid, bucket)
+                ii_c, jj_c, out.body[4][ii_c, jj_c], grid, bucket)
 
             # Adding new bucket soil position to body_soil_pos
-            push!(new_body_soil_pos, [3; ii_c; jj_c; pos[1]; pos[2]; pos[3]; h_soil])
+            push!(new_body_soil_pos, BodySoil(3, ii_c, jj_c, pos[1], pos[2], pos[3], h_soil))
         elseif (st[2] == '3')
             ### Soil should avalanche on the first bucket soil layer ###
             h_new = 0.5 * (
@@ -1318,9 +1318,9 @@ function _relax_unstable_body_cell!(
             h_soil = out.body_soil[ind+1][ii, jj] - h_new
 
             # Checking amount of soil in body_soil_pos
-            if (h_soil > out.body_soil_pos[nn][7])
+            if (h_soil > out.body_soil_pos[nn].h_soil[1])
                 ### Not enough soil in body_soil_pos ###
-                h_soil = out.body_soil_pos[nn][7]
+                h_soil = out.body_soil_pos[nn].h_soil[1]
                 h_new = out.body_soil[ind+1][ii, jj] - h_soil
             end
             h_new_c = out.body_soil[2][ii_c, jj_c] + h_soil
@@ -1331,13 +1331,13 @@ function _relax_unstable_body_cell!(
                     ### Soil on the bucket should partially avalanche ###
                     out.body_soil[2][ii_c, jj_c] = h_new_c
                     out.body_soil[ind+1][ii, jj] = h_new
-                    out.body_soil_pos[nn][7] -= h_soil
+                    out.body_soil_pos[nn].h_soil[1] -= h_soil
                 else
                     ### All soil on the bucket should avalanche ###
                     out.body_soil[2][ii_c, jj_c] += h_soil
                     out.body_soil[ind][ii, jj] = 0.0
                     out.body_soil[ind+1][ii, jj] = 0.0
-                    out.body_soil_pos[nn][7] = 0.0
+                    out.body_soil_pos[nn].h_soil[1] = 0.0
                 end
             else
                 ### Soil should avalanche on the bottom layer ###
@@ -1353,23 +1353,23 @@ function _relax_unstable_body_cell!(
                         out.body_soil[2][ii_c, jj_c] = h_new_c
                         out.body_soil[ind+1][ii, jj] = h_new
                     end
-                    out.body_soil_pos[nn][7] -= h_soil
+                    out.body_soil_pos[nn].h_soil[1] -= h_soil
                 else
                     ### All soil on the bucket may avalanche ###
                     # By construction, it must have enough space for the full avalanche
                     out.body_soil[2][ii_c, jj_c] += h_soil
                     out.body_soil[ind][ii, jj] = 0.0
                     out.body_soil[ind+1][ii, jj] = 0.0
-                    out.body_soil_pos[nn][7] = 0.0
+                    out.body_soil_pos[nn].h_soil[1] = 0.0
                 end
             end
             if (h_soil > tol)
                 # Calculating pos of cell in bucket frame
                 pos = _calc_bucket_frame_pos(
-                    ii_c, jj_c, out->body[2][ii_c, jj_c], grid, bucket)
+                    ii_c, jj_c, out.body[2][ii_c, jj_c], grid, bucket)
 
                 # Adding new bucket soil position to body_soil_pos
-                push!(new_body_soil_pos, [1; ii_c; jj_c; pos[1]; pos[2]; pos[3]; h_soil])
+                push!(new_body_soil_pos, BodySoil(1, ii_c, jj_c, pos[1], pos[2], pos[3], h_soil))
             end
         elseif (st[2] == '4')
             ### Soil should avalanche on the first bucket layer ###
@@ -1380,9 +1380,9 @@ function _relax_unstable_body_cell!(
             h_soil = out.body_soil[ind+1][ii, jj] - h_new
 
             # Checking amount of soil in body_soil_pos
-            if (h_soil > out.body_soil_pos[nn][7])
+            if (h_soil > out.body_soil_pos[nn].h_soil[1])
                 ### Not enough soil in body_soil_pos ###
-                h_soil = out.body_soil_pos[nn][7]
+                h_soil = out.body_soil_pos[nn].h_soil[1]
                 h_new = out.body_soil[ind+1][ii, jj] - h_soil
             end
             h_new_c = out.body[2][ii_c, jj_c] + h_soil
@@ -1394,12 +1394,12 @@ function _relax_unstable_body_cell!(
                 if (h_new - tol > out.body_soil[ind][ii, jj])
                     ### Soil on the bucket should partially avalanche ###
                     out.body_soil[ind+1][ii, jj] = h_new
-                    out.body_soil_pos[nn][7] -= h_soil
+                    out.body_soil_pos[nn].h_soil[1] -= h_soil
                 else
                     ### All soil on the bucket should avalanche ###
                     out.body_soil[ind][ii, jj] = 0.0
                     out.body_soil[ind+1][ii, jj] = 0.0
-                    out.body_soil_pos[nn][7] = 0.0
+                    out.body_soil_pos[nn].h_soil[1] = 0.0
                 end
             else
                 ### Soil should avalanche on the bottom layer ###
@@ -1415,7 +1415,7 @@ function _relax_unstable_body_cell!(
                         out.body_soil[2][ii_c, jj_c] = h_new_c
                         out.body_soil[ind+1][ii, jj] = h_new
                     end
-                    out.body_soil_pos[nn][7] -= h_soil
+                    out.body_soil_pos[nn].h_soil[1] -= h_soil
                 else
                     ### All soil on the bucket may avalanche ###
                     # By construction, it must have enough space for the full avalanche
@@ -1427,16 +1427,16 @@ function _relax_unstable_body_cell!(
                     out.body_soil[2][ii_c, jj_c] = h_new_c
                     out.body_soil[ind][ii, jj] = 0.0
                     out.body_soil[ind+1][ii, jj] = 0.0
-                    out.body_soil_pos[nn][7] = 0.0
+                    out.body_soil_pos[nn].h_soil[1] = 0.0
                 end
             end
 
             # Calculating pos of cell in bucket frame
             pos = _calc_bucket_frame_pos(
-                ii_c, jj_c, out->body[2][ii_c, jj_c], grid, bucket)
+                ii_c, jj_c, out.body[2][ii_c, jj_c], grid, bucket)
 
             # Adding new bucket soil position to body_soil_pos
-            push!(new_body_soil_pos, [1; ii_c; jj_c; pos[1]; pos[2]; pos[3]; h_soil])
+            push!(new_body_soil_pos, BodySoil(1, ii_c, jj_c, pos[1], pos[2], pos[3], h_soil))
         end
     end
 end

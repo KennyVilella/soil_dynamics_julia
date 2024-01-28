@@ -125,7 +125,7 @@ function check_bucket_movement(
 
     # Calculating former position of bucket corners
     j_r_pos_f, j_l_pos_f, b_r_pos_f, b_l_pos_f, t_r_pos_f, t_l_pos_f = (
-        _calc_bucket_corner_pos(bucket.pos, bucket.ori, bucket)
+        _calc_bucket_corner_pos(bucket.pos, Quaternion(bucket.ori), bucket)
     )
 
     # Calculating distance travelled
@@ -160,7 +160,7 @@ function check_bucket_movement(
     )
 
     # Calculating min cell size
-    min_cell_size = min(grid.cell_size_xy_, grid.cell_size_z_)
+    min_cell_size = min(grid.cell_size_xy, grid.cell_size_z)
 
     if (max_dist < 0.5 * min_cell_size)
         # Bucket has only slightly moved since last update
@@ -221,7 +221,7 @@ function _calc_bucket_frame_pos(
     ]
 
     # Inversing rotation
-    inv_ori = [bucket.ori[1], -bucket.ori[2], -bucket.ori[3], -bucket.ori[4]]
+    inv_ori = Quaternion(bucket.ori[1], -bucket.ori[2], -bucket.ori[3], -bucket.ori[4])
 
     # Calculating reference position of cell in bucket frame
     cell_local_pos = Vector{T}(vect(inv_ori \ cell_pos * inv_ori))

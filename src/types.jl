@@ -379,13 +379,24 @@ This would indicate that 0.5m of soil is present on the first body layer at (10,
 which corresponds to the coordinates (0.1, 0.0, 0.2) in the reference bucket frame.
 """
 struct BodySoil{I<:Int64,T<:Float64}
-    ind::I
-    ii::I
-    jj::I
-    x_b::T
-    y_b::T
-    z_b::T
-    h_soil::T
+    ind::Vector{I}
+    ii::Vector{I}
+    jj::Vector{I}
+    x_b::Vector{T}
+    y_b::Vector{T}
+    z_b::Vector{T}
+    h_soil::Vector{T}
+    function BodySoil(
+        ind::I,
+        ii::I,
+        jj::I,
+        x_b::T,
+        y_b::T,
+        z_b::T,
+        h_soil::T
+    ) where {I<:Int64,T<:Float64}
+        new{I,T}([ind], [ii], [jj], [x_b], [y_b], [z_b], [h_soil])
+    end
 end
 
 """

@@ -73,13 +73,13 @@ function _update_body_soil!(
     # Iterating over all XY positions where body_soil is present
     min_cell_height_diff = grid.cell_size_z + tol
     for cell in old_body_soil_pos
-        ind = cell[1]
-        ii = cell[2]
-        jj = cell[3]
-        x_b = cell[4]
-        y_b = cell[5]
-        z_b = cell[6]
-        h_soil = cell[7]
+        ind = cell.ind[1]
+        ii = cell.ii[1]
+        jj = cell.jj[1]
+        x_b = cell.x_b[1]
+        y_b = cell.y_b[1]
+        z_b = cell.z_b[1]
+        h_soil = cell.h_soil[1]
 
         if (h_soil < 0.9 * grid.cell_size_z)
             # No soil to be moved
@@ -96,14 +96,14 @@ function _update_body_soil!(
         cell_local_pos = [x_b, y_b, z_b]
         new_cell_pos = pos + Vector{T}(vect(ori \ cell_local_pos * ori))
         old_cell_pos = bucket.pos + Vector{T}(
-            vect(bucket.ori \ cell_local_pos * bucket.ori)
+            vect(Quaternion(bucket.ori) \ cell_local_pos * Quaternion(bucket.ori))
         )
 
         # Establishing order of exploration
         dx = new_cell_pos[1] - old_cell_pos[1]
         dy = new_cell_pos[2] - old_cell_pos[2]
-        sx = sign(dx)
-        sy = sign(dy)
+        sx = Int64(sign(dx))
+        sy = Int64(sign(dy))
         if (abs(dx) > abs(dy))
             # Main direction follows X
             directions = [
@@ -119,6 +119,13 @@ function _update_body_soil!(
         # Calculating new cell indices
         ii_n = round(Int64, new_cell_pos[1] / grid.cell_size_xy + grid.half_length_x + 1)
         jj_n = round(Int64, new_cell_pos[2] / grid.cell_size_xy + grid.half_length_y + 1)
+
+        # Initializing some variables
+        soil_moved = false
+        dist_s = 2 * grid.half_length_z
+        ind_s = 0
+        ii_s = 0
+        jj_s = 0
 
         # Starting loop over neighbours
         for dir in directions
@@ -146,7 +153,7 @@ function _update_body_soil!(
                     out.body_soil[1][ii_t, jj_t] = out.body[2][ii_t, jj_t]
 
                     # Adding position to body_soil_pos
-                    push!(out.body_soil_pos, [1, ii_t, jj_t, x_b, y_b, z_b, h_soil])
+                    push!(out.body_soil_pos, BodySoil(1, ii_t, jj_t, x_b, y_b, z_b, h_soil))
                     soil_moved = true
                     break
                 elseif (dist < dist_s)
@@ -169,7 +176,7 @@ function _update_body_soil!(
                     out.body_soil[3][ii_t, jj_t] = out.body[4][ii_t, jj_t]
 
                     # Adding position to body_soil_pos
-                    push!(out.body_soil_pos, [3, ii_t, jj_t, x_b, y_b, z_b, h_soil])
+                    push!(out.body_soil_pos, BodySoil(3, ii_t, jj_t, x_b, y_b, z_b, h_soil))
                     soil_moved = true
                     break
                 elseif (dist < dist_s)
@@ -182,9 +189,8 @@ function _update_body_soil!(
             end
         end
 
-
         if (!soil_moved)
-            if (dist_s != 2 * grid.half_length_z)
+            if (abs(dist_s - 2 * grid.half_length_z) > tol)
                 # Moving body_soil to closest location, this implementation
                 # works regardless of the presence of body_soil
                 out.body_soil[ind_s][ii_s, jj_s] += (
@@ -193,7 +199,7 @@ function _update_body_soil!(
                 out.body_soil[ind_s-1][ii_s, jj_s] = out.body[ind_s][ii_s, jj_s]
 
                 # Adding position to body_soil_pos
-                push!(out.body_soil_pos, [ind_s-1, ii_s, jj_s, x_b, y_b, z_b, h_soil])
+                push!(out.body_soil_pos, BodySoil(ind_s-1, ii_s, jj_s, x_b, y_b, z_b, h_soil))
             else
                 # This should normally not happen, it is only for safety
                 # Moving body_soil to terrain

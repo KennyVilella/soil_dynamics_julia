@@ -656,14 +656,11 @@ end
 
 """
     _calc_line_pos(
-        a::Vector{T}, b::Vector{T}, delta::T, grid::GridParam{I,T}
+        a::Vector{T}, b::Vector{T}, grid::GridParam{I,T}
     ) where {I<:Int64,T<:Float64}
 
 This function determines all the cells that lie on a straight line between two Cartesian
 coordinates.
-
-For the sake of accuracy, the line is divided into smaller segments using a spatial
-increment `delta`.
 
 The coordinates of each sub-point (ab_i) along the line can then be calculated as
 
@@ -688,13 +685,12 @@ while `ceil` should be used for the Z direction.
 # Inputs
 - `a::Vector{Float64}`: Cartesian coordinates of the first extremity of the line. [m]
 - `b::Vector{Float64}`: Cartesian coordinates of the second extremity of the line. [m]
-- `delta::Float64`: Spatial increment used to decompose the line. [m]
 - `grid::GridParam{Int64,Float64}`: Struct that stores information related to the
                                     simulation grid.
 
 # Outputs
-- `line_pos::Vector{Vector{Int64}}`: Collection of cells indices where the line is located.
-                                     Result is not sorted and duplicates should be expected.
+- `Vector{Vector{Int64}}`: Collection of cells indices where the line is located.
+                           Result is not sorted and duplicates should be expected.
 
 # Example
 
@@ -702,12 +698,11 @@ while `ceil` should be used for the Z direction.
     a = [1.0, 0.5, 0.7]
     b = [0.7, 0.8, -0.3]
 
-    line_pos = _calc_line_pos(a, b, 0.01, grid)
+    line_pos = _calc_line_pos(a, b, grid)
 """
 function _calc_line_pos(
     a::Vector{T},
     b::Vector{T},
-    delta::T,
     grid::GridParam{I,T}
 ) where {I<:Int64,T<:Float64}
 
@@ -742,19 +737,19 @@ function _calc_line_pos(
 
     # Determining the offset to first cell boundary
     if (step_x == 1)
-        t_max_x = round(Float64, x1) + 0.5 - x1
+        t_max_x = round(x1) + 0.5 - x1
     else
-        t_max_x = x1 - round(Float64, x1) + 0.5
+        t_max_x = x1 - round(x1) + 0.5
     end
     if (step_y == 1)
-        t_max_y = round(Float64, y1) + 0.5 - y1
+        t_max_y = round(y1) + 0.5 - y1
     else
-        t_max_y = y1 - round(Float64, y1) + 0.5
+        t_max_y = y1 - round(y1) + 0.5
     end
     if (step_z == 1)
-        t_max_z = ceil(Float64, z1) - z1
+        t_max_z = ceil(z1) - z1
     else
-        t_max_z = z1 - floor(Float64, z1)
+        t_max_z = z1 - floor(z1)
     end
 
     # Determining how long on the line to cross the cell
