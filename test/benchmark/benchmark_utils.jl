@@ -44,6 +44,31 @@ BenchmarkTools.DEFAULT_PARAMETERS.evals = 1
 BenchmarkTools.DEFAULT_PARAMETERS.seconds = 60
 BenchmarkTools.DEFAULT_PARAMETERS.samples = 100
 
+# Benchmarking for _calc_bucket_corner_pos function
+ori = angle_to_quat(0.0, -pi / 2, 0.0, :ZYX)
+pos = Vector{Float64}([0.0, 0.0, -0.1])
+println("_calc_bucket_corner_pos")
+display(
+    @benchmark _calc_bucket_corner_pos(pos, ori, bucket)
+)
+println("")
+
+# Benchmarking for check_bucket_movement function
+ori = angle_to_quat(0.0, 0.0, 0.0, :ZYX)
+pos = Vector{Float64}([0.0, 0.0, -0.01])
+println("check_bucket_movement")
+display(
+    @benchmark check_bucket_movement(pos, ori, grid, bucket)
+)
+println("")
+
+# Benchmarking for _calc_bucket_frame_pos function
+println("_calc_bucket_frame_pos")
+display(
+    @benchmark _calc_bucket_frame_pos(10, 11, 0.1, grid, bucket)
+)
+println("")
+
 # Benchmarking for _init_sparse_array! function
 ori = angle_to_quat(0.0, -pi / 2, 0.0, :ZYX)
 pos = Vector{Float64}([0.0, 0.0, -0.1])
