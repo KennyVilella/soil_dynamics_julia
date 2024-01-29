@@ -14,6 +14,14 @@ cell_size_xy = 0.05
 cell_size_z = 0.01
 grid = GridParam(grid_size_x, grid_size_y, grid_size_z, cell_size_xy, cell_size_z)
 
+# Bucket properties
+o_pos_init = Vector{Float64}([0.0, 0.0, 0.0])
+j_pos_init = Vector{Float64}([0.0, 0.0, 0.0])
+b_pos_init = Vector{Float64}([0.0, 0.0, -0.5])
+t_pos_init = Vector{Float64}([0.7, 0.0, -0.5])
+bucket_width = 0.5
+bucket = BucketParam(o_pos_init, j_pos_init, b_pos_init, t_pos_init, bucket_width)
+
 # Simulation properties
 repose_angle = 0.85
 max_iterations = 3
@@ -45,7 +53,7 @@ out.relax_area[:, :] .= Int64[[45, 46] [69, 69]]
 out.impact_area[:, :] .= Int64[[45, 46] [69, 69]]
 println("_relax_terrain!")
 display(
-    @benchmark _relax_terrain!(out, grid, sim)
+    @benchmark _relax_terrain!(out, grid, bucket, sim)
 )
 println("")
 
@@ -68,7 +76,7 @@ println("")
 # Benchmarking for _relax_unstable_terrain_cell! function
 println("_relax_unstable_terrain_cell!")
 display(
-    @benchmark _relax_unstable_terrain_cell!(out, 142, 0.1, 50, 55, 49, 55, grid)
+    @benchmark _relax_unstable_terrain_cell!(out, 142, 0.1, 50, 55, 49, 55, grid, bucket)
 )
 println("")
 
@@ -83,7 +91,7 @@ out.body_soil[1][50:65, 61:65] .= 0.4
 out.body_soil[2][50:65, 61:65] .= 0.7
 println("_relax_body_soil!")
 display(
-    @benchmark _relax_body_soil!(out, grid, sim)
+    @benchmark _relax_body_soil!(out, grid, bucket, sim)
 )
 println("")
 
@@ -96,8 +104,10 @@ println("")
 
 # Benchmarking for _relax_unstable_body_cell! function
 println("_relax_unstable_body_cell!")
-new_body_soil_pos = Vector{Vector{Int64}}()
+new_body_soil_pos = Vector{BodySoil{Int64, Float64}}()
 display(
-    @benchmark _relax_unstable_body_cell!(out, 13, new_body_soil_pos, 0.1, 50, 55, 1, 49, 55, grid)
+    @benchmark _relax_unstable_body_cell!(
+        out, 13, new_body_soil_pos, 0.1, 1, 50, 55, 1, 49, 55, grid, bucket
+    )
 )
 println("")
