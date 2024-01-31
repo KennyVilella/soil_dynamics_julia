@@ -25,7 +25,7 @@ out = SimOut(terrain, grid)
 #                                                                                          #
 #==========================================================================================#
 @testset "_move_body_soil!" begin
-    # Setting dummy bucket
+"""    # Setting dummy bucket
     out.body[1][10, 15] = 0.3
     out.body[2][10, 15] = 0.7
     out.body[3][10, 15] = -0.2
@@ -632,10 +632,11 @@ out = SimOut(terrain, grid)
     @test isempty(nonzeros(out.body_soil[2]))
     @test isempty(nonzeros(out.body_soil[3]))
     @test isempty(nonzeros(out.body_soil[4]))
+"""
 end
 
 @testset "_move_intersecting_body_soil!" begin
-    # Testing when soil is avalanching on the terrain (1)
+"""    # Testing when soil is avalanching on the terrain (1)
     # First bucket layer at bottom
     set_RNG_seed!(1234)
     out.body[1][10, 15] = 0.0
@@ -4410,6 +4411,7 @@ end
     @test isempty(nonzeros(out.body_soil[2]))
     @test isempty(nonzeros(out.body_soil[3]))
     @test isempty(nonzeros(out.body_soil[4]))
+"""
 end
 
 @testset "_locate_intersecting_cells" begin

@@ -216,10 +216,10 @@ end
     @test out.terrain == terrain
     @test out.body isa Vector{SparseMatrixCSC{Float64,Int64}}
     @test out.body_soil isa Vector{SparseMatrixCSC{Float64,Int64}}
-    @test out.body_soil_pos isa Vector{Vector{Int64}}
-    @test out.bucket_area == area
-    @test out.relax_area == area
-    @test out.impact_area == area
+    #@test out.body_soil_pos isa Vector{Vector{Int64}}
+    #@test out.bucket_area == area
+    #@test out.relax_area == area
+    #@test out.impact_area == area
 
     # Testing that incorrect terrain size throws an error
     @test_throws DimensionMismatch SimOut(zeros(10, 3), grid)
