@@ -167,49 +167,33 @@ end
 end
 
 @testset "calc_normal" begin
-    # Setting dummy coordinates forming a triangle in the XY plane
+    # Test: UT-CN-1
     a = [0.0, 0.0, 0.0]
     b = [2.3, 0.0, 0.0]
     c = [2.3, 2.45, 0.0]
-
-    # Testing that the unit normal vector follows the Z direction
     @test calc_normal(a, b, c) == [0.0, 0.0, 1.0]
-
-    # Testing the opposite direction
     @test calc_normal(a, c, b) == [0.0, 0.0, -1.0]
 
-    # Setting dummy coordinates forming a triangle in the XZ plane
+    # Test: UT-CN-2
     a = [1.0, 0.0, -1.3]
     b = [0.3, 0.0, 4.2]
     c = [2.3, 0.0, 3.0]
-
-    # Testing that the unit normal vector follows the Y direction
     @test calc_normal(a, b, c) == [0.0, 1.0, 0.0]
-
-    # Testing the opposite direction
     @test calc_normal(a, c, b) == [0.0, -1.0, 0.0]
 
-    # Setting dummy coordinates forming a triangle in the YZ plane
+    # Test: UT-CN-3
     a = [0.0, -4.7, 1.3]
     b = [0.0, 7.2, -0.6]
     c = [0.0, -1.0, 54.3]
-
-    # Testing that the unit normal vector follows the X direction
     @test calc_normal(a, b, c) == [1.0, 0.0, 0.0]
-
-    # Testing the opposite direction
     @test calc_normal(a, c, b) == [-1.0, 0.0, 0.0]
 
-    # Setting dummy coordinates following a 45 degrees inclined plane
+    # Test: UT-CN-4
     a = [1.0, 0.0, 0.0]
     b = [0.0, 1.0, 0.0]
     c = [0.0, 0.0, 1.0]
-
-    # Testing that the unit normal vector follows the inclined plane
     @test calc_normal(a, b, c) ≈ [sqrt(1/3), sqrt(1/3), sqrt(1/3)]
-
-    # Testing the opposite direction
-    @test calc_normal(a, c, b) ≈ -[sqrt(1/3), sqrt(1/3), sqrt(1/3)]
+    @test calc_normal(a, c, b) ≈ [-sqrt(1/3), -sqrt(1/3), -sqrt(1/3)]
 end
 
 @testset "set_RNG_seed!" begin
@@ -235,10 +219,8 @@ end
     # Setting dummy properties
     init_volume = 0.0
 
-    # Testing that no warning is sent for correct initial volume
+    # Test: UT-CV-1
     @test_logs check_volume(out, init_volume, grid)
-
-    # Testing that warning is sent for incorrect initial volume
     @test_logs (:warn,) match_mode=:any check_volume(out, 1.0, grid)
     @test_logs (:warn,) match_mode=:any check_volume(
             out, init_volume - 0.6 * grid.cell_volume, grid
@@ -247,14 +229,10 @@ end
             out, init_volume + 0.6 * grid.cell_volume, grid
         )
 
-    # Setting non-zero terrain
+    # Test: UT-CV-2
     out.terrain[1, 2] = 0.2
     init_volume =  0.2 * (grid.cell_size_xy * grid.cell_size_xy)
-
-    # Testing that no warning is sent for correct initial volume
     @test_logs check_volume(out, init_volume, grid)
-
-    # Testing that warning is sent for incorrect initial volume
     @test_logs (:warn,) match_mode=:any check_volume(out, 0.0, grid)
     @test_logs (:warn,) match_mode=:any check_volume(
             out, init_volume - 0.6 * grid.cell_volume, grid
@@ -264,24 +242,21 @@ end
         )
     @test_logs (:warn,) match_mode=:any check_volume(out, -init_volume, grid)
 
-    # Setting non-zero body soil
+    # Test: UT-CV-3
     out.terrain[1, 2] = 0.0
-    out.body_soil[1][2, 2] = -0.1
-    out.body_soil[2][2, 2] = 0.0
-    out.body_soil[3][2, 2] = 0.2
-    out.body_soil[4][2, 2] = 0.27
-    out.body_soil[1][1, 1] = 0.0
-    out.body_soil[2][1, 1] = 0.08
-    out.body_soil[3][2, 1] = 0.0
-    out.body_soil[4][2, 1] = 0.15
-
+    set_height(out, 1, 1, NaN, NaN, NaN, 0.0, 0.08, NaN, NaN, NaN, NaN)
+    set_height(out, 2, 1, NaN, NaN, NaN, NaN, NaN, NaN, NaN, 0.0, 0.15)
+    set_height(out, 2, 2, NaN, NaN, NaN, -0.1, 0.0, NaN, NaN, 0.2, 0.27)
+    push_body_soil_pos(out, 1, 1, 1, [0.0, 0.0, 0.0], 0.08)
+    push_body_soil_pos(out, 3, 2, 1, [0.0, 0.0, 0.0], 0.15)
+    push_body_soil_pos(out, 1, 2, 2, [0.0, 0.0, 0.0], 0.1)
+    push_body_soil_pos(out, 3, 2, 2, [0.0, 0.0, 0.0], 0.07)
     init_volume =  0.4 * (grid.cell_size_xy * grid.cell_size_xy)
-
-    # Testing that no warning is sent for correct initial volume
     @test_logs check_volume(out, init_volume, grid)
-
-    # Testing that warning is sent for incorrect initial volume
     @test_logs (:warn,) match_mode=:any check_volume(out, 0.0, grid)
+
+    # Test: UT-CV-4
+
 
     # Resetting body_soil
     out.body_soil[1][2, 2] = 0.0
