@@ -479,20 +479,24 @@ function check_volume(
     # Copying body_soil location
     old_body_soil = deepcopy(out.body_soil)
 
+    # Calculating volume of soil in body_soil
     body_soil_volume = 0.0
     for cell in body_soil_pos
         ii = cell[2]
         jj = cell[3]
         ind = cell[1]
-        h_soil = cell[7]
-
-        # Adding volume of body soil
         body_soil_volume += out.body_soil[ind+1][ii, jj] - out.body_soil[ind][ii, jj]
-
-        # Removing soil from old_body_soil
-        old_body_soil[ind+1][ii, jj] -= h_soil
     end
     body_soil_volume *= grid.cell_area
+
+    # Removing soil from old_body_soil followung body_soil_pos
+    for cell in out.body_soil_pos
+        ii = cell[2]
+        jj = cell[3]
+        ind = cell[1]
+        h_soil = cell[7]
+        old_body_soil[ind+1][ii, jj] -= h_soil
+    end
 
     # Calculating total volume of soil
     total_volume = terrain_volume + body_soil_volume
