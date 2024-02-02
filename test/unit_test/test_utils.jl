@@ -256,7 +256,16 @@ end
     @test_logs (:warn,) match_mode=:any check_volume(out, 0.0, grid)
 
     # Test: UT-CV-4
-
+    out.body_soil_pos[3].h_soil = 0.0
+    @test_logs (:warn,) match_mode=:any check_volume(out, init_volume, grid)
+    out.body_soil_pos[3].h_soil = 0.1
+    push_body_soil_pos(out, 1, 2, 2, [0.0, 0.0, 0.0], 0.05)
+    @test_logs (:warn,) match_mode=:any check_volume(out, init_volume, grid)
+    out.body_soil[2][2, 2] = 0.05
+    init_volume += 0.05 * grid.cell_area
+    @test_logs check_volume(out, init_volume, grid)
+    push_body_soil_pos(out, 1, 5, 5, [0.0, 0.0, 0.0], 0.05)
+    @test_logs (:warn,) match_mode=:any check_volume(out, init_volume, grid)
 
     # Resetting body_soil
     out.body_soil[1][2, 2] = 0.0
@@ -274,101 +283,94 @@ end
 end
 
 @testset "check_soil" begin
-    # Testing that no warning is sent when everything is at zero
+    # Test: UT-CS-1
     @test_logs check_soil(out)
 
-    # Changing terrain to an arbitrary shape
+    # Test: UT-CS-2
     out.terrain[1, 1] = -0.2
     out.terrain[1, 2] = -0.15
     out.terrain[2, 1] = 0.0
     out.terrain[2, 2] = 0.0
-
-    # Testing that no warning is sent
     @test_logs check_soil(out)
 
-    # Setting the bucket
-    out.body[1][1, 1] = -0.2
-    out.body[2][1, 1] = 0.0
-    out.body[1][1, 2] = -0.15
-    out.body[2][1, 2] = 0.0
-    out.body[3][1, 2] = 0.1
-    out.body[4][1, 2] = 0.2
-    out.body[3][2, 1] = 0.0
-    out.body[4][2, 1] = 0.15
-    out.body[1][2, 2] = 0.1
-    out.body[2][2, 2] = 0.1
-
-    # Testing that no warning is sent
+    # Test: UT-CS-3
+    set_height(out, 1, 1, NaN, -0.2, 0.0, NaN, NaN, NaN, NaN, NaN, NaN)
+    set_height(out, 1, 2, NaN, -0.15, 0.0, NaN, NaN, 0.1, 0.2, NaN, NaN)
+    set_height(out, 2, 1, NaN, NaN, NaN, NaN, NaN, 0.0, 0.15, NaN, NaN)
+    set_height(out, 2, 2, NaN, 0.05, 0.1, NaN, NaN, NaN, NaN, NaN, NaN)
     @test_logs check_soil(out)
 
-    # Setting the bucket soil
-    out.body_soil[1][1, 1] = 0.0
-    out.body_soil[2][1, 1] = 0.1
-    out.body_soil[1][1, 2] = 0.0
-    out.body_soil[2][1, 2] = 0.1
-    out.body_soil[3][1, 2] = 0.2
-    out.body_soil[4][1, 2] = 0.3
-    out.body_soil[3][2, 1] = 0.15
-    out.body_soil[4][2, 1] = 0.25
-    out.body_soil[1][2, 2] = 0.1
-    out.body_soil[2][2, 2] = 0.1
-
-    # Testing that no warning is sent
+    # Test: UT-CS-4
+    set_height(out, 1, 1, NaN, NaN, NaN, 0.0, 0.1, NaN, NaN, NaN, NaN)
+    set_height(out, 1, 2, NaN, NaN, NaN, 0.0, 0.1, NaN, NaN, 0.2, 0.3)
+    set_height(out, 2, 1, NaN, NaN, NaN, NaN, NaN, NaN, NaN, 0.15, 0.25)
+    set_height(out, 2, 2, NaN, NaN, NaN, 0.1, 0.15, NaN, NaN, NaN, NaN)
+    push_body_soil_pos(out, 1, 1, 1, [0.0, 0.0, 0.0], 0.1)
+    push_body_soil_pos(out, 1, 1, 2, [0.0, 0.0, 0.0], 0.1)
+    push_body_soil_pos(out, 3, 1, 2, [0.0, 0.0, 0.0], 0.1)
+    push_body_soil_pos(out, 3, 2, 1, [0.0, 0.0, 0.0], 0.1)
+    push_body_soil_pos(out, 1, 2, 2, [0.0, 0.0, 0.0], 0.05)
     @test_logs check_soil(out)
 
-    # Testing that warning is sent when terrain is above the bucket
+    # Test: UT-CS-5
     out.terrain[1, 1] = 0.5
     warning_message = "Terrain is above the bucket\nLocation: (1, 1)\n" *
         "Terrain height: 0.5\nBucket minimum height: -0.2"
     @test_logs (:warn, warning_message) match_mode=:any check_soil(out)
-    out.terrain[1, 1] = -0.19
-    warning_message = "Terrain is above the bucket\nLocation: (1, 1)\n" *
-        "Terrain height: -0.19\nBucket minimum height: -0.2"
-    @test_logs (:warn, warning_message) match_mode=:any check_soil(out)
-    # Resetting value
     out.terrain[1, 1] = -0.2
-
-    # Testing that no warning is sent
+    out.terrain[2, 1] = 0.05
+    warning_message = "Terrain is above the bucket\nLocation: (2, 1)\n" *
+        "Terrain height: 0.05\nBucket minimum height: 0.0"
+    @test_logs (:warn, warning_message) match_mode=:any check_soil(out)
+    out.terrain[2, 1] = 0.0
     @test_logs check_soil(out)
 
-    # Testing that warning is sent when body is not set properly
-    out.body[1][1, 1] = 0.0
-    out.body[2][1, 1] = -0.1
+    # Test: UT-CS-6
+    set_height(out, 1, 1, NaN, 0.0, -0.1, NaN, NaN, NaN, NaN, NaN, NaN)
     warning_message = "Minimum height of the bucket is above its maximum height\n" *
         "Location: (1, 1)\nBucket minimum height: 0.0\n" *
         "Bucket maximum height: -0.1"
     @test_logs (:warn, warning_message) match_mode=:any check_soil(out)
-    out.body_soil[1][1, 1] = 0.0
-    out.body_soil[2][1, 1] = 0.0
+    set_height(out, 1, 1, NaN, 0.0, 0.0, NaN, NaN, NaN, NaN, NaN, NaN)
     warning_message = "Minimum height of the bucket is above its maximum height\n" *
         "Location: (1, 1)\nBucket minimum height: 0.0\n" *
         "Bucket maximum height: -0.1"
     @test_logs (:warn, warning_message) match_mode=:any check_soil(out)
-    out.body[1][1, 1] = 0.41
-    out.body[2][1, 1] = 0.4
+    set_height(out, 1, 1, NaN, 0.41, 0.4, NaN, NaN, NaN, NaN, NaN, NaN)
     warning_message = "Minimum height of the bucket is above its maximum height\n" *
         "Location: (1, 1)\nBucket minimum height: 0.41\n" *
         "Bucket maximum height: 0.4"
     @test_logs (:warn, warning_message) match_mode=:any check_soil(out)
-    out.body[2][1, 1] = 0.0
+    set_height(out, 1, 1, NaN, 0.41, 0.0, NaN, NaN, NaN, NaN, NaN, NaN)
     warning_message = "Minimum height of the bucket is above its maximum height\n" *
         "Location: (1, 1)\nBucket minimum height: 0.41\n" *
         "Bucket maximum height: 0.0"
     @test_logs (:warn, warning_message) match_mode=:any check_soil(out)
-    out.body[1][1, 1] = 0.0
-    out.body[2][1, 1] = -0.4
+    set_height(out, 1, 1, NaN, 0.0, -0.4, NaN, NaN, NaN, NaN, NaN, NaN)
     warning_message = "Minimum height of the bucket is above its maximum height\n" *
         "Location: (1, 1)\nBucket minimum height: 0.0\n" *
         "Bucket maximum height: -0.4"
     @test_logs (:warn, warning_message) match_mode=:any check_soil(out)
-    # Resetting value
-    out.body[1][1, 1] = -0.2
-    out.body[2][1, 1] = 0.0
-    out.body_soil[1][1, 1] = 0.0
-    out.body_soil[2][1, 1] = 0.1
-
-    # Testing that no warning is sent
+    set_height(out, 1, 1, NaN, -0.2, 0.0, 0.0, 0.1, NaN, NaN, NaN, NaN)
+    set_height(out, 2, 1, NaN, NaN, NaN, NaN, NaN, 0.16, 0.15, NaN, NaN)
+    warning_message = "Minimum height of the bucket is above its maximum height\n" *
+        "Location: (2, 1)\nBucket minimum height: 0.16\n" *
+        "Bucket maximum height: 0.15"
+    @test_logs (:warn, warning_message) match_mode=:any check_soil(out)
+    set_height(out, 2, 1, NaN, NaN, NaN, NaN, NaN, 0.0, 0.15, NaN, NaN)
     @test_logs check_soil(out)
+
+    # Test: UT-CS-7
+
+    # Test: UT-CS-8
+
+    # Test: UT-CS-9
+
+    # Test: UT-CS-10
+
+    # Test: UT-CS-11
+
+    # Test: UT-CS-12
 
     # Testing that warning is sent when bucket soil is not set properly
     out.body_soil[1][1, 1] = 0.0
