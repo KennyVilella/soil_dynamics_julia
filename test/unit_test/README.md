@@ -65,3 +65,94 @@ Unit tests for the `SimOut` struct and its inner constructor.
 | --------- | ---------------------------------------------------------------------------------------------------- |
 | TY-SO-1   | Testing that all members of the `SimOut` struct are present and properly initialized.                |
 | TY-SO-2   | Testing that an exception is raised when the size of `terrain` is not consistent with the grid size. |
+
+## `test_utils.cpp`
+
+This file implements unit tests for the functions in the `utils.cpp` file.
+It should be tested before the main functionalities of the simulator since the utility functions are used throughout the simulator.
+
+### `CalcBucketCornerPos`
+
+Unit tests for the `CalcBucketCornerPos` function.
+
+| Test name | Description of the unit test                                              |
+| --------- | ------------------------------------------------------------------------- |
+| UT-CBC-1  | Testing for a bucket in its reference pose.                               |
+| UT-CBC-2  | Testing for a bucket with a simple translation applied.                   |
+| UT-CBC-3  | Testing for a bucket with a simple rotation applied.                      |
+| UT-CBC-4  | Testing for a bucket with both a simple rotation and translation applied. |
+
+### `CheckBucketMovement`
+
+Unit tests for the `CheckBucketMovement` function.
+
+| Test name | Description of the unit test                                                    |
+| --------- | ------------------------------------------------------------------------------- |
+| UT-CBM-1  | Testing for a one cell translation following the X axis.                        |
+| UT-CBM-2  | Testing for an arbitrary translation.                                           |
+| UT-CBM-3  | Testing for a 8 degrees rotation around the Y axis.                             |
+| UT-CBM-4  | Testing for a 8 degrees rotation around the Y axis combined with a half cell translation following the X axis. |
+| UT-CBM-5  | Testing for a translation much shorter than the cell size following the X axis. |
+| UT-CBM-6  | Testing for an arbitrary translation much shorter than cell size.               |
+| UT-CBM-7  | Testing for a 0.33 degree rotation around the Y axis.                           |
+| UT-CBM-8  | Testing for a 0.33 degree rotation around the Y axis combined with a translation much shorter than the cell size following the X axis. |
+| UT-CBM-9  | Testing that a warning is issued for a large movement.                          |
+
+### `CalcNormal`
+
+Unit tests for the `CalcNormal` function.
+Note that for each unit test, two different input orders are investigated in order to ensure that the direction of the normal is properly calculated.
+
+| Test name | Description of the unit test                                                                   |
+| --------- | ---------------------------------------------------------------------------------------------- |
+| UT-CN-1   | Testing for a triangle in the XY plane resulting in a unit normal vector following the Z axis. |
+| UT-CN-2   | Testing for a triangle in the XZ plane resulting in a unit normal vector following the Y axis. |
+| UT-CN-3   | Testing for a triangle in the YZ plane resulting in a unit normal vector following the X axis. |
+| UT-CN-4   | Testing for a triangle in a 45 degrees inclined plane resulting in unit normal vector with a 45 degrees slope in the three axis. |
+
+### `CalcBucketFramePos`
+
+Unit tests for the `CalcBucketFramePos` function.
+
+| Test name | Description of the unit test                                       |
+| --------- | ------------------------------------------------------------------ |
+| UT-CBF-1  | Testing for a bucket in its reference position and orientation. Input cell has an arbitrary position. |
+| UT-CBF-2  | Testing for a bucket in its reference orientation and an arbitrary position. Input cell has an arbitrary position. |
+| UT-CBF-3  | Testing for a bucket in its reference position and rotated by pi/2 around the Z axis. Input cell has an arbitrary position. |
+| UT-CBF-4  | Testing for a bucket in its reference position and rotated by pi/2 around the Y axis. Input cell has an arbitrary position. |
+| UT-CBF-5  | Testing for a bucket in its reference position and rotated by pi/2 around the X axis. Input cell has an arbitrary position. |
+| UT-CBF-6  | Testing for a bucket rotated by pi/2 around the Z axis and an arbitrary position. Input cell has an arbitrary position. |
+
+### `CheckVolume`
+
+Unit tests for the `CheckVolume` function.
+Note that for unit tests 1 to 3, results with correct and incorrect initial volumes are investigated to ensure that warning is sent only when an inconsistent initial volume is given.
+
+| Test name | Description of the unit test                                       |
+| --------- | ------------------------------------------------------------------ |
+| UT-CV-1   | Testing with a `terrain_` everywhere at 0.0 and no `body_soil_`.   |
+| UT-CV-2   | Testing with a `terrain_` everywhere at 0.0 except at one location and no `body_soil_`. |
+| UT-CV-3   | Testing with a `terrain_` everywhere at 0.0 and some `body_soil_` present at various locations. |
+| UT-CV-4   | Testing with the setup of UT-CV-3 that inconsistent amount of soil in `body_soil_pos_` results into a warning. It can be either not enough or too much soil. |
+
+### `CheckSoil`
+
+Unit tests for the `CheckSoil` function.
+The unit tests 1 to 4 correspond to the building of the environment setup.
+The subsequent unit tests check that improper environment setup yields a warning.
+At the end of each unit test, the environment is set to a proper setup and it is checked that no warning is sent.
+
+| Test name | Description of the unit test                                          |
+| --------- | --------------------------------------------------------------------- |
+| UT-CS-1   | Testing when everything is at zero.                                   |
+| UT-CS-2   | Testing for an arbitrary `terrain_` setup.                            |
+| UT-CS-3   | Testing for an arbitrary `terrain_` and `body_` setup.                |
+| UT-CS-4   | Testing for an arbitrary `terrain_`, `body_`, and `body_soil_` setup. |
+| UT-CS-5   | Testing when the `terrain_` is above the `body_`.                     |
+| UT-CS-6   | Testing when `body_` is not set properly, that is the maximum height of a body layer is not strictly higher than its minimum height. |
+| UT-CS-7   | Testing when `body_soil_` is not set properly, that is the maximum height of a body soil layer is not strictly higher than its minimum height. |
+| UT-CS-8   | Testing when `body_` is intersecting with its `body_soil_`.           |
+| UT-CS-9   | Testing when there is a gap between `body_` and `body_soil_`.         |
+| UT-CS-10  | Testing when `body_soil_` is present but `body_` is not present.      |
+| UT-CS-11  | Testing when two `body_` layers are intersecting.                     |
+| UT-CS-12  | Testing when the `body_soil_` on the bottom layer is intersecting with the top `body_` layer. |

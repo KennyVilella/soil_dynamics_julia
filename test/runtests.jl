@@ -3,6 +3,7 @@ using SoilDynamics
 import Random: seed!
 import ReferenceFrameRotations: angle_to_quat, Quaternion
 import SparseArrays: SparseMatrixCSC, nonzeros, dropzeros!
+include("./unit_test/utility.jl")
 
 println("Unit testing")
 @time @testset "types.jl" verbose = true begin
