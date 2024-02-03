@@ -256,9 +256,9 @@ end
     @test_logs (:warn,) match_mode=:any check_volume(out, 0.0, grid)
 
     # Test: UT-CV-4
-    out.body_soil_pos[3].h_soil = 0.0
+    out.body_soil_pos[3].h_soil[1] = 0.0
     @test_logs (:warn,) match_mode=:any check_volume(out, init_volume, grid)
-    out.body_soil_pos[3].h_soil = 0.1
+    out.body_soil_pos[3].h_soil[1] = 0.1
     push_body_soil_pos(out, 1, 2, 2, [0.0, 0.0, 0.0], 0.05)
     @test_logs (:warn,) match_mode=:any check_volume(out, init_volume, grid)
     out.body_soil[2][2, 2] = 0.05
