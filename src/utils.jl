@@ -473,28 +473,55 @@ function check_volume(
     # Calculating volume of soil in the terrain
     terrain_volume = grid.cell_area * sum(out.terrain)
 
-    # Collecting all bucket soil
+    # Collecting all body soil
     body_soil_pos = _locate_all_non_zeros(out.body_soil)
 
-    # Calculating volume of bucket soil
+    # Copying body_soil location
+    old_body_soil = deepcopy(out.body_soil)
+
+    # Calculating volume of soil in body_soil
     body_soil_volume = 0.0
     for cell in body_soil_pos
         ii = cell[2]
         jj = cell[3]
         ind = cell[1]
-
         body_soil_volume += out.body_soil[ind+1][ii, jj] - out.body_soil[ind][ii, jj]
     end
     body_soil_volume *= grid.cell_area
 
+    # Removing soil from old_body_soil followung body_soil_pos
+    for cell in out.body_soil_pos
+        ii = cell[2]
+        jj = cell[3]
+        ind = cell[1]
+        h_soil = cell[7]
+        old_body_soil[ind+1][ii, jj] -= h_soil
+    end
+
     # Calculating total volume of soil
     total_volume = terrain_volume + body_soil_volume
+
+    # Checking that volume of soil in body_soil_pos_ corresponds to soil in body_soil
+    for col in 1:size(old_body_soil, 2)
+        for r in nzrange(old_body_soil, col)
+            dh_1 = abs(old_body_soil[1][ii, jj] - old_body_soil[2][ii, jj])
+            dh_2 = abs(old_body_soil[3][ii, jj] - old_body_soil[4][ii, jj])
+            if ((dh_1 > tol) || (dh_2 > tol))
+                # Soil in body_soil_pos_ does not correspond to amount of soil in body_soil
+                @warn "Volume of soil in body_soil_pos_ is not consistent with " *
+                    "the amount of soil in body_soil."
+                return false
+            end
+        end
+    end
 
     if (abs(total_volume - init_volume) > 0.5 * grid.cell_volume)
         @warn "Volume is not conserved! \n" *
             "Initial volume: " * string(init_volume) *
             "   Current volume: " * string(total_volume)
+        return false
     end
+    return true
 end
 
 """
@@ -550,6 +577,7 @@ function check_soil(
                 "Location: (" * string(ii) * ", " * string(jj) * ")\n" *
                 "Terrain height: " * string(out.terrain[ii, jj]) * "\n" *
                 "Bucket minimum height: " * string(out.body[ind][ii, jj])
+            return false
         end
 
         if (out.body[ind][ii, jj] > out.body[ind+1][ii, jj] + tol)
@@ -557,6 +585,7 @@ function check_soil(
                 "Location: (" * string(ii) * ", " * string(jj) * ")\n" *
                 "Bucket minimum height: " * string(out.body[ind][ii, jj]) * "\n" *
                 "Bucket maximum height: " * string(out.body[ind+1][ii, jj])
+            return false
         end
 
         if (
@@ -571,6 +600,7 @@ function check_soil(
                 "Bucket 1 maximum height: " * string(out.body[2][ii, jj]) * "\n" *
                 "Bucket 2 minimum height: " * string(out.body[3][ii, jj]) * "\n" *
                 "Bucket 2 maximum height: " * string(out.body[4][ii, jj])
+            return false
         end
 
         if (
@@ -585,6 +615,7 @@ function check_soil(
                 "Bucket 1 maximum height: " * string(out.body[2][ii, jj]) * "\n" *
                 "Bucket soil 2 minimum height: " * string(out.body_soil[3][ii, jj]) * "\n" *
                 "Bucket soil 2 maximum height: " * string(out.body_soil[4][ii, jj])
+            return false
         end
 
         if (
@@ -599,6 +630,7 @@ function check_soil(
                 "Bucket soil 1 maximum height: " * string(out.body_soil[2][ii, jj]) * "\n" *
                 "Bucket 2 minimum height: " * string(out.body[3][ii, jj]) * "\n" *
                 "Bucket 2 maximum height: " * string(out.body[4][ii, jj])
+            return false
         end
 
         if ((out.body_soil[ind][ii, jj] == 0.0) && (out.body_soil[ind+1][ii, jj] == 0.0))
@@ -612,6 +644,7 @@ function check_soil(
                 "Location: (" * string(ii) * ", " * string(jj) * ")\n" *
                 "Bucket soil minimum height: " * string(out.body_soil[ind][ii, jj]) * "\n" *
                 "Bucket soil maximum height: " * string(out.body_soil[ind+1][ii, jj])
+            return false
         end
 
         if (out.body[ind+1][ii, jj] > out.body_soil[ind][ii, jj] + tol)
@@ -619,6 +652,7 @@ function check_soil(
                 "Location: (" * string(ii) * ", " * string(jj) * ")\n" *
                 "Bucket maximum height: " * string(out.body[ind+1][ii, jj]) * "\n" *
                 "Bucket soil minimum height: " * string(out.body_soil[ind][ii, jj])
+            return false
         end
 
         if (out.body_soil[ind][ii, jj] != out.body[ind+1][ii, jj])
@@ -626,6 +660,7 @@ function check_soil(
                 "Location: (" * string(ii) * ", " * string(jj) * ")\n" *
                 "Bucket maximum height: " * string(out.body[ind+1][ii, jj]) * "\n" *
                 "Bucket soil minimum height: " * string(out.body_soil[ind][ii, jj])
+            return false
         end
     end
 
@@ -644,8 +679,10 @@ function check_soil(
                 "Location: (" * string(ii) * ", " * string(jj) * ")\n" *
                 "Bucket soil minimum height: " * string(out.body_soil[ind][ii, jj]) * "\n" *
                 "Bucket soil maximum height: " * string(out.body_soil[ind+1][ii, jj])
+            return false
         end
     end
+    return true
 end
 
 """

@@ -156,4 +156,3 @@ At the end of each unit test, the environment is set to a proper setup and it is
 | UT-CS-10  | Testing when `body_soil_` is present but `body_` is not present.      |
 | UT-CS-11  | Testing when two `body_` layers are intersecting.                     |
 | UT-CS-12  | Testing when the `body_soil_` on the bottom layer is intersecting with the top `body_` layer. |
-
