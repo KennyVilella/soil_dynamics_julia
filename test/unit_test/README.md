@@ -82,9 +82,9 @@ Unit tests for the `_calc_bucket_corner_pos` function.
 | UT-CBC-3  | Testing for a bucket with a simple rotation applied.                      |
 | UT-CBC-4  | Testing for a bucket with both a simple rotation and translation applied. |
 
-### `CheckBucketMovement`
+### `check_bucket_movement`
 
-Unit tests for the `CheckBucketMovement` function.
+Unit tests for the `check_bucket_movement` function.
 
 | Test name | Description of the unit test                                                    |
 | --------- | ------------------------------------------------------------------------------- |
@@ -129,9 +129,9 @@ Unit tests for the `_locate_all_non_zeros` function.
 | UT-LA-3   | Testing that all non-empty value in `body_soil` are properly located for various configurations. |
 | UT-LA-4   | Testing that all zero values in `body_soil` are properly ignored.                                |
 
-### `CalcNormal`
+### `calc_normal`
 
-Unit tests for the `CalcNormal` function.
+Unit tests for the `calc_normal` function.
 Note that for each unit test, two different input orders are investigated in order to ensure that the direction of the normal is properly calculated.
 
 | Test name | Description of the unit test                                                                   |
@@ -151,9 +151,9 @@ As it is difficult to retrieve the seed, instead of checking that the seed is pr
 | UT-SR-1   | Testing with the default seed that the results are reproducible.   |
 | UT-SR-2   | Testing with an aribitrary seed that the results are reproducible. |
 
-### `CalcBucketFramePos`
+### `_calc_bucket_frame_pos`
 
-Unit tests for the `CalcBucketFramePos` function.
+Unit tests for the `_calc_bucket_frame_pos` function.
 
 | Test name | Description of the unit test                                       |
 | --------- | ------------------------------------------------------------------ |
@@ -164,21 +164,21 @@ Unit tests for the `CalcBucketFramePos` function.
 | UT-CBF-5  | Testing for a bucket in its reference position and rotated by pi/2 around the X axis. Input cell has an arbitrary position. |
 | UT-CBF-6  | Testing for a bucket rotated by pi/2 around the Z axis and an arbitrary position. Input cell has an arbitrary position. |
 
-### `CheckVolume`
+### `check_volume`
 
-Unit tests for the `CheckVolume` function.
+Unit tests for the `check_volume` function.
 Note that for unit tests 1 to 3, results with correct and incorrect initial volumes are investigated to ensure that warning is sent only when an inconsistent initial volume is given.
 
 | Test name | Description of the unit test                                       |
 | --------- | ------------------------------------------------------------------ |
-| UT-CV-1   | Testing with a `terrain_` everywhere at 0.0 and no `body_soil_`.   |
-| UT-CV-2   | Testing with a `terrain_` everywhere at 0.0 except at one location and no `body_soil_`. |
-| UT-CV-3   | Testing with a `terrain_` everywhere at 0.0 and some `body_soil_` present at various locations. |
-| UT-CV-4   | Testing with the setup of UT-CV-3 that inconsistent amount of soil in `body_soil_pos_` results into a warning. It can be either not enough or too much soil. |
+| UT-CV-1   | Testing with a `terrain` everywhere at 0.0 and no `body_soil`.   |
+| UT-CV-2   | Testing with a `terrain` everywhere at 0.0 except at one location and no `body_soil`. |
+| UT-CV-3   | Testing with a `terrain` everywhere at 0.0 and some `body_soil` present at various locations. |
+| UT-CV-4   | Testing with the setup of UT-CV-3 that inconsistent amount of soil in `body_soil_pos` results into a warning. It can be either not enough or too much soil. |
 
-### `CheckSoil`
+### `check_soil`
 
-Unit tests for the `CheckSoil` function.
+Unit tests for the `check_soil` function.
 The unit tests 1 to 4 correspond to the building of the environment setup.
 The subsequent unit tests check that improper environment setup yields a warning.
 At the end of each unit test, the environment is set to a proper setup and it is checked that no warning is sent.
@@ -186,14 +186,14 @@ At the end of each unit test, the environment is set to a proper setup and it is
 | Test name | Description of the unit test                                          |
 | --------- | --------------------------------------------------------------------- |
 | UT-CS-1   | Testing when everything is at zero.                                   |
-| UT-CS-2   | Testing for an arbitrary `terrain_` setup.                            |
-| UT-CS-3   | Testing for an arbitrary `terrain_` and `body_` setup.                |
-| UT-CS-4   | Testing for an arbitrary `terrain_`, `body_`, and `body_soil_` setup. |
-| UT-CS-5   | Testing when the `terrain_` is above the `body_`.                     |
-| UT-CS-6   | Testing when `body_` is not set properly, that is the maximum height of a body layer is not strictly higher than its minimum height. |
-| UT-CS-7   | Testing when `body_soil_` is not set properly, that is the maximum height of a body soil layer is not strictly higher than its minimum height. |
-| UT-CS-8   | Testing when `body_` is intersecting with its `body_soil_`.           |
-| UT-CS-9   | Testing when there is a gap between `body_` and `body_soil_`.         |
-| UT-CS-10  | Testing when `body_soil_` is present but `body_` is not present.      |
-| UT-CS-11  | Testing when two `body_` layers are intersecting.                     |
-| UT-CS-12  | Testing when the `body_soil_` on the bottom layer is intersecting with the top `body_` layer. |
+| UT-CS-2   | Testing for an arbitrary `terrain` setup.                             |
+| UT-CS-3   | Testing for an arbitrary `terrain` and `body` setup.                  |
+| UT-CS-4   | Testing for an arbitrary `terrain`, `body`, and `body_soil` setup.    |
+| UT-CS-5   | Testing when the `terrain` is above the `body`.                       |
+| UT-CS-6   | Testing when `body` is not set properly, that is the maximum height of a body layer is not strictly higher than its minimum height. |
+| UT-CS-7   | Testing when `body_soil` is not set properly, that is the maximum height of a body soil layer is not strictly higher than its minimum height. |
+| UT-CS-8   | Testing when `body` is intersecting with its `body_soil`.                                   |
+| UT-CS-9   | Testing when there is a gap between `body` and `body_soil`.                                 |
+| UT-CS-10  | Testing when `body_soil` is present but `body` is not present.                              |
+| UT-CS-11  | Testing when two `body` layers are intersecting.                                            |
+| UT-CS-12  | Testing when the `body_soil` on the bottom layer is intersecting with the top `body` layer. |

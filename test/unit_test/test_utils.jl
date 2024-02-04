@@ -141,44 +141,6 @@ end
     @test_logs (:warn,) match_mode=:any check_bucket_movement(pos, ori, grid, bucket)
 end
 
-@testset "_calc_bucket_frame_pos" begin
-    # Test: UT-CBF-1
-    cell_local_pos = _calc_bucket_frame_pos(12, 12, 0.2, grid, bucket)
-    @test (cell_local_pos ≈ Vector{Float64}([0.1, 0.1, 0.2]))
-
-    # Test: UT-CBF-2
-    bucket.pos .= [-0.1, 0.2, 0.3]
-    cell_local_pos = _calc_bucket_frame_pos(11, 13, -0.2, grid, bucket)
-    @test (cell_local_pos ≈ Vector{Float64}([0.1, 0.0, -0.5]))
-    bucket.pos .= [0.0, 0.0, 0.0]
-
-    # Test: UT-CBF-3
-    bucket.ori .= [0.707107, 0.0, 0.0, -0.707107]
-    cell_local_pos = _calc_bucket_frame_pos(12, 13, 0.3, grid, bucket)
-    @test (cell_local_pos ≈ Vector{Float64}([0.2, -0.1, 0.3]))
-    bucket.ori .= [1.0, 0.0, 0.0, 0.0]
-
-    # Test: UT-CBF-4
-    bucket.ori .= [0.707107, 0.0, -0.707107, 0.0]
-    cell_local_pos = _calc_bucket_frame_pos(12, 13, 0.3, grid, bucket)
-    @test (cell_local_pos ≈ Vector{Float64}([-0.3, 0.2, 0.1]))
-    bucket.ori .= [1.0, 0.0, 0.0, 0.0]
-
-    # Test: UT-CBF-5
-    bucket.ori .= [0.707107, 0.707107, 0.0, 0.0]
-    cell_local_pos = _calc_bucket_frame_pos(12, 13, 0.3, grid, bucket)
-    @test (cell_local_pos ≈ Vector{Float64}([0.1, -0.3, 0.2]))
-    bucket.ori .= [1.0, 0.0, 0.0, 0.0]
-
-    # Test: UT-CBF-6
-    bucket.pos .= [-0.1, 0.2, 0.3]
-    bucket.ori .= [0.707107, 0.0, 0.0, -0.707107]
-    cell_local_pos = _calc_bucket_frame_pos(11, 13, -0.2, grid, bucket)
-    @test (cell_local_pos ≈ Vector{Float64}([0.0, -0.1, -0.5]))
-    bucket.pos .= [0.0, 0.0, 0.0]
-    bucket.ori .= [1.0, 0.0, 0.0, 0.0]
-end
-
 @testset "_init_sparse_array!" begin
     # Test: UT-IS-1
     out.body[1][5:17, 1:16] .= 1.0
@@ -375,6 +337,44 @@ end
     seed!(15034)
     exp_rand = rand(1)
     @test get_rand  == exp_rand
+end
+
+@testset "_calc_bucket_frame_pos" begin
+    # Test: UT-CBF-1
+    cell_local_pos = _calc_bucket_frame_pos(12, 12, 0.2, grid, bucket)
+    @test (cell_local_pos ≈ Vector{Float64}([0.1, 0.1, 0.2]))
+
+    # Test: UT-CBF-2
+    bucket.pos .= [-0.1, 0.2, 0.3]
+    cell_local_pos = _calc_bucket_frame_pos(11, 13, -0.2, grid, bucket)
+    @test (cell_local_pos ≈ Vector{Float64}([0.1, 0.0, -0.5]))
+    bucket.pos .= [0.0, 0.0, 0.0]
+
+    # Test: UT-CBF-3
+    bucket.ori .= [0.707107, 0.0, 0.0, -0.707107]
+    cell_local_pos = _calc_bucket_frame_pos(12, 13, 0.3, grid, bucket)
+    @test (cell_local_pos ≈ Vector{Float64}([0.2, -0.1, 0.3]))
+    bucket.ori .= [1.0, 0.0, 0.0, 0.0]
+
+    # Test: UT-CBF-4
+    bucket.ori .= [0.707107, 0.0, -0.707107, 0.0]
+    cell_local_pos = _calc_bucket_frame_pos(12, 13, 0.3, grid, bucket)
+    @test (cell_local_pos ≈ Vector{Float64}([-0.3, 0.2, 0.1]))
+    bucket.ori .= [1.0, 0.0, 0.0, 0.0]
+
+    # Test: UT-CBF-5
+    bucket.ori .= [0.707107, 0.707107, 0.0, 0.0]
+    cell_local_pos = _calc_bucket_frame_pos(12, 13, 0.3, grid, bucket)
+    @test (cell_local_pos ≈ Vector{Float64}([0.1, -0.3, 0.2]))
+    bucket.ori .= [1.0, 0.0, 0.0, 0.0]
+
+    # Test: UT-CBF-6
+    bucket.pos .= [-0.1, 0.2, 0.3]
+    bucket.ori .= [0.707107, 0.0, 0.0, -0.707107]
+    cell_local_pos = _calc_bucket_frame_pos(11, 13, -0.2, grid, bucket)
+    @test (cell_local_pos ≈ Vector{Float64}([0.0, -0.1, -0.5]))
+    bucket.pos .= [0.0, 0.0, 0.0]
+    bucket.ori .= [1.0, 0.0, 0.0, 0.0]
 end
 
 @testset "check_volume" begin
