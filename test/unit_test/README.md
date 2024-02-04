@@ -107,6 +107,26 @@ Unit tests for the `_init_sparse_array!` function.
 | UT-IS-1   | Testing that non zeros values of `body` are properly reset.      |
 | UT-IS-2   | Testing that non zeros values of `body_soil` are properly reset. |
 
+### `_locate_non_zeros`
+
+Unit tests for the `_locate_non_zeros` function.
+
+| Test name | Description of the unit test                                      |
+| --------- | ----------------------------------------------------------------- |
+| UT-LN-1   | Testing that non-empty value in `body` are properly located.      |
+| UT-LN-2   | Testing that zero values in `body` are properly ignored.          |
+| UT-LN-3   | Testing that non-empty value in `body_soil` are properly located. |
+| UT-LN-4   | Testing that zero values in `body_soil` are properly ignored.     |
+
+### `_locate_all_non_zeros`
+
+Unit tests for the `_locate_all_non_zeros` function.
+
+| Test name | Description of the unit test                                      |
+| --------- | ----------------------------------------------------------------- |
+| UT-LA-1   | Testing that non-empty value in `body` are properly located.      |
+| UT-LA-2   | Testing that non-empty value in `body_soil` are properly located. |
+
 ### `CalcNormal`
 
 Unit tests for the `CalcNormal` function.

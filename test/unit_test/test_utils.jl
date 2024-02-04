@@ -49,37 +49,41 @@ out = SimOut(terrain, grid)
 end
 
 @testset "_locate_non_zeros" begin
-    # Setting dummy values in body_soil
-    out.body_soil[1][5, 5] = 0.1
-    out.body_soil[1][4, 9] = 0.0
-    out.body_soil[1][11, 7] = -0.5
-    out.body_soil[1][15, 1] = -0.2
-
-    # Setting dummy values in body
-    out.body[2][10, 10] = 0.0
+    # Test: UT-LN-1
     out.body[2][15, 11] = 0.3
     out.body[2][7, 1] = -0.3
     out.body[2][1, 2] = 0.01
-
-    # Testing that non-empty cells are located properly in body_soil
-    non_zeros = _locate_non_zeros(out.body_soil[1])
-    @test ([5, 5] in non_zeros) && ([11, 7] in non_zeros) && ([15, 1] in non_zeros)
-    @test (length(non_zeros) == 3)
-
-    # Testing that non-empty cells are located properly in body
     non_zeros = _locate_non_zeros(out.body[2])
     @test ([15, 11] in non_zeros) && ([7, 1] in non_zeros) && ([1, 2] in non_zeros)
     @test (length(non_zeros) == 3)
-
-    # Resetting properties
-    out.body_soil[1][5, 5] = 0.0
-    out.body_soil[1][11, 7] = 0.0
-    out.body_soil[1][15, 1] = 0.0
     out.body[2][15, 11] = 0.0
     out.body[2][7, 1] = 0.0
     out.body[2][1, 2] = 0.0
-    dropzeros!(out.body_soil[1])
     dropzeros!(out.body[2])
+
+    # Test: UT-LN-2
+    out.body[2][10, 10] = 0.0
+    non_zeros = _locate_non_zeros(out.body[2])
+    @test isempty(non_zeros)
+    dropzeros!(out.body[2])
+
+    # Test: UT-LN-3
+    out.body_soil[1][5, 5] = 0.1
+    out.body_soil[1][11, 7] = -0.5
+    out.body_soil[1][15, 1] = -0.2
+    non_zeros = _locate_non_zeros(out.body_soil[1])
+    @test ([5, 5] in non_zeros) && ([11, 7] in non_zeros) && ([15, 1] in non_zeros)
+    @test (length(non_zeros) == 3)
+    out.body_soil[1][5, 5] = 0.0
+    out.body_soil[1][11, 7] = 0.0
+    out.body_soil[1][15, 1] = 0.0
+    dropzeros!(out.body_soil[1])
+
+    # Test: UT-LN-4
+    out.body_soil[1][4, 9] = 0.0
+    non_zeros = _locate_non_zeros(out.body_soil[1])
+    @test isempty(non_zeros)
+    dropzeros!(out.body_soil[1])
 end
 
 @testset "_locate_all_non_zeros" begin
@@ -118,6 +122,8 @@ end
     out.body[2][16, 7] = 0.0
     out.body[3][19, 5] = 0.0
     out.body[4][19, 5] = 0.0
+
+
 
     # Testing that cells in body_soil are located properly
     body_soil_pos = _locate_all_non_zeros(out.body_soil)
