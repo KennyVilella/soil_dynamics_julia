@@ -141,6 +141,16 @@ Note that for each unit test, two different input orders are investigated in ord
 | UT-CN-3   | Testing for a triangle in the YZ plane resulting in a unit normal vector following the X axis. |
 | UT-CN-4   | Testing for a triangle in a 45 degrees inclined plane resulting in unit normal vector with a 45 degrees slope in the three axis. |
 
+### `set_RNG_seed!`
+
+Unit tests for the `set_RNG_seed!` function.
+As it is difficult to retrieve the seed, instead of checking that the seed is properly set, we rather test the reproducibility of the result.
+
+| Test name | Description of the unit test                                       |
+| --------- | ------------------------------------------------------------------ |
+| UT-SR-1   | Testing with the default seed that the results are reproducible.   |
+| UT-SR-2   | Testing with an aribitrary seed that the results are reproducible. |
+
 ### `CalcBucketFramePos`
 
 Unit tests for the `CalcBucketFramePos` function.

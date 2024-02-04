@@ -207,17 +207,14 @@ end
 end
 
 @testset "set_RNG_seed!" begin
-    # As it is difficult to retrieve the seed, instead of checking that the
-    # seed is properly set, we rather test the reproducibility of the result
-
-    # Testing for the default seed
+    # Test: UT-SR-1
     set_RNG_seed!()
     get_rand = rand(1)
     seed!(1234)
     exp_rand = rand(1)
     @test get_rand  == exp_rand
 
-    # Testing with a different seed
+    # Test: UT-SR-2
     set_RNG_seed!(15034)
     get_rand = rand(1)
     seed!(15034)
