@@ -24,6 +24,71 @@ out = SimOut(terrain, grid)
 #                                         Testing                                          #
 #                                                                                          #
 #==========================================================================================#
+@testset "_calc_bucket_corner_pos" begin
+    # Setting up the environment
+    o_pos = Vector{Float64}([0.0, 0.0, 0.0])
+    j_pos = Vector{Float64}([0.0, 0.0, 0.0])
+    b_pos = Vector{Float64}([0.0, 0.0, -0.5])
+    t_pos = Vector{Float64}([0.7, 0.0, -0.5])
+    bucket = BucketParam(o_pos, j_pos, b_pos, t_pos, 0.5)
+
+    # Test: UT-CBC-1
+    pos = Vector{Float64}([0.0, 0.0, 0.0])
+    ori = Quaternion(1.0, 0.0, 0.0, 0.0)
+    j_r_pos, j_l_pos, b_r_pos, b_l_pos, t_r_pos, t_l_pos = _calc_bucket_corner_pos(
+        pos, ori, bucket
+    )
+    @test (j_r_pos == Vector{Float64}([0.0, -0.25, 0.0]))
+    @test (j_l_pos == Vector{Float64}([0.0, 0.25, 0.0]))
+    @test (b_r_pos == Vector{Float64}([0.0, -0.25, -0.5]))
+    @test (b_l_pos == Vector{Float64}([0.0, 0.25, -0.5]))
+    @test (t_r_pos == Vector{Float64}([0.7, -0.25, -0.5]))
+    @test (t_l_pos == Vector{Float64}([0.7, 0.25, -0.5]))
+
+    # Test: UT-CBC-2
+    pos = Vector{Float64}([0.1, -0.1, 0.2])
+    ori = Quaternion(1.0, 0.0, 0.0, 0.0)
+    j_r_pos, j_l_pos, b_r_pos, b_l_pos, t_r_pos, t_l_pos = _calc_bucket_corner_pos(
+        pos, ori, bucket
+    )
+    @test (j_r_pos ≈ Vector{Float64}([0.1, -0.35, 0.2]))
+    @test (j_l_pos ≈ Vector{Float64}([0.1, 0.15, 0.2]))
+    @test (b_r_pos ≈ Vector{Float64}([0.1, -0.35, -0.3]))
+    @test (b_l_pos ≈ Vector{Float64}([0.1, 0.15, -0.3]))
+    @test (t_r_pos ≈ Vector{Float64}([0.8, -0.35, -0.3]))
+    @test (t_l_pos ≈ Vector{Float64}([0.8, 0.15, -0.3]))
+
+    # Test: UT-CBC-3
+    pos = Vector{Float64}([0.0, 0.0, 0.0])
+    ori = Quaternion(0.707107, 0.0, 0.0, -0.707107)
+    j_r_pos, j_l_pos, b_r_pos, b_l_pos, t_r_pos, t_l_pos = _calc_bucket_corner_pos(
+        pos, ori, bucket
+    )
+    @test (j_r_pos ≈ Vector{Float64}([0.25, 0.0, 0.0]))
+    @test (j_l_pos ≈ Vector{Float64}([-0.25, 0.0, 0.0]))
+    @test (b_r_pos ≈ Vector{Float64}([0.25, 0.0, -0.5]))
+    @test (b_l_pos ≈ Vector{Float64}([-0.25, 0.0, -0.5]))
+    @test (t_r_pos ≈ Vector{Float64}([0.25, 0.7, -0.5]))
+    @test (t_l_pos ≈ Vector{Float64}([-0.25, 0.7, -0.5]))
+
+    # Test: UT-CBC-4
+    pos = Vector{Float64}([0.1, -0.1, 0.2])
+    ori = Quaternion(0.707107, 0.0, 0.0, -0.707107)
+    j_r_pos, j_l_pos, b_r_pos, b_l_pos, t_r_pos, t_l_pos = _calc_bucket_corner_pos(
+        pos, ori, bucket
+    )
+    @test (j_r_pos ≈ Vector{Float64}([0.35, -0.1, 0.2]))
+    @test (j_l_pos ≈ Vector{Float64}([-0.15, -0.1, 0.2]))
+    @test (b_r_pos ≈ Vector{Float64}([0.35, -0.1, -0.3]))
+    @test (b_l_pos ≈ Vector{Float64}([-0.15, -0.1, -0.3]))
+    @test (t_r_pos ≈ Vector{Float64}([0.35, 0.6, -0.3]))
+    @test (t_l_pos ≈ Vector{Float64}([-0.15, 0.6, -0.3]))
+end
+
+@testset "" begin
+
+end
+
 @testset "_init_sparse_array!" begin
     # Test: UT-IS-1
     out.body[1][5:17, 1:16] .= 1.0
