@@ -98,6 +98,15 @@ Unit tests for the `CheckBucketMovement` function.
 | UT-CBM-8  | Testing for a 0.33 degree rotation around the Y axis combined with a translation much shorter than the cell size following the X axis. |
 | UT-CBM-9  | Testing that a warning is issued for a large movement.                          |
 
+### `_init_sparse_array!`
+
+Unit tests for the `_init_sparse_array!` function.
+
+| Test name | Description of the unit test                                     |
+| --------- | ---------------------------------------------------------------- |
+| UT-IS-1   | Testing that non zeros values of `body` are properly reset.      |
+| UT-IS-2   | Testing that non zeros values of `body_soil` are properly reset. |
+
 ### `CalcNormal`
 
 Unit tests for the `CalcNormal` function.
