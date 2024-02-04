@@ -122,10 +122,12 @@ Unit tests for the `_locate_non_zeros` function.
 
 Unit tests for the `_locate_all_non_zeros` function.
 
-| Test name | Description of the unit test                                      |
-| --------- | ----------------------------------------------------------------- |
-| UT-LA-1   | Testing that non-empty value in `body` are properly located.      |
-| UT-LA-2   | Testing that non-empty value in `body_soil` are properly located. |
+| Test name | Description of the unit test                                                                     |
+| --------- | ------------------------------------------------------------------------------------------------ |
+| UT-LA-1   | Testing that all non-empty value in `body` are properly located for various configurations.      |
+| UT-LA-2   | Testing that all zero values in `body` are properly ignored.                                     |
+| UT-LA-3   | Testing that all non-empty value in `body_soil` are properly located for various configurations. |
+| UT-LA-4   | Testing that all zero values in `body_soil` are properly ignored.                                |
 
 ### `CalcNormal`
 
