@@ -14,6 +14,14 @@ cell_size_xy = 0.1
 cell_size_z = 0.1
 grid = GridParam(grid_size_x, grid_size_y, grid_size_z, cell_size_xy, cell_size_z)
 
+# Bucket properties
+o_pos_init = Vector{Float64}([0.0, 0.0, 0.0])
+j_pos_init = Vector{Float64}([0.0, 0.0, 0.0])
+b_pos_init = Vector{Float64}([0.0, 0.0, -0.5])
+t_pos_init = Vector{Float64}([0.7, 0.0, -0.5])
+bucket_width = 0.5
+bucket = BucketParam(o_pos_init, j_pos_init, b_pos_init, t_pos_init, bucket_width)
+
 # Terrain properties
 terrain = zeros(2 * grid.half_length_x + 1, 2 * grid.half_length_y + 1)
 out = SimOut(terrain, grid)
@@ -25,13 +33,6 @@ out = SimOut(terrain, grid)
 #                                                                                          #
 #==========================================================================================#
 @testset "_calc_bucket_corner_pos" begin
-    # Setting up the environment
-    o_pos = Vector{Float64}([0.0, 0.0, 0.0])
-    j_pos = Vector{Float64}([0.0, 0.0, 0.0])
-    b_pos = Vector{Float64}([0.0, 0.0, -0.5])
-    t_pos = Vector{Float64}([0.7, 0.0, -0.5])
-    bucket = BucketParam(o_pos, j_pos, b_pos, t_pos, 0.5)
-
     # Test: UT-CBC-1
     pos = Vector{Float64}([0.0, 0.0, 0.0])
     ori = Quaternion(1.0, 0.0, 0.0, 0.0)
@@ -85,7 +86,62 @@ out = SimOut(terrain, grid)
     @test (t_l_pos ≈ Vector{Float64}([-0.15, 0.6, -0.3]))
 end
 
-@testset "" begin
+@testset "check_bucket_movement" begin
+    # Test: UT-CBM-1
+    pos = Vector{Float64}([0.1, 0.0, 0.0])
+    ori = Quaternion(1.0, 0.0, 0.0, 0.0)
+    soil_update = check_bucket_movement(pos, ori, grid, bucket)
+    @test (soil_update == true)
+
+    # Test: UT-CBM-2
+    pos = Vector{Float64}([0.05, 0.02, -0.05])
+    ori = Quaternion(1.0, 0.0, 0.0, 0.0)
+    soil_update = check_bucket_movement(pos, ori, grid, bucket)
+    @test (soil_update == true)
+
+    # Test: UT-CBM-3
+    pos = Vector{Float64}([0.0, 0.0, 0.0])
+    ori = Quaternion(0.997, 0.0, 0.07, 0.0)
+    soil_update = check_bucket_movement(pos, ori, grid, bucket)
+    @test (soil_update == true)
+
+    # Test: UT-CBM-4
+    pos = Vector{Float64}([0.05, 0.0, 0.0])
+    ori = Quaternion(0.997, 0.0, 0.07, 0.0)
+    soil_update = check_bucket_movement(pos, ori, grid, bucket)
+    @test (soil_update == true)
+
+    # Test: UT-CBM-5
+    pos = Vector{Float64}([0.005, 0.0, 0.0])
+    ori = Quaternion(1.0, 0.0, 0.0, 0.0)
+    soil_update = check_bucket_movement(pos, ori, grid, bucket)
+    @test (soil_update == false)
+
+    # Test: UT-CBM-6
+    pos = Vector{Float64}([0.001, 0.002, -0.003])
+    ori = Quaternion(1.0, 0.0, 0.0, 0.0)
+    soil_update = check_bucket_movement(pos, ori, grid, bucket)
+    @test (soil_update == false)
+
+    # Test: UT-CBM-7
+    pos = Vector{Float64}([0.0, 0.0, 0.0])
+    ori = Quaternion(1.0, 0.0, 0.0, 0.0)
+    soil_update = check_bucket_movement(pos, ori, grid, bucket)
+    @test (soil_update == false)
+
+    # Test: UT-CBM-8
+    pos = Vector{Float64}([0.001, 0.0, 0.0])
+    ori = Quaternion(0.999, 0.0, 0.0029, 0.0)
+    soil_update = check_bucket_movement(pos, ori, grid, bucket)
+    @test (soil_update == false)
+
+    # Test: UT-CBM-9
+    pos = Vector{Float64}([0.3, 0.0, 0.0])
+    ori = Quaternion(1.0, 0.0, 0.0, 0.0)
+    @test_logs (:warn,) match_mode=:any check_bucket_movement(pos, ori, grid, bucket)
+end
+
+@testset "_calc_bucket_frame_pos" begin
 
 end
 
