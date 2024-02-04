@@ -440,7 +440,7 @@ end
 
 """
     check_volume(
-        out::SimOut{B,I,T}, init_volume::T, grid::GridParam{I,T}
+        out::SimOut{B,I,T}, init_volume::T, grid::GridParam{I,T}, tol::T=1e-8
     ) where {B<:Bool,I<:Int64,T<:Float64}
 
 This function checks that the volume of soil is conserved.
@@ -451,6 +451,7 @@ The initial volume of soil (`init_volume`) has to be provided.
 - `init_volume::Float64`: Initial volume of soil in the terrain. [m^3]
 - `grid::GridParam{Int64,Float64}`: Struct that stores information related to the
                                     simulation grid.
+- `tol::Float64`: Small number used to handle numerical approximation errors.
 
 # Outputs
 - None
@@ -467,7 +468,8 @@ The initial volume of soil (`init_volume`) has to be provided.
 function check_volume(
     out::SimOut{B,I,T},
     init_volume::T,
-    grid::GridParam{I,T}
+    grid::GridParam{I,T},
+    tol::T=1e-8
 ) where {B<:Bool,I<:Int64,T<:Float64}
 
     # Calculating volume of soil in the terrain
@@ -491,23 +493,23 @@ function check_volume(
 
     # Removing soil from old_body_soil followung body_soil_pos
     for cell in out.body_soil_pos
-        ii = cell[2]
-        jj = cell[3]
-        ind = cell[1]
-        h_soil = cell[7]
+        ii = cell.ii[1]
+        jj = cell.jj[1]
+        ind = cell.ind[1]
+        h_soil = cell.h_soil[1]
         old_body_soil[ind+1][ii, jj] -= h_soil
     end
 
     # Calculating total volume of soil
     total_volume = terrain_volume + body_soil_volume
 
-    # Checking that volume of soil in body_soil_pos_ corresponds to soil in body_soil
-    for col in 1:size(old_body_soil, 2)
-        for r in nzrange(old_body_soil, col)
+    # Checking that volume of soil in body_soil_pos corresponds to soil in body_soil
+    for ii in 1:size(old_body_soil[1], 1)
+        for jj in 1:size(old_body_soil[1], 2)
             dh_1 = abs(old_body_soil[1][ii, jj] - old_body_soil[2][ii, jj])
             dh_2 = abs(old_body_soil[3][ii, jj] - old_body_soil[4][ii, jj])
             if ((dh_1 > tol) || (dh_2 > tol))
-                # Soil in body_soil_pos_ does not correspond to amount of soil in body_soil
+                # Soil in body_soil_pos does not correspond to amount of soil in body_soil
                 @warn "Volume of soil in body_soil_pos_ is not consistent with " *
                     "the amount of soil in body_soil."
                 return false

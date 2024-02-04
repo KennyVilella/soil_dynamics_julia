@@ -35,6 +35,7 @@ and duplicates are removed.
                                     simulation grid.
 - `bucket::BucketParam{Float64}`: Struct that stores information related to the
                                   bucket object.
+- `tol::Float64`: Small number used to handle numerical approximation errors.
 
 # Outputs
 - None

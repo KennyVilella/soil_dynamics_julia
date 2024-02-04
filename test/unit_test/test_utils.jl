@@ -256,9 +256,9 @@ end
     @test_logs (:warn,) match_mode=:any check_volume(out, 0.0, grid)
 
     # Test: UT-CV-4
-    out.body_soil_pos[3].h_soil = 0.0
+    out.body_soil_pos[3].h_soil[1] = 0.0
     @test_logs (:warn,) match_mode=:any check_volume(out, init_volume, grid)
-    out.body_soil_pos[3].h_soil = 0.1
+    out.body_soil_pos[3].h_soil[1] = 0.1
     push_body_soil_pos(out, 1, 2, 2, [0.0, 0.0, 0.0], 0.05)
     @test_logs (:warn,) match_mode=:any check_volume(out, init_volume, grid)
     out.body_soil[2][2, 2] = 0.05
@@ -267,13 +267,18 @@ end
     push_body_soil_pos(out, 1, 5, 5, [0.0, 0.0, 0.0], 0.05)
     @test_logs (:warn,) match_mode=:any check_volume(out, init_volume, grid)
 
-    # Resetting body_soil
-    set_height(out, 1, 1, NaN, NaN, NaN, 0.0, 0.0, NaN, NaN, 0.0, 0.0)
-    set_height(out, 2, 2, NaN, NaN, NaN, 0.0, 0.0, NaN, NaN, 0.0, 0.0)
+    # Resetting everything
+    set_height(out, 1, 1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+    set_height(out, 2, 1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+    set_height(out, 2, 2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
     dropzeros!(out.body_soil[1])
     dropzeros!(out.body_soil[2])
     dropzeros!(out.body_soil[3])
     dropzeros!(out.body_soil[4])
+    dropzeros!(out.body[1])
+    dropzeros!(out.body[2])
+    dropzeros!(out.body[3])
+    dropzeros!(out.body[4])
 end
 
 @testset "check_soil" begin
@@ -325,7 +330,7 @@ end
         "Location: (1, 1)\nBucket minimum height: 0.0\n" *
         "Bucket maximum height: -0.1"
     @test_logs (:warn, warning_message) match_mode=:any check_soil(out)
-    set_height(out, 1, 1, NaN, 0.0, 0.0, NaN, NaN, NaN, NaN, NaN, NaN)
+    set_height(out, 1, 1, NaN, 0.0, -0.1, NaN, NaN, NaN, NaN, NaN, NaN)
     warning_message = "Minimum height of the bucket is above its maximum height\n" *
         "Location: (1, 1)\nBucket minimum height: 0.0\n" *
         "Bucket maximum height: -0.1"
