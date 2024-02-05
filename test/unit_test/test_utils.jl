@@ -14,6 +14,14 @@ cell_size_xy = 0.1
 cell_size_z = 0.1
 grid = GridParam(grid_size_x, grid_size_y, grid_size_z, cell_size_xy, cell_size_z)
 
+# Bucket properties
+o_pos_init = Vector{Float64}([0.0, 0.0, 0.0])
+j_pos_init = Vector{Float64}([0.0, 0.0, 0.0])
+b_pos_init = Vector{Float64}([0.0, 0.0, -0.5])
+t_pos_init = Vector{Float64}([0.7, 0.0, -0.5])
+bucket_width = 0.5
+bucket = BucketParam(o_pos_init, j_pos_init, b_pos_init, t_pos_init, bucket_width)
+
 # Terrain properties
 terrain = zeros(2 * grid.half_length_x + 1, 2 * grid.half_length_y + 1)
 out = SimOut(terrain, grid)
@@ -24,27 +32,132 @@ out = SimOut(terrain, grid)
 #                                         Testing                                          #
 #                                                                                          #
 #==========================================================================================#
+@testset "_calc_bucket_corner_pos" begin
+    # Test: UT-CBC-1
+    pos = Vector{Float64}([0.0, 0.0, 0.0])
+    ori = Quaternion(1.0, 0.0, 0.0, 0.0)
+    j_r_pos, j_l_pos, b_r_pos, b_l_pos, t_r_pos, t_l_pos = _calc_bucket_corner_pos(
+        pos, ori, bucket
+    )
+    @test (j_r_pos == Vector{Float64}([0.0, -0.25, 0.0]))
+    @test (j_l_pos == Vector{Float64}([0.0, 0.25, 0.0]))
+    @test (b_r_pos == Vector{Float64}([0.0, -0.25, -0.5]))
+    @test (b_l_pos == Vector{Float64}([0.0, 0.25, -0.5]))
+    @test (t_r_pos == Vector{Float64}([0.7, -0.25, -0.5]))
+    @test (t_l_pos == Vector{Float64}([0.7, 0.25, -0.5]))
+
+    # Test: UT-CBC-2
+    pos = Vector{Float64}([0.1, -0.1, 0.2])
+    ori = Quaternion(1.0, 0.0, 0.0, 0.0)
+    j_r_pos, j_l_pos, b_r_pos, b_l_pos, t_r_pos, t_l_pos = _calc_bucket_corner_pos(
+        pos, ori, bucket
+    )
+    @test (j_r_pos ≈ Vector{Float64}([0.1, -0.35, 0.2]))
+    @test (j_l_pos ≈ Vector{Float64}([0.1, 0.15, 0.2]))
+    @test (b_r_pos ≈ Vector{Float64}([0.1, -0.35, -0.3]))
+    @test (b_l_pos ≈ Vector{Float64}([0.1, 0.15, -0.3]))
+    @test (t_r_pos ≈ Vector{Float64}([0.8, -0.35, -0.3]))
+    @test (t_l_pos ≈ Vector{Float64}([0.8, 0.15, -0.3]))
+
+    # Test: UT-CBC-3
+    pos = Vector{Float64}([0.0, 0.0, 0.0])
+    ori = Quaternion(0.707107, 0.0, 0.0, -0.707107)
+    j_r_pos, j_l_pos, b_r_pos, b_l_pos, t_r_pos, t_l_pos = _calc_bucket_corner_pos(
+        pos, ori, bucket
+    )
+    @test (j_r_pos ≈ Vector{Float64}([0.25, 0.0, 0.0]))
+    @test (j_l_pos ≈ Vector{Float64}([-0.25, 0.0, 0.0]))
+    @test (b_r_pos ≈ Vector{Float64}([0.25, 0.0, -0.5]))
+    @test (b_l_pos ≈ Vector{Float64}([-0.25, 0.0, -0.5]))
+    @test (t_r_pos ≈ Vector{Float64}([0.25, 0.7, -0.5]))
+    @test (t_l_pos ≈ Vector{Float64}([-0.25, 0.7, -0.5]))
+
+    # Test: UT-CBC-4
+    pos = Vector{Float64}([0.1, -0.1, 0.2])
+    ori = Quaternion(0.707107, 0.0, 0.0, -0.707107)
+    j_r_pos, j_l_pos, b_r_pos, b_l_pos, t_r_pos, t_l_pos = _calc_bucket_corner_pos(
+        pos, ori, bucket
+    )
+    @test (j_r_pos ≈ Vector{Float64}([0.35, -0.1, 0.2]))
+    @test (j_l_pos ≈ Vector{Float64}([-0.15, -0.1, 0.2]))
+    @test (b_r_pos ≈ Vector{Float64}([0.35, -0.1, -0.3]))
+    @test (b_l_pos ≈ Vector{Float64}([-0.15, -0.1, -0.3]))
+    @test (t_r_pos ≈ Vector{Float64}([0.35, 0.6, -0.3]))
+    @test (t_l_pos ≈ Vector{Float64}([-0.15, 0.6, -0.3]))
+end
+
+@testset "check_bucket_movement" begin
+    # Test: UT-CBM-1
+    pos = Vector{Float64}([0.1, 0.0, 0.0])
+    ori = Quaternion(1.0, 0.0, 0.0, 0.0)
+    soil_update = check_bucket_movement(pos, ori, grid, bucket)
+    @test (soil_update == true)
+
+    # Test: UT-CBM-2
+    pos = Vector{Float64}([0.05, 0.02, -0.05])
+    ori = Quaternion(1.0, 0.0, 0.0, 0.0)
+    soil_update = check_bucket_movement(pos, ori, grid, bucket)
+    @test (soil_update == true)
+
+    # Test: UT-CBM-3
+    pos = Vector{Float64}([0.0, 0.0, 0.0])
+    ori = Quaternion(0.997, 0.0, 0.07, 0.0)
+    soil_update = check_bucket_movement(pos, ori, grid, bucket)
+    @test (soil_update == true)
+
+    # Test: UT-CBM-4
+    pos = Vector{Float64}([0.05, 0.0, 0.0])
+    ori = Quaternion(0.997, 0.0, 0.07, 0.0)
+    soil_update = check_bucket_movement(pos, ori, grid, bucket)
+    @test (soil_update == true)
+
+    # Test: UT-CBM-5
+    pos = Vector{Float64}([0.005, 0.0, 0.0])
+    ori = Quaternion(1.0, 0.0, 0.0, 0.0)
+    soil_update = check_bucket_movement(pos, ori, grid, bucket)
+    @test (soil_update == false)
+
+    # Test: UT-CBM-6
+    pos = Vector{Float64}([0.001, 0.002, -0.003])
+    ori = Quaternion(1.0, 0.0, 0.0, 0.0)
+    soil_update = check_bucket_movement(pos, ori, grid, bucket)
+    @test (soil_update == false)
+
+    # Test: UT-CBM-7
+    pos = Vector{Float64}([0.0, 0.0, 0.0])
+    ori = Quaternion(1.0, 0.0, 0.0, 0.0)
+    soil_update = check_bucket_movement(pos, ori, grid, bucket)
+    @test (soil_update == false)
+
+    # Test: UT-CBM-8
+    pos = Vector{Float64}([0.001, 0.0, 0.0])
+    ori = Quaternion(0.999, 0.0, 0.0029, 0.0)
+    soil_update = check_bucket_movement(pos, ori, grid, bucket)
+    @test (soil_update == false)
+
+    # Test: UT-CBM-9
+    pos = Vector{Float64}([0.3, 0.0, 0.0])
+    ori = Quaternion(1.0, 0.0, 0.0, 0.0)
+    @test_logs (:warn,) match_mode=:any check_bucket_movement(pos, ori, grid, bucket)
+end
+
 @testset "_init_sparse_array!" begin
-    # Setting dummy values in body
+    # Test: UT-IS-1
     out.body[1][5:17, 1:16] .= 1.0
     out.body[2][5:17, 1:16] .= 2.0
     out.body[3][4:10, 13:17] .= 0.0
     out.body[4][4:10, 13:17] .= 2*grid.half_length_z
-
-    # Setting dummy values in body_soil
-    out.body_soil[1][5:17, 1:16] .= 1.0
-    out.body_soil[2][5:17, 1:16] .= 2.0
-    out.body_soil[3][4:10, 13:17] .= 0.0
-    out.body_soil[4][4:10, 13:17] .= 2*grid.half_length_z
-
-    # Testing that body is properly reset
     _init_sparse_array!(out.body, grid)
     @test isempty(nonzeros(out.body[1]))
     @test isempty(nonzeros(out.body[2]))
     @test isempty(nonzeros(out.body[3]))
     @test isempty(nonzeros(out.body[4]))
 
-    # Testing that body_soil is properly reset
+    # Test: UT-IS-2
+    out.body_soil[1][5:17, 1:16] .= 1.0
+    out.body_soil[2][5:17, 1:16] .= 2.0
+    out.body_soil[3][4:10, 13:17] .= 0.0
+    out.body_soil[4][4:10, 13:17] .= 2*grid.half_length_z
     _init_sparse_array!(out.body_soil, grid)
     @test isempty(nonzeros(out.body_soil[1]))
     @test isempty(nonzeros(out.body_soil[2]))
@@ -53,59 +166,45 @@ out = SimOut(terrain, grid)
 end
 
 @testset "_locate_non_zeros" begin
-    # Setting dummy values in body_soil
-    out.body_soil[1][5, 5] = 0.1
-    out.body_soil[1][4, 9] = 0.0
-    out.body_soil[1][11, 7] = -0.5
-    out.body_soil[1][15, 1] = -0.2
-
-    # Setting dummy values in body
-    out.body[2][10, 10] = 0.0
+    # Test: UT-LN-1
     out.body[2][15, 11] = 0.3
     out.body[2][7, 1] = -0.3
     out.body[2][1, 2] = 0.01
-
-    # Testing that non-empty cells are located properly in body_soil
-    non_zeros = _locate_non_zeros(out.body_soil[1])
-    @test ([5, 5] in non_zeros) && ([11, 7] in non_zeros) && ([15, 1] in non_zeros)
-    @test (length(non_zeros) == 3)
-
-    # Testing that non-empty cells are located properly in body
     non_zeros = _locate_non_zeros(out.body[2])
     @test ([15, 11] in non_zeros) && ([7, 1] in non_zeros) && ([1, 2] in non_zeros)
     @test (length(non_zeros) == 3)
-
-    # Resetting properties
-    out.body_soil[1][5, 5] = 0.0
-    out.body_soil[1][11, 7] = 0.0
-    out.body_soil[1][15, 1] = 0.0
     out.body[2][15, 11] = 0.0
     out.body[2][7, 1] = 0.0
     out.body[2][1, 2] = 0.0
-    dropzeros!(out.body_soil[1])
     dropzeros!(out.body[2])
+
+    # Test: UT-LN-2
+    out.body[2][10, 10] = 0.0
+    non_zeros = _locate_non_zeros(out.body[2])
+    @test isempty(non_zeros)
+    dropzeros!(out.body[2])
+
+    # Test: UT-LN-3
+    out.body_soil[1][5, 5] = 0.1
+    out.body_soil[1][11, 7] = -0.5
+    out.body_soil[1][15, 1] = -0.2
+    non_zeros = _locate_non_zeros(out.body_soil[1])
+    @test ([5, 5] in non_zeros) && ([11, 7] in non_zeros) && ([15, 1] in non_zeros)
+    @test (length(non_zeros) == 3)
+    out.body_soil[1][5, 5] = 0.0
+    out.body_soil[1][11, 7] = 0.0
+    out.body_soil[1][15, 1] = 0.0
+    dropzeros!(out.body_soil[1])
+
+    # Test: UT-LN-4
+    out.body_soil[1][4, 9] = 0.0
+    non_zeros = _locate_non_zeros(out.body_soil[1])
+    @test isempty(non_zeros)
+    dropzeros!(out.body_soil[1])
 end
 
 @testset "_locate_all_non_zeros" begin
-    # Setting dummy values in body_soil
-    out.body_soil[1][5, 5] = 0.1
-    out.body_soil[2][5, 5] = 0.2
-    out.body_soil[1][4, 9] = 0.0
-    out.body_soil[2][4, 9] = 0.1
-    out.body_soil[1][11, 7] = -0.5
-    out.body_soil[2][11, 7] = -0.3
-    out.body_soil[3][1, 1] = -0.2
-    out.body_soil[4][1, 1] = -0.1
-    out.body_soil[1][3, 7] = -0.2
-    out.body_soil[2][3, 7] = 0.0
-    out.body_soil[3][3, 7] = 0.0
-    out.body_soil[4][3, 7] = 0.5
-    out.body_soil[1][6, 7] = 0.0
-    out.body_soil[2][6, 7] = 0.0
-    out.body_soil[3][9, 5] = 0.0
-    out.body_soil[4][9, 5] = 0.0
-
-    # Setting dummy values in body
+    # Test: UT-LA-1
     out.body[1][15, 5] = -0.3
     out.body[2][15, 5] = 0.3
     out.body[1][4, 19] = 0.0
@@ -118,35 +217,11 @@ end
     out.body[2][13, 17] = 0.0
     out.body[3][13, 17] = 0.0
     out.body[4][13, 17] = 0.9
-    out.body[1][16, 7] = 0.0
-    out.body[2][16, 7] = 0.0
-    out.body[3][19, 5] = 0.0
-    out.body[4][19, 5] = 0.0
-
-    # Testing that cells in body_soil are located properly
-    body_soil_pos = _locate_all_non_zeros(out.body_soil)
-    @test ([1, 5, 5] in body_soil_pos) && ([1, 4, 9] in body_soil_pos)
-    @test ([1, 11, 7] in body_soil_pos) && ([3, 1, 1] in body_soil_pos)
-    @test ([1, 3, 7] in body_soil_pos) && ([3, 3, 7] in body_soil_pos)
-    @test (length(body_soil_pos) == 6)
-
-    # Testing that cells in body are located properly
     body_pos = _locate_all_non_zeros(out.body)
     @test ([1, 15, 5] in body_pos) && ([1, 4, 19] in body_pos)
     @test ([1, 11, 17] in body_pos) && ([3, 3, 3] in body_pos)
     @test ([1, 13, 17] in body_pos) && ([3, 13, 17] in body_pos)
-    @test (length(body_soil_pos) == 6)
-
-    # Resetting properties
-    out.body_soil[1][5, 5] = 0.0
-    out.body_soil[2][5, 5] = 0.0
-    out.body_soil[2][4, 9] = 0.0
-    out.body_soil[1][11, 7] = 0.0
-    out.body_soil[2][11, 7] = 0.0
-    out.body_soil[3][1, 1] = 0.0
-    out.body_soil[4][1, 1] = 0.0
-    out.body_soil[1][3, 7] = 0.0
-    out.body_soil[4][3, 7] = 0.0
+    @test (length(body_pos) == 6)
     out.body[1][15, 5] = 0.0
     out.body[2][15, 5] = 0.0
     out.body[2][4, 19] = 0.0
@@ -156,14 +231,66 @@ end
     out.body[4][3, 3] = 0.0
     out.body[1][13, 17] = 0.0
     out.body[4][13, 17] = 0.0
-    dropzeros!(out.body_soil[1])
-    dropzeros!(out.body_soil[2])
-    dropzeros!(out.body_soil[3])
-    dropzeros!(out.body_soil[4])
     dropzeros!(out.body[1])
     dropzeros!(out.body[2])
     dropzeros!(out.body[3])
     dropzeros!(out.body[4])
+
+    # Test: UT-LA-2
+    out.body[1][16, 7] = 0.0
+    out.body[2][16, 7] = 0.0
+    out.body[3][19, 5] = 0.0
+    out.body[4][19, 5] = 0.0
+    body_pos = _locate_all_non_zeros(out.body)
+    @test isempty(body_pos)
+    dropzeros!(out.body[1])
+    dropzeros!(out.body[2])
+    dropzeros!(out.body[3])
+    dropzeros!(out.body[4])
+
+    # Test: UT-LA-3
+    out.body_soil[1][5, 5] = 0.1
+    out.body_soil[2][5, 5] = 0.2
+    out.body_soil[1][4, 9] = 0.0
+    out.body_soil[2][4, 9] = 0.1
+    out.body_soil[1][11, 7] = -0.5
+    out.body_soil[2][11, 7] = -0.3
+    out.body_soil[3][1, 1] = -0.2
+    out.body_soil[4][1, 1] = -0.1
+    out.body_soil[1][3, 7] = -0.2
+    out.body_soil[2][3, 7] = 0.0
+    out.body_soil[3][3, 7] = 0.0
+    out.body_soil[4][3, 7] = 0.5
+    body_soil_pos = _locate_all_non_zeros(out.body_soil)
+    @test ([1, 5, 5] in body_soil_pos) && ([1, 4, 9] in body_soil_pos)
+    @test ([1, 11, 7] in body_soil_pos) && ([3, 1, 1] in body_soil_pos)
+    @test ([1, 3, 7] in body_soil_pos) && ([3, 3, 7] in body_soil_pos)
+    @test (length(body_soil_pos) == 6)
+    out.body_soil[1][5, 5] = 0.0
+    out.body_soil[2][5, 5] = 0.0
+    out.body_soil[2][4, 9] = 0.0
+    out.body_soil[1][11, 7] = 0.0
+    out.body_soil[2][11, 7] = 0.0
+    out.body_soil[3][1, 1] = 0.0
+    out.body_soil[4][1, 1] = 0.0
+    out.body_soil[1][3, 7] = 0.0
+    out.body_soil[4][3, 7] = 0.0
+    dropzeros!(out.body_soil[1])
+    dropzeros!(out.body_soil[2])
+    dropzeros!(out.body_soil[3])
+    dropzeros!(out.body_soil[4])
+
+    # Test: UT-LA-4
+    out.body_soil[1][6, 7] = 0.0
+    out.body_soil[2][6, 7] = 0.0
+    out.body_soil[3][9, 5] = 0.0
+    out.body_soil[4][9, 5] = 0.0
+    body_soil_pos = _locate_all_non_zeros(out.body_soil)
+    @test isempty(body_soil_pos)
+    dropzeros!(out.body_soil[1])
+    dropzeros!(out.body_soil[2])
+    dropzeros!(out.body_soil[3])
+    dropzeros!(out.body_soil[4])
 end
 
 @testset "calc_normal" begin
@@ -197,22 +324,57 @@ end
 end
 
 @testset "set_RNG_seed!" begin
-    # As it is difficult to retrieve the seed, instead of checking that the
-    # seed is properly set, we rather test the reproducibility of the result
-
-    # Testing for the default seed
+    # Test: UT-SR-1
     set_RNG_seed!()
     get_rand = rand(1)
     seed!(1234)
     exp_rand = rand(1)
     @test get_rand  == exp_rand
 
-    # Testing with a different seed
+    # Test: UT-SR-2
     set_RNG_seed!(15034)
     get_rand = rand(1)
     seed!(15034)
     exp_rand = rand(1)
     @test get_rand  == exp_rand
+end
+
+@testset "_calc_bucket_frame_pos" begin
+    # Test: UT-CBF-1
+    cell_local_pos = _calc_bucket_frame_pos(12, 12, 0.2, grid, bucket)
+    @test (cell_local_pos ≈ Vector{Float64}([0.1, 0.1, 0.2]))
+
+    # Test: UT-CBF-2
+    bucket.pos .= [-0.1, 0.2, 0.3]
+    cell_local_pos = _calc_bucket_frame_pos(11, 13, -0.2, grid, bucket)
+    @test (cell_local_pos ≈ Vector{Float64}([0.1, 0.0, -0.5]))
+    bucket.pos .= [0.0, 0.0, 0.0]
+
+    # Test: UT-CBF-3
+    bucket.ori .= [0.707107, 0.0, 0.0, -0.707107]
+    cell_local_pos = _calc_bucket_frame_pos(12, 13, 0.3, grid, bucket)
+    @test (cell_local_pos ≈ Vector{Float64}([0.2, -0.1, 0.3]))
+    bucket.ori .= [1.0, 0.0, 0.0, 0.0]
+
+    # Test: UT-CBF-4
+    bucket.ori .= [0.707107, 0.0, -0.707107, 0.0]
+    cell_local_pos = _calc_bucket_frame_pos(12, 13, 0.3, grid, bucket)
+    @test (cell_local_pos ≈ Vector{Float64}([-0.3, 0.2, 0.1]))
+    bucket.ori .= [1.0, 0.0, 0.0, 0.0]
+
+    # Test: UT-CBF-5
+    bucket.ori .= [0.707107, 0.707107, 0.0, 0.0]
+    cell_local_pos = _calc_bucket_frame_pos(12, 13, 0.3, grid, bucket)
+    @test (cell_local_pos ≈ Vector{Float64}([0.1, -0.3, 0.2]))
+    bucket.ori .= [1.0, 0.0, 0.0, 0.0]
+
+    # Test: UT-CBF-6
+    bucket.pos .= [-0.1, 0.2, 0.3]
+    bucket.ori .= [0.707107, 0.0, 0.0, -0.707107]
+    cell_local_pos = _calc_bucket_frame_pos(11, 13, -0.2, grid, bucket)
+    @test (cell_local_pos ≈ Vector{Float64}([0.0, -0.1, -0.5]))
+    bucket.pos .= [0.0, 0.0, 0.0]
+    bucket.ori .= [1.0, 0.0, 0.0, 0.0]
 end
 
 @testset "check_volume" begin
