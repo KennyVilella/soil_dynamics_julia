@@ -39,92 +39,67 @@ out = SimOut(terrain, grid)
 #                                                                                          #
 #==========================================================================================#
 @testset "_calc_line_pos" begin
-    # Note that the function does not account for the case where
-    # the line follows a cell border.
-    # It is therefore necessary to solve this potential ambiguity
-    # before calling the function. As a result, a small increment (1e-8)
-    # is added or removed to the input in order to make sure that
-    # the input coordinates do not correspond to a cell border.
+    function _check_results(a, b, line_pos_exp, grid)
+        # Checking first input order
+        line_pos = sort(unique(_calc_line_pos(a, b, grid)))
+        @test (line_pos == line_pos_exp)
+        # Checking second input order
+        line_pos = sort(unique(_calc_line_pos(b, a, grid)))
+        @test (line_pos == line_pos_exp)
+    end
 
-    # Testing for a line following the X axis
+    # Test: BP-CL-1
     a = [0.0 + 1e-8, 0.0 - 1e-8, -0.06 + 1e-8]
     b = [1.0 - 1e-8, 0.0 - 1e-8,  0.0  - 1e-8]
-    line_pos = _calc_line_pos(a, b, grid)
-    #@test ([11, 11, 11] in line_pos) && ([12, 11, 11] in line_pos)
-    #@test ([13, 11, 11] in line_pos) && ([14, 11, 11] in line_pos)
-    #@test ([15, 11, 11] in line_pos) && ([16, 11, 11] in line_pos)
-    #@test ([17, 11, 11] in line_pos) && ([18, 11, 11] in line_pos)
-    #@test ([19, 11, 11] in line_pos) && ([20, 11, 11] in line_pos)
-    #@test ([21, 11, 11] in line_pos)
-    @test length(line_pos) == 11
+    line_pos_exp = [
+        [11, 11, 10], [12, 11, 10], [13, 11, 10], [14, 11, 10], [15, 11, 10],
+        [16, 11, 10], [17, 11, 10], [18, 11, 10], [19, 11, 10], [20, 11, 10],
+        [21, 11, 10]]
+    _check_results(a, b, line_pos_exp, grid)
 
-    # Testing for a line following the X axis with a larger delta
-    a = [0.0 + 1e-8, 0.0 - 1e-8, 0.0 - 1e-8]
-    b = [1.0 - 1e-8, 0.0 - 1e-8, 0.0 - 1e-8]
-    line_pos = _calc_line_pos(a, b, grid)
-    #@test ([11, 11, 11] in line_pos) && ([16, 11, 11] in line_pos)
-    #@test ([21, 11, 11] in line_pos)
-    #@test length(line_pos) == 3
-
-    # Testing that the rounding is done properly
+    # Test: BP-CL-2
     a = [0.04 + 1e-8,  0.04 - 1e-8, -0.09 + 1e-8]
     b = [1.04 - 1e-8, -0.04 + 1e-8,  0.0  - 1e-8]
-    line_pos = _calc_line_pos(a, b, grid)
-    #@test ([11, 11, 11] in line_pos) && ([12, 11, 11] in line_pos)
-    #@test ([13, 11, 11] in line_pos) && ([14, 11, 11] in line_pos)
-    #@test ([15, 11, 11] in line_pos) && ([16, 11, 11] in line_pos)
-    #@test ([17, 11, 11] in line_pos) && ([18, 11, 11] in line_pos)
-    #@test ([19, 11, 11] in line_pos) && ([20, 11, 11] in line_pos)
-    #@test ([21, 11, 11] in line_pos)
-    @test length(line_pos) == 11
+    line_pos_exp = [
+        [11, 11, 10], [12, 11, 10], [13, 11, 10], [14, 11, 10], [15, 11, 10],
+        [16, 11, 10], [17, 11, 10], [18, 11, 10], [19, 11, 10], [20, 11, 10],
+        [21, 11, 10]]
+    _check_results(a, b, line_pos_exp, grid)
 
-    # Testing for a line following the Y axis
+    # Test: BP-CL-3
     a = [0.0 - 1e-8, 0.0 + 1e-8, 0.0 - 1e-8]
     b = [0.0 - 1e-8, 1.0 - 1e-8, 0.0 - 1e-8]
-    line_pos = unique(_calc_line_pos(a, b, grid))
-    #@test ([11, 11, 11] in line_pos) && ([11, 12, 11] in line_pos)
-    #@test ([11, 13, 11] in line_pos) && ([11, 14, 11] in line_pos)
-    #@test ([11, 15, 11] in line_pos) && ([11, 16, 11] in line_pos)
-    #@test ([11, 17, 11] in line_pos) && ([11, 18, 11] in line_pos)
-    #@test ([11, 19, 11] in line_pos) && ([11, 20, 11] in line_pos)
-    #@test ([11, 21, 11] in line_pos)
-    @test length(line_pos) == 11
+    line_pos_exp = [
+        [11, 11, 10], [11, 12, 10], [11, 13, 10], [11, 14, 10], [11, 15, 10],
+        [11, 16, 10], [11, 17, 10], [11, 18, 10], [11, 19, 10], [11, 20, 10],
+        [11, 21, 10]]
+    _check_results(a, b, line_pos_exp, grid)
 
-    # Testing for an arbitrary line (results obtained through hand-drawing)
+    # Test: BP-CL-4
     a = [0.34 + 1e-8, 0.56 + 1e-8, 0.0 - 1e-8]
     b = [0.74 - 1e-8, 0.97 - 1e-8, 0.0 - 1e-8]
-    line_pos = unique(_calc_line_pos(a, b, grid))
-    #@test ([14, 17, 11] in line_pos) && ([15, 17, 11] in line_pos)
-    #@test ([15, 18, 11] in line_pos) && ([16, 18, 11] in line_pos)
-    #@test ([16, 19, 11] in line_pos) && ([17, 19, 11] in line_pos)
-    #@test ([17, 20, 11] in line_pos) && ([18, 20, 11] in line_pos)
-    #@test ([18, 21, 11] in line_pos)
-    @test length(line_pos) == 9
+    line_pos_exp = [
+        [14, 17, 10], [15, 17, 10], [15, 18, 10], [16, 18, 10], [16, 19, 10],
+        [17, 19, 10], [17, 20, 10], [18, 20, 10], [18, 21, 10]]
+    _check_results(a, b, line_pos_exp, grid)
 
-    # Testing for an arbitrary line in the XZ plane
+    # Test: BP-CL-5
     a = [0.34 + 1e-8, 0.0 - 1e-8, 0.56 + 1e-8]
     b = [0.74 - 1e-8, 0.0 - 1e-8, 0.97 - 1e-8]
-    line_pos = unique(_calc_line_pos(a, b, grid))
-    #@test ([14, 11, 17] in line_pos) && ([15, 11, 17] in line_pos)
-    #@test ([15, 11, 18] in line_pos) && ([16, 11, 18] in line_pos)
-    #@test ([16, 11, 19] in line_pos) && ([17, 11, 19] in line_pos)
-    #@test ([17, 11, 20] in line_pos) && ([18, 11, 20] in line_pos)
-    #@test ([18, 11, 21] in line_pos)
-    @test length(line_pos) == 9
+    line_pos_exp = [
+        [14, 11, 16], [15, 11, 16], [15, 11, 17], [16, 11, 17], [16, 11, 18],
+        [17, 11, 18], [17, 11, 19], [18, 11, 19], [18, 11, 20]]
+    _check_results(a, b, line_pos_exp, grid)
 
-    # Testing for the edge case where the line is a point
+    # Test: BP-CL-6
     a = [0.5 - 1e-8, 0.5 - 1e-8, 0.5 - 1e-8]
     b = [0.5 - 1e-8, 0.5 - 1e-8, 0.5 - 1e-8]
-    line_pos = unique(_calc_line_pos(a, b, grid))
-    #@test ([16, 16, 16] in line_pos)
-    @test length(line_pos) == 1
-
-    # Testing for the edge case where the line is a point
+    line_pos_exp = [[16, 16, 15]]
+    _check_results(a, b, line_pos_exp, grid)
     a = [0.55 - 1e-8, 0.55 - 1e-8, 0.55 - 1e-8]
     b = [0.55 - 1e-8, 0.55 - 1e-8, 0.55 - 1e-8]
-    line_pos = unique(_calc_line_pos(a, b, grid))
-    #@test ([16, 16, 17] in line_pos)
-    @test length(line_pos) == 1
+    line_pos_exp = [[16, 16, 16]]
+    _check_results(a, b, line_pos_exp, grid)
 end
 
 @testset "_decompose_vector_rectangle" begin
