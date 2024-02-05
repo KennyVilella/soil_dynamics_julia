@@ -206,7 +206,6 @@ end
         -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1]
     @test (c_ab ≈ c_ab_exp)
     @test (c_ad ≈ c_ad_exp)
-    display(in_rectangle)
     @test all(in_rectangle[3, 3:7] .== true)
     in_rectangle[3, 3:7] .= false
     @test all(in_rectangle[:, :] .== false)
@@ -238,6 +237,183 @@ end
         ab_ind, ad_ind, a_ind, area_min_x, area_min_y, area_length_x, area_length_y
     )
     @test all(in_rectangle[:, :] .== false)
+    @test n_cell == 0
+end
+
+@testset "_decompose_vector_triangle" begin
+    # Test: BP-DVT-1
+    a_ind = [11.0, 11.0, 11.0]
+    ab_ind = [10.0, 0.0, 0.0]
+    ac_ind = [0.0, 10.0, 0.0]
+    area_min_x = 10
+    area_min_y = 10
+    area_length_x = 11
+    area_length_y = 10
+    c_ab, c_ac, in_triangle, n_cell = _decompose_vector_triangle(
+        ab_ind, ac_ind, a_ind, area_min_x, area_min_y, area_length_x, area_length_y
+    )
+    in_tri_exp = [
+        false false false false false false false false false false
+        false true  true  true  true  true  true  true  true  true
+        false true  true  true  true  true  true  true  true  false
+        false true  true  true  true  true  true  true  false false
+        false true  true  true  true  true  true  false false false
+        false true  true  true  true  true  false false false false
+        false true  true  true  true  false false false false false
+        false true  true  true  false false false false false false
+        false true  true  false false false false false false false
+        false true  false false false false false false false false
+        false false false false false false false false false false]
+    c_ab_exp = [
+        -0.05 -0.05 -0.05 -0.05 -0.05 -0.05 -0.05 -0.05 -0.05 -0.05
+         0.05  0.05  0.05  0.05  0.05  0.05  0.05  0.05  0.05  0.05
+         0.15  0.15  0.15  0.15  0.15  0.15  0.15  0.15  0.15  0.15
+         0.25  0.25  0.25  0.25  0.25  0.25  0.25  0.25  0.25  0.25
+         0.35  0.35  0.35  0.35  0.35  0.35  0.35  0.35  0.35  0.35
+         0.45  0.45  0.45  0.45  0.45  0.45  0.45  0.45  0.45  0.45
+         0.55  0.55  0.55  0.55  0.55  0.55  0.55  0.55  0.55  0.55
+         0.65  0.65  0.65  0.65  0.65  0.65  0.65  0.65  0.65  0.65
+         0.75  0.75  0.75  0.75  0.75  0.75  0.75  0.75  0.75  0.75
+         0.85  0.85  0.85  0.85  0.85  0.85  0.85  0.85  0.85  0.85
+         0.95  0.95  0.95  0.95  0.95  0.95  0.95  0.95  0.95  0.95]
+    c_ac_exp = [
+        -0.05 0.05 0.15 0.25 0.35 0.45 0.55 0.65 0.75 0.85
+        -0.05 0.05 0.15 0.25 0.35 0.45 0.55 0.65 0.75 0.85
+        -0.05 0.05 0.15 0.25 0.35 0.45 0.55 0.65 0.75 0.85
+        -0.05 0.05 0.15 0.25 0.35 0.45 0.55 0.65 0.75 0.85
+        -0.05 0.05 0.15 0.25 0.35 0.45 0.55 0.65 0.75 0.85
+        -0.05 0.05 0.15 0.25 0.35 0.45 0.55 0.65 0.75 0.85
+        -0.05 0.05 0.15 0.25 0.35 0.45 0.55 0.65 0.75 0.85
+        -0.05 0.05 0.15 0.25 0.35 0.45 0.55 0.65 0.75 0.85
+        -0.05 0.05 0.15 0.25 0.35 0.45 0.55 0.65 0.75 0.85
+        -0.05 0.05 0.15 0.25 0.35 0.45 0.55 0.65 0.75 0.85
+        -0.05 0.05 0.15 0.25 0.35 0.45 0.55 0.65 0.75 0.85]
+    @test (c_ab ≈ c_ab_exp)
+    @test (c_ac ≈ c_ac_exp)
+    @test (in_triangle == in_tri_exp)
+    @test n_cell == 45 * 4
+
+    # Test: BP-DVT-2
+    a_ind = [10.9, 10.7, 11.0]
+    ab_ind = [9.7, 0.0, 0.0]
+    ac_ind = [0.0, 10.4, 0.0]
+    area_min_x = 10
+    area_min_y = 10
+    area_length_x = 11
+    area_length_y = 10
+    c_ab, c_ac, in_triangle, n_cell = _decompose_vector_triangle(
+        ab_ind, ac_ind, a_ind, area_min_x, area_min_y, area_length_x, area_length_y
+    )
+    in_tri_exp = [
+        false false false false false false false false false false
+        false true  true  true  true  true  true  true  true  true
+        false true  true  true  true  true  true  true  true  false
+        false true  true  true  true  true  true  true  false false
+        false true  true  true  true  true  true  false false false
+        false true  true  true  true  true  false false false false
+        false true  true  true  true  false false false false false
+        false true  true  true  false false false false false false
+        false true  true  false false false false false false false
+        false true  false false false false false false false false
+        false false false false false false false false false false]
+    c_ab_exp = [
+        -0.4 -0.4 -0.4 -0.4 -0.4 -0.4 -0.4 -0.4 -0.4 -0.4
+        0.6  0.6  0.6  0.6  0.6  0.6  0.6  0.6  0.6  0.6
+        1.6  1.6  1.6  1.6  1.6  1.6  1.6  1.6  1.6  1.6
+        2.6  2.6  2.6  2.6  2.6  2.6  2.6  2.6  2.6  2.6
+        3.6  3.6  3.6  3.6  3.6  3.6  3.6  3.6  3.6  3.6
+        4.6  4.6  4.6  4.6  4.6  4.6  4.6  4.6  4.6  4.6
+        5.6  5.6  5.6  5.6  5.6  5.6  5.6  5.6  5.6  5.6
+        6.6  6.6  6.6  6.6  6.6  6.6  6.6  6.6  6.6  6.6
+        7.6  7.6  7.6  7.6  7.6  7.6  7.6  7.6  7.6  7.6
+        8.6  8.6  8.6  8.6  8.6  8.6  8.6  8.6  8.6  8.6
+        9.6  9.6  9.6  9.6  9.6  9.6  9.6  9.6  9.6  9.6]
+    c_ac_exp = [
+        -0.2 0.8 1.8 2.8 3.8 4.8 5.8 6.8 7.8 8.8
+        -0.2 0.8 1.8 2.8 3.8 4.8 5.8 6.8 7.8 8.8
+        -0.2 0.8 1.8 2.8 3.8 4.8 5.8 6.8 7.8 8.8
+        -0.2 0.8 1.8 2.8 3.8 4.8 5.8 6.8 7.8 8.8
+        -0.2 0.8 1.8 2.8 3.8 4.8 5.8 6.8 7.8 8.8
+        -0.2 0.8 1.8 2.8 3.8 4.8 5.8 6.8 7.8 8.8
+        -0.2 0.8 1.8 2.8 3.8 4.8 5.8 6.8 7.8 8.8
+        -0.2 0.8 1.8 2.8 3.8 4.8 5.8 6.8 7.8 8.8
+        -0.2 0.8 1.8 2.8 3.8 4.8 5.8 6.8 7.8 8.8
+        -0.2 0.8 1.8 2.8 3.8 4.8 5.8 6.8 7.8 8.8
+        -0.2 0.8 1.8 2.8 3.8 4.8 5.8 6.8 7.8 8.8]
+    @test (c_ab ≈ c_ab_exp ./ 9.7)
+    @test (c_ac ≈ c_ac_exp ./ 10.4)
+    @test (in_triangle == in_tri_exp)
+    @test n_cell == 45 * 4
+
+    # Test: BP-DVT-3
+    a_ind = [16.0, 11.0, 11.0]
+    ab_ind = [1.0, 0.0, 0.0]
+    ac_ind = [1.0, 5.0, 0.0]
+    area_min_x = 14
+    area_min_y = 9
+    area_length_x = 8
+    area_length_y = 8
+    c_ab, c_ac, in_triangle, n_cell = _decompose_vector_triangle(
+        ab_ind, ac_ind, a_ind, area_min_x, area_min_y, area_length_x, area_length_y
+    )
+    in_tri_exp = [
+        false false false false false false false false
+        false false false false false false false false
+        false false true  true  false false false false
+        false false false false false false false false
+        false false false false false false false false
+        false false false false false false false false
+        false false false false false false false false
+        false false false false false false false false]
+    c_ab_exp = [
+        -1.2 -1.4 -1.6 -1.8 -2.0 -2.2 -2.4 -2.6
+        -0.2 -0.4 -0.6 -0.8 -1.0 -1.2 -1.4 -1.6
+         0.8  0.6  0.4  0.2  0.0 -0.2 -0.4 -0.6
+         1.8  1.6  1.4  1.2  1.0  0.8  0.6  0.4
+         2.8  2.6  2.4  2.2  2.0  1.8  1.6  1.4
+         3.8  3.6  3.4  3.2  3.0  2.8  2.6  2.4
+         4.8  4.6  4.4  4.2  4.0  3.8  3.6  3.4
+         5.8  5.6  5.4  5.2  5.0  4.8  4.6  4.4]
+    c_ac_exp = [
+        -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
+        -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
+        -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
+        -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
+        -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
+        -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
+        -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
+        -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1]
+    @test (c_ab ≈ c_ab_exp)
+    @test (c_ac ≈ c_ac_exp)
+    @test (in_triangle == in_tri_exp)
+    @test n_cell == 2 * 4
+
+    # Test: BP-DVT-4
+    a_ind = [16.0, 11.0, 11.0]
+    ab_ind = [1.4, 0.7, 0.0]
+    ac_ind = [2.8, 1.4, 0.0]
+    area_min_x = 14
+    area_min_y = 9
+    area_length_x = 8
+    area_length_y = 8
+    c_ab, c_ac, in_triangle, n_cell = _decompose_vector_triangle(
+        ab_ind, ac_ind, a_ind, area_min_x, area_min_y, area_length_x, area_length_y
+    )
+    @test all(in_triangle[:, :] .== false)
+    @test n_cell == 0
+
+    # Test: BP-DVT-5
+    a_ind = [16.0, 11.0, 11.0]
+    ab_ind = [0.0, 0.0, 0.0]
+    ac_ind = [0.0, 0.0, 0.0]
+    area_min_x = 14
+    area_min_y = 9
+    area_length_x = 8
+    area_length_y = 8
+    c_ab, c_ac, in_triangle, n_cell = _decompose_vector_triangle(
+        ab_ind, ac_ind, a_ind, area_min_x, area_min_y, area_length_x, area_length_y
+    )
+    @test all(in_triangle[:, :] .== false)
     @test n_cell == 0
 end
 
@@ -459,193 +635,6 @@ end
     rec_pos = unique(_calc_rectangle_pos(b, a, c, d, grid))
     #@test ([16, 16, 16] in rec_pos)
     @test length(rec_pos) == 1
-end
-
-@testset "_decompose_vector_triangle" begin
-    # Note that the function does not account for the case where
-    # the triangle follows a cell border.
-
-    # Testing for a simple triangle in the XY plane
-    a_ind = [11.0, 11.0, 11.0]
-    ab_ind = [10.0, 0.0, 0.0]
-    ac_ind = [0.0, 10.0, 0.0]
-    area_min_x = 9
-    area_min_y = 9
-    area_length_x = 15
-    area_length_y = 15
-    c_ab, c_ac, in_triangle, n_cell = _decompose_vector_triangle(
-        ab_ind, ac_ind, a_ind, area_min_x, area_min_y, area_length_x, area_length_y
-    )
-    # Checking decomposition in terms of AB component
-    @test (c_ab[3, 3] ≈ 0.05) && (c_ab[3, 4] ≈ 0.05) && (c_ab[3, 5] ≈ 0.05)
-    @test (c_ab[3, 6] ≈ 0.05) && (c_ab[3, 7] ≈ 0.05) && (c_ab[3, 8] ≈ 0.05)
-    @test (c_ab[3, 9] ≈ 0.05) && (c_ab[3, 10] ≈ 0.05) && (c_ab[3, 11] ≈ 0.05)
-    @test (c_ab[3, 12] ≈ 0.05) && (c_ab[3, 13] ≈ 0.05)
-    @test (c_ab[4, 3] ≈ 0.15) && (c_ab[4, 4] ≈ 0.15) && (c_ab[4, 5] ≈ 0.15)
-    @test (c_ab[4, 6] ≈ 0.15) && (c_ab[4, 7] ≈ 0.15) && (c_ab[4, 8] ≈ 0.15)
-    @test (c_ab[4, 9] ≈ 0.15) && (c_ab[4, 10] ≈ 0.15) && (c_ab[4, 11] ≈ 0.15)
-    @test (c_ab[4, 12] ≈ 0.15)
-    @test (c_ab[5, 3] ≈ 0.25) && (c_ab[5, 4] ≈ 0.25) && (c_ab[5, 5] ≈ 0.25)
-    @test (c_ab[5, 6] ≈ 0.25) && (c_ab[5, 7] ≈ 0.25) && (c_ab[5, 8] ≈ 0.25)
-    @test (c_ab[5, 9] ≈ 0.25) && (c_ab[5, 10] ≈ 0.25) && (c_ab[5, 11] ≈ 0.25)
-    @test (c_ab[6, 3] ≈ 0.35) && (c_ab[6, 4] ≈ 0.35) && (c_ab[6, 5] ≈ 0.35)
-    @test (c_ab[6, 6] ≈ 0.35) && (c_ab[6, 7] ≈ 0.35) && (c_ab[6, 8] ≈ 0.35)
-    @test (c_ab[6, 9] ≈ 0.35) && (c_ab[6, 10] ≈ 0.35)
-    @test (c_ab[7, 3] ≈ 0.45) && (c_ab[7, 4] ≈ 0.45) && (c_ab[7, 5] ≈ 0.45)
-    @test (c_ab[7, 6] ≈ 0.45) && (c_ab[7, 7] ≈ 0.45) && (c_ab[7, 8] ≈ 0.45)
-    @test (c_ab[7, 9] ≈ 0.45)
-    @test (c_ab[8, 3] ≈ 0.55) && (c_ab[8, 4] ≈ 0.55) && (c_ab[8, 5] ≈ 0.55)
-    @test (c_ab[8, 6] ≈ 0.55) && (c_ab[8, 7] ≈ 0.55) && (c_ab[8, 8] ≈ 0.55)
-    @test (c_ab[9, 3] ≈ 0.65) && (c_ab[9, 4] ≈ 0.65) && (c_ab[9, 5] ≈ 0.65)
-    @test (c_ab[9, 6] ≈ 0.65) && (c_ab[9, 7] ≈ 0.65)
-    @test (c_ab[10, 3] ≈ 0.75) && (c_ab[10, 4] ≈ 0.75) && (c_ab[10, 5] ≈ 0.75)
-    @test (c_ab[10, 6] ≈ 0.75)
-    @test (c_ab[11, 3] ≈ 0.85) && (c_ab[11, 4] ≈ 0.85) && (c_ab[11, 5] ≈ 0.85)
-    @test (c_ab[12, 3] ≈ 0.95) && (c_ab[12, 4] ≈ 0.95)
-    # Checking decomposition in terms of AC component
-    @test (c_ac[3, 3] ≈ 0.05) && (c_ac[3, 4] ≈ 0.15) && (c_ac[3, 5] ≈ 0.25)
-    @test (c_ac[3, 6] ≈ 0.35) && (c_ac[3, 7] ≈ 0.45) && (c_ac[3, 8] ≈ 0.55)
-    @test (c_ac[3, 9] ≈ 0.65) && (c_ac[3, 10] ≈ 0.75) && (c_ac[3, 11] ≈ 0.85)
-    @test (c_ac[3, 12] ≈ 0.95) && (c_ac[3, 13] ≈ 1.05)
-    @test (c_ac[4, 3] ≈ 0.05) && (c_ac[4, 4] ≈ 0.15) && (c_ac[4, 5] ≈ 0.25)
-    @test (c_ac[4, 6] ≈ 0.35) && (c_ac[4, 7] ≈ 0.45) && (c_ac[4, 8] ≈ 0.55)
-    @test (c_ac[4, 9] ≈ 0.65) && (c_ac[4, 10] ≈ 0.75) && (c_ac[4, 11] ≈ 0.85)
-    @test (c_ac[4, 12] ≈ 0.95)
-    @test (c_ac[5, 3] ≈ 0.05) && (c_ac[5, 4] ≈ 0.15) && (c_ac[5, 5] ≈ 0.25)
-    @test (c_ac[5, 6] ≈ 0.35) && (c_ac[5, 7] ≈ 0.45) && (c_ac[5, 8] ≈ 0.55)
-    @test (c_ac[5, 9] ≈ 0.65) && (c_ac[5, 10] ≈ 0.75) && (c_ac[5, 11] ≈ 0.85)
-    @test (c_ac[6, 3] ≈ 0.05) && (c_ac[6, 4] ≈ 0.15) && (c_ac[6, 5] ≈ 0.25)
-    @test (c_ac[6, 6] ≈ 0.35) && (c_ac[6, 7] ≈ 0.45) && (c_ac[6, 8] ≈ 0.55)
-    @test (c_ac[6, 9] ≈ 0.65) && (c_ac[6, 10] ≈ 0.75)
-    @test (c_ac[7, 3] ≈ 0.05) && (c_ac[7, 4] ≈ 0.15) && (c_ac[7, 5] ≈ 0.25)
-    @test (c_ac[7, 6] ≈ 0.35) && (c_ac[7, 7] ≈ 0.45) && (c_ac[7, 8] ≈ 0.55)
-    @test (c_ac[7, 9] ≈ 0.65)
-    @test (c_ac[8, 3] ≈ 0.05) && (c_ac[8, 4] ≈ 0.15) && (c_ac[8, 5] ≈ 0.25)
-    @test (c_ac[8, 6] ≈ 0.35) && (c_ac[8, 7] ≈ 0.45) && (c_ac[8, 8] ≈ 0.55)
-    @test (c_ac[9, 3] ≈ 0.05) && (c_ac[9, 4] ≈ 0.15) && (c_ac[9, 5] ≈ 0.25)
-    @test (c_ac[9, 6] ≈ 0.35) && (c_ac[9, 7] ≈ 0.45)
-    @test (c_ac[10, 3] ≈ 0.05) && (c_ac[10, 4] ≈ 0.15) && (c_ac[10, 5] ≈ 0.25)
-    @test (c_ac[10, 6] ≈ 0.35)
-    @test (c_ac[11, 3] ≈ 0.05) && (c_ac[11, 4] ≈ 0.15) && (c_ac[11, 5] ≈ 0.25)
-    @test (c_ac[12, 3] ≈ 0.05) && (c_ac[12, 4] ≈ 0.15)
-    # Checking cells inside the triangle area
-    @test all(in_triangle[3, 3:11] .== true)
-    @test all(in_triangle[4, 3:10] .== true)
-    @test all(in_triangle[5, 3:9] .== true)
-    @test all(in_triangle[6, 3:8] .== true)
-    @test all(in_triangle[7, 3:7] .== true)
-    @test all(in_triangle[8, 3:6] .== true)
-    @test all(in_triangle[9, 3:5] .== true)
-    @test all(in_triangle[10, 3:4] .== true)
-    @test all(in_triangle[11, 3] == true)
-    in_triangle[3, 3:11] .= false
-    in_triangle[4, 3:10] .= false
-    in_triangle[5, 3:9] .= false
-    in_triangle[6, 3:8] .= false
-    in_triangle[7, 3:7] .= false
-    in_triangle[8, 3:6] .= false
-    in_triangle[9, 3:5] .= false
-    in_triangle[10, 3:4] .= false
-    in_triangle[11, 3] = false
-    @test all(in_triangle[:, :] .== false)
-    # Checking the number of cells inside the triangle area
-    @test n_cell == 45 * 4
-
-    # Testing for not rounded indices
-    a_ind = [10.9, 10.7, 11.0]
-    ab_ind = [9.7, 0.0, 0.0]
-    ac_ind = [0.0, 10.4, 0.0]
-    area_min_x = 9
-    area_min_y = 9
-    area_length_x = 15
-    area_length_y = 15
-    c_ab, c_ac, in_triangle, n_cell = _decompose_vector_triangle(
-        ab_ind, ac_ind, a_ind, area_min_x, area_min_y, area_length_x, area_length_y
-    )
-    # Checking cells inside the triangle area
-    @test all(in_triangle[3, 3:11] .== true)
-    @test all(in_triangle[4, 3:10] .== true)
-    @test all(in_triangle[5, 3:9] .== true)
-    @test all(in_triangle[6, 3:8] .== true)
-    @test all(in_triangle[7, 3:7] .== true)
-    @test all(in_triangle[8, 3:6] .== true)
-    @test all(in_triangle[9, 3:5] .== true)
-    @test all(in_triangle[10, 3:4] .== true)
-    @test all(in_triangle[11, 3] == true)
-    in_triangle[3, 3:11] .= false
-    in_triangle[4, 3:10] .= false
-    in_triangle[5, 3:9] .= false
-    in_triangle[6, 3:8] .= false
-    in_triangle[7, 3:7] .= false
-    in_triangle[8, 3:6] .= false
-    in_triangle[9, 3:5] .= false
-    in_triangle[10, 3:4] .= false
-    in_triangle[11, 3] = false
-    @test all(in_triangle[:, :] .== false)
-    # Checking the number of cells inside the triangle area
-    @test n_cell == 45 * 4
-
-    # Testing for a simple triangle in the XYZ plane
-    a_ind = [16.0, 11.0, 11.0]
-    ab_ind = [1.0, 0.0, 0.0]
-    ac_ind = [1.0, 5.0, 0.0]
-    area_min_x = 14
-    area_min_y = 9
-    area_length_x = 8
-    area_length_y = 8
-    c_ab, c_ac, in_triangle, n_cell = _decompose_vector_triangle(
-        ab_ind, ac_ind, a_ind, area_min_x, area_min_y, area_length_x, area_length_y
-    )
-    # Checking decomposition in terms of AB component
-    @test (c_ab[3, 3] ≈ 0.4) && (c_ab[3, 4] ≈ 0.2) && (c_ab[3, 5] ≈ 0.0)
-    @test (c_ab[3, 6] ≈ -0.2)
-    @test (c_ab[4, 3] ≈ 1.4) && (c_ab[4, 4] ≈ 1.2) && (c_ab[4, 5] ≈ 1.0)
-    @test (c_ab[4, 6] ≈ 0.8) && (c_ab[4, 7] ≈ 0.6) && (c_ab[4, 8] ≈ 0.4)
-    # Checking decomposition in terms of AC component
-    @test (c_ac[3, 3] ≈ 0.1) && (c_ac[3, 4] ≈ 0.3) && (c_ac[3, 5] ≈ 0.5)
-    @test (c_ac[3, 6] ≈ 0.7)
-    @test (c_ac[4, 3] ≈ 0.1) && (c_ac[4, 4] ≈ 0.3) && (c_ac[4, 5] ≈ 0.5)
-    @test (c_ac[4, 6] ≈ 0.7) && (c_ac[4, 7] ≈ 0.9) && (c_ac[4, 8] ≈ 1.1)
-    # Checking cells inside the triangle area
-    @test all(in_triangle[3, 3:4] .== true)
-    in_triangle[3, 3:4] .= false
-    @test all(in_triangle[:, :] .== false)
-    # Checking the number of cells inside the triangle area
-    @test n_cell == 2 * 4
-
-    # Testing for the edge case where the triangle is a line
-    # Note that no decomposition can be mathematically made
-    a_ind = [16.0, 11.0, 11.0]
-    ab_ind = [1.4, 0.7, 0.0]
-    ac_ind = [2.8, 1.4, 0.0]
-    area_min_x = 14
-    area_min_y = 9
-    area_length_x = 8
-    area_length_y = 8
-    c_ab, c_ac, in_triangle, n_cell = _decompose_vector_triangle(
-        ab_ind, ac_ind, a_ind, area_min_x, area_min_y, area_length_x, area_length_y
-    )
-    # Checking there is no cell in the triangle area
-    @test all(in_triangle[:, :] .== false)
-    # Checking the number of cells inside the triangle area
-    @test n_cell == 0
-
-    # Testing for the edge case where the triangle is a point
-    # Note that no decomposition can be mathematically made
-    a_ind = [16.0, 11.0, 11.0]
-    ab_ind = [0.0, 0.0, 0.0]
-    ac_ind = [0.0, 0.0, 0.0]
-    area_min_x = 14
-    area_min_y = 9
-    area_length_x = 8
-    area_length_y = 8
-    c_ab, c_ac, in_triangle, n_cell = _decompose_vector_triangle(
-        ab_ind, ac_ind, a_ind, area_min_x, area_min_y, area_length_x, area_length_y
-    )
-    # Checking there is no cell in the triangle area
-    @test all(in_triangle[:, :] .== false)
-    # Checking the number of cells inside the triangle area
-    @test n_cell == 0
 end
 
 @testset "_calc_triangle_pos" begin
