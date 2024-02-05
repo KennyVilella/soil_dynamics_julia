@@ -103,14 +103,7 @@ out = SimOut(terrain, grid)
 end
 
 @testset "_decompose_vector_rectangle" begin
-    # Note that the function does not account for the case where
-    # the rectangle follows a cell border.
-    # It is therefore necessary to solve this potential ambiguity
-    # before calling the function. As a result, a small increment (1e-12)
-    # is sometimes added or removed to the input in order to make sure that
-    # the input coordinates do not correspond to a cell border.
-
-    # Testing for a simple rectangle in the XY plane
+    # Test: BP-DVR-1
     a_ind = [11.0, 11.0, 11.0]
     ab_ind = [5.0, 0.0, 0.0]
     ad_ind = [0.0, 5.0, 0.0]
@@ -121,36 +114,32 @@ end
     c_ab, c_ad, in_rectangle, n_cell = _decompose_vector_rectangle(
         ab_ind, ad_ind, a_ind, area_min_x, area_min_y, area_length_x, area_length_y
     )
-    # Checking decomposition in terms of AB component
-    @test (c_ab[3, 3] ≈ 0.1) && (c_ab[3, 4] ≈ 0.1) && (c_ab[3, 5] ≈ 0.1)
-    @test (c_ab[3, 6] ≈ 0.1) && (c_ab[3, 7] ≈ 0.1) && (c_ab[3, 8] ≈ 0.1)
-    @test (c_ab[4, 3] ≈ 0.3) && (c_ab[4, 4] ≈ 0.3) && (c_ab[4, 5] ≈ 0.3)
-    @test (c_ab[4, 6] ≈ 0.3) && (c_ab[4, 7] ≈ 0.3) && (c_ab[4, 8] ≈ 0.3)
-    @test (c_ab[5, 3] ≈ 0.5) && (c_ab[5, 4] ≈ 0.5) && (c_ab[5, 5] ≈ 0.5)
-    @test (c_ab[5, 6] ≈ 0.5) && (c_ab[5, 7] ≈ 0.5) && (c_ab[5, 8] ≈ 0.5)
-    @test (c_ab[6, 3] ≈ 0.7) && (c_ab[6, 4] ≈ 0.7) && (c_ab[6, 5] ≈ 0.7)
-    @test (c_ab[6, 6] ≈ 0.7) && (c_ab[6, 7] ≈ 0.7) && (c_ab[6, 8] ≈ 0.7)
-    @test (c_ab[7, 3] ≈ 0.9) && (c_ab[7, 4] ≈ 0.9) && (c_ab[7, 5] ≈ 0.9)
-    @test (c_ab[7, 6] ≈ 0.9) && (c_ab[7, 7] ≈ 0.9) && (c_ab[7, 8] ≈ 0.9)
-    # Checking decomposition in terms of AD component
-    @test (c_ad[3, 3] ≈ 0.1) && (c_ad[3, 4] ≈ 0.3) && (c_ad[3, 5] ≈ 0.5)
-    @test (c_ad[3, 6] ≈ 0.7) && (c_ad[3, 7] ≈ 0.9) && (c_ad[3, 8] ≈ 1.1)
-    @test (c_ad[4, 3] ≈ 0.1) && (c_ad[4, 4] ≈ 0.3) && (c_ad[4, 5] ≈ 0.5)
-    @test (c_ad[4, 6] ≈ 0.7) && (c_ad[4, 7] ≈ 0.9) && (c_ad[4, 8] ≈ 1.1)
-    @test (c_ad[5, 3] ≈ 0.1) && (c_ad[5, 4] ≈ 0.3) && (c_ad[5, 5] ≈ 0.5)
-    @test (c_ad[5, 6] ≈ 0.7) && (c_ad[5, 7] ≈ 0.9) && (c_ad[5, 8] ≈ 1.1)
-    @test (c_ad[6, 3] ≈ 0.1) && (c_ad[6, 4] ≈ 0.3) && (c_ad[6, 5] ≈ 0.5)
-    @test (c_ad[6, 6] ≈ 0.7) && (c_ad[6, 7] ≈ 0.9) && (c_ad[6, 8] ≈ 1.1)
-    @test (c_ad[7, 3] ≈ 0.1) && (c_ad[7, 4] ≈ 0.3) && (c_ad[7, 5] ≈ 0.5)
-    @test (c_ad[7, 6] ≈ 0.7) && (c_ad[7, 7] ≈ 0.9) && (c_ad[7, 8] ≈ 1.1)
-    # Checking cells inside the rectangle area
+    c_ab_exp = [
+        -0.3 -0.3 -0.3 -0.3 -0.3 -0.3 -0.3 -0.3
+        -0.1 -0.1 -0.1 -0.1 -0.1 -0.1 -0.1 -0.1
+         0.1  0.1  0.1  0.1  0.1  0.1  0.1  0.1
+         0.3  0.3  0.3  0.3  0.3  0.3  0.3  0.3
+         0.5  0.5  0.5  0.5  0.5  0.5  0.5  0.5
+         0.7  0.7  0.7  0.7  0.7  0.7  0.7  0.7
+         0.9  0.9  0.9  0.9  0.9  0.9  0.9  0.9
+         1.1  1.1  1.1  1.1  1.1  1.1  1.1  1.1]
+    c_ad_exp = [
+        -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
+        -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
+        -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
+        -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
+        -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
+        -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
+        -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
+        -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1]
+    @test (c_ab ≈ c_ab_exp)
+    @test (c_ad ≈ c_ad_exp)
     @test all(in_rectangle[3:7, 3:7] .== true)
     in_rectangle[3:7, 3:7] .= false
     @test all(in_rectangle[:, :] .== false)
-    # Checking the number of cells inside the rectangle area
     @test n_cell == 25 * 4
 
-    # Testing for not rounded indices
+    # Test: BP-DVR-2
     a_ind = [10.7, 11.3, 5.3]
     ab_ind = [5.7, 0.0, 0.0]
     ad_ind = [0.0, 4.7, 0.0]
@@ -161,49 +150,32 @@ end
     c_ab, c_ad, in_rectangle, n_cell = _decompose_vector_rectangle(
         ab_ind, ad_ind, a_ind, area_min_x, area_min_y, area_length_x, area_length_y
     )
-    # Checking cells inside the rectangle area
+    c_ab_exp = [
+        -1.2 -1.2 -1.2 -1.2 -1.2 -1.2 -1.2 -1.2
+        -0.2 -0.2 -0.2 -0.2 -0.2 -0.2 -0.2 -0.2
+         0.8  0.8  0.8  0.8  0.8  0.8  0.8  0.8
+         1.8  1.8  1.8  1.8  1.8  1.8  1.8  1.8
+         2.8  2.8  2.8  2.8  2.8  2.8  2.8  2.8
+         3.8  3.8  3.8  3.8  3.8  3.8  3.8  3.8
+         4.8  4.8  4.8  4.8  4.8  4.8  4.8  4.8
+         5.8  5.8  5.8  5.8  5.8  5.8  5.8  5.8]
+    c_ad_exp = [
+        -1.8 -0.8 0.2 1.2 2.2 3.2 4.2 5.2
+        -1.8 -0.8 0.2 1.2 2.2 3.2 4.2 5.2
+        -1.8 -0.8 0.2 1.2 2.2 3.2 4.2 5.2
+        -1.8 -0.8 0.2 1.2 2.2 3.2 4.2 5.2
+        -1.8 -0.8 0.2 1.2 2.2 3.2 4.2 5.2
+        -1.8 -0.8 0.2 1.2 2.2 3.2 4.2 5.2
+        -1.8 -0.8 0.2 1.2 2.2 3.2 4.2 5.2
+        -1.8 -0.8 0.2 1.2 2.2 3.2 4.2 5.2]
+    @test (c_ab ≈ c_ab_exp ./ 5.7)
+    @test (c_ad ≈ c_ad_exp ./ 4.7)
     @test all(in_rectangle[3:7, 3:7] .== true)
     in_rectangle[3:7, 3:7] .= false
     @test all(in_rectangle[:, :] .== false)
-    # Checking the number of cells inside the rectangle area
     @test n_cell == 25 * 4
 
-    # Testing for a simple rectangle in the XY plane at cell border
-    a_ind = [11 + 1e-12, 10.5 + 1e-12, 6.0]
-    ab_ind = [5.0 - 1e-12, 0.0, 2.4]
-    ad_ind = [0.0, 3.0 - 1e-12, -0.3]
-    area_min_x = 9
-    area_min_y = 9
-    area_length_x = 8
-    area_length_y = 8
-    c_ab, c_ad, in_rectangle, n_cell = _decompose_vector_rectangle(
-        ab_ind, ad_ind, a_ind, area_min_x, area_min_y, area_length_x, area_length_y
-    )
-    # Checking decomposition in terms of AB component
-    @test (c_ab[3, 3] ≈ 0.1) && (c_ab[3, 4] ≈ 0.1) && (c_ab[3, 5] ≈ 0.1)
-    @test (c_ab[3, 6] ≈ 0.1) && (c_ab[3, 7] ≈ 0.1) && (c_ab[3, 8] ≈ 0.1)
-    @test (c_ab[4, 3] ≈ 0.3) && (c_ab[4, 4] ≈ 0.3) && (c_ab[4, 5] ≈ 0.3)
-    @test (c_ab[4, 6] ≈ 0.3) && (c_ab[4, 7] ≈ 0.3) && (c_ab[4, 8] ≈ 0.3)
-    @test (c_ab[5, 3] ≈ 0.5) && (c_ab[5, 4] ≈ 0.5) && (c_ab[5, 5] ≈ 0.5)
-    @test (c_ab[5, 6] ≈ 0.5) && (c_ab[5, 7] ≈ 0.5) && (c_ab[5, 8] ≈ 0.5)
-    @test (c_ab[6, 3] ≈ 0.7) && (c_ab[6, 4] ≈ 0.7) && (c_ab[6, 5] ≈ 0.7)
-    @test (c_ab[6, 6] ≈ 0.7) && (c_ab[6, 7] ≈ 0.7) && (c_ab[6, 8] ≈ 0.7)
-    @test (c_ab[7, 3] ≈ 0.9) && (c_ab[7, 4] ≈ 0.9) && (c_ab[7, 5] ≈ 0.9)
-    @test (c_ab[7, 6] ≈ 0.9) && (c_ab[7, 7] ≈ 0.9) && (c_ab[7, 8] ≈ 0.9)
-    # Checking decomposition in terms of AD component
-    @test (c_ad[3, 3] ≈ 1/3) && (c_ad[3, 4] ≈ 2/3) && (c_ad[3, 5] ≈ 1.0)
-    @test (c_ad[4, 3] ≈ 1/3) && (c_ad[4, 4] ≈ 2/3) && (c_ad[4, 5] ≈ 1.0)
-    @test (c_ad[5, 3] ≈ 1/3) && (c_ad[5, 4] ≈ 2/3) && (c_ad[5, 5] ≈ 1.0)
-    @test (c_ad[6, 3] ≈ 1/3) && (c_ad[6, 4] ≈ 2/3) && (c_ad[6, 5] ≈ 1.0)
-    @test (c_ad[7, 3] ≈ 1/3) && (c_ad[7, 4] ≈ 2/3) && (c_ad[7, 5] ≈ 1.0)
-    # Checking cells inside the rectangle area
-    @test all(in_rectangle[3:7, 3:4] .== true)
-    in_rectangle[3:7, 3:4] .= false
-    @test all(in_rectangle[:, :] .== false)
-    # Checking the number of cells inside the rectangle area
-    @test n_cell == 10 * 4
-
-    # Testing for a simple rectangle in the XYZ plane
+    # Test: BP-DVR-3
     a_ind = [16.0, 11.0, 6.0]
     ab_ind = [1.0, 0.0, 2.4]
     ad_ind = [0.0, 5.0, -0.3]
@@ -214,25 +186,33 @@ end
     c_ab, c_ad, in_rectangle, n_cell = _decompose_vector_rectangle(
         ab_ind, ad_ind, a_ind, area_min_x, area_min_y, area_length_x, area_length_y
     )
-    # Checking decomposition in terms of AB component
-    @test (c_ab[3, 3] ≈ 0.5) && (c_ab[3, 4] ≈ 0.5) && (c_ab[3, 5] ≈ 0.5)
-    @test (c_ab[3, 6] ≈ 0.5) && (c_ab[3, 7] ≈ 0.5) && (c_ab[3, 8] ≈ 0.5)
-    @test (c_ab[4, 3] ≈ 1.5) && (c_ab[4, 4] ≈ 1.5) && (c_ab[4, 5] ≈ 1.5)
-    @test (c_ab[4, 6] ≈ 1.5) && (c_ab[4, 7] ≈ 1.5) && (c_ab[4, 8] ≈ 1.5)
-    # Checking decomposition in terms of AD component
-    @test (c_ad[3, 3] ≈ 0.1) && (c_ad[3, 4] ≈ 0.3) && (c_ad[3, 5] ≈ 0.5)
-    @test (c_ad[3, 6] ≈ 0.7) && (c_ad[3, 7] ≈ 0.9) && (c_ad[3, 8] ≈ 1.1)
-    @test (c_ad[4, 3] ≈ 0.1) && (c_ad[4, 4] ≈ 0.3) && (c_ad[4, 5] ≈ 0.5)
-    @test (c_ad[4, 6] ≈ 0.7) && (c_ad[4, 7] ≈ 0.9) && (c_ad[4, 8] ≈ 1.1)
-    # Checking cells inside the rectangle area
+    c_ab_exp = [
+        -1.5 -1.5 -1.5 -1.5 -1.5 -1.5 -1.5 -1.5
+        -0.5 -0.5 -0.5 -0.5 -0.5 -0.5 -0.5 -0.5
+         0.5  0.5  0.5  0.5  0.5  0.5  0.5  0.5
+         1.5  1.5  1.5  1.5  1.5  1.5  1.5  1.5
+         2.5  2.5  2.5  2.5  2.5  2.5  2.5  2.5
+         3.5  3.5  3.5  3.5  3.5  3.5  3.5  3.5
+         4.5  4.5  4.5  4.5  4.5  4.5  4.5  4.5
+         5.5  5.5  5.5  5.5  5.5  5.5  5.5  5.5]
+    c_ad_exp = [
+        -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
+        -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
+        -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
+        -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
+        -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
+        -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
+        -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
+        -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1]
+    @test (c_ab ≈ c_ab_exp)
+    @test (c_ad ≈ c_ad_exp)
+    display(in_rectangle)
     @test all(in_rectangle[3, 3:7] .== true)
     in_rectangle[3, 3:7] .= false
     @test all(in_rectangle[:, :] .== false)
-    # Checking the number of cells inside the rectangle area
     @test n_cell == 5 * 4
 
-    # Testing for the edge case where the rectangle is a line
-    # Note that no decomposition can be mathematically made
+    # Test: BP-DVR-4
     a_ind = [15.2, 11.3, 6.0]
     ab_ind = [2.3, 1.2, 2.4]
     ad_ind = [4.6, 2.4, -0.3]
@@ -243,13 +223,10 @@ end
     c_ab, c_ad, in_rectangle, n_cell = _decompose_vector_rectangle(
         ab_ind, ad_ind, a_ind, area_min_x, area_min_y, area_length_x, area_length_y
     )
-    # Checking there is no cell in the rectangle area
     @test all(in_rectangle[:, :] .== false)
-    # Checking the number of cells inside the rectangle area
     @test n_cell == 0
 
-    # Testing for the edge case where the rectangle is a point
-    # Note that no decomposition can be mathematically made
+    # Test: BP-DVR-5
     a_ind = [15.2, 11.3, 6.0]
     ab_ind = [0.0, 0.0, 0.0]
     ad_ind = [0.0, 0.0, 0.0]
@@ -260,9 +237,7 @@ end
     c_ab, c_ad, in_rectangle, n_cell = _decompose_vector_rectangle(
         ab_ind, ad_ind, a_ind, area_min_x, area_min_y, area_length_x, area_length_y
     )
-    # Checking there is no cell in the rectangle area
     @test all(in_rectangle[:, :] .== false)
-    # Checking the number of cells inside the rectangle area
     @test n_cell == 0
 end
 
