@@ -504,216 +504,89 @@ end
 end
 
 @testset "_calc_triangle_pos" begin
-    # Note that the function does not account for the case where
-    # the triangle follows a cell border.
-    # It is therefore necessary to solve this potential ambiguity
-    # before calling the function. As a result, a small increment (1e-8)
-    # is added or removed to the input in order to make sure that
-    # the input coordinates do not correspond to a cell border.
+    function _check_results(a, b, c, tri_pos_exp, grid)
+        # Checking first input order
+        tri_pos = sort(unique(_calc_triangle_pos(a, b, c, grid)))
+        @test (tri_pos == tri_pos_exp)
+        # Checking second input order
+        tri_pos = sort(unique(_calc_triangle_pos(a, c, b, grid)))
+        @test (tri_pos == tri_pos_exp)
+        # Checking third input order
+        tri_pos = sort(unique(_calc_triangle_pos(b, a, c, grid)))
+        @test (tri_pos == tri_pos_exp)
+        # Checking fourth input order
+        tri_pos = sort(unique(_calc_triangle_pos(b, c, a, grid)))
+        @test (tri_pos == tri_pos_exp)
+        # Checking fifth input order
+        tri_pos = sort(unique(_calc_triangle_pos(c, a, b, grid)))
+        @test (tri_pos == tri_pos_exp)
+        # Checking sixth input order
+        tri_pos = sort(unique(_calc_triangle_pos(c, b, a, grid)))
+        @test (tri_pos == tri_pos_exp)
+    end
 
-    # Testing for a simple triangle in the XY plane
-    a = [0.0 + 1e-8, 0.0 + 1e-8, 0.0 - 1e-8]
-    b = [1.0 - 1e-8, 0.0 + 1e-8, 0.0 - 1e-8]
-    c = [0.0 + 1e-8, 1.0 - 1e-8, 0.0 - 1e-8]
-    tri_pos = unique(_calc_triangle_pos(a, b, c, grid))
-    @test ([11, 11, 11] in tri_pos) && ([12, 11, 11] in tri_pos)
-    @test ([14, 11, 11] in tri_pos) && ([13, 11, 11] in tri_pos)
-    @test ([15, 11, 11] in tri_pos) && ([16, 11, 11] in tri_pos)
-    @test ([17, 11, 11] in tri_pos) && ([18, 11, 11] in tri_pos)
-    @test ([20, 11, 11] in tri_pos) && ([19, 11, 11] in tri_pos)
-    #@test ([21, 11, 11] in tri_pos) && ([11, 12, 11] in tri_pos)
-    @test ([12, 12, 11] in tri_pos) && ([13, 12, 11] in tri_pos)
-    @test ([15, 12, 11] in tri_pos) && ([14, 12, 11] in tri_pos)
-    @test ([16, 12, 11] in tri_pos) && ([17, 12, 11] in tri_pos)
-    @test ([18, 12, 11] in tri_pos) && ([19, 12, 11] in tri_pos)
-    @test ([11, 13, 11] in tri_pos) && ([20, 12, 11] in tri_pos)
-    @test ([12, 13, 11] in tri_pos) && ([13, 13, 11] in tri_pos)
-    @test ([14, 13, 11] in tri_pos) && ([15, 13, 11] in tri_pos)
-    @test ([17, 13, 11] in tri_pos) && ([16, 13, 11] in tri_pos)
-    @test ([18, 13, 11] in tri_pos) && ([19, 13, 11] in tri_pos)
-    @test ([11, 14, 11] in tri_pos) && ([12, 14, 11] in tri_pos)
-    @test ([14, 14, 11] in tri_pos) && ([13, 14, 11] in tri_pos)
-    @test ([15, 14, 11] in tri_pos) && ([16, 14, 11] in tri_pos)
-    @test ([17, 14, 11] in tri_pos) && ([18, 14, 11] in tri_pos)
-    @test ([12, 15, 11] in tri_pos) && ([11, 15, 11] in tri_pos)
-    @test ([13, 15, 11] in tri_pos) && ([14, 15, 11] in tri_pos)
-    @test ([15, 15, 11] in tri_pos) && ([16, 15, 11] in tri_pos)
-    @test ([11, 16, 11] in tri_pos) && ([17, 15, 11] in tri_pos)
-    @test ([12, 16, 11] in tri_pos) && ([13, 16, 11] in tri_pos)
-    @test ([14, 16, 11] in tri_pos) && ([15, 16, 11] in tri_pos)
-    @test ([11, 17, 11] in tri_pos) && ([16, 16, 11] in tri_pos)
-    @test ([12, 17, 11] in tri_pos) && ([13, 17, 11] in tri_pos)
-    @test ([14, 17, 11] in tri_pos) && ([15, 17, 11] in tri_pos)
-    @test ([12, 18, 11] in tri_pos) && ([11, 18, 11] in tri_pos)
-    @test ([13, 18, 11] in tri_pos) && ([14, 18, 11] in tri_pos)
-    @test ([11, 19, 11] in tri_pos) && ([12, 19, 11] in tri_pos)
-    @test ([11, 20, 11] in tri_pos) && ([13, 19, 11] in tri_pos)
-    #@test ([12, 20, 11] in tri_pos) && ([11, 21, 11] in tri_pos)
-    #@test length(tri_pos) == 66
+    # Test: BP-CT-1
+    a = [0.0 + 1e-3, 0.0 + 1e-3, 0.0 - 1e-8]
+    b = [1.0 - 1e-3, 0.0 + 1e-3, 0.0 - 1e-8]
+    c = [0.0 + 1e-3, 1.0 - 1e-3, 0.0 - 1e-8]
+    tri_pos_exp = [
+        [11, 11, 10], [11, 12, 10], [11, 13, 10], [11, 14, 10], [11, 15, 10],
+        [11, 16, 10], [11, 17, 10], [11, 18, 10], [11, 19, 10], [11, 20, 10],
+        [11, 21, 10], [12, 11, 10], [12, 12, 10], [12, 13, 10], [12, 14, 10],
+        [12, 15, 10], [12, 16, 10], [12, 17, 10], [12, 18, 10], [12, 19, 10],
+        [12, 20, 10], [12, 21, 10], [13, 11, 10], [13, 12, 10], [13, 13, 10],
+        [13, 14, 10], [13, 15, 10], [13, 16, 10], [13, 17, 10], [13, 18, 10],
+        [13, 19, 10], [13, 20, 10], [14, 11, 10], [14, 12, 10], [14, 13, 10],
+        [14, 14, 10], [14, 15, 10], [14, 16, 10], [14, 17, 10], [14, 18, 10],
+        [14, 19, 10], [15, 11, 10], [15, 12, 10], [15, 13, 10], [15, 14, 10],
+        [15, 15, 10], [15, 16, 10], [15, 17, 10], [15, 18, 10], [16, 11, 10],
+        [16, 12, 10], [16, 13, 10], [16, 14, 10], [16, 15, 10], [16, 16, 10],
+        [16, 17, 10], [17, 11, 10], [17, 12, 10], [17, 13, 10], [17, 14, 10],
+        [17, 15, 10], [17, 16, 10], [18, 11, 10], [18, 12, 10], [18, 13, 10],
+        [18, 14, 10], [18, 15, 10], [19, 11, 10], [19, 12, 10], [19, 13, 10],
+        [19, 14, 10], [20, 11, 10], [20, 12, 10], [20, 13, 10], [21, 11, 10],
+        [21, 12, 10]]
+    _check_results(a, b, c, tri_pos_exp, grid)
 
-    # Testing that the input order does not influence the results (1)
-    tri_pos = unique(_calc_triangle_pos(b, a, c, grid))
-    @test ([11, 11, 11] in tri_pos) && ([12, 11, 11] in tri_pos)
-    @test ([14, 11, 11] in tri_pos) && ([13, 11, 11] in tri_pos)
-    @test ([15, 11, 11] in tri_pos) && ([16, 11, 11] in tri_pos)
-    @test ([17, 11, 11] in tri_pos) && ([18, 11, 11] in tri_pos)
-    @test ([20, 11, 11] in tri_pos) && ([19, 11, 11] in tri_pos)
-    #@test ([21, 11, 11] in tri_pos) && ([11, 12, 11] in tri_pos)
-    @test ([12, 12, 11] in tri_pos) && ([13, 12, 11] in tri_pos)
-    @test ([15, 12, 11] in tri_pos) && ([14, 12, 11] in tri_pos)
-    @test ([16, 12, 11] in tri_pos) && ([17, 12, 11] in tri_pos)
-    @test ([18, 12, 11] in tri_pos) && ([19, 12, 11] in tri_pos)
-    @test ([11, 13, 11] in tri_pos) && ([20, 12, 11] in tri_pos)
-    @test ([12, 13, 11] in tri_pos) && ([13, 13, 11] in tri_pos)
-    @test ([14, 13, 11] in tri_pos) && ([15, 13, 11] in tri_pos)
-    @test ([17, 13, 11] in tri_pos) && ([16, 13, 11] in tri_pos)
-    @test ([18, 13, 11] in tri_pos) && ([19, 13, 11] in tri_pos)
-    @test ([11, 14, 11] in tri_pos) && ([12, 14, 11] in tri_pos)
-    @test ([14, 14, 11] in tri_pos) && ([13, 14, 11] in tri_pos)
-    @test ([15, 14, 11] in tri_pos) && ([16, 14, 11] in tri_pos)
-    @test ([17, 14, 11] in tri_pos) && ([18, 14, 11] in tri_pos)
-    @test ([12, 15, 11] in tri_pos) && ([11, 15, 11] in tri_pos)
-    @test ([13, 15, 11] in tri_pos) && ([14, 15, 11] in tri_pos)
-    @test ([15, 15, 11] in tri_pos) && ([16, 15, 11] in tri_pos)
-    @test ([11, 16, 11] in tri_pos) && ([17, 15, 11] in tri_pos)
-    @test ([12, 16, 11] in tri_pos) && ([13, 16, 11] in tri_pos)
-    @test ([14, 16, 11] in tri_pos) && ([15, 16, 11] in tri_pos)
-    @test ([11, 17, 11] in tri_pos) && ([16, 16, 11] in tri_pos)
-    @test ([12, 17, 11] in tri_pos) && ([13, 17, 11] in tri_pos)
-    @test ([14, 17, 11] in tri_pos) && ([15, 17, 11] in tri_pos)
-    @test ([12, 18, 11] in tri_pos) && ([11, 18, 11] in tri_pos)
-    @test ([13, 18, 11] in tri_pos) && ([14, 18, 11] in tri_pos)
-    @test ([11, 19, 11] in tri_pos) && ([12, 19, 11] in tri_pos)
-    @test ([11, 20, 11] in tri_pos) && ([13, 19, 11] in tri_pos)
-    #@test ([12, 20, 11] in tri_pos) && ([11, 21, 11] in tri_pos)
-    #@test length(tri_pos) == 66
-
-    # Testing that the input order does not influence the results (2)
-    tri_pos = unique(_calc_triangle_pos(c, a, b, grid))
-    @test ([11, 11, 11] in tri_pos) && ([12, 11, 11] in tri_pos)
-    @test ([14, 11, 11] in tri_pos) && ([13, 11, 11] in tri_pos)
-    @test ([15, 11, 11] in tri_pos) && ([16, 11, 11] in tri_pos)
-    @test ([17, 11, 11] in tri_pos) && ([18, 11, 11] in tri_pos)
-    @test ([20, 11, 11] in tri_pos) && ([19, 11, 11] in tri_pos)
-    #@test ([21, 11, 11] in tri_pos) && ([11, 12, 11] in tri_pos)
-    @test ([12, 12, 11] in tri_pos) && ([13, 12, 11] in tri_pos)
-    @test ([15, 12, 11] in tri_pos) && ([14, 12, 11] in tri_pos)
-    @test ([16, 12, 11] in tri_pos) && ([17, 12, 11] in tri_pos)
-    @test ([18, 12, 11] in tri_pos) && ([19, 12, 11] in tri_pos)
-    @test ([11, 13, 11] in tri_pos) && ([20, 12, 11] in tri_pos)
-    @test ([12, 13, 11] in tri_pos) && ([13, 13, 11] in tri_pos)
-    @test ([14, 13, 11] in tri_pos) && ([15, 13, 11] in tri_pos)
-    @test ([17, 13, 11] in tri_pos) && ([16, 13, 11] in tri_pos)
-    @test ([18, 13, 11] in tri_pos) && ([19, 13, 11] in tri_pos)
-    @test ([11, 14, 11] in tri_pos) && ([12, 14, 11] in tri_pos)
-    @test ([14, 14, 11] in tri_pos) && ([13, 14, 11] in tri_pos)
-    @test ([15, 14, 11] in tri_pos) && ([16, 14, 11] in tri_pos)
-    @test ([17, 14, 11] in tri_pos) && ([18, 14, 11] in tri_pos)
-    @test ([12, 15, 11] in tri_pos) && ([11, 15, 11] in tri_pos)
-    @test ([13, 15, 11] in tri_pos) && ([14, 15, 11] in tri_pos)
-    @test ([15, 15, 11] in tri_pos) && ([16, 15, 11] in tri_pos)
-    @test ([11, 16, 11] in tri_pos) && ([17, 15, 11] in tri_pos)
-    @test ([12, 16, 11] in tri_pos) && ([13, 16, 11] in tri_pos)
-    @test ([14, 16, 11] in tri_pos) && ([15, 16, 11] in tri_pos)
-    @test ([11, 17, 11] in tri_pos) && ([16, 16, 11] in tri_pos)
-    @test ([12, 17, 11] in tri_pos) && ([13, 17, 11] in tri_pos)
-    @test ([14, 17, 11] in tri_pos) && ([15, 17, 11] in tri_pos)
-    @test ([12, 18, 11] in tri_pos) && ([11, 18, 11] in tri_pos)
-    @test ([13, 18, 11] in tri_pos) && ([14, 18, 11] in tri_pos)
-    @test ([11, 19, 11] in tri_pos) && ([12, 19, 11] in tri_pos)
-    @test ([11, 20, 11] in tri_pos) && ([13, 19, 11] in tri_pos)
-    #@test ([12, 20, 11] in tri_pos) && ([11, 21, 11] in tri_pos)
-    #@test length(tri_pos) == 66
-
-    # Testing that the input order does not influence the results (3)
-    tri_pos = unique(_calc_triangle_pos(a, c, b, grid))
-    #@test length(tri_pos) == 66
-    tri_pos = unique(_calc_triangle_pos(b, c, a, grid))
-    #@test length(tri_pos) == 66
-    tri_pos = unique(_calc_triangle_pos(c, b, a, grid))
-    #@test length(tri_pos) == 66
-
-    # Testing for a simple triangle in the XZ plane
+    # Test: BP-CT-2
     a = [0.0 + 1e-8, 0.0 - 1e-8, 0.0 + 1e-8]
     b = [1.0 - 1e-8, 0.0 - 1e-8, 0.0 + 1e-8]
     c = [0.0 + 1e-8, 0.0 - 1e-8, 1.0 - 1e-8]
-    tri_pos = unique(_calc_triangle_pos(a, b, c, grid))
-    #@test ([11, 11, 12] in tri_pos) && ([12, 11, 12] in tri_pos)
-    #@test ([13, 11, 12] in tri_pos) && ([14, 11, 12] in tri_pos)
-    #@test ([15, 11, 12] in tri_pos) && ([16, 11, 12] in tri_pos)
-    #@test ([17, 11, 12] in tri_pos) && ([18, 11, 12] in tri_pos)
-    @test ([19, 11, 12] in tri_pos) && ([20, 11, 12] in tri_pos)
-    #@test ([21, 11, 12] in tri_pos) && ([11, 11, 13] in tri_pos)
-    @test ([11, 11, 14] in tri_pos) && ([11, 11, 15] in tri_pos)
-    @test ([11, 11, 16] in tri_pos) && ([11, 11, 17] in tri_pos)
-    @test ([11, 11, 18] in tri_pos) && ([11, 11, 19] in tri_pos)
-    #@test ([11, 11, 20] in tri_pos) && ([11, 11, 21] in tri_pos)
-    #@test ([20, 11, 13] in tri_pos) && ([19, 11, 14] in tri_pos)
-    #@test ([18, 11, 15] in tri_pos) && ([17, 11, 16] in tri_pos)
-    #@test ([16, 11, 17] in tri_pos) && ([15, 11, 18] in tri_pos)
-    #@test ([14, 11, 19] in tri_pos) && ([13, 11, 20] in tri_pos)
-    #@test ([12, 11, 21] in tri_pos) && ([19, 11, 13] in tri_pos)
-    @test ([18, 11, 14] in tri_pos) && ([17, 11, 15] in tri_pos)
-    @test ([16, 11, 16] in tri_pos) && ([15, 11, 17] in tri_pos)
-    @test ([14, 11, 18] in tri_pos) && ([13, 11, 19] in tri_pos)
-    @test ([12, 11, 20] in tri_pos)
-    @test length(tri_pos) == 37
+    tri_pos_exp = [
+        [11, 11, 11], [11, 11, 12], [11, 11, 13], [11, 11, 14], [11, 11, 15],
+        [11, 11, 16], [11, 11, 17], [11, 11, 18], [11, 11, 19], [11, 11, 20],
+        [12, 11, 11], [12, 11, 19], [12, 11, 20], [13, 11, 11], [13, 11, 18],
+        [13, 11, 19], [14, 11, 11], [14, 11, 17], [14, 11, 18], [15, 11, 11],
+        [15, 11, 16], [15, 11, 17], [16, 11, 11], [16, 11, 15], [16, 11, 16],
+        [17, 11, 11], [17, 11, 14], [17, 11, 15], [18, 11, 11], [18, 11, 13],
+        [18, 11, 14], [19, 11, 11], [19, 11, 12], [19, 11, 13], [20, 11, 11],
+        [20, 11, 12], [21, 11, 11]]
+    _check_results(a, b, c, tri_pos_exp, grid)
 
-    # Testing that the input order does not influence the results
-    tri_pos = unique(_calc_triangle_pos(a, c, b, grid))
-    @test length(tri_pos) == 37
-    tri_pos = unique(_calc_triangle_pos(b, a, c, grid))
-    @test length(tri_pos) == 37
-    tri_pos = unique(_calc_triangle_pos(b, c, a, grid))
-    @test length(tri_pos) == 37
-    tri_pos = unique(_calc_triangle_pos(c, a, b, grid))
-    @test length(tri_pos) == 37
-    tri_pos = unique(_calc_triangle_pos(c, b, a, grid))
-    @test length(tri_pos) == 37
+    # Test: BP-CT-3
+    a = [0.5 + 1e-4, 0.0 + 1e-8, 0.5 + 1e-8]
+    b = [0.6 - 1e-4, 0.0 + 1e-8, 0.6 - 1e-8]
+    c = [0.6 - 1e-4, 0.5 - 1e-8, 0.6 - 1e-8]
+    tri_pos_exp = [
+        [16, 11, 16], [16, 12, 16], [16, 13, 16], [16, 14, 16], [17, 11, 16],
+        [17, 12, 16], [17, 13, 16], [17, 14, 16], [17, 15, 16], [17, 16, 16]]
+    _check_results(a, b, c, tri_pos_exp, grid)
 
-    # Testing for a simple triangle in the XYZ plane
-    a = [0.5 + 1e-8, 0.0 + 1e-8, 0.5 + 1e-8]
-    b = [0.6 - 1e-8, 0.0 + 1e-8, 0.6 - 1e-8]
-    c = [0.6 - 1e-8, 0.5 - 1e-8, 0.6 - 1e-8]
-    tri_pos = unique(_calc_triangle_pos(a, b, c, grid))
-    @test ([16, 11, 17] in tri_pos) && ([17, 11, 17] in tri_pos)
-    @test ([16, 12, 17] in tri_pos) && ([17, 12, 17] in tri_pos)
-    @test ([16, 13, 17] in tri_pos) && ([17, 13, 17] in tri_pos)
-    #@test ([17, 14, 17] in tri_pos) && ([17, 15, 17] in tri_pos)
-    #@test ([17, 16, 17] in tri_pos) && ([16, 14, 17] in tri_pos)
-    #@test length(tri_pos) == 10
-
-    # Testing that the input order does not influence the results
-    tri_pos = unique(_calc_triangle_pos(a, c, b, grid))
-    #@test length(tri_pos) == 10
-    tri_pos = unique(_calc_triangle_pos(b, a, c, grid))
-    #@test length(tri_pos) == 10
-    tri_pos = unique(_calc_triangle_pos(b, c, a, grid))
-    #@test length(tri_pos) == 10
-    tri_pos = unique(_calc_triangle_pos(c, a, b, grid))
-    #@test length(tri_pos) == 10
-    tri_pos = unique(_calc_triangle_pos(c, b, a, grid))
-    #@test length(tri_pos) == 10
-
-    # Testing for the edge case where the triangle is a line
+    # Test: BP-CT-4
     a = [0.34 + 1e-8, 0.56 + 1e-8, 0.0 - 1e-8]
     b = [0.74 - 1e-8, 0.97 - 1e-8, 0.0 - 1e-8]
     c = [0.74 - 1e-8, 0.97 - 1e-8, 0.0 - 1e-8]
-    tri_pos = unique(_calc_triangle_pos(a, b, c, grid))
-    #@test ([14, 17, 11] in tri_pos) && ([15, 17, 11] in tri_pos)
-    #@test ([15, 18, 11] in tri_pos) && ([16, 18, 11] in tri_pos)
-    #@test ([16, 19, 11] in tri_pos) && ([17, 19, 11] in tri_pos)
-    #@test ([17, 20, 11] in tri_pos) && ([18, 20, 11] in tri_pos)
-    #@test ([18, 21, 11] in tri_pos)
-    @test length(tri_pos) == 9
+    tri_pos_exp = [
+        [14, 17, 10], [15, 17, 10], [15, 18, 10], [16, 18, 10], [16, 19, 10],
+        [17, 19, 10], [17, 20, 10], [18, 20, 10], [18, 21, 10]]
+    _check_results(a, b, c, tri_pos_exp, grid)
 
-    # Testing for the edge case where the triangle is a point
+    # Test: BP-CT-5
     a = [0.5 - 1e-8, 0.5 - 1e-8, 0.5 - 1e-8]
     b = [0.5 - 1e-8, 0.5 - 1e-8, 0.5 - 1e-8]
     c = [0.5 - 1e-8, 0.5 - 1e-8, 0.5 - 1e-8]
-    tri_pos = unique(_calc_triangle_pos(a, b, c, grid))
-    #@test ([16, 16, 16] in tri_pos)
-    @test length(tri_pos) == 1
+    tri_pos_exp = [[16, 16, 15]]
+    _check_results(a, b, c, tri_pos_exp, grid)
 end
 
 @testset "_include_new_body_pos!" begin
