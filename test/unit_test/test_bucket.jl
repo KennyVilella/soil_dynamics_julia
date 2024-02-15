@@ -677,19 +677,10 @@ end
     # Resetting bucket position
     _init_sparse_array!(out.body, grid)
 
-    # Creating a dummy bucket wall
-    area_pos = Vector{Vector{Int64}}()
-    push!(area_pos, [5, 5, 11])
-    push!(area_pos, [5, 5, 15])
-    push!(area_pos, [6, 6, 17])
-    push!(area_pos, [7, 11, 11])
-    push!(area_pos, [7, 11, 12])
-    push!(area_pos, [7, 12, 12])
-    push!(area_pos, [7, 12, 13])
-    push!(area_pos, [7, 13, 11])
-    push!(area_pos, [10, 10, 11])
-
-    # Testing for a first bucket wall
+    # Test: BP-UB-1
+    area_pos = [
+        [5, 5, 10], [5, 5, 14], [6, 6, 16], [7, 11, 10], [7, 11, 11], [7, 12, 11],
+        [7, 12, 12], [7, 13, 10], [10, 10, 10]]
     _update_body!(area_pos, out, grid)
     @test (out.body[1][5, 5] ≈ -0.1) && (out.body[2][5, 5] ≈ 0.4)
     @test (out.body[1][6, 6] ≈ 0.5) && (out.body[2][6, 6] ≈ 0.6)
@@ -698,20 +689,10 @@ end
     @test (out.body[1][7, 13] ≈ -0.1) && (out.body[2][7, 13] ≈ 0.0)
     @test (out.body[1][10, 10] ≈ -0.1) && (out.body[2][10, 10] ≈ 0.0)
 
-    # Creating a dummy bucket wall
-    area_pos = Vector{Vector{Int64}}()
-    push!(area_pos, [4, 4, 11])
-    push!(area_pos, [5, 5, 15])
-    push!(area_pos, [6, 6, 10])
-    push!(area_pos, [7, 11, 12])
-    push!(area_pos, [7, 11, 15])
-    push!(area_pos, [7, 12, 9])
-    push!(area_pos, [7, 12, 12])
-    push!(area_pos, [7, 13, 9])
-    push!(area_pos, [7, 13, 14])
-    push!(area_pos, [10, 10, 13])
-
-    # Testing for a second bucket wall
+    # Test: BP-UB-2
+    area_pos = [
+        [4, 4, 10], [5, 5, 14], [6, 6, 9], [7, 11, 11], [7, 11, 14], [7, 12, 8],
+        [7, 12, 11], [7, 13, 8], [7, 13, 13], [10, 10, 12]]
     _update_body!(area_pos, out, grid)
     @test (out.body[1][4, 4] ≈ -0.1) && (out.body[2][4, 4] ≈ 0.0)
     @test (out.body[1][5, 5] ≈ -0.1) && (out.body[2][5, 5] ≈ 0.4)
@@ -723,40 +704,26 @@ end
     @test (out.body[1][10, 10] ≈ -0.1) && (out.body[2][10, 10] ≈ 0.0)
     @test (out.body[3][10, 10] ≈ 0.1) && (out.body[4][10, 10] ≈ 0.2)
 
-    # Creating a dummy bucket wall
-    area_pos = Vector{Vector{Int64}}()
-    push!(area_pos, [6, 6, 8])
-    push!(area_pos, [6, 6, 19])
-
-    # Testing for a third bucket wall
+    # Test: BP-UB-3
+    area_pos = [[6, 6, 7], [6, 6, 18]]
     _update_body!(area_pos, out, grid)
     @test (out.body[1][6, 6] ≈ -0.4) && (out.body[2][6, 6] ≈ 0.8)
     @test (out.body[3][6, 6] ≈ 0.0) && (out.body[4][6, 6] ≈ 0.0)
 
-    # Creating a dummy bucket wall
-    area_pos = Vector{Vector{Int64}}()
-    push!(area_pos, [10, 10, 15])
-
-    # Testing that incorrect request throws an error
-    #@test_throws ErrorException _update_body!(area_pos, out, grid)
+    # Test: BP-UB-4
+    area_pos = [[10, 10, 14]]
+    _update_body!(area_pos, out, grid)
+    @test (out.body[1][10, 10] ≈ -0.1) && (out.body[2][10, 10] ≈ 0.0)
+    @test (out.body[3][10, 10] ≈ 0.1) && (out.body[4][10, 10] ≈ 0.4)
 
     # Resetting bucket position
-    out.body[1][4, 4] = 0.0
-    out.body[2][4, 4] = 0.0
-    out.body[1][5, 5] = 0.0
-    out.body[2][5, 5] = 0.0
-    out.body[1][6, 6] = 0.0
-    out.body[2][6, 6] = 0.0
-    out.body[1][7, 11] = 0.0
-    out.body[2][7, 11] = 0.0
-    out.body[1][7, 12] = 0.0
-    out.body[2][7, 12] = 0.0
-    out.body[1][7, 13] = 0.0
-    out.body[2][7, 13] = 0.0
-    out.body[1][10, 10] = 0.0
-    out.body[2][10, 10] = 0.0
-    out.body[3][10, 10] = 0.0
-    out.body[4][10, 10] = 0.0
+    set_height(out, 4, 4, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+    set_height(out, 5, 5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+    set_height(out, 6, 6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+    set_height(out, 7, 11, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+    set_height(out, 7, 12, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+    set_height(out, 7, 13, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+    set_height(out, 10, 10, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
     dropzeros!(out.body[1])
     dropzeros!(out.body[2])
     dropzeros!(out.body[3])
