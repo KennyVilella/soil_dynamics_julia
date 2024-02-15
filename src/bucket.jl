@@ -203,7 +203,7 @@ function _calc_rectangle_pos(
 
     # Converting the four rectangle vertices from position to indices
     cell_size = [grid.cell_size_xy; grid.cell_size_xy; grid.cell_size_z]
-    grid_size = [grid.half_length_x + 1; grid.half_length_y + 1; grid.half_length_z + 1]
+    grid_size = [grid.half_length_x + 1; grid.half_length_y + 1; grid.half_length_z]
     a_ind = a ./ cell_size .+ grid_size
     b_ind = b ./ cell_size .+ grid_size
     c_ind = c ./ cell_size .+ grid_size
@@ -461,7 +461,7 @@ function _calc_triangle_pos(
 
     # Converting the three triangle vertices from position to indices
     cell_size = [grid.cell_size_xy; grid.cell_size_xy; grid.cell_size_z]
-    grid_size = [grid.half_length_x + 1; grid.half_length_y + 1; grid.half_length_z + 1]
+    grid_size = [grid.half_length_x + 1; grid.half_length_y + 1; grid.half_length_z]
     a_ind = a ./ cell_size .+ grid_size
     b_ind = b ./ cell_size .+ grid_size
     c_ind = c ./ cell_size .+ grid_size

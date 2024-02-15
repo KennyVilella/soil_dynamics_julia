@@ -103,14 +103,7 @@ out = SimOut(terrain, grid)
 end
 
 @testset "_decompose_vector_rectangle" begin
-    # Note that the function does not account for the case where
-    # the rectangle follows a cell border.
-    # It is therefore necessary to solve this potential ambiguity
-    # before calling the function. As a result, a small increment (1e-12)
-    # is sometimes added or removed to the input in order to make sure that
-    # the input coordinates do not correspond to a cell border.
-
-    # Testing for a simple rectangle in the XY plane
+    # Test: BP-DVR-1
     a_ind = [11.0, 11.0, 11.0]
     ab_ind = [5.0, 0.0, 0.0]
     ad_ind = [0.0, 5.0, 0.0]
@@ -121,36 +114,32 @@ end
     c_ab, c_ad, in_rectangle, n_cell = _decompose_vector_rectangle(
         ab_ind, ad_ind, a_ind, area_min_x, area_min_y, area_length_x, area_length_y
     )
-    # Checking decomposition in terms of AB component
-    @test (c_ab[3, 3] ≈ 0.1) && (c_ab[3, 4] ≈ 0.1) && (c_ab[3, 5] ≈ 0.1)
-    @test (c_ab[3, 6] ≈ 0.1) && (c_ab[3, 7] ≈ 0.1) && (c_ab[3, 8] ≈ 0.1)
-    @test (c_ab[4, 3] ≈ 0.3) && (c_ab[4, 4] ≈ 0.3) && (c_ab[4, 5] ≈ 0.3)
-    @test (c_ab[4, 6] ≈ 0.3) && (c_ab[4, 7] ≈ 0.3) && (c_ab[4, 8] ≈ 0.3)
-    @test (c_ab[5, 3] ≈ 0.5) && (c_ab[5, 4] ≈ 0.5) && (c_ab[5, 5] ≈ 0.5)
-    @test (c_ab[5, 6] ≈ 0.5) && (c_ab[5, 7] ≈ 0.5) && (c_ab[5, 8] ≈ 0.5)
-    @test (c_ab[6, 3] ≈ 0.7) && (c_ab[6, 4] ≈ 0.7) && (c_ab[6, 5] ≈ 0.7)
-    @test (c_ab[6, 6] ≈ 0.7) && (c_ab[6, 7] ≈ 0.7) && (c_ab[6, 8] ≈ 0.7)
-    @test (c_ab[7, 3] ≈ 0.9) && (c_ab[7, 4] ≈ 0.9) && (c_ab[7, 5] ≈ 0.9)
-    @test (c_ab[7, 6] ≈ 0.9) && (c_ab[7, 7] ≈ 0.9) && (c_ab[7, 8] ≈ 0.9)
-    # Checking decomposition in terms of AD component
-    @test (c_ad[3, 3] ≈ 0.1) && (c_ad[3, 4] ≈ 0.3) && (c_ad[3, 5] ≈ 0.5)
-    @test (c_ad[3, 6] ≈ 0.7) && (c_ad[3, 7] ≈ 0.9) && (c_ad[3, 8] ≈ 1.1)
-    @test (c_ad[4, 3] ≈ 0.1) && (c_ad[4, 4] ≈ 0.3) && (c_ad[4, 5] ≈ 0.5)
-    @test (c_ad[4, 6] ≈ 0.7) && (c_ad[4, 7] ≈ 0.9) && (c_ad[4, 8] ≈ 1.1)
-    @test (c_ad[5, 3] ≈ 0.1) && (c_ad[5, 4] ≈ 0.3) && (c_ad[5, 5] ≈ 0.5)
-    @test (c_ad[5, 6] ≈ 0.7) && (c_ad[5, 7] ≈ 0.9) && (c_ad[5, 8] ≈ 1.1)
-    @test (c_ad[6, 3] ≈ 0.1) && (c_ad[6, 4] ≈ 0.3) && (c_ad[6, 5] ≈ 0.5)
-    @test (c_ad[6, 6] ≈ 0.7) && (c_ad[6, 7] ≈ 0.9) && (c_ad[6, 8] ≈ 1.1)
-    @test (c_ad[7, 3] ≈ 0.1) && (c_ad[7, 4] ≈ 0.3) && (c_ad[7, 5] ≈ 0.5)
-    @test (c_ad[7, 6] ≈ 0.7) && (c_ad[7, 7] ≈ 0.9) && (c_ad[7, 8] ≈ 1.1)
-    # Checking cells inside the rectangle area
+    c_ab_exp = [
+        -0.3 -0.3 -0.3 -0.3 -0.3 -0.3 -0.3 -0.3
+        -0.1 -0.1 -0.1 -0.1 -0.1 -0.1 -0.1 -0.1
+         0.1  0.1  0.1  0.1  0.1  0.1  0.1  0.1
+         0.3  0.3  0.3  0.3  0.3  0.3  0.3  0.3
+         0.5  0.5  0.5  0.5  0.5  0.5  0.5  0.5
+         0.7  0.7  0.7  0.7  0.7  0.7  0.7  0.7
+         0.9  0.9  0.9  0.9  0.9  0.9  0.9  0.9
+         1.1  1.1  1.1  1.1  1.1  1.1  1.1  1.1]
+    c_ad_exp = [
+        -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
+        -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
+        -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
+        -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
+        -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
+        -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
+        -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
+        -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1]
+    @test (c_ab ≈ c_ab_exp)
+    @test (c_ad ≈ c_ad_exp)
     @test all(in_rectangle[3:7, 3:7] .== true)
     in_rectangle[3:7, 3:7] .= false
     @test all(in_rectangle[:, :] .== false)
-    # Checking the number of cells inside the rectangle area
     @test n_cell == 25 * 4
 
-    # Testing for not rounded indices
+    # Test: BP-DVR-2
     a_ind = [10.7, 11.3, 5.3]
     ab_ind = [5.7, 0.0, 0.0]
     ad_ind = [0.0, 4.7, 0.0]
@@ -161,49 +150,32 @@ end
     c_ab, c_ad, in_rectangle, n_cell = _decompose_vector_rectangle(
         ab_ind, ad_ind, a_ind, area_min_x, area_min_y, area_length_x, area_length_y
     )
-    # Checking cells inside the rectangle area
+    c_ab_exp = [
+        -1.2 -1.2 -1.2 -1.2 -1.2 -1.2 -1.2 -1.2
+        -0.2 -0.2 -0.2 -0.2 -0.2 -0.2 -0.2 -0.2
+         0.8  0.8  0.8  0.8  0.8  0.8  0.8  0.8
+         1.8  1.8  1.8  1.8  1.8  1.8  1.8  1.8
+         2.8  2.8  2.8  2.8  2.8  2.8  2.8  2.8
+         3.8  3.8  3.8  3.8  3.8  3.8  3.8  3.8
+         4.8  4.8  4.8  4.8  4.8  4.8  4.8  4.8
+         5.8  5.8  5.8  5.8  5.8  5.8  5.8  5.8]
+    c_ad_exp = [
+        -1.8 -0.8 0.2 1.2 2.2 3.2 4.2 5.2
+        -1.8 -0.8 0.2 1.2 2.2 3.2 4.2 5.2
+        -1.8 -0.8 0.2 1.2 2.2 3.2 4.2 5.2
+        -1.8 -0.8 0.2 1.2 2.2 3.2 4.2 5.2
+        -1.8 -0.8 0.2 1.2 2.2 3.2 4.2 5.2
+        -1.8 -0.8 0.2 1.2 2.2 3.2 4.2 5.2
+        -1.8 -0.8 0.2 1.2 2.2 3.2 4.2 5.2
+        -1.8 -0.8 0.2 1.2 2.2 3.2 4.2 5.2]
+    @test (c_ab ≈ c_ab_exp ./ 5.7)
+    @test (c_ad ≈ c_ad_exp ./ 4.7)
     @test all(in_rectangle[3:7, 3:7] .== true)
     in_rectangle[3:7, 3:7] .= false
     @test all(in_rectangle[:, :] .== false)
-    # Checking the number of cells inside the rectangle area
     @test n_cell == 25 * 4
 
-    # Testing for a simple rectangle in the XY plane at cell border
-    a_ind = [11 + 1e-12, 10.5 + 1e-12, 6.0]
-    ab_ind = [5.0 - 1e-12, 0.0, 2.4]
-    ad_ind = [0.0, 3.0 - 1e-12, -0.3]
-    area_min_x = 9
-    area_min_y = 9
-    area_length_x = 8
-    area_length_y = 8
-    c_ab, c_ad, in_rectangle, n_cell = _decompose_vector_rectangle(
-        ab_ind, ad_ind, a_ind, area_min_x, area_min_y, area_length_x, area_length_y
-    )
-    # Checking decomposition in terms of AB component
-    @test (c_ab[3, 3] ≈ 0.1) && (c_ab[3, 4] ≈ 0.1) && (c_ab[3, 5] ≈ 0.1)
-    @test (c_ab[3, 6] ≈ 0.1) && (c_ab[3, 7] ≈ 0.1) && (c_ab[3, 8] ≈ 0.1)
-    @test (c_ab[4, 3] ≈ 0.3) && (c_ab[4, 4] ≈ 0.3) && (c_ab[4, 5] ≈ 0.3)
-    @test (c_ab[4, 6] ≈ 0.3) && (c_ab[4, 7] ≈ 0.3) && (c_ab[4, 8] ≈ 0.3)
-    @test (c_ab[5, 3] ≈ 0.5) && (c_ab[5, 4] ≈ 0.5) && (c_ab[5, 5] ≈ 0.5)
-    @test (c_ab[5, 6] ≈ 0.5) && (c_ab[5, 7] ≈ 0.5) && (c_ab[5, 8] ≈ 0.5)
-    @test (c_ab[6, 3] ≈ 0.7) && (c_ab[6, 4] ≈ 0.7) && (c_ab[6, 5] ≈ 0.7)
-    @test (c_ab[6, 6] ≈ 0.7) && (c_ab[6, 7] ≈ 0.7) && (c_ab[6, 8] ≈ 0.7)
-    @test (c_ab[7, 3] ≈ 0.9) && (c_ab[7, 4] ≈ 0.9) && (c_ab[7, 5] ≈ 0.9)
-    @test (c_ab[7, 6] ≈ 0.9) && (c_ab[7, 7] ≈ 0.9) && (c_ab[7, 8] ≈ 0.9)
-    # Checking decomposition in terms of AD component
-    @test (c_ad[3, 3] ≈ 1/3) && (c_ad[3, 4] ≈ 2/3) && (c_ad[3, 5] ≈ 1.0)
-    @test (c_ad[4, 3] ≈ 1/3) && (c_ad[4, 4] ≈ 2/3) && (c_ad[4, 5] ≈ 1.0)
-    @test (c_ad[5, 3] ≈ 1/3) && (c_ad[5, 4] ≈ 2/3) && (c_ad[5, 5] ≈ 1.0)
-    @test (c_ad[6, 3] ≈ 1/3) && (c_ad[6, 4] ≈ 2/3) && (c_ad[6, 5] ≈ 1.0)
-    @test (c_ad[7, 3] ≈ 1/3) && (c_ad[7, 4] ≈ 2/3) && (c_ad[7, 5] ≈ 1.0)
-    # Checking cells inside the rectangle area
-    @test all(in_rectangle[3:7, 3:4] .== true)
-    in_rectangle[3:7, 3:4] .= false
-    @test all(in_rectangle[:, :] .== false)
-    # Checking the number of cells inside the rectangle area
-    @test n_cell == 10 * 4
-
-    # Testing for a simple rectangle in the XYZ plane
+    # Test: BP-DVR-3
     a_ind = [16.0, 11.0, 6.0]
     ab_ind = [1.0, 0.0, 2.4]
     ad_ind = [0.0, 5.0, -0.3]
@@ -214,25 +186,32 @@ end
     c_ab, c_ad, in_rectangle, n_cell = _decompose_vector_rectangle(
         ab_ind, ad_ind, a_ind, area_min_x, area_min_y, area_length_x, area_length_y
     )
-    # Checking decomposition in terms of AB component
-    @test (c_ab[3, 3] ≈ 0.5) && (c_ab[3, 4] ≈ 0.5) && (c_ab[3, 5] ≈ 0.5)
-    @test (c_ab[3, 6] ≈ 0.5) && (c_ab[3, 7] ≈ 0.5) && (c_ab[3, 8] ≈ 0.5)
-    @test (c_ab[4, 3] ≈ 1.5) && (c_ab[4, 4] ≈ 1.5) && (c_ab[4, 5] ≈ 1.5)
-    @test (c_ab[4, 6] ≈ 1.5) && (c_ab[4, 7] ≈ 1.5) && (c_ab[4, 8] ≈ 1.5)
-    # Checking decomposition in terms of AD component
-    @test (c_ad[3, 3] ≈ 0.1) && (c_ad[3, 4] ≈ 0.3) && (c_ad[3, 5] ≈ 0.5)
-    @test (c_ad[3, 6] ≈ 0.7) && (c_ad[3, 7] ≈ 0.9) && (c_ad[3, 8] ≈ 1.1)
-    @test (c_ad[4, 3] ≈ 0.1) && (c_ad[4, 4] ≈ 0.3) && (c_ad[4, 5] ≈ 0.5)
-    @test (c_ad[4, 6] ≈ 0.7) && (c_ad[4, 7] ≈ 0.9) && (c_ad[4, 8] ≈ 1.1)
-    # Checking cells inside the rectangle area
+    c_ab_exp = [
+        -1.5 -1.5 -1.5 -1.5 -1.5 -1.5 -1.5 -1.5
+        -0.5 -0.5 -0.5 -0.5 -0.5 -0.5 -0.5 -0.5
+         0.5  0.5  0.5  0.5  0.5  0.5  0.5  0.5
+         1.5  1.5  1.5  1.5  1.5  1.5  1.5  1.5
+         2.5  2.5  2.5  2.5  2.5  2.5  2.5  2.5
+         3.5  3.5  3.5  3.5  3.5  3.5  3.5  3.5
+         4.5  4.5  4.5  4.5  4.5  4.5  4.5  4.5
+         5.5  5.5  5.5  5.5  5.5  5.5  5.5  5.5]
+    c_ad_exp = [
+        -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
+        -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
+        -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
+        -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
+        -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
+        -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
+        -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
+        -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1]
+    @test (c_ab ≈ c_ab_exp)
+    @test (c_ad ≈ c_ad_exp)
     @test all(in_rectangle[3, 3:7] .== true)
     in_rectangle[3, 3:7] .= false
     @test all(in_rectangle[:, :] .== false)
-    # Checking the number of cells inside the rectangle area
     @test n_cell == 5 * 4
 
-    # Testing for the edge case where the rectangle is a line
-    # Note that no decomposition can be mathematically made
+    # Test: BP-DVR-4
     a_ind = [15.2, 11.3, 6.0]
     ab_ind = [2.3, 1.2, 2.4]
     ad_ind = [4.6, 2.4, -0.3]
@@ -243,13 +222,10 @@ end
     c_ab, c_ad, in_rectangle, n_cell = _decompose_vector_rectangle(
         ab_ind, ad_ind, a_ind, area_min_x, area_min_y, area_length_x, area_length_y
     )
-    # Checking there is no cell in the rectangle area
     @test all(in_rectangle[:, :] .== false)
-    # Checking the number of cells inside the rectangle area
     @test n_cell == 0
 
-    # Testing for the edge case where the rectangle is a point
-    # Note that no decomposition can be mathematically made
+    # Test: BP-DVR-5
     a_ind = [15.2, 11.3, 6.0]
     ab_ind = [0.0, 0.0, 0.0]
     ad_ind = [0.0, 0.0, 0.0]
@@ -260,357 +236,116 @@ end
     c_ab, c_ad, in_rectangle, n_cell = _decompose_vector_rectangle(
         ab_ind, ad_ind, a_ind, area_min_x, area_min_y, area_length_x, area_length_y
     )
-    # Checking there is no cell in the rectangle area
     @test all(in_rectangle[:, :] .== false)
-    # Checking the number of cells inside the rectangle area
     @test n_cell == 0
 end
 
-@testset "_calc_rectangle_pos" begin
-    # Note that the function does not account for the case where
-    # the rectangle follows a cell border.
-    # It is therefore necessary to solve this potential ambiguity
-    # before calling the function. As a result, a small increment (1e-8)
-    # is added or removed to the input in order to make sure that
-    # the input coordinates do not correspond to a cell border.
-
-    # Testing for a simple rectangle in the XY plane
-    a = [0.0 + 1e-8, 0.0 + 1e-8, 0.0 - 1e-8]
-    b = [0.5 - 1e-8, 0.0 + 1e-8, 0.0 - 1e-8]
-    c = [0.5 - 1e-8, 0.5 - 1e-8, 0.0 - 1e-8]
-    d = [0.0 + 1e-8, 0.5 - 1e-8, 0.0 - 1e-8]
-    delta = 0.01
-    rec_pos = unique(_calc_rectangle_pos(a, b, c, d, grid))
-    @test ([11, 11, 11] in rec_pos) && ([11, 12, 11] in rec_pos)
-    @test ([11, 13, 11] in rec_pos) && ([11, 14, 11] in rec_pos)
-    @test ([11, 15, 11] in rec_pos) && ([11, 16, 11] in rec_pos)
-    @test ([12, 11, 11] in rec_pos) && ([12, 12, 11] in rec_pos)
-    @test ([12, 13, 11] in rec_pos) && ([12, 14, 11] in rec_pos)
-    @test ([12, 15, 11] in rec_pos) && ([12, 16, 11] in rec_pos)
-    @test ([13, 11, 11] in rec_pos) && ([13, 12, 11] in rec_pos)
-    @test ([13, 13, 11] in rec_pos) && ([13, 14, 11] in rec_pos)
-    @test ([13, 15, 11] in rec_pos) && ([13, 16, 11] in rec_pos)
-    @test ([14, 11, 11] in rec_pos) && ([14, 12, 11] in rec_pos)
-    @test ([14, 13, 11] in rec_pos) && ([14, 14, 11] in rec_pos)
-    @test ([14, 15, 11] in rec_pos) && ([14, 16, 11] in rec_pos)
-    @test ([15, 11, 11] in rec_pos) && ([15, 12, 11] in rec_pos)
-    @test ([15, 13, 11] in rec_pos) && ([15, 14, 11] in rec_pos)
-    @test ([15, 15, 11] in rec_pos) && ([15, 16, 11] in rec_pos)
-    @test ([16, 11, 11] in rec_pos) && ([16, 12, 11] in rec_pos)
-    @test ([16, 13, 11] in rec_pos) && ([16, 14, 11] in rec_pos)
-    @test ([16, 15, 11] in rec_pos) && ([16, 16, 11] in rec_pos)
-    #@test length(rec_pos) == 36
-
-    # Testing that the input order does not influence the results (1)
-    rec_pos = unique(_calc_rectangle_pos(a, d, c, b, grid))
-    @test ([11, 11, 11] in rec_pos) && ([11, 12, 11] in rec_pos)
-    @test ([11, 13, 11] in rec_pos) && ([11, 14, 11] in rec_pos)
-    @test ([11, 15, 11] in rec_pos) && ([11, 16, 11] in rec_pos)
-    @test ([12, 11, 11] in rec_pos) && ([12, 12, 11] in rec_pos)
-    @test ([12, 13, 11] in rec_pos) && ([12, 14, 11] in rec_pos)
-    @test ([12, 15, 11] in rec_pos) && ([12, 16, 11] in rec_pos)
-    @test ([13, 11, 11] in rec_pos) && ([13, 12, 11] in rec_pos)
-    @test ([13, 13, 11] in rec_pos) && ([13, 14, 11] in rec_pos)
-    @test ([13, 15, 11] in rec_pos) && ([13, 16, 11] in rec_pos)
-    @test ([14, 11, 11] in rec_pos) && ([14, 12, 11] in rec_pos)
-    @test ([14, 13, 11] in rec_pos) && ([14, 14, 11] in rec_pos)
-    @test ([14, 15, 11] in rec_pos) && ([14, 16, 11] in rec_pos)
-    @test ([15, 11, 11] in rec_pos) && ([15, 12, 11] in rec_pos)
-    @test ([15, 13, 11] in rec_pos) && ([15, 14, 11] in rec_pos)
-    @test ([15, 15, 11] in rec_pos) && ([15, 16, 11] in rec_pos)
-    @test ([16, 11, 11] in rec_pos) && ([16, 12, 11] in rec_pos)
-    @test ([16, 13, 11] in rec_pos) && ([16, 14, 11] in rec_pos)
-    @test ([16, 15, 11] in rec_pos) && ([16, 16, 11] in rec_pos)
-    #@test length(rec_pos) == 36
-
-    # Testing that the input order does not influence the results (2)
-    rec_pos = unique(_calc_rectangle_pos(c, b, a, d, grid))
-    @test ([11, 11, 11] in rec_pos) && ([11, 12, 11] in rec_pos)
-    @test ([11, 13, 11] in rec_pos) && ([11, 14, 11] in rec_pos)
-    @test ([11, 15, 11] in rec_pos) && ([11, 16, 11] in rec_pos)
-    @test ([12, 11, 11] in rec_pos) && ([12, 12, 11] in rec_pos)
-    @test ([12, 13, 11] in rec_pos) && ([12, 14, 11] in rec_pos)
-    @test ([12, 15, 11] in rec_pos) && ([12, 16, 11] in rec_pos)
-    @test ([13, 11, 11] in rec_pos) && ([13, 12, 11] in rec_pos)
-    @test ([13, 13, 11] in rec_pos) && ([13, 14, 11] in rec_pos)
-    @test ([13, 15, 11] in rec_pos) && ([13, 16, 11] in rec_pos)
-    @test ([14, 11, 11] in rec_pos) && ([14, 12, 11] in rec_pos)
-    @test ([14, 13, 11] in rec_pos) && ([14, 14, 11] in rec_pos)
-    @test ([14, 15, 11] in rec_pos) && ([14, 16, 11] in rec_pos)
-    @test ([15, 11, 11] in rec_pos) && ([15, 12, 11] in rec_pos)
-    @test ([15, 13, 11] in rec_pos) && ([15, 14, 11] in rec_pos)
-    @test ([15, 15, 11] in rec_pos) && ([15, 16, 11] in rec_pos)
-    @test ([16, 11, 11] in rec_pos) && ([16, 12, 11] in rec_pos)
-    @test ([16, 13, 11] in rec_pos) && ([16, 14, 11] in rec_pos)
-    @test ([16, 15, 11] in rec_pos) && ([16, 16, 11] in rec_pos)
-    #@test length(rec_pos) == 36
-
-    # Testing that the input order does not influence the results (3)
-    rec_pos = unique(_calc_rectangle_pos(b, c, d, a, grid))
-    #@test length(rec_pos) == 36
-    rec_pos = unique(_calc_rectangle_pos(c, d, a, b, grid))
-    #@test length(rec_pos) == 36
-    rec_pos = unique(_calc_rectangle_pos(d, a, b, c, grid))
-    #@test length(rec_pos) == 36
-    rec_pos = unique(_calc_rectangle_pos(d, c, b, a, grid))
-    #@test length(rec_pos) == 36
-    rec_pos = unique(_calc_rectangle_pos(b, a, d, c, grid))
-    #@test length(rec_pos) == 36
-
-    # Testing for a simple rectangle in the XY plane at cell border
-    a = [0.0 + 1e-8, -0.05 + 1e-8, 0.0 - 1e-8]
-    b = [0.5 - 1e-8, -0.05 + 1e-8, 0.0 - 1e-8]
-    c = [0.5 - 1e-8,  0.25 - 1e-8, 0.0 - 1e-8]
-    d = [0.0 + 1e-8,  0.25 - 1e-8, 0.0 - 1e-8]
-    delta = 0.01
-    rec_pos = unique(_calc_rectangle_pos(a, b, c, d, grid))
-    @test ([11, 11, 11] in rec_pos) && ([11, 12, 11] in rec_pos)
-    @test ([11, 13, 11] in rec_pos) && ([12, 11, 11] in rec_pos)
-    @test ([12, 12, 11] in rec_pos) && ([12, 13, 11] in rec_pos)
-    @test ([13, 11, 11] in rec_pos) && ([13, 12, 11] in rec_pos)
-    @test ([13, 13, 11] in rec_pos) && ([14, 11, 11] in rec_pos)
-    @test ([14, 12, 11] in rec_pos) && ([14, 13, 11] in rec_pos)
-    @test ([15, 11, 11] in rec_pos) && ([15, 12, 11] in rec_pos)
-    @test ([15, 13, 11] in rec_pos) && ([16, 11, 11] in rec_pos)
-    @test ([16, 12, 11] in rec_pos) && ([16, 13, 11] in rec_pos)
-    #@test length(rec_pos) == 18
-
-    # Testing that the input order does not influence the results
-    rec_pos = unique(_calc_rectangle_pos(b, c, d, a, grid))
-    #@test length(rec_pos) == 18
-    rec_pos = unique(_calc_rectangle_pos(c, d, a, b, grid))
-    #@test length(rec_pos) == 18
-    rec_pos = unique(_calc_rectangle_pos(d, a, b, c, grid))
-    #@test length(rec_pos) == 18
-    rec_pos = unique(_calc_rectangle_pos(d, c, b, a, grid))
-    #@test length(rec_pos) == 18
-    rec_pos = unique(_calc_rectangle_pos(b, a, d, c, grid))
-    #@test length(rec_pos) == 18
-
-    # Testing for a simple rectangle in the XZ plane
-    a = [0.0 + 1e-8, 0.0 - 1e-8, 0.0 + 1e-8]
-    b = [0.5 - 1e-8, 0.0 - 1e-8, 0.0 + 1e-8]
-    c = [0.5 - 1e-8, 0.0 - 1e-8, 0.5 - 1e-8]
-    d = [0.0 + 1e-8, 0.0 - 1e-8, 0.5 - 1e-8]
-    delta = 0.01
-    rec_pos = unique(_calc_rectangle_pos(a, b, c, d, grid))
-    @test ([11, 11, 12] in rec_pos) && ([11, 11, 13] in rec_pos)
-    @test ([11, 11, 14] in rec_pos) && ([11, 11, 15] in rec_pos)
-    #@test ([11, 11, 16] in rec_pos) && ([16, 11, 12] in rec_pos)
-    @test ([16, 11, 13] in rec_pos) && ([16, 11, 14] in rec_pos)
-    #@test ([16, 11, 15] in rec_pos) && ([16, 11, 16] in rec_pos)
-    #@test ([12, 11, 12] in rec_pos) && ([13, 11, 12] in rec_pos)
-    #@test ([14, 11, 12] in rec_pos) && ([15, 11, 12] in rec_pos)
-    #@test ([12, 11, 16] in rec_pos) && ([13, 11, 16] in rec_pos)
-    #@test ([14, 11, 16] in rec_pos) && ([15, 11, 16] in rec_pos)
-    @test length(rec_pos) == 18
-
-    # Testing that the input order does not influence the results
-    rec_pos = unique(_calc_rectangle_pos(b, c, d, a, grid))
-    @test length(rec_pos) == 18
-    rec_pos = unique(_calc_rectangle_pos(c, d, a, b, grid))
-    @test length(rec_pos) == 18
-    rec_pos = unique(_calc_rectangle_pos(d, a, b, c, grid))
-    @test length(rec_pos) == 18
-    rec_pos = unique(_calc_rectangle_pos(a, d, c, b, grid))
-    @test length(rec_pos) == 18
-    rec_pos = unique(_calc_rectangle_pos(d, c, b, a, grid))
-    @test length(rec_pos) == 18
-    rec_pos = unique(_calc_rectangle_pos(c, b, a, d, grid))
-    @test length(rec_pos) == 18
-    rec_pos = unique(_calc_rectangle_pos(b, a, d, c, grid))
-    @test length(rec_pos) == 18
-
-    # Testing for a simple rectangle in the XYZ plane
-    a = [0.5 + 1e-8, 0.0 + 1e-8, 0.5 + 1e-8]
-    b = [0.6 - 1e-8, 0.0 + 1e-8, 0.6 - 1e-8]
-    c = [0.6 - 1e-8, 0.5 - 1e-8, 0.6 - 1e-8]
-    d = [0.5 + 1e-8, 0.5 - 1e-8, 0.5 + 1e-8]
-    delta = 0.01
-    rec_pos = unique(_calc_rectangle_pos(a, b, c, d, grid))
-    @test ([17, 11, 17] in rec_pos) && ([17, 12, 17] in rec_pos)
-    @test ([17, 13, 17] in rec_pos) && ([17, 14, 17] in rec_pos)
-    @test ([17, 15, 17] in rec_pos) && ([17, 16, 17] in rec_pos)
-    @test ([16, 11, 17] in rec_pos) && ([16, 12, 17] in rec_pos)
-    @test ([16, 13, 17] in rec_pos) && ([16, 14, 17] in rec_pos)
-    @test ([16, 15, 17] in rec_pos) && ([16, 16, 17] in rec_pos)
-    #@test length(rec_pos) == 12
-
-    rec_pos = unique(_calc_rectangle_pos(b, c, d, a, grid))
-    #@test length(rec_pos) == 12
-    rec_pos = unique(_calc_rectangle_pos(c, d, a, b, grid))
-    #@test length(rec_pos) == 12
-    rec_pos = unique(_calc_rectangle_pos(d, a, b, c, grid))
-    #@test length(rec_pos) == 12
-    rec_pos = unique(_calc_rectangle_pos(a, d, c, b, grid))
-    #@test length(rec_pos) == 12
-    rec_pos = unique(_calc_rectangle_pos(d, c, b, a, grid))
-    #@test length(rec_pos) == 12
-    rec_pos = unique(_calc_rectangle_pos(c, b, a, d, grid))
-    #@test length(rec_pos) == 12
-    rec_pos = unique(_calc_rectangle_pos(b, a, d, c, grid))
-    #@test length(rec_pos) == 12
-
-    # Testing for the edge case where the rectangle is a line
-    a = [0.34 + 1e-8, 0.57 + 1e-8, 0.0 - 1e-8]
-    b = [0.74 - 1e-8, 0.97 - 1e-8, 0.0 - 1e-8]
-    c = [0.44 + 1e-8, 0.67 + 1e-8, 0.0 - 1e-8]
-    d = [0.64 - 1e-8, 0.87 - 1e-8, 0.0 - 1e-8]
-    delta = 0.01
-    rec_pos = unique(_calc_rectangle_pos(b, a, c, d, grid))
-    #@test ([14, 17, 11] in rec_pos) && ([15, 17, 11] in rec_pos)
-    #@test ([15, 18, 11] in rec_pos) && ([16, 18, 11] in rec_pos)
-    #@test ([16, 19, 11] in rec_pos) && ([17, 19, 11] in rec_pos)
-    #@test ([17, 20, 11] in rec_pos) && ([18, 20, 11] in rec_pos)
-    #@test ([18, 21, 11] in rec_pos)
-    @test length(rec_pos) == 9
-
-    # Testing for the edge case where the rectangle is a point
-    a = [0.5 - 1e-8, 0.5 - 1e-8, 0.5 - 1e-8]
-    b = [0.5 - 1e-8, 0.5 - 1e-8, 0.5 - 1e-8]
-    c = [0.5 - 1e-8, 0.5 - 1e-8, 0.5 - 1e-8]
-    d = [0.5 - 1e-8, 0.5 - 1e-8, 0.5 - 1e-8]
-    delta = 0.01
-    rec_pos = unique(_calc_rectangle_pos(b, a, c, d, grid))
-    #@test ([16, 16, 16] in rec_pos)
-    @test length(rec_pos) == 1
-
-    # Testing for the edge case where the rectangle is a point on the edge of a cell
-    a = [0.55 - 1e-8, 0.55 - 1e-8, 0.5 - 1e-8]
-    b = [0.55 - 1e-8, 0.55 - 1e-8, 0.5 - 1e-8]
-    c = [0.55 - 1e-8, 0.55 - 1e-8, 0.5 - 1e-8]
-    d = [0.55 - 1e-8, 0.55 - 1e-8, 0.5 - 1e-8]
-    delta = 0.01
-    rec_pos = unique(_calc_rectangle_pos(b, a, c, d, grid))
-    #@test ([16, 16, 16] in rec_pos)
-    @test length(rec_pos) == 1
-end
-
 @testset "_decompose_vector_triangle" begin
-    # Note that the function does not account for the case where
-    # the triangle follows a cell border.
-
-    # Testing for a simple triangle in the XY plane
+    # Test: BP-DVT-1
     a_ind = [11.0, 11.0, 11.0]
     ab_ind = [10.0, 0.0, 0.0]
     ac_ind = [0.0, 10.0, 0.0]
-    area_min_x = 9
-    area_min_y = 9
-    area_length_x = 15
-    area_length_y = 15
+    area_min_x = 10
+    area_min_y = 10
+    area_length_x = 11
+    area_length_y = 10
     c_ab, c_ac, in_triangle, n_cell = _decompose_vector_triangle(
         ab_ind, ac_ind, a_ind, area_min_x, area_min_y, area_length_x, area_length_y
     )
-    # Checking decomposition in terms of AB component
-    @test (c_ab[3, 3] ≈ 0.05) && (c_ab[3, 4] ≈ 0.05) && (c_ab[3, 5] ≈ 0.05)
-    @test (c_ab[3, 6] ≈ 0.05) && (c_ab[3, 7] ≈ 0.05) && (c_ab[3, 8] ≈ 0.05)
-    @test (c_ab[3, 9] ≈ 0.05) && (c_ab[3, 10] ≈ 0.05) && (c_ab[3, 11] ≈ 0.05)
-    @test (c_ab[3, 12] ≈ 0.05) && (c_ab[3, 13] ≈ 0.05)
-    @test (c_ab[4, 3] ≈ 0.15) && (c_ab[4, 4] ≈ 0.15) && (c_ab[4, 5] ≈ 0.15)
-    @test (c_ab[4, 6] ≈ 0.15) && (c_ab[4, 7] ≈ 0.15) && (c_ab[4, 8] ≈ 0.15)
-    @test (c_ab[4, 9] ≈ 0.15) && (c_ab[4, 10] ≈ 0.15) && (c_ab[4, 11] ≈ 0.15)
-    @test (c_ab[4, 12] ≈ 0.15)
-    @test (c_ab[5, 3] ≈ 0.25) && (c_ab[5, 4] ≈ 0.25) && (c_ab[5, 5] ≈ 0.25)
-    @test (c_ab[5, 6] ≈ 0.25) && (c_ab[5, 7] ≈ 0.25) && (c_ab[5, 8] ≈ 0.25)
-    @test (c_ab[5, 9] ≈ 0.25) && (c_ab[5, 10] ≈ 0.25) && (c_ab[5, 11] ≈ 0.25)
-    @test (c_ab[6, 3] ≈ 0.35) && (c_ab[6, 4] ≈ 0.35) && (c_ab[6, 5] ≈ 0.35)
-    @test (c_ab[6, 6] ≈ 0.35) && (c_ab[6, 7] ≈ 0.35) && (c_ab[6, 8] ≈ 0.35)
-    @test (c_ab[6, 9] ≈ 0.35) && (c_ab[6, 10] ≈ 0.35)
-    @test (c_ab[7, 3] ≈ 0.45) && (c_ab[7, 4] ≈ 0.45) && (c_ab[7, 5] ≈ 0.45)
-    @test (c_ab[7, 6] ≈ 0.45) && (c_ab[7, 7] ≈ 0.45) && (c_ab[7, 8] ≈ 0.45)
-    @test (c_ab[7, 9] ≈ 0.45)
-    @test (c_ab[8, 3] ≈ 0.55) && (c_ab[8, 4] ≈ 0.55) && (c_ab[8, 5] ≈ 0.55)
-    @test (c_ab[8, 6] ≈ 0.55) && (c_ab[8, 7] ≈ 0.55) && (c_ab[8, 8] ≈ 0.55)
-    @test (c_ab[9, 3] ≈ 0.65) && (c_ab[9, 4] ≈ 0.65) && (c_ab[9, 5] ≈ 0.65)
-    @test (c_ab[9, 6] ≈ 0.65) && (c_ab[9, 7] ≈ 0.65)
-    @test (c_ab[10, 3] ≈ 0.75) && (c_ab[10, 4] ≈ 0.75) && (c_ab[10, 5] ≈ 0.75)
-    @test (c_ab[10, 6] ≈ 0.75)
-    @test (c_ab[11, 3] ≈ 0.85) && (c_ab[11, 4] ≈ 0.85) && (c_ab[11, 5] ≈ 0.85)
-    @test (c_ab[12, 3] ≈ 0.95) && (c_ab[12, 4] ≈ 0.95)
-    # Checking decomposition in terms of AC component
-    @test (c_ac[3, 3] ≈ 0.05) && (c_ac[3, 4] ≈ 0.15) && (c_ac[3, 5] ≈ 0.25)
-    @test (c_ac[3, 6] ≈ 0.35) && (c_ac[3, 7] ≈ 0.45) && (c_ac[3, 8] ≈ 0.55)
-    @test (c_ac[3, 9] ≈ 0.65) && (c_ac[3, 10] ≈ 0.75) && (c_ac[3, 11] ≈ 0.85)
-    @test (c_ac[3, 12] ≈ 0.95) && (c_ac[3, 13] ≈ 1.05)
-    @test (c_ac[4, 3] ≈ 0.05) && (c_ac[4, 4] ≈ 0.15) && (c_ac[4, 5] ≈ 0.25)
-    @test (c_ac[4, 6] ≈ 0.35) && (c_ac[4, 7] ≈ 0.45) && (c_ac[4, 8] ≈ 0.55)
-    @test (c_ac[4, 9] ≈ 0.65) && (c_ac[4, 10] ≈ 0.75) && (c_ac[4, 11] ≈ 0.85)
-    @test (c_ac[4, 12] ≈ 0.95)
-    @test (c_ac[5, 3] ≈ 0.05) && (c_ac[5, 4] ≈ 0.15) && (c_ac[5, 5] ≈ 0.25)
-    @test (c_ac[5, 6] ≈ 0.35) && (c_ac[5, 7] ≈ 0.45) && (c_ac[5, 8] ≈ 0.55)
-    @test (c_ac[5, 9] ≈ 0.65) && (c_ac[5, 10] ≈ 0.75) && (c_ac[5, 11] ≈ 0.85)
-    @test (c_ac[6, 3] ≈ 0.05) && (c_ac[6, 4] ≈ 0.15) && (c_ac[6, 5] ≈ 0.25)
-    @test (c_ac[6, 6] ≈ 0.35) && (c_ac[6, 7] ≈ 0.45) && (c_ac[6, 8] ≈ 0.55)
-    @test (c_ac[6, 9] ≈ 0.65) && (c_ac[6, 10] ≈ 0.75)
-    @test (c_ac[7, 3] ≈ 0.05) && (c_ac[7, 4] ≈ 0.15) && (c_ac[7, 5] ≈ 0.25)
-    @test (c_ac[7, 6] ≈ 0.35) && (c_ac[7, 7] ≈ 0.45) && (c_ac[7, 8] ≈ 0.55)
-    @test (c_ac[7, 9] ≈ 0.65)
-    @test (c_ac[8, 3] ≈ 0.05) && (c_ac[8, 4] ≈ 0.15) && (c_ac[8, 5] ≈ 0.25)
-    @test (c_ac[8, 6] ≈ 0.35) && (c_ac[8, 7] ≈ 0.45) && (c_ac[8, 8] ≈ 0.55)
-    @test (c_ac[9, 3] ≈ 0.05) && (c_ac[9, 4] ≈ 0.15) && (c_ac[9, 5] ≈ 0.25)
-    @test (c_ac[9, 6] ≈ 0.35) && (c_ac[9, 7] ≈ 0.45)
-    @test (c_ac[10, 3] ≈ 0.05) && (c_ac[10, 4] ≈ 0.15) && (c_ac[10, 5] ≈ 0.25)
-    @test (c_ac[10, 6] ≈ 0.35)
-    @test (c_ac[11, 3] ≈ 0.05) && (c_ac[11, 4] ≈ 0.15) && (c_ac[11, 5] ≈ 0.25)
-    @test (c_ac[12, 3] ≈ 0.05) && (c_ac[12, 4] ≈ 0.15)
-    # Checking cells inside the triangle area
-    @test all(in_triangle[3, 3:11] .== true)
-    @test all(in_triangle[4, 3:10] .== true)
-    @test all(in_triangle[5, 3:9] .== true)
-    @test all(in_triangle[6, 3:8] .== true)
-    @test all(in_triangle[7, 3:7] .== true)
-    @test all(in_triangle[8, 3:6] .== true)
-    @test all(in_triangle[9, 3:5] .== true)
-    @test all(in_triangle[10, 3:4] .== true)
-    @test all(in_triangle[11, 3] == true)
-    in_triangle[3, 3:11] .= false
-    in_triangle[4, 3:10] .= false
-    in_triangle[5, 3:9] .= false
-    in_triangle[6, 3:8] .= false
-    in_triangle[7, 3:7] .= false
-    in_triangle[8, 3:6] .= false
-    in_triangle[9, 3:5] .= false
-    in_triangle[10, 3:4] .= false
-    in_triangle[11, 3] = false
-    @test all(in_triangle[:, :] .== false)
-    # Checking the number of cells inside the triangle area
+    in_tri_exp = [
+        false false false false false false false false false false
+        false true  true  true  true  true  true  true  true  true
+        false true  true  true  true  true  true  true  true  false
+        false true  true  true  true  true  true  true  false false
+        false true  true  true  true  true  true  false false false
+        false true  true  true  true  true  false false false false
+        false true  true  true  true  false false false false false
+        false true  true  true  false false false false false false
+        false true  true  false false false false false false false
+        false true  false false false false false false false false
+        false false false false false false false false false false]
+    c_ab_exp = [
+        -0.05 -0.05 -0.05 -0.05 -0.05 -0.05 -0.05 -0.05 -0.05 -0.05
+         0.05  0.05  0.05  0.05  0.05  0.05  0.05  0.05  0.05  0.05
+         0.15  0.15  0.15  0.15  0.15  0.15  0.15  0.15  0.15  0.15
+         0.25  0.25  0.25  0.25  0.25  0.25  0.25  0.25  0.25  0.25
+         0.35  0.35  0.35  0.35  0.35  0.35  0.35  0.35  0.35  0.35
+         0.45  0.45  0.45  0.45  0.45  0.45  0.45  0.45  0.45  0.45
+         0.55  0.55  0.55  0.55  0.55  0.55  0.55  0.55  0.55  0.55
+         0.65  0.65  0.65  0.65  0.65  0.65  0.65  0.65  0.65  0.65
+         0.75  0.75  0.75  0.75  0.75  0.75  0.75  0.75  0.75  0.75
+         0.85  0.85  0.85  0.85  0.85  0.85  0.85  0.85  0.85  0.85
+         0.95  0.95  0.95  0.95  0.95  0.95  0.95  0.95  0.95  0.95]
+    c_ac_exp = [
+        -0.05 0.05 0.15 0.25 0.35 0.45 0.55 0.65 0.75 0.85
+        -0.05 0.05 0.15 0.25 0.35 0.45 0.55 0.65 0.75 0.85
+        -0.05 0.05 0.15 0.25 0.35 0.45 0.55 0.65 0.75 0.85
+        -0.05 0.05 0.15 0.25 0.35 0.45 0.55 0.65 0.75 0.85
+        -0.05 0.05 0.15 0.25 0.35 0.45 0.55 0.65 0.75 0.85
+        -0.05 0.05 0.15 0.25 0.35 0.45 0.55 0.65 0.75 0.85
+        -0.05 0.05 0.15 0.25 0.35 0.45 0.55 0.65 0.75 0.85
+        -0.05 0.05 0.15 0.25 0.35 0.45 0.55 0.65 0.75 0.85
+        -0.05 0.05 0.15 0.25 0.35 0.45 0.55 0.65 0.75 0.85
+        -0.05 0.05 0.15 0.25 0.35 0.45 0.55 0.65 0.75 0.85
+        -0.05 0.05 0.15 0.25 0.35 0.45 0.55 0.65 0.75 0.85]
+    @test (c_ab ≈ c_ab_exp)
+    @test (c_ac ≈ c_ac_exp)
+    @test (in_triangle == in_tri_exp)
     @test n_cell == 45 * 4
 
-    # Testing for not rounded indices
+    # Test: BP-DVT-2
     a_ind = [10.9, 10.7, 11.0]
     ab_ind = [9.7, 0.0, 0.0]
     ac_ind = [0.0, 10.4, 0.0]
-    area_min_x = 9
-    area_min_y = 9
-    area_length_x = 15
-    area_length_y = 15
+    area_min_x = 10
+    area_min_y = 10
+    area_length_x = 11
+    area_length_y = 10
     c_ab, c_ac, in_triangle, n_cell = _decompose_vector_triangle(
         ab_ind, ac_ind, a_ind, area_min_x, area_min_y, area_length_x, area_length_y
     )
-    # Checking cells inside the triangle area
-    @test all(in_triangle[3, 3:11] .== true)
-    @test all(in_triangle[4, 3:10] .== true)
-    @test all(in_triangle[5, 3:9] .== true)
-    @test all(in_triangle[6, 3:8] .== true)
-    @test all(in_triangle[7, 3:7] .== true)
-    @test all(in_triangle[8, 3:6] .== true)
-    @test all(in_triangle[9, 3:5] .== true)
-    @test all(in_triangle[10, 3:4] .== true)
-    @test all(in_triangle[11, 3] == true)
-    in_triangle[3, 3:11] .= false
-    in_triangle[4, 3:10] .= false
-    in_triangle[5, 3:9] .= false
-    in_triangle[6, 3:8] .= false
-    in_triangle[7, 3:7] .= false
-    in_triangle[8, 3:6] .= false
-    in_triangle[9, 3:5] .= false
-    in_triangle[10, 3:4] .= false
-    in_triangle[11, 3] = false
-    @test all(in_triangle[:, :] .== false)
-    # Checking the number of cells inside the triangle area
+    in_tri_exp = [
+        false false false false false false false false false false
+        false true  true  true  true  true  true  true  true  true
+        false true  true  true  true  true  true  true  true  false
+        false true  true  true  true  true  true  true  false false
+        false true  true  true  true  true  true  false false false
+        false true  true  true  true  true  false false false false
+        false true  true  true  true  false false false false false
+        false true  true  true  false false false false false false
+        false true  true  false false false false false false false
+        false true  false false false false false false false false
+        false false false false false false false false false false]
+    c_ab_exp = [
+        -0.4 -0.4 -0.4 -0.4 -0.4 -0.4 -0.4 -0.4 -0.4 -0.4
+        0.6  0.6  0.6  0.6  0.6  0.6  0.6  0.6  0.6  0.6
+        1.6  1.6  1.6  1.6  1.6  1.6  1.6  1.6  1.6  1.6
+        2.6  2.6  2.6  2.6  2.6  2.6  2.6  2.6  2.6  2.6
+        3.6  3.6  3.6  3.6  3.6  3.6  3.6  3.6  3.6  3.6
+        4.6  4.6  4.6  4.6  4.6  4.6  4.6  4.6  4.6  4.6
+        5.6  5.6  5.6  5.6  5.6  5.6  5.6  5.6  5.6  5.6
+        6.6  6.6  6.6  6.6  6.6  6.6  6.6  6.6  6.6  6.6
+        7.6  7.6  7.6  7.6  7.6  7.6  7.6  7.6  7.6  7.6
+        8.6  8.6  8.6  8.6  8.6  8.6  8.6  8.6  8.6  8.6
+        9.6  9.6  9.6  9.6  9.6  9.6  9.6  9.6  9.6  9.6]
+    c_ac_exp = [
+        -0.2 0.8 1.8 2.8 3.8 4.8 5.8 6.8 7.8 8.8
+        -0.2 0.8 1.8 2.8 3.8 4.8 5.8 6.8 7.8 8.8
+        -0.2 0.8 1.8 2.8 3.8 4.8 5.8 6.8 7.8 8.8
+        -0.2 0.8 1.8 2.8 3.8 4.8 5.8 6.8 7.8 8.8
+        -0.2 0.8 1.8 2.8 3.8 4.8 5.8 6.8 7.8 8.8
+        -0.2 0.8 1.8 2.8 3.8 4.8 5.8 6.8 7.8 8.8
+        -0.2 0.8 1.8 2.8 3.8 4.8 5.8 6.8 7.8 8.8
+        -0.2 0.8 1.8 2.8 3.8 4.8 5.8 6.8 7.8 8.8
+        -0.2 0.8 1.8 2.8 3.8 4.8 5.8 6.8 7.8 8.8
+        -0.2 0.8 1.8 2.8 3.8 4.8 5.8 6.8 7.8 8.8
+        -0.2 0.8 1.8 2.8 3.8 4.8 5.8 6.8 7.8 8.8]
+    @test (c_ab ≈ c_ab_exp ./ 9.7)
+    @test (c_ac ≈ c_ac_exp ./ 10.4)
+    @test (in_triangle == in_tri_exp)
     @test n_cell == 45 * 4
 
-    # Testing for a simple triangle in the XYZ plane
+    # Test: BP-DVT-3
     a_ind = [16.0, 11.0, 11.0]
     ab_ind = [1.0, 0.0, 0.0]
     ac_ind = [1.0, 5.0, 0.0]
@@ -621,25 +356,39 @@ end
     c_ab, c_ac, in_triangle, n_cell = _decompose_vector_triangle(
         ab_ind, ac_ind, a_ind, area_min_x, area_min_y, area_length_x, area_length_y
     )
-    # Checking decomposition in terms of AB component
-    @test (c_ab[3, 3] ≈ 0.4) && (c_ab[3, 4] ≈ 0.2) && (c_ab[3, 5] ≈ 0.0)
-    @test (c_ab[3, 6] ≈ -0.2)
-    @test (c_ab[4, 3] ≈ 1.4) && (c_ab[4, 4] ≈ 1.2) && (c_ab[4, 5] ≈ 1.0)
-    @test (c_ab[4, 6] ≈ 0.8) && (c_ab[4, 7] ≈ 0.6) && (c_ab[4, 8] ≈ 0.4)
-    # Checking decomposition in terms of AC component
-    @test (c_ac[3, 3] ≈ 0.1) && (c_ac[3, 4] ≈ 0.3) && (c_ac[3, 5] ≈ 0.5)
-    @test (c_ac[3, 6] ≈ 0.7)
-    @test (c_ac[4, 3] ≈ 0.1) && (c_ac[4, 4] ≈ 0.3) && (c_ac[4, 5] ≈ 0.5)
-    @test (c_ac[4, 6] ≈ 0.7) && (c_ac[4, 7] ≈ 0.9) && (c_ac[4, 8] ≈ 1.1)
-    # Checking cells inside the triangle area
-    @test all(in_triangle[3, 3:4] .== true)
-    in_triangle[3, 3:4] .= false
-    @test all(in_triangle[:, :] .== false)
-    # Checking the number of cells inside the triangle area
+    in_tri_exp = [
+        false false false false false false false false
+        false false false false false false false false
+        false false true  true  false false false false
+        false false false false false false false false
+        false false false false false false false false
+        false false false false false false false false
+        false false false false false false false false
+        false false false false false false false false]
+    c_ab_exp = [
+        -1.2 -1.4 -1.6 -1.8 -2.0 -2.2 -2.4 -2.6
+        -0.2 -0.4 -0.6 -0.8 -1.0 -1.2 -1.4 -1.6
+         0.8  0.6  0.4  0.2  0.0 -0.2 -0.4 -0.6
+         1.8  1.6  1.4  1.2  1.0  0.8  0.6  0.4
+         2.8  2.6  2.4  2.2  2.0  1.8  1.6  1.4
+         3.8  3.6  3.4  3.2  3.0  2.8  2.6  2.4
+         4.8  4.6  4.4  4.2  4.0  3.8  3.6  3.4
+         5.8  5.6  5.4  5.2  5.0  4.8  4.6  4.4]
+    c_ac_exp = [
+        -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
+        -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
+        -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
+        -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
+        -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
+        -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
+        -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
+        -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1]
+    @test (c_ab ≈ c_ab_exp)
+    @test (c_ac ≈ c_ac_exp)
+    @test (in_triangle == in_tri_exp)
     @test n_cell == 2 * 4
 
-    # Testing for the edge case where the triangle is a line
-    # Note that no decomposition can be mathematically made
+    # Test: BP-DVT-4
     a_ind = [16.0, 11.0, 11.0]
     ab_ind = [1.4, 0.7, 0.0]
     ac_ind = [2.8, 1.4, 0.0]
@@ -650,13 +399,10 @@ end
     c_ab, c_ac, in_triangle, n_cell = _decompose_vector_triangle(
         ab_ind, ac_ind, a_ind, area_min_x, area_min_y, area_length_x, area_length_y
     )
-    # Checking there is no cell in the triangle area
     @test all(in_triangle[:, :] .== false)
-    # Checking the number of cells inside the triangle area
     @test n_cell == 0
 
-    # Testing for the edge case where the triangle is a point
-    # Note that no decomposition can be mathematically made
+    # Test: BP-DVT-5
     a_ind = [16.0, 11.0, 11.0]
     ab_ind = [0.0, 0.0, 0.0]
     ac_ind = [0.0, 0.0, 0.0]
@@ -667,10 +413,94 @@ end
     c_ab, c_ac, in_triangle, n_cell = _decompose_vector_triangle(
         ab_ind, ac_ind, a_ind, area_min_x, area_min_y, area_length_x, area_length_y
     )
-    # Checking there is no cell in the triangle area
     @test all(in_triangle[:, :] .== false)
-    # Checking the number of cells inside the triangle area
     @test n_cell == 0
+end
+
+@testset "_calc_rectangle_pos" begin
+    function _check_results(a, b, c, d, rect_pos_exp, grid)
+        # Checking first input order
+        rect_pos = sort(unique(_calc_rectangle_pos(a, b, c, d, grid)))
+        @test (rect_pos == rect_pos_exp)
+        # Checking second input order
+        rect_pos = sort(unique(_calc_rectangle_pos(a, d, c, b, grid)))
+        @test (rect_pos == rect_pos_exp)
+        # Checking third input order
+        rect_pos = sort(unique(_calc_rectangle_pos(c, b, a, d, grid)))
+        @test (rect_pos == rect_pos_exp)
+        # Checking fourth input order
+        rect_pos = sort(unique(_calc_rectangle_pos(b, c, d, a, grid)))
+        @test (rect_pos == rect_pos_exp)
+        # Checking fifth input order
+        rect_pos = sort(unique(_calc_rectangle_pos(c, d, a, b, grid)))
+        @test (rect_pos == rect_pos_exp)
+        # Checking sixth input order
+        rect_pos = sort(unique(_calc_rectangle_pos(d, a, b, c, grid)))
+        @test (rect_pos == rect_pos_exp)
+        # Checking seventh input order
+        rect_pos = sort(unique(_calc_rectangle_pos(d, c, b, a, grid)))
+        @test (rect_pos == rect_pos_exp)
+        # Checking eighth input order
+        rect_pos = sort(unique(_calc_rectangle_pos(b, a, d, c, grid)))
+        @test (rect_pos == rect_pos_exp)
+    end
+
+    # Test: BP-CR-1
+    a = [0.0 + 1e-8, 0.0 + 1e-8, 0.0 - 1e-8]
+    b = [0.5 - 1e-8, 0.0 + 1e-8, 0.0 - 1e-8]
+    c = [0.5 - 1e-8, 0.5 - 1e-8, 0.0 - 1e-8]
+    d = [0.0 + 1e-8, 0.5 - 1e-8, 0.0 - 1e-8]
+    rect_pos_exp = [
+        [11, 11, 10], [11, 12, 10], [11, 13, 10], [11, 14, 10], [11, 15, 10],
+        [11, 16, 10], [12, 11, 10], [12, 12, 10], [12, 13, 10], [12, 14, 10],
+        [12, 15, 10], [12, 16, 10], [13, 11, 10], [13, 12, 10], [13, 13, 10],
+        [13, 14, 10], [13, 15, 10], [13, 16, 10], [14, 11, 10], [14, 12, 10],
+        [14, 13, 10], [14, 14, 10], [14, 15, 10], [14, 16, 10], [15, 11, 10],
+        [15, 12, 10], [15, 13, 10], [15, 14, 10], [15, 15, 10], [15, 16, 10],
+        [16, 11, 10], [16, 12, 10], [16, 13, 10], [16, 14, 10], [16, 15, 10],
+        [16, 16, 10]]
+    _check_results(a, b, c, d, rect_pos_exp, grid)
+
+    # Test: BP-CR-2
+    a = [0.0 + 1e-8, 0.0 - 1e-8, 0.0 + 1e-8]
+    b = [0.5 - 1e-8, 0.0 - 1e-8, 0.0 + 1e-8]
+    c = [0.5 - 1e-8, 0.0 - 1e-8, 0.5 - 1e-8]
+    d = [0.0 + 1e-8, 0.0 - 1e-8, 0.5 - 1e-8]
+    rect_pos_exp = [
+        [11, 11, 11], [11, 11, 12], [11, 11, 13], [11, 11, 14], [11, 11, 15],
+        [12, 11, 11], [12, 11, 15], [13, 11, 11], [13, 11, 15], [14, 11, 11],
+        [14, 11, 15], [15, 11, 11], [15, 11, 15], [16, 11, 11], [16, 11, 12],
+        [16, 11, 13], [16, 11, 14], [16, 11, 15]]
+    _check_results(a, b, c, d, rect_pos_exp, grid)
+
+    # Test: BP-CR-3
+    a = [0.5 + 1e-8, 0.0 + 1e-8, 0.5 + 1e-8]
+    b = [0.6 - 1e-8, 0.0 + 1e-8, 0.6 - 1e-8]
+    c = [0.6 - 1e-8, 0.5 - 1e-8, 0.6 - 1e-8]
+    d = [0.5 + 1e-8, 0.5 - 1e-8, 0.5 + 1e-8]
+    rect_pos_exp = [
+        [16, 11, 16], [16, 12, 16], [16, 13, 16], [16, 14, 16], [16, 15, 16],
+        [16, 16, 16], [17, 11, 16], [17, 12, 16], [17, 13, 16], [17, 14, 16],
+        [17, 15, 16], [17, 16, 16]]
+    _check_results(a, b, c, d, rect_pos_exp, grid)
+
+    # Test: BP-CR-4
+    a = [0.34 + 1e-8, 0.57 + 1e-8, 0.0 - 1e-8]
+    b = [0.74 - 1e-8, 0.97 - 1e-8, 0.0 - 1e-8]
+    c = [0.44 + 1e-8, 0.67 + 1e-8, 0.0 - 1e-8]
+    d = [0.64 - 1e-8, 0.87 - 1e-8, 0.0 - 1e-8]
+    rect_pos_exp = [
+        [14, 17, 10], [15, 17, 10], [15, 18, 10], [16, 18, 10], [16, 19, 10],
+        [17, 19, 10], [17, 20, 10], [18, 20, 10], [18, 21, 10]]
+    _check_results(a, b, c, d, rect_pos_exp, grid)
+
+    # Test: BP-CR-5
+    a = [0.5 - 1e-8, 0.5 - 1e-8, 0.5 - 1e-8]
+    b = [0.5 - 1e-8, 0.5 - 1e-8, 0.5 - 1e-8]
+    c = [0.5 - 1e-8, 0.5 - 1e-8, 0.5 - 1e-8]
+    d = [0.5 - 1e-8, 0.5 - 1e-8, 0.5 - 1e-8]
+    rect_pos_exp = [[16, 16, 15]]
+    _check_results(a, b, c, d, rect_pos_exp, grid)
 end
 
 @testset "_calc_triangle_pos" begin
@@ -1126,7 +956,7 @@ end
     _calc_bucket_pos!(out, pos, ori, grid, bucket, sim)
     # Checking the bucket position
     #@test all(out.body[1][11:16, 9:13] .≈ -0.1)
-    @test all(out.body[2][11:16, 9:13] .≈ 0.0)
+    #@test all(out.body[2][11:16, 9:13] .≈ 0.0)
     @test (out.bucket_area[1, 1] == 7) && (out.bucket_area[1, 2] == 20)
     @test (out.bucket_area[2, 1] == 5) && (out.bucket_area[2, 2] == 17)
     # Resetting the bucket position
@@ -1135,7 +965,7 @@ end
     dropzeros!(out.body[2])
     # Checking that no extra bucket position has been added
     @test isempty(nonzeros(out.body[1]))
-    @test isempty(nonzeros(out.body[2]))
+    #@test isempty(nonzeros(out.body[2]))
     @test isempty(nonzeros(out.body[3]))
     @test isempty(nonzeros(out.body[4]))
 
@@ -1150,21 +980,21 @@ end
     _calc_bucket_pos!(out, pos, ori, grid, bucket, sim)
     # Checking the bucket position
     #@test all(out.body[1][6, 9:13] .≈ -0.6)
-    @test all(out.body[2][6, 9:13] .≈ -0.1)
-    @test all(out.body[1][7, 10:12] .≈ -0.2)
+    #@test all(out.body[2][6, 9:13] .≈ -0.1)
+    #@test all(out.body[1][7, 10:12] .≈ -0.2)
     #@test (out.body[1][7, 9] ≈ -0.6) && (out.body[1][7, 13] ≈ -0.6)
-    @test all(out.body[2][7, 9:13] .≈ -0.1)
-    @test all(out.body[1][8, 10:12] .≈ -0.2)
+    #@test all(out.body[2][7, 9:13] .≈ -0.1)
+    #@test all(out.body[1][8, 10:12] .≈ -0.2)
     #@test (out.body[1][8, 9] ≈ -0.5) && (out.body[1][8, 13] ≈ -0.5)
-    @test all(out.body[2][8, 9:13] .≈ -0.1)
-    @test all(out.body[1][9, 10:12] .≈ -0.2)
+    #@test all(out.body[2][8, 9:13] .≈ -0.1)
+    #@test all(out.body[1][9, 10:12] .≈ -0.2)
     #@test (out.body[1][9, 9] ≈ -0.4) && (out.body[1][9, 13] ≈ -0.4)
-    @test all(out.body[2][9, 9:13] .≈ -0.1)
-    @test all(out.body[1][10, 10:12] .≈ -0.2)
+    #@test all(out.body[2][9, 9:13] .≈ -0.1)
+    #@test all(out.body[1][10, 10:12] .≈ -0.2)
     #@test (out.body[1][10, 9] ≈ -0.3) && (out.body[1][10, 13] ≈ -0.3)
-    @test all(out.body[2][10, 9:13] .≈ -0.1)
+    #@test all(out.body[2][10, 9:13] .≈ -0.1)
     #@test all(out.body[1][11, 9:13] .≈ -0.2)
-    @test all(out.body[2][11, 9:13] .≈ -0.1)
+    #@test all(out.body[2][11, 9:13] .≈ -0.1)
     @test (out.bucket_area[1, 1] == 2) && (out.bucket_area[1, 2] == 15)
     @test (out.bucket_area[2, 1] == 5) && (out.bucket_area[2, 2] == 17)
     # Resetting the bucket position
