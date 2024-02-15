@@ -592,94 +592,75 @@ end
 @testset "_include_new_body_pos!" begin
     # Setting a dummy body
     _init_sparse_array!(out.body, grid)
-    out.body[1][7, 10] = 1.0
-    out.body[2][7, 10] = 2.0
-    out.body[1][9, 12] = 0.5
-    out.body[2][9, 12] = 0.6
-    out.body[3][9, 12] = 0.8
-    out.body[4][9, 12] = 0.9
-    out.body[3][10, 9] = 1.2
-    out.body[4][10, 9] = 1.4
+    set_height(out, 7, 10, NaN, 1.0, 2.0, NaN, NaN, NaN, NaN, NaN, NaN)
+    set_height(out, 9, 12, NaN, 0.5, 0.6, NaN, NaN, 0.8, 0.9, NaN, NaN)
+    set_height(out, 10, 9, NaN, NaN, NaN, NaN, NaN, 1.2, 1.4, NaN, NaN)
 
-    # Testing to add a position when there is no existing position
+    # Test: BP-INB-1
     _include_new_body_pos!(out, 6, 6, 0.1, 0.2)
     @test (out.body[1][6, 6] ≈ 0.1) && (out.body[2][6, 6] ≈ 0.2)
+    @test (out.body[3][6, 6] == 0.0) && (out.body[4][6, 6] == 0.0)
 
-    # Testing to add a position distinct from existing positions (1)
+    # Test: BP-INB-2
     _include_new_body_pos!(out, 7, 10, 0.1, 0.2)
     @test (out.body[1][7, 10] ≈ 1.0) && (out.body[2][7, 10] ≈ 2.0)
     @test (out.body[3][7, 10] ≈ 0.1) && (out.body[4][7, 10] ≈ 0.2)
 
-    # Testing to add a position distinct from existing positions (2)
+    # Test: BP-INB-3
     _include_new_body_pos!(out, 10, 9, 1.6, 1.7)
     @test (out.body[1][10, 9] ≈ 1.6) && (out.body[2][10, 9] ≈ 1.7)
     @test (out.body[3][10, 9] ≈ 1.2) && (out.body[4][10, 9] ≈ 1.4)
 
-    # Testing to add a position overlapping with an existing position (1)
+    # Test: BP-INB-4
     _include_new_body_pos!(out, 7, 10, 0.2, 0.4)
     @test (out.body[1][7, 10] ≈ 1.0) && (out.body[2][7, 10] ≈ 2.0)
     @test (out.body[3][7, 10] ≈ 0.1) && (out.body[4][7, 10] ≈ 0.4)
 
-    # Testing to add a position overlapping with an existing position (2)
+    # Test: BP-INB-5
     _include_new_body_pos!(out, 7, 10, -0.2, 0.1)
     @test (out.body[1][7, 10] ≈ 1.0) && (out.body[2][7, 10] ≈ 2.0)
     @test (out.body[3][7, 10] ≈ -0.2) && (out.body[4][7, 10] ≈ 0.4)
 
-    # Testing to add a position overlapping with an existing position (3)
+    # Test: BP-INB-6
     _include_new_body_pos!(out, 7, 10, 2.0, 2.5)
     @test (out.body[1][7, 10] ≈ 1.0) && (out.body[2][7, 10] ≈ 2.5)
     @test (out.body[3][7, 10] ≈ -0.2) && (out.body[4][7, 10] ≈ 0.4)
 
-    # Testing to add a position overlapping with an existing position (4)
+    # Test: BP-INB-7
     _include_new_body_pos!(out, 7, 10, 0.7, 1.0)
     @test (out.body[1][7, 10] ≈ 0.7) && (out.body[2][7, 10] ≈ 2.5)
     @test (out.body[3][7, 10] ≈ -0.2) && (out.body[4][7, 10] ≈ 0.4)
 
-    # Testing to add a position overlapping with an existing position (5)
+    # Test: BP-INB-8
     _include_new_body_pos!(out, 7, 10, -0.4, 0.6)
     @test (out.body[1][7, 10] ≈ 0.7) && (out.body[2][7, 10] ≈ 2.5)
     @test (out.body[3][7, 10] ≈ -0.4) && (out.body[4][7, 10] ≈ 0.6)
 
-    # Testing to add a position overlapping with the two existing positions
+    # Test: BP-INB-9
     _include_new_body_pos!(out, 9, 12, 0.6, 0.8)
     @test (out.body[1][9, 12] ≈ 0.5) && (out.body[2][9, 12] ≈ 0.9)
+    @test (out.body[3][9, 12] == 0.0) && (out.body[4][9, 12] == 0.0)
 
-    # Testing to add a position within an existing position (1)
+    # Test: BP-INB-10
     _include_new_body_pos!(out, 7, 10, 0.9, 2.5)
     @test (out.body[1][7, 10] ≈ 0.7) && (out.body[2][7, 10] ≈ 2.5)
     @test (out.body[3][7, 10] ≈ -0.4) && (out.body[4][7, 10] ≈ 0.6)
 
-    # Testing to add a position within an existing position (2)
+    # Test: BP-INB-11
     _include_new_body_pos!(out, 7, 10, -0.4, 0.6)
     @test (out.body[1][7, 10] ≈ 0.7) && (out.body[2][7, 10] ≈ 2.5)
     @test (out.body[3][7, 10] ≈ -0.4) && (out.body[4][7, 10] ≈ 0.6)
 
-    # Testing to add a position within an existing position (3)
-    _include_new_body_pos!(out, 6, 6, 0.1, 0.2)
-    @test (out.body[1][6, 6] ≈ 0.1) && (out.body[2][6, 6] ≈ 0.2)
-    @test (out.body[3][6, 6] == 0.0) && (out.body[4][6, 6] == 0.0)
-
-    # Testing to add a position within an existing position (4)
-    _include_new_body_pos!(out, 6, 6, 0.15, 0.18)
-    @test (out.body[1][6, 6] ≈ 0.1) && (out.body[2][6, 6] ≈ 0.2)
-    @test (out.body[3][6, 6] == 0.0) && (out.body[4][6, 6] == 0.0)
-
-    # Testing that incorrect request throws an error
-    #@test_throws ErrorException _include_new_body_pos!(out, 7, 10, 3.0, 3.1)
+    # Test: BP-INB-12
+    _include_new_body_pos!(out, 7, 10, 3.0, 3.1)
+    @test (out.body[1][7, 10] ≈ 0.7) && (out.body[2][7, 10] ≈ 3.1)
+    @test (out.body[3][7, 10] ≈ -0.4) && (out.body[4][7, 10] ≈ 0.6)
 
     # Resetting bucket position
-    out.body[1][6, 6] = 0.0
-    out.body[2][6, 6] = 0.0
-    out.body[1][7, 10] = 0.0
-    out.body[2][7, 10] = 0.0
-    out.body[3][7, 10] = 0.0
-    out.body[4][7, 10] = 0.0
-    out.body[1][10, 9] = 0.0
-    out.body[2][10, 9] = 0.0
-    out.body[3][10, 9] = 0.0
-    out.body[4][10, 9] = 0.0
-    out.body[1][9, 12] = 0.0
-    out.body[2][9, 12] = 0.0
+    set_height(out, 6, 6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+    set_height(out, 7, 10, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+    set_height(out, 10, 9, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+    set_height(out, 9, 12, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
     dropzeros!(out.body[1])
     dropzeros!(out.body[2])
     dropzeros!(out.body[3])
