@@ -737,22 +737,19 @@ end
 end
 
 @testset "_calc_bucket_pos!" begin
-    # Setting a dummy bucket geometry in the XZ plane
+    # Test: BP-CB-1
     bucket.j_pos_init .= Vector{Float64}([0.0, 0.0, 0.0])
     bucket.b_pos_init .= Vector{Float64}([0.5, 0.01, 0.0])
     bucket.t_pos_init .= Vector{Float64}([0.5, 0.0, 0.0])
-    ori = angle_to_quat(0.0, 0.0, 0.0, :ZYX)
+    ori = Quaternion(1.0, 0.0, 0.0, 0.0)
     pos = Vector{Float64}([0.0, 0.0, 0.0])
-
-    # Testing for a bucket in the XZ plane
     _calc_bucket_pos!(out, pos, ori, grid, bucket, sim)
-    # Checking the bucket position
-    #@test (out.body[1][11, 11] ≈ -0.3) && (out.body[2][11, 11] ≈ 0.3)
-    #@test (out.body[1][12, 11] ≈ -0.3) && (out.body[2][12, 11] ≈ 0.3)
-    #@test (out.body[1][13, 11] ≈ -0.3) && (out.body[2][13, 11] ≈ 0.3)
-    #@test (out.body[1][14, 11] ≈ -0.3) && (out.body[2][14, 11] ≈ 0.3)
-    #@test (out.body[1][15, 11] ≈ -0.3) && (out.body[2][15, 11] ≈ 0.3)
-    #@test (out.body[1][16, 11] ≈ -0.3) && (out.body[2][16, 11] ≈ 0.3)
+    @test (out.body[1][11, 11] ≈ -0.3) && (out.body[2][11, 11] ≈ 0.3)
+    @test (out.body[1][12, 11] ≈ -0.3) && (out.body[2][12, 11] ≈ 0.3)
+    @test (out.body[1][13, 11] ≈ -0.3) && (out.body[2][13, 11] ≈ 0.3)
+    @test (out.body[1][14, 11] ≈ -0.3) && (out.body[2][14, 11] ≈ 0.3)
+    @test (out.body[1][15, 11] ≈ -0.3) && (out.body[2][15, 11] ≈ 0.3)
+    @test (out.body[1][16, 11] ≈ -0.3) && (out.body[2][16, 11] ≈ 0.3)
     @test (out.bucket_area[1, 1] == 7) && (out.bucket_area[1, 2] == 20)
     @test (out.bucket_area[2, 1] == 7) && (out.bucket_area[2, 2] == 15)
     # Resetting the bucket position
@@ -760,62 +757,54 @@ end
     out.body[2][11:16, 11] .= 0.0
     dropzeros!(out.body[1])
     dropzeros!(out.body[2])
-    # Checking that no extra bucket position has been added
     @test isempty(nonzeros(out.body[1]))
     @test isempty(nonzeros(out.body[2]))
     @test isempty(nonzeros(out.body[3]))
     @test isempty(nonzeros(out.body[4]))
 
-    # Setting a dummy bucket geometry in the XY plane
+    # Test: BP-CB-2
     bucket.j_pos_init .= Vector{Float64}([0.0, 0.0, 0.0])
     bucket.b_pos_init .= Vector{Float64}([0.5, 0.0, -0.01])
     bucket.t_pos_init .= Vector{Float64}([0.5, 0.0, 0.0])
-    ori = angle_to_quat(0.0, 0.0, 0.0, :ZYX)
+    ori = Quaternion(1.0, 0.0, 0.0, 0.0)
     pos = Vector{Float64}([0.0, 0.0, 0.0])
-
-    # Testing for a bucket in the XY plane
     _calc_bucket_pos!(out, pos, ori, grid, bucket, sim)
-    # Checking the bucket position
-    #@test all(out.body[1][11:16, 9:13] .≈ -0.1)
-    #@test all(out.body[2][11:16, 9:13] .≈ 0.0)
+    @test all(out.body[1][11:16, 9:13] .≈ -0.1)
+    @test all(out.body[2][11:16, 9:13] .≈ 0.0)
     @test (out.bucket_area[1, 1] == 7) && (out.bucket_area[1, 2] == 20)
     @test (out.bucket_area[2, 1] == 5) && (out.bucket_area[2, 2] == 17)
     # Resetting the bucket position
     out.body[1][11:16, 9:13] .= 0.0
     dropzeros!(out.body[1])
     dropzeros!(out.body[2])
-    # Checking that no extra bucket position has been added
     @test isempty(nonzeros(out.body[1]))
-    #@test isempty(nonzeros(out.body[2]))
+    @test isempty(nonzeros(out.body[2]))
     @test isempty(nonzeros(out.body[3]))
     @test isempty(nonzeros(out.body[4]))
 
-    # Setting a dummy bucket geometry
+    # Test: BP-CB-3
     bucket.j_pos_init .= Vector{Float64}([0.0, 0.0, 0.0])
     bucket.b_pos_init .= Vector{Float64}([0.0, 0.0, -0.5])
     bucket.t_pos_init .= Vector{Float64}([0.5, 0.0, -0.5])
-    ori = angle_to_quat(0.0, -pi / 2, 0.0, :ZYX)
+    ori = Quaternion(0.707107, 0.0, -0.707107, 0.0) # -pi/2 rotation around the Y axis
     pos = Vector{Float64}([0.0, 0.0, -0.1])
-
-    # Testing for a bucket in a dummy position
     _calc_bucket_pos!(out, pos, ori, grid, bucket, sim)
-    # Checking the bucket position
-    #@test all(out.body[1][6, 9:13] .≈ -0.6)
-    #@test all(out.body[2][6, 9:13] .≈ -0.1)
-    #@test all(out.body[1][7, 10:12] .≈ -0.2)
-    #@test (out.body[1][7, 9] ≈ -0.6) && (out.body[1][7, 13] ≈ -0.6)
-    #@test all(out.body[2][7, 9:13] .≈ -0.1)
-    #@test all(out.body[1][8, 10:12] .≈ -0.2)
-    #@test (out.body[1][8, 9] ≈ -0.5) && (out.body[1][8, 13] ≈ -0.5)
-    #@test all(out.body[2][8, 9:13] .≈ -0.1)
-    #@test all(out.body[1][9, 10:12] .≈ -0.2)
-    #@test (out.body[1][9, 9] ≈ -0.4) && (out.body[1][9, 13] ≈ -0.4)
-    #@test all(out.body[2][9, 9:13] .≈ -0.1)
-    #@test all(out.body[1][10, 10:12] .≈ -0.2)
-    #@test (out.body[1][10, 9] ≈ -0.3) && (out.body[1][10, 13] ≈ -0.3)
-    #@test all(out.body[2][10, 9:13] .≈ -0.1)
-    #@test all(out.body[1][11, 9:13] .≈ -0.2)
-    #@test all(out.body[2][11, 9:13] .≈ -0.1)
+    @test all(out.body[1][6, 9:13] .≈ -0.6)
+    @test all(out.body[2][6, 9:13] .≈ -0.1)
+    @test all(out.body[1][7, 10:12] .≈ -0.2)
+    @test (out.body[1][7, 9] ≈ -0.6) && (out.body[1][7, 13] ≈ -0.6)
+    @test all(out.body[2][7, 9:13] .≈ -0.1)
+    @test all(out.body[1][8, 10:12] .≈ -0.2)
+    @test (out.body[1][8, 9] ≈ -0.5) && (out.body[1][8, 13] ≈ -0.5)
+    @test all(out.body[2][8, 9:13] .≈ -0.1)
+    @test all(out.body[1][9, 10:12] .≈ -0.2)
+    @test (out.body[1][9, 9] ≈ -0.4) && (out.body[1][9, 13] ≈ -0.4)
+    @test all(out.body[2][9, 9:13] .≈ -0.1)
+    @test all(out.body[1][10, 10:12] .≈ -0.2)
+    @test (out.body[1][10, 9] ≈ -0.3) && (out.body[1][10, 13] ≈ -0.3)
+    @test all(out.body[2][10, 9:13] .≈ -0.1)
+    @test all(out.body[1][11, 9:13] .≈ -0.2)
+    @test all(out.body[2][11, 9:13] .≈ -0.1)
     @test (out.bucket_area[1, 1] == 2) && (out.bucket_area[1, 2] == 15)
     @test (out.bucket_area[2, 1] == 5) && (out.bucket_area[2, 2] == 17)
     # Resetting the bucket position
