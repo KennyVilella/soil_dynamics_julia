@@ -841,8 +841,8 @@ function _update_body!(
     # Initializing cell position and height
     ii = area_pos[1][1]
     jj = area_pos[1][2]
-    min_h = grid.vect_z[area_pos[1][3]] - grid.cell_size_z
-    max_h = grid.vect_z[area_pos[1][3]]
+    min_h = grid.vect_z[area_pos[1][3]+1] - grid.cell_size_z
+    max_h = grid.vect_z[area_pos[1][3]+1]
 
     # Iterating over all cells in area_pos
     for cell in area_pos
@@ -852,14 +852,14 @@ function _update_body!(
             _include_new_body_pos!(out, ii, jj, min_h, max_h, tol)
 
             # Initializing new cell position and height
-            min_h = grid.vect_z[cell[3]] - grid.cell_size_z
-            max_h = grid.vect_z[cell[3]]
+            min_h = grid.vect_z[cell[3]+1] - grid.cell_size_z
+            max_h = grid.vect_z[cell[3]+1]
             ii = cell[1]
             jj = cell[2]
         else
             ### New height for the XY position ###
             # Updating maximum height
-            max_h = grid.vect_z[cell[3]]
+            max_h = grid.vect_z[cell[3]+1]
         end
     end
 
