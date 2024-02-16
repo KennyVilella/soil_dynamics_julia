@@ -504,309 +504,163 @@ end
 end
 
 @testset "_calc_triangle_pos" begin
-    # Note that the function does not account for the case where
-    # the triangle follows a cell border.
-    # It is therefore necessary to solve this potential ambiguity
-    # before calling the function. As a result, a small increment (1e-8)
-    # is added or removed to the input in order to make sure that
-    # the input coordinates do not correspond to a cell border.
+    function _check_results(a, b, c, tri_pos_exp, grid)
+        # Checking first input order
+        tri_pos = sort(unique(_calc_triangle_pos(a, b, c, grid)))
+        @test (tri_pos == tri_pos_exp)
+        # Checking second input order
+        tri_pos = sort(unique(_calc_triangle_pos(a, c, b, grid)))
+        @test (tri_pos == tri_pos_exp)
+        # Checking third input order
+        tri_pos = sort(unique(_calc_triangle_pos(b, a, c, grid)))
+        @test (tri_pos == tri_pos_exp)
+        # Checking fourth input order
+        tri_pos = sort(unique(_calc_triangle_pos(b, c, a, grid)))
+        @test (tri_pos == tri_pos_exp)
+        # Checking fifth input order
+        tri_pos = sort(unique(_calc_triangle_pos(c, a, b, grid)))
+        @test (tri_pos == tri_pos_exp)
+        # Checking sixth input order
+        tri_pos = sort(unique(_calc_triangle_pos(c, b, a, grid)))
+        @test (tri_pos == tri_pos_exp)
+    end
 
-    # Testing for a simple triangle in the XY plane
-    a = [0.0 + 1e-8, 0.0 + 1e-8, 0.0 - 1e-8]
-    b = [1.0 - 1e-8, 0.0 + 1e-8, 0.0 - 1e-8]
-    c = [0.0 + 1e-8, 1.0 - 1e-8, 0.0 - 1e-8]
-    tri_pos = unique(_calc_triangle_pos(a, b, c, grid))
-    @test ([11, 11, 11] in tri_pos) && ([12, 11, 11] in tri_pos)
-    @test ([14, 11, 11] in tri_pos) && ([13, 11, 11] in tri_pos)
-    @test ([15, 11, 11] in tri_pos) && ([16, 11, 11] in tri_pos)
-    @test ([17, 11, 11] in tri_pos) && ([18, 11, 11] in tri_pos)
-    @test ([20, 11, 11] in tri_pos) && ([19, 11, 11] in tri_pos)
-    #@test ([21, 11, 11] in tri_pos) && ([11, 12, 11] in tri_pos)
-    @test ([12, 12, 11] in tri_pos) && ([13, 12, 11] in tri_pos)
-    @test ([15, 12, 11] in tri_pos) && ([14, 12, 11] in tri_pos)
-    @test ([16, 12, 11] in tri_pos) && ([17, 12, 11] in tri_pos)
-    @test ([18, 12, 11] in tri_pos) && ([19, 12, 11] in tri_pos)
-    @test ([11, 13, 11] in tri_pos) && ([20, 12, 11] in tri_pos)
-    @test ([12, 13, 11] in tri_pos) && ([13, 13, 11] in tri_pos)
-    @test ([14, 13, 11] in tri_pos) && ([15, 13, 11] in tri_pos)
-    @test ([17, 13, 11] in tri_pos) && ([16, 13, 11] in tri_pos)
-    @test ([18, 13, 11] in tri_pos) && ([19, 13, 11] in tri_pos)
-    @test ([11, 14, 11] in tri_pos) && ([12, 14, 11] in tri_pos)
-    @test ([14, 14, 11] in tri_pos) && ([13, 14, 11] in tri_pos)
-    @test ([15, 14, 11] in tri_pos) && ([16, 14, 11] in tri_pos)
-    @test ([17, 14, 11] in tri_pos) && ([18, 14, 11] in tri_pos)
-    @test ([12, 15, 11] in tri_pos) && ([11, 15, 11] in tri_pos)
-    @test ([13, 15, 11] in tri_pos) && ([14, 15, 11] in tri_pos)
-    @test ([15, 15, 11] in tri_pos) && ([16, 15, 11] in tri_pos)
-    @test ([11, 16, 11] in tri_pos) && ([17, 15, 11] in tri_pos)
-    @test ([12, 16, 11] in tri_pos) && ([13, 16, 11] in tri_pos)
-    @test ([14, 16, 11] in tri_pos) && ([15, 16, 11] in tri_pos)
-    @test ([11, 17, 11] in tri_pos) && ([16, 16, 11] in tri_pos)
-    @test ([12, 17, 11] in tri_pos) && ([13, 17, 11] in tri_pos)
-    @test ([14, 17, 11] in tri_pos) && ([15, 17, 11] in tri_pos)
-    @test ([12, 18, 11] in tri_pos) && ([11, 18, 11] in tri_pos)
-    @test ([13, 18, 11] in tri_pos) && ([14, 18, 11] in tri_pos)
-    @test ([11, 19, 11] in tri_pos) && ([12, 19, 11] in tri_pos)
-    @test ([11, 20, 11] in tri_pos) && ([13, 19, 11] in tri_pos)
-    #@test ([12, 20, 11] in tri_pos) && ([11, 21, 11] in tri_pos)
-    #@test length(tri_pos) == 66
+    # Test: BP-CT-1
+    a = [0.0 + 1e-3, 0.0 + 1e-3, 0.0 - 1e-8]
+    b = [1.0 - 1e-3, 0.0 + 1e-3, 0.0 - 1e-8]
+    c = [0.0 + 1e-3, 1.0 - 1e-3, 0.0 - 1e-8]
+    tri_pos_exp = [
+        [11, 11, 10], [11, 12, 10], [11, 13, 10], [11, 14, 10], [11, 15, 10],
+        [11, 16, 10], [11, 17, 10], [11, 18, 10], [11, 19, 10], [11, 20, 10],
+        [11, 21, 10], [12, 11, 10], [12, 12, 10], [12, 13, 10], [12, 14, 10],
+        [12, 15, 10], [12, 16, 10], [12, 17, 10], [12, 18, 10], [12, 19, 10],
+        [12, 20, 10], [12, 21, 10], [13, 11, 10], [13, 12, 10], [13, 13, 10],
+        [13, 14, 10], [13, 15, 10], [13, 16, 10], [13, 17, 10], [13, 18, 10],
+        [13, 19, 10], [13, 20, 10], [14, 11, 10], [14, 12, 10], [14, 13, 10],
+        [14, 14, 10], [14, 15, 10], [14, 16, 10], [14, 17, 10], [14, 18, 10],
+        [14, 19, 10], [15, 11, 10], [15, 12, 10], [15, 13, 10], [15, 14, 10],
+        [15, 15, 10], [15, 16, 10], [15, 17, 10], [15, 18, 10], [16, 11, 10],
+        [16, 12, 10], [16, 13, 10], [16, 14, 10], [16, 15, 10], [16, 16, 10],
+        [16, 17, 10], [17, 11, 10], [17, 12, 10], [17, 13, 10], [17, 14, 10],
+        [17, 15, 10], [17, 16, 10], [18, 11, 10], [18, 12, 10], [18, 13, 10],
+        [18, 14, 10], [18, 15, 10], [19, 11, 10], [19, 12, 10], [19, 13, 10],
+        [19, 14, 10], [20, 11, 10], [20, 12, 10], [20, 13, 10], [21, 11, 10],
+        [21, 12, 10]]
+    _check_results(a, b, c, tri_pos_exp, grid)
 
-    # Testing that the input order does not influence the results (1)
-    tri_pos = unique(_calc_triangle_pos(b, a, c, grid))
-    @test ([11, 11, 11] in tri_pos) && ([12, 11, 11] in tri_pos)
-    @test ([14, 11, 11] in tri_pos) && ([13, 11, 11] in tri_pos)
-    @test ([15, 11, 11] in tri_pos) && ([16, 11, 11] in tri_pos)
-    @test ([17, 11, 11] in tri_pos) && ([18, 11, 11] in tri_pos)
-    @test ([20, 11, 11] in tri_pos) && ([19, 11, 11] in tri_pos)
-    #@test ([21, 11, 11] in tri_pos) && ([11, 12, 11] in tri_pos)
-    @test ([12, 12, 11] in tri_pos) && ([13, 12, 11] in tri_pos)
-    @test ([15, 12, 11] in tri_pos) && ([14, 12, 11] in tri_pos)
-    @test ([16, 12, 11] in tri_pos) && ([17, 12, 11] in tri_pos)
-    @test ([18, 12, 11] in tri_pos) && ([19, 12, 11] in tri_pos)
-    @test ([11, 13, 11] in tri_pos) && ([20, 12, 11] in tri_pos)
-    @test ([12, 13, 11] in tri_pos) && ([13, 13, 11] in tri_pos)
-    @test ([14, 13, 11] in tri_pos) && ([15, 13, 11] in tri_pos)
-    @test ([17, 13, 11] in tri_pos) && ([16, 13, 11] in tri_pos)
-    @test ([18, 13, 11] in tri_pos) && ([19, 13, 11] in tri_pos)
-    @test ([11, 14, 11] in tri_pos) && ([12, 14, 11] in tri_pos)
-    @test ([14, 14, 11] in tri_pos) && ([13, 14, 11] in tri_pos)
-    @test ([15, 14, 11] in tri_pos) && ([16, 14, 11] in tri_pos)
-    @test ([17, 14, 11] in tri_pos) && ([18, 14, 11] in tri_pos)
-    @test ([12, 15, 11] in tri_pos) && ([11, 15, 11] in tri_pos)
-    @test ([13, 15, 11] in tri_pos) && ([14, 15, 11] in tri_pos)
-    @test ([15, 15, 11] in tri_pos) && ([16, 15, 11] in tri_pos)
-    @test ([11, 16, 11] in tri_pos) && ([17, 15, 11] in tri_pos)
-    @test ([12, 16, 11] in tri_pos) && ([13, 16, 11] in tri_pos)
-    @test ([14, 16, 11] in tri_pos) && ([15, 16, 11] in tri_pos)
-    @test ([11, 17, 11] in tri_pos) && ([16, 16, 11] in tri_pos)
-    @test ([12, 17, 11] in tri_pos) && ([13, 17, 11] in tri_pos)
-    @test ([14, 17, 11] in tri_pos) && ([15, 17, 11] in tri_pos)
-    @test ([12, 18, 11] in tri_pos) && ([11, 18, 11] in tri_pos)
-    @test ([13, 18, 11] in tri_pos) && ([14, 18, 11] in tri_pos)
-    @test ([11, 19, 11] in tri_pos) && ([12, 19, 11] in tri_pos)
-    @test ([11, 20, 11] in tri_pos) && ([13, 19, 11] in tri_pos)
-    #@test ([12, 20, 11] in tri_pos) && ([11, 21, 11] in tri_pos)
-    #@test length(tri_pos) == 66
-
-    # Testing that the input order does not influence the results (2)
-    tri_pos = unique(_calc_triangle_pos(c, a, b, grid))
-    @test ([11, 11, 11] in tri_pos) && ([12, 11, 11] in tri_pos)
-    @test ([14, 11, 11] in tri_pos) && ([13, 11, 11] in tri_pos)
-    @test ([15, 11, 11] in tri_pos) && ([16, 11, 11] in tri_pos)
-    @test ([17, 11, 11] in tri_pos) && ([18, 11, 11] in tri_pos)
-    @test ([20, 11, 11] in tri_pos) && ([19, 11, 11] in tri_pos)
-    #@test ([21, 11, 11] in tri_pos) && ([11, 12, 11] in tri_pos)
-    @test ([12, 12, 11] in tri_pos) && ([13, 12, 11] in tri_pos)
-    @test ([15, 12, 11] in tri_pos) && ([14, 12, 11] in tri_pos)
-    @test ([16, 12, 11] in tri_pos) && ([17, 12, 11] in tri_pos)
-    @test ([18, 12, 11] in tri_pos) && ([19, 12, 11] in tri_pos)
-    @test ([11, 13, 11] in tri_pos) && ([20, 12, 11] in tri_pos)
-    @test ([12, 13, 11] in tri_pos) && ([13, 13, 11] in tri_pos)
-    @test ([14, 13, 11] in tri_pos) && ([15, 13, 11] in tri_pos)
-    @test ([17, 13, 11] in tri_pos) && ([16, 13, 11] in tri_pos)
-    @test ([18, 13, 11] in tri_pos) && ([19, 13, 11] in tri_pos)
-    @test ([11, 14, 11] in tri_pos) && ([12, 14, 11] in tri_pos)
-    @test ([14, 14, 11] in tri_pos) && ([13, 14, 11] in tri_pos)
-    @test ([15, 14, 11] in tri_pos) && ([16, 14, 11] in tri_pos)
-    @test ([17, 14, 11] in tri_pos) && ([18, 14, 11] in tri_pos)
-    @test ([12, 15, 11] in tri_pos) && ([11, 15, 11] in tri_pos)
-    @test ([13, 15, 11] in tri_pos) && ([14, 15, 11] in tri_pos)
-    @test ([15, 15, 11] in tri_pos) && ([16, 15, 11] in tri_pos)
-    @test ([11, 16, 11] in tri_pos) && ([17, 15, 11] in tri_pos)
-    @test ([12, 16, 11] in tri_pos) && ([13, 16, 11] in tri_pos)
-    @test ([14, 16, 11] in tri_pos) && ([15, 16, 11] in tri_pos)
-    @test ([11, 17, 11] in tri_pos) && ([16, 16, 11] in tri_pos)
-    @test ([12, 17, 11] in tri_pos) && ([13, 17, 11] in tri_pos)
-    @test ([14, 17, 11] in tri_pos) && ([15, 17, 11] in tri_pos)
-    @test ([12, 18, 11] in tri_pos) && ([11, 18, 11] in tri_pos)
-    @test ([13, 18, 11] in tri_pos) && ([14, 18, 11] in tri_pos)
-    @test ([11, 19, 11] in tri_pos) && ([12, 19, 11] in tri_pos)
-    @test ([11, 20, 11] in tri_pos) && ([13, 19, 11] in tri_pos)
-    #@test ([12, 20, 11] in tri_pos) && ([11, 21, 11] in tri_pos)
-    #@test length(tri_pos) == 66
-
-    # Testing that the input order does not influence the results (3)
-    tri_pos = unique(_calc_triangle_pos(a, c, b, grid))
-    #@test length(tri_pos) == 66
-    tri_pos = unique(_calc_triangle_pos(b, c, a, grid))
-    #@test length(tri_pos) == 66
-    tri_pos = unique(_calc_triangle_pos(c, b, a, grid))
-    #@test length(tri_pos) == 66
-
-    # Testing for a simple triangle in the XZ plane
+    # Test: BP-CT-2
     a = [0.0 + 1e-8, 0.0 - 1e-8, 0.0 + 1e-8]
     b = [1.0 - 1e-8, 0.0 - 1e-8, 0.0 + 1e-8]
     c = [0.0 + 1e-8, 0.0 - 1e-8, 1.0 - 1e-8]
-    tri_pos = unique(_calc_triangle_pos(a, b, c, grid))
-    #@test ([11, 11, 12] in tri_pos) && ([12, 11, 12] in tri_pos)
-    #@test ([13, 11, 12] in tri_pos) && ([14, 11, 12] in tri_pos)
-    #@test ([15, 11, 12] in tri_pos) && ([16, 11, 12] in tri_pos)
-    #@test ([17, 11, 12] in tri_pos) && ([18, 11, 12] in tri_pos)
-    @test ([19, 11, 12] in tri_pos) && ([20, 11, 12] in tri_pos)
-    #@test ([21, 11, 12] in tri_pos) && ([11, 11, 13] in tri_pos)
-    @test ([11, 11, 14] in tri_pos) && ([11, 11, 15] in tri_pos)
-    @test ([11, 11, 16] in tri_pos) && ([11, 11, 17] in tri_pos)
-    @test ([11, 11, 18] in tri_pos) && ([11, 11, 19] in tri_pos)
-    #@test ([11, 11, 20] in tri_pos) && ([11, 11, 21] in tri_pos)
-    #@test ([20, 11, 13] in tri_pos) && ([19, 11, 14] in tri_pos)
-    #@test ([18, 11, 15] in tri_pos) && ([17, 11, 16] in tri_pos)
-    #@test ([16, 11, 17] in tri_pos) && ([15, 11, 18] in tri_pos)
-    #@test ([14, 11, 19] in tri_pos) && ([13, 11, 20] in tri_pos)
-    #@test ([12, 11, 21] in tri_pos) && ([19, 11, 13] in tri_pos)
-    @test ([18, 11, 14] in tri_pos) && ([17, 11, 15] in tri_pos)
-    @test ([16, 11, 16] in tri_pos) && ([15, 11, 17] in tri_pos)
-    @test ([14, 11, 18] in tri_pos) && ([13, 11, 19] in tri_pos)
-    @test ([12, 11, 20] in tri_pos)
-    @test length(tri_pos) == 37
+    tri_pos_exp = [
+        [11, 11, 11], [11, 11, 12], [11, 11, 13], [11, 11, 14], [11, 11, 15],
+        [11, 11, 16], [11, 11, 17], [11, 11, 18], [11, 11, 19], [11, 11, 20],
+        [12, 11, 11], [12, 11, 19], [12, 11, 20], [13, 11, 11], [13, 11, 18],
+        [13, 11, 19], [14, 11, 11], [14, 11, 17], [14, 11, 18], [15, 11, 11],
+        [15, 11, 16], [15, 11, 17], [16, 11, 11], [16, 11, 15], [16, 11, 16],
+        [17, 11, 11], [17, 11, 14], [17, 11, 15], [18, 11, 11], [18, 11, 13],
+        [18, 11, 14], [19, 11, 11], [19, 11, 12], [19, 11, 13], [20, 11, 11],
+        [20, 11, 12], [21, 11, 11]]
+    _check_results(a, b, c, tri_pos_exp, grid)
 
-    # Testing that the input order does not influence the results
-    tri_pos = unique(_calc_triangle_pos(a, c, b, grid))
-    @test length(tri_pos) == 37
-    tri_pos = unique(_calc_triangle_pos(b, a, c, grid))
-    @test length(tri_pos) == 37
-    tri_pos = unique(_calc_triangle_pos(b, c, a, grid))
-    @test length(tri_pos) == 37
-    tri_pos = unique(_calc_triangle_pos(c, a, b, grid))
-    @test length(tri_pos) == 37
-    tri_pos = unique(_calc_triangle_pos(c, b, a, grid))
-    @test length(tri_pos) == 37
+    # Test: BP-CT-3
+    a = [0.5 + 1e-4, 0.0 + 1e-8, 0.5 + 1e-8]
+    b = [0.6 - 1e-4, 0.0 + 1e-8, 0.6 - 1e-8]
+    c = [0.6 - 1e-4, 0.5 - 1e-8, 0.6 - 1e-8]
+    tri_pos_exp = [
+        [16, 11, 16], [16, 12, 16], [16, 13, 16], [16, 14, 16], [17, 11, 16],
+        [17, 12, 16], [17, 13, 16], [17, 14, 16], [17, 15, 16], [17, 16, 16]]
+    _check_results(a, b, c, tri_pos_exp, grid)
 
-    # Testing for a simple triangle in the XYZ plane
-    a = [0.5 + 1e-8, 0.0 + 1e-8, 0.5 + 1e-8]
-    b = [0.6 - 1e-8, 0.0 + 1e-8, 0.6 - 1e-8]
-    c = [0.6 - 1e-8, 0.5 - 1e-8, 0.6 - 1e-8]
-    tri_pos = unique(_calc_triangle_pos(a, b, c, grid))
-    @test ([16, 11, 17] in tri_pos) && ([17, 11, 17] in tri_pos)
-    @test ([16, 12, 17] in tri_pos) && ([17, 12, 17] in tri_pos)
-    @test ([16, 13, 17] in tri_pos) && ([17, 13, 17] in tri_pos)
-    #@test ([17, 14, 17] in tri_pos) && ([17, 15, 17] in tri_pos)
-    #@test ([17, 16, 17] in tri_pos) && ([16, 14, 17] in tri_pos)
-    #@test length(tri_pos) == 10
-
-    # Testing that the input order does not influence the results
-    tri_pos = unique(_calc_triangle_pos(a, c, b, grid))
-    #@test length(tri_pos) == 10
-    tri_pos = unique(_calc_triangle_pos(b, a, c, grid))
-    #@test length(tri_pos) == 10
-    tri_pos = unique(_calc_triangle_pos(b, c, a, grid))
-    #@test length(tri_pos) == 10
-    tri_pos = unique(_calc_triangle_pos(c, a, b, grid))
-    #@test length(tri_pos) == 10
-    tri_pos = unique(_calc_triangle_pos(c, b, a, grid))
-    #@test length(tri_pos) == 10
-
-    # Testing for the edge case where the triangle is a line
+    # Test: BP-CT-4
     a = [0.34 + 1e-8, 0.56 + 1e-8, 0.0 - 1e-8]
     b = [0.74 - 1e-8, 0.97 - 1e-8, 0.0 - 1e-8]
     c = [0.74 - 1e-8, 0.97 - 1e-8, 0.0 - 1e-8]
-    tri_pos = unique(_calc_triangle_pos(a, b, c, grid))
-    #@test ([14, 17, 11] in tri_pos) && ([15, 17, 11] in tri_pos)
-    #@test ([15, 18, 11] in tri_pos) && ([16, 18, 11] in tri_pos)
-    #@test ([16, 19, 11] in tri_pos) && ([17, 19, 11] in tri_pos)
-    #@test ([17, 20, 11] in tri_pos) && ([18, 20, 11] in tri_pos)
-    #@test ([18, 21, 11] in tri_pos)
-    @test length(tri_pos) == 9
+    tri_pos_exp = [
+        [14, 17, 10], [15, 17, 10], [15, 18, 10], [16, 18, 10], [16, 19, 10],
+        [17, 19, 10], [17, 20, 10], [18, 20, 10], [18, 21, 10]]
+    _check_results(a, b, c, tri_pos_exp, grid)
 
-    # Testing for the edge case where the triangle is a point
+    # Test: BP-CT-5
     a = [0.5 - 1e-8, 0.5 - 1e-8, 0.5 - 1e-8]
     b = [0.5 - 1e-8, 0.5 - 1e-8, 0.5 - 1e-8]
     c = [0.5 - 1e-8, 0.5 - 1e-8, 0.5 - 1e-8]
-    tri_pos = unique(_calc_triangle_pos(a, b, c, grid))
-    #@test ([16, 16, 16] in tri_pos)
-    @test length(tri_pos) == 1
+    tri_pos_exp = [[16, 16, 15]]
+    _check_results(a, b, c, tri_pos_exp, grid)
 end
 
 @testset "_include_new_body_pos!" begin
     # Setting a dummy body
     _init_sparse_array!(out.body, grid)
-    out.body[1][7, 10] = 1.0
-    out.body[2][7, 10] = 2.0
-    out.body[1][9, 12] = 0.5
-    out.body[2][9, 12] = 0.6
-    out.body[3][9, 12] = 0.8
-    out.body[4][9, 12] = 0.9
-    out.body[3][10, 9] = 1.2
-    out.body[4][10, 9] = 1.4
+    set_height(out, 7, 10, NaN, 1.0, 2.0, NaN, NaN, NaN, NaN, NaN, NaN)
+    set_height(out, 9, 12, NaN, 0.5, 0.6, NaN, NaN, 0.8, 0.9, NaN, NaN)
+    set_height(out, 10, 9, NaN, NaN, NaN, NaN, NaN, 1.2, 1.4, NaN, NaN)
 
-    # Testing to add a position when there is no existing position
+    # Test: BP-INB-1
     _include_new_body_pos!(out, 6, 6, 0.1, 0.2)
     @test (out.body[1][6, 6] ≈ 0.1) && (out.body[2][6, 6] ≈ 0.2)
+    @test (out.body[3][6, 6] == 0.0) && (out.body[4][6, 6] == 0.0)
 
-    # Testing to add a position distinct from existing positions (1)
+    # Test: BP-INB-2
     _include_new_body_pos!(out, 7, 10, 0.1, 0.2)
     @test (out.body[1][7, 10] ≈ 1.0) && (out.body[2][7, 10] ≈ 2.0)
     @test (out.body[3][7, 10] ≈ 0.1) && (out.body[4][7, 10] ≈ 0.2)
 
-    # Testing to add a position distinct from existing positions (2)
+    # Test: BP-INB-3
     _include_new_body_pos!(out, 10, 9, 1.6, 1.7)
     @test (out.body[1][10, 9] ≈ 1.6) && (out.body[2][10, 9] ≈ 1.7)
     @test (out.body[3][10, 9] ≈ 1.2) && (out.body[4][10, 9] ≈ 1.4)
 
-    # Testing to add a position overlapping with an existing position (1)
+    # Test: BP-INB-4
     _include_new_body_pos!(out, 7, 10, 0.2, 0.4)
     @test (out.body[1][7, 10] ≈ 1.0) && (out.body[2][7, 10] ≈ 2.0)
     @test (out.body[3][7, 10] ≈ 0.1) && (out.body[4][7, 10] ≈ 0.4)
 
-    # Testing to add a position overlapping with an existing position (2)
+    # Test: BP-INB-5
     _include_new_body_pos!(out, 7, 10, -0.2, 0.1)
     @test (out.body[1][7, 10] ≈ 1.0) && (out.body[2][7, 10] ≈ 2.0)
     @test (out.body[3][7, 10] ≈ -0.2) && (out.body[4][7, 10] ≈ 0.4)
 
-    # Testing to add a position overlapping with an existing position (3)
+    # Test: BP-INB-6
     _include_new_body_pos!(out, 7, 10, 2.0, 2.5)
     @test (out.body[1][7, 10] ≈ 1.0) && (out.body[2][7, 10] ≈ 2.5)
     @test (out.body[3][7, 10] ≈ -0.2) && (out.body[4][7, 10] ≈ 0.4)
 
-    # Testing to add a position overlapping with an existing position (4)
+    # Test: BP-INB-7
     _include_new_body_pos!(out, 7, 10, 0.7, 1.0)
     @test (out.body[1][7, 10] ≈ 0.7) && (out.body[2][7, 10] ≈ 2.5)
     @test (out.body[3][7, 10] ≈ -0.2) && (out.body[4][7, 10] ≈ 0.4)
 
-    # Testing to add a position overlapping with an existing position (5)
+    # Test: BP-INB-8
     _include_new_body_pos!(out, 7, 10, -0.4, 0.6)
     @test (out.body[1][7, 10] ≈ 0.7) && (out.body[2][7, 10] ≈ 2.5)
     @test (out.body[3][7, 10] ≈ -0.4) && (out.body[4][7, 10] ≈ 0.6)
 
-    # Testing to add a position overlapping with the two existing positions
+    # Test: BP-INB-9
     _include_new_body_pos!(out, 9, 12, 0.6, 0.8)
     @test (out.body[1][9, 12] ≈ 0.5) && (out.body[2][9, 12] ≈ 0.9)
+    @test (out.body[3][9, 12] == 0.0) && (out.body[4][9, 12] == 0.0)
 
-    # Testing to add a position within an existing position (1)
+    # Test: BP-INB-10
     _include_new_body_pos!(out, 7, 10, 0.9, 2.5)
     @test (out.body[1][7, 10] ≈ 0.7) && (out.body[2][7, 10] ≈ 2.5)
     @test (out.body[3][7, 10] ≈ -0.4) && (out.body[4][7, 10] ≈ 0.6)
 
-    # Testing to add a position within an existing position (2)
+    # Test: BP-INB-11
     _include_new_body_pos!(out, 7, 10, -0.4, 0.6)
     @test (out.body[1][7, 10] ≈ 0.7) && (out.body[2][7, 10] ≈ 2.5)
     @test (out.body[3][7, 10] ≈ -0.4) && (out.body[4][7, 10] ≈ 0.6)
 
-    # Testing to add a position within an existing position (3)
-    _include_new_body_pos!(out, 6, 6, 0.1, 0.2)
-    @test (out.body[1][6, 6] ≈ 0.1) && (out.body[2][6, 6] ≈ 0.2)
-    @test (out.body[3][6, 6] == 0.0) && (out.body[4][6, 6] == 0.0)
-
-    # Testing to add a position within an existing position (4)
-    _include_new_body_pos!(out, 6, 6, 0.15, 0.18)
-    @test (out.body[1][6, 6] ≈ 0.1) && (out.body[2][6, 6] ≈ 0.2)
-    @test (out.body[3][6, 6] == 0.0) && (out.body[4][6, 6] == 0.0)
-
-    # Testing that incorrect request throws an error
-    #@test_throws ErrorException _include_new_body_pos!(out, 7, 10, 3.0, 3.1)
+    # Test: BP-INB-12
+    _include_new_body_pos!(out, 7, 10, 3.0, 3.1)
+    @test (out.body[1][7, 10] ≈ 0.7) && (out.body[2][7, 10] ≈ 3.1)
+    @test (out.body[3][7, 10] ≈ -0.4) && (out.body[4][7, 10] ≈ 0.6)
 
     # Resetting bucket position
-    out.body[1][6, 6] = 0.0
-    out.body[2][6, 6] = 0.0
-    out.body[1][7, 10] = 0.0
-    out.body[2][7, 10] = 0.0
-    out.body[3][7, 10] = 0.0
-    out.body[4][7, 10] = 0.0
-    out.body[1][10, 9] = 0.0
-    out.body[2][10, 9] = 0.0
-    out.body[3][10, 9] = 0.0
-    out.body[4][10, 9] = 0.0
-    out.body[1][9, 12] = 0.0
-    out.body[2][9, 12] = 0.0
+    set_height(out, 6, 6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+    set_height(out, 7, 10, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+    set_height(out, 10, 9, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+    set_height(out, 9, 12, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
     dropzeros!(out.body[1])
     dropzeros!(out.body[2])
     dropzeros!(out.body[3])
@@ -823,19 +677,10 @@ end
     # Resetting bucket position
     _init_sparse_array!(out.body, grid)
 
-    # Creating a dummy bucket wall
-    area_pos = Vector{Vector{Int64}}()
-    push!(area_pos, [5, 5, 11])
-    push!(area_pos, [5, 5, 15])
-    push!(area_pos, [6, 6, 17])
-    push!(area_pos, [7, 11, 11])
-    push!(area_pos, [7, 11, 12])
-    push!(area_pos, [7, 12, 12])
-    push!(area_pos, [7, 12, 13])
-    push!(area_pos, [7, 13, 11])
-    push!(area_pos, [10, 10, 11])
-
-    # Testing for a first bucket wall
+    # Test: BP-UB-1
+    area_pos = [
+        [5, 5, 10], [5, 5, 14], [6, 6, 16], [7, 11, 10], [7, 11, 11], [7, 12, 11],
+        [7, 12, 12], [7, 13, 10], [10, 10, 10]]
     _update_body!(area_pos, out, grid)
     @test (out.body[1][5, 5] ≈ -0.1) && (out.body[2][5, 5] ≈ 0.4)
     @test (out.body[1][6, 6] ≈ 0.5) && (out.body[2][6, 6] ≈ 0.6)
@@ -844,20 +689,10 @@ end
     @test (out.body[1][7, 13] ≈ -0.1) && (out.body[2][7, 13] ≈ 0.0)
     @test (out.body[1][10, 10] ≈ -0.1) && (out.body[2][10, 10] ≈ 0.0)
 
-    # Creating a dummy bucket wall
-    area_pos = Vector{Vector{Int64}}()
-    push!(area_pos, [4, 4, 11])
-    push!(area_pos, [5, 5, 15])
-    push!(area_pos, [6, 6, 10])
-    push!(area_pos, [7, 11, 12])
-    push!(area_pos, [7, 11, 15])
-    push!(area_pos, [7, 12, 9])
-    push!(area_pos, [7, 12, 12])
-    push!(area_pos, [7, 13, 9])
-    push!(area_pos, [7, 13, 14])
-    push!(area_pos, [10, 10, 13])
-
-    # Testing for a second bucket wall
+    # Test: BP-UB-2
+    area_pos = [
+        [4, 4, 10], [5, 5, 14], [6, 6, 9], [7, 11, 11], [7, 11, 14], [7, 12, 8],
+        [7, 12, 11], [7, 13, 8], [7, 13, 13], [10, 10, 12]]
     _update_body!(area_pos, out, grid)
     @test (out.body[1][4, 4] ≈ -0.1) && (out.body[2][4, 4] ≈ 0.0)
     @test (out.body[1][5, 5] ≈ -0.1) && (out.body[2][5, 5] ≈ 0.4)
@@ -869,40 +704,26 @@ end
     @test (out.body[1][10, 10] ≈ -0.1) && (out.body[2][10, 10] ≈ 0.0)
     @test (out.body[3][10, 10] ≈ 0.1) && (out.body[4][10, 10] ≈ 0.2)
 
-    # Creating a dummy bucket wall
-    area_pos = Vector{Vector{Int64}}()
-    push!(area_pos, [6, 6, 8])
-    push!(area_pos, [6, 6, 19])
-
-    # Testing for a third bucket wall
+    # Test: BP-UB-3
+    area_pos = [[6, 6, 7], [6, 6, 18]]
     _update_body!(area_pos, out, grid)
     @test (out.body[1][6, 6] ≈ -0.4) && (out.body[2][6, 6] ≈ 0.8)
     @test (out.body[3][6, 6] ≈ 0.0) && (out.body[4][6, 6] ≈ 0.0)
 
-    # Creating a dummy bucket wall
-    area_pos = Vector{Vector{Int64}}()
-    push!(area_pos, [10, 10, 15])
-
-    # Testing that incorrect request throws an error
-    #@test_throws ErrorException _update_body!(area_pos, out, grid)
+    # Test: BP-UB-4
+    area_pos = [[10, 10, 14]]
+    _update_body!(area_pos, out, grid)
+    @test (out.body[1][10, 10] ≈ -0.1) && (out.body[2][10, 10] ≈ 0.0)
+    @test (out.body[3][10, 10] ≈ 0.1) && (out.body[4][10, 10] ≈ 0.4)
 
     # Resetting bucket position
-    out.body[1][4, 4] = 0.0
-    out.body[2][4, 4] = 0.0
-    out.body[1][5, 5] = 0.0
-    out.body[2][5, 5] = 0.0
-    out.body[1][6, 6] = 0.0
-    out.body[2][6, 6] = 0.0
-    out.body[1][7, 11] = 0.0
-    out.body[2][7, 11] = 0.0
-    out.body[1][7, 12] = 0.0
-    out.body[2][7, 12] = 0.0
-    out.body[1][7, 13] = 0.0
-    out.body[2][7, 13] = 0.0
-    out.body[1][10, 10] = 0.0
-    out.body[2][10, 10] = 0.0
-    out.body[3][10, 10] = 0.0
-    out.body[4][10, 10] = 0.0
+    set_height(out, 4, 4, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+    set_height(out, 5, 5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+    set_height(out, 6, 6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+    set_height(out, 7, 11, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+    set_height(out, 7, 12, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+    set_height(out, 7, 13, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+    set_height(out, 10, 10, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
     dropzeros!(out.body[1])
     dropzeros!(out.body[2])
     dropzeros!(out.body[3])
@@ -916,22 +737,19 @@ end
 end
 
 @testset "_calc_bucket_pos!" begin
-    # Setting a dummy bucket geometry in the XZ plane
+    # Test: BP-CB-1
     bucket.j_pos_init .= Vector{Float64}([0.0, 0.0, 0.0])
     bucket.b_pos_init .= Vector{Float64}([0.5, 0.01, 0.0])
     bucket.t_pos_init .= Vector{Float64}([0.5, 0.0, 0.0])
-    ori = angle_to_quat(0.0, 0.0, 0.0, :ZYX)
+    ori = Quaternion(1.0, 0.0, 0.0, 0.0)
     pos = Vector{Float64}([0.0, 0.0, 0.0])
-
-    # Testing for a bucket in the XZ plane
     _calc_bucket_pos!(out, pos, ori, grid, bucket, sim)
-    # Checking the bucket position
-    #@test (out.body[1][11, 11] ≈ -0.3) && (out.body[2][11, 11] ≈ 0.3)
-    #@test (out.body[1][12, 11] ≈ -0.3) && (out.body[2][12, 11] ≈ 0.3)
-    #@test (out.body[1][13, 11] ≈ -0.3) && (out.body[2][13, 11] ≈ 0.3)
-    #@test (out.body[1][14, 11] ≈ -0.3) && (out.body[2][14, 11] ≈ 0.3)
-    #@test (out.body[1][15, 11] ≈ -0.3) && (out.body[2][15, 11] ≈ 0.3)
-    #@test (out.body[1][16, 11] ≈ -0.3) && (out.body[2][16, 11] ≈ 0.3)
+    @test (out.body[1][11, 11] ≈ -0.3) && (out.body[2][11, 11] ≈ 0.3)
+    @test (out.body[1][12, 11] ≈ -0.3) && (out.body[2][12, 11] ≈ 0.3)
+    @test (out.body[1][13, 11] ≈ -0.3) && (out.body[2][13, 11] ≈ 0.3)
+    @test (out.body[1][14, 11] ≈ -0.3) && (out.body[2][14, 11] ≈ 0.3)
+    @test (out.body[1][15, 11] ≈ -0.3) && (out.body[2][15, 11] ≈ 0.3)
+    @test (out.body[1][16, 11] ≈ -0.3) && (out.body[2][16, 11] ≈ 0.3)
     @test (out.bucket_area[1, 1] == 7) && (out.bucket_area[1, 2] == 20)
     @test (out.bucket_area[2, 1] == 7) && (out.bucket_area[2, 2] == 15)
     # Resetting the bucket position
@@ -939,62 +757,54 @@ end
     out.body[2][11:16, 11] .= 0.0
     dropzeros!(out.body[1])
     dropzeros!(out.body[2])
-    # Checking that no extra bucket position has been added
     @test isempty(nonzeros(out.body[1]))
     @test isempty(nonzeros(out.body[2]))
     @test isempty(nonzeros(out.body[3]))
     @test isempty(nonzeros(out.body[4]))
 
-    # Setting a dummy bucket geometry in the XY plane
+    # Test: BP-CB-2
     bucket.j_pos_init .= Vector{Float64}([0.0, 0.0, 0.0])
     bucket.b_pos_init .= Vector{Float64}([0.5, 0.0, -0.01])
     bucket.t_pos_init .= Vector{Float64}([0.5, 0.0, 0.0])
-    ori = angle_to_quat(0.0, 0.0, 0.0, :ZYX)
+    ori = Quaternion(1.0, 0.0, 0.0, 0.0)
     pos = Vector{Float64}([0.0, 0.0, 0.0])
-
-    # Testing for a bucket in the XY plane
     _calc_bucket_pos!(out, pos, ori, grid, bucket, sim)
-    # Checking the bucket position
-    #@test all(out.body[1][11:16, 9:13] .≈ -0.1)
-    #@test all(out.body[2][11:16, 9:13] .≈ 0.0)
+    @test all(out.body[1][11:16, 9:13] .≈ -0.1)
+    @test all(out.body[2][11:16, 9:13] .≈ 0.0)
     @test (out.bucket_area[1, 1] == 7) && (out.bucket_area[1, 2] == 20)
     @test (out.bucket_area[2, 1] == 5) && (out.bucket_area[2, 2] == 17)
     # Resetting the bucket position
     out.body[1][11:16, 9:13] .= 0.0
     dropzeros!(out.body[1])
     dropzeros!(out.body[2])
-    # Checking that no extra bucket position has been added
     @test isempty(nonzeros(out.body[1]))
-    #@test isempty(nonzeros(out.body[2]))
+    @test isempty(nonzeros(out.body[2]))
     @test isempty(nonzeros(out.body[3]))
     @test isempty(nonzeros(out.body[4]))
 
-    # Setting a dummy bucket geometry
+    # Test: BP-CB-3
     bucket.j_pos_init .= Vector{Float64}([0.0, 0.0, 0.0])
     bucket.b_pos_init .= Vector{Float64}([0.0, 0.0, -0.5])
     bucket.t_pos_init .= Vector{Float64}([0.5, 0.0, -0.5])
-    ori = angle_to_quat(0.0, -pi / 2, 0.0, :ZYX)
+    ori = Quaternion(0.707107, 0.0, -0.707107, 0.0) # -pi/2 rotation around the Y axis
     pos = Vector{Float64}([0.0, 0.0, -0.1])
-
-    # Testing for a bucket in a dummy position
     _calc_bucket_pos!(out, pos, ori, grid, bucket, sim)
-    # Checking the bucket position
-    #@test all(out.body[1][6, 9:13] .≈ -0.6)
-    #@test all(out.body[2][6, 9:13] .≈ -0.1)
-    #@test all(out.body[1][7, 10:12] .≈ -0.2)
-    #@test (out.body[1][7, 9] ≈ -0.6) && (out.body[1][7, 13] ≈ -0.6)
-    #@test all(out.body[2][7, 9:13] .≈ -0.1)
-    #@test all(out.body[1][8, 10:12] .≈ -0.2)
-    #@test (out.body[1][8, 9] ≈ -0.5) && (out.body[1][8, 13] ≈ -0.5)
-    #@test all(out.body[2][8, 9:13] .≈ -0.1)
-    #@test all(out.body[1][9, 10:12] .≈ -0.2)
-    #@test (out.body[1][9, 9] ≈ -0.4) && (out.body[1][9, 13] ≈ -0.4)
-    #@test all(out.body[2][9, 9:13] .≈ -0.1)
-    #@test all(out.body[1][10, 10:12] .≈ -0.2)
-    #@test (out.body[1][10, 9] ≈ -0.3) && (out.body[1][10, 13] ≈ -0.3)
-    #@test all(out.body[2][10, 9:13] .≈ -0.1)
-    #@test all(out.body[1][11, 9:13] .≈ -0.2)
-    #@test all(out.body[2][11, 9:13] .≈ -0.1)
+    @test all(out.body[1][6, 9:13] .≈ -0.6)
+    @test all(out.body[2][6, 9:13] .≈ -0.1)
+    @test all(out.body[1][7, 10:12] .≈ -0.2)
+    @test (out.body[1][7, 9] ≈ -0.6) && (out.body[1][7, 13] ≈ -0.6)
+    @test all(out.body[2][7, 9:13] .≈ -0.1)
+    @test all(out.body[1][8, 10:12] .≈ -0.2)
+    @test (out.body[1][8, 9] ≈ -0.5) && (out.body[1][8, 13] ≈ -0.5)
+    @test all(out.body[2][8, 9:13] .≈ -0.1)
+    @test all(out.body[1][9, 10:12] .≈ -0.2)
+    @test (out.body[1][9, 9] ≈ -0.4) && (out.body[1][9, 13] ≈ -0.4)
+    @test all(out.body[2][9, 9:13] .≈ -0.1)
+    @test all(out.body[1][10, 10:12] .≈ -0.2)
+    @test (out.body[1][10, 9] ≈ -0.3) && (out.body[1][10, 13] ≈ -0.3)
+    @test all(out.body[2][10, 9:13] .≈ -0.1)
+    @test all(out.body[1][11, 9:13] .≈ -0.2)
+    @test all(out.body[2][11, 9:13] .≈ -0.1)
     @test (out.bucket_area[1, 1] == 2) && (out.bucket_area[1, 2] == 15)
     @test (out.bucket_area[2, 1] == 5) && (out.bucket_area[2, 2] == 17)
     # Resetting the bucket position
