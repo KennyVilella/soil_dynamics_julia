@@ -102,8 +102,8 @@ function reset_value_and_test(
     dropzeros!(out.body_soil[4])
 
     # Checking that everything is properly reset
-    for ii in 1:size(out.terrain)
-        for jj in 1:size(out.terrain[0])
+    for ii in 1:size(out.terrain, 1)
+        for jj in 1:size(out.terrain, 2)
             @test (out.terrain[ii, jj] == 0.0)
         end
     end
