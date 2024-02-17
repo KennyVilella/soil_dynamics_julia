@@ -202,12 +202,12 @@ At the end of each unit test, the environment is set to a proper setup and it is
 
 This file implements unit tests for the functions in the `bucket_pos.cpp` file.
 
-### `CalcLinePos`
+### `_calc_line_pos`
 
-Unit tests for the `CalcLinePos` function.
-Note that the `CalcLinePos` function does not account well for the case where the line follows a cell border.
+Unit tests for the `_calc_line_pos` function.
+Note that the `_calc_line_pos` function does not account well for the case where the line follows a cell border.
 It is therefore necessary to solve this potential ambiguity before calling the function.
-As a result, a small increment (`1e-5`) is added or removed to the input in order to make sure that the input coordinates do not correspond to a cell border.
+As a result, a small increment (`1e-8`) is added or removed to the input in order to make sure that the input coordinates do not correspond to a cell border.
 
 For each case, some tests are present to check that the results do not depend on the order where the line vertices are given to the function.
 
@@ -220,12 +220,9 @@ For each case, some tests are present to check that the results do not depend on
 | BP-CL-5   | Testing with an arbitrary line in the XZ plane. Results were obtained with a drawing. |
 | BP-CL-6   | Testing the edge case where the line is a point.                                      |
 
-### `DecomposeVectorRectangle`
+### `_decompose_vector_rectangle`
 
-Unit tests for the `DecomposeVectorRectangle` function.
-Note that the `DecomposeVectorRectangle` function does not account for the case where the rectangle follows a cell border.
-It is therefore necessary to solve this potential ambiguity before calling the function.
-As a result, a small increment (`1e-12`) is sometimes added or removed to the input in order to make sure that the input coordinates do not correspond to a cell border.
+Unit tests for the `_decompose_vector_rectangle` function.
 
 | Test name | Description of the unit test                                                        |
 | --------- | ----------------------------------------------------------------------------------- |
@@ -235,11 +232,9 @@ As a result, a small increment (`1e-12`) is sometimes added or removed to the in
 | BP-DVR-4  | Testing the edge case where the rectangle is a line. No decomposition can be made.  |
 | BP-DVR-5  | Testing the edge case where the rectangle is a point. No decomposition can be made. |
 
-### `DecomposeVectorTriangle`
+### `_decompose_vector_triangle`
 
-Unit tests for the `DecomposeVectorTriangle` function.
-Note that the `DecomposeVectorTriangle` function does not account for the case where the triangle follows a cell border.
-It is therefore necessary to solve this potential ambiguity before calling the function.
+Unit tests for the `_decompose_vector_triangle` function.
 
 | Test name | Description of the unit test                                                       |
 | --------- | ---------------------------------------------------------------------------------- |
@@ -249,12 +244,12 @@ It is therefore necessary to solve this potential ambiguity before calling the f
 | BP-DVT-4  | Testing the edge case where the triangle is a line. No decomposition can be made.  |
 | BP-DVT-5  | Testing the edge case where the triangle is a point. No decomposition can be made. |
 
-### `CalcRectanglePos`
+### `_calc_rectangle_pos`
 
-Unit tests for the `CalcRectanglePos` function.
-Note that the `CalcRectanglePos` function does not account for the case where the rectangle follows a cell border.
+Unit tests for the `_calc_rectangle_pos` function.
+Note that the `_calc_rectangle_pos` function does not account for the case where the rectangle follows a cell border.
 It is therefore necessary to solve this potential ambiguity before calling the function.
-As a result, a small increment (`1e-5`) is added or removed to the input in order to make sure that the input coordinates do not correspond to a cell border.
+As a result, a small increment (`1e-8`) is added or removed to the input in order to make sure that the input coordinates do not correspond to a cell border.
 
 For each case, some tests are present to check that the results do not depend on the order where the rectangle vertices are given to the function.
 
@@ -266,12 +261,12 @@ For each case, some tests are present to check that the results do not depend on
 | BP-CR-4   | Testing the edge case where the rectangle is a line.                       |
 | BP-CR-5   | Testing the edge case where the rectangle is a point.                      |
 
-### `CalcTrianglePos`
+### `_calc_triangle_pos`
 
-Unit tests for the `CalcTrianglePos` function.
-Note that the `CalcTrianglePos` function does not account for the case where the triangle follows a cell border.
+Unit tests for the `_calc_triangle_pos` function.
+Note that the `_calc_triangle_pos` function does not account for the case where the triangle follows a cell border.
 It is therefore necessary to solve this potential ambiguity before calling the function.
-As a result, a small increment (`1e-5`) is added or removed to the input in order to make sure that the input coordinates do not correspond to a cell border.
+As a result, a small increment (between `1e-8` and `1e-3`) is added or removed to the input in order to make sure that the input coordinates do not correspond to a cell border.
 
 For each case, some tests are present to check that the results do not depend on the order where the triangle vertices are given to the function.
 
@@ -283,9 +278,9 @@ For each case, some tests are present to check that the results do not depend on
 | BP-CT-4   | Testing the edge case where the triangle is a line.                       |
 | BP-CT-5   | Testing the edge case where the triangle is a point.                      |
 
-### `IncludeNewBodyPos`
+### `_include_new_body_pos!`
 
-Unit tests for the `IncludeNewBodyPos` function.
+Unit tests for the `_include_new_body_pos!` function.
 
 | Test name | Description of the unit test                                                                       |
 | --------- | -------------------------------------------------------------------------------------------------- |
@@ -302,9 +297,9 @@ Unit tests for the `IncludeNewBodyPos` function.
 | BP-INB-11 | Testing to add a new body position within an existing position on the second bucket layer. |
 | BP-INB-12 | Testing to add a new body position distinct from the two existing positions.               |
 
-### `UpdateBody`
+### `_update_body!`
 
-Unit tests for the `UpdateBody` function.
+Unit tests for the `_update_body!` function.
 
 | Test name | Description of the unit test                                          |
 | --------- | --------------------------------------------------------------------- |
@@ -313,9 +308,9 @@ Unit tests for the `UpdateBody` function.
 | BP-UB-3   | Testing to add a third arbitrary body wall. The case where two body positions are merged into one is tested. |
 | BP-UB-4   | Testing to add a fourth arbitrary body wall. The case where a new body position is added distinct from the two existing positions is tested. |
 
-### `CalcBucketPos`
+### `_calc_bucket_pos!`
 
-Unit tests for the `CalcBucketPos` function.
+Unit tests for the `_calc_bucket_pos!` function.
 
 | Test name | Description of the unit test                                           |
 | --------- | ---------------------------------------------------------------------- |

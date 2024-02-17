@@ -61,6 +61,67 @@ end
 
 """
 """
+function reset_value_and_test(
+    out::SimOut{B,I,T},
+    terrain_pos::Vector{Vector{I}},
+    body_pos::Vector{Vector{I}},
+    body_soil_pos::Vector{Vector{I}}
+) where {B<:Bool,I<:Int64,T<:Float64}
+
+    # Resetting requested terrain
+    for cell in terrain_pos
+        ii = cell[1]
+        jj = cell[2]
+        out.terrain[ii, jj] = 0.0
+    end
+
+    # Resetting requested body
+    for cell in body_pos
+        ind = cell[1]
+        ii = cell[2]
+        jj = cell[3]
+        out.body[ind][ii, jj] = 0.0
+        out.body[ind+1][ii, jj] = 0.0
+    end
+    dropzeros!(out.body[1])
+    dropzeros!(out.body[2])
+    dropzeros!(out.body[3])
+    dropzeros!(out.body[4])
+
+    # Resetting requested body_soil
+    for cell in body_soil_pos
+        ind = cell[1]
+        ii = cell[2]
+        jj = cell[3]
+        out.body_soil[ind][ii, jj] = 0.0
+        out.body_soil[ind+1][ii, jj] = 0.0
+    end
+    dropzeros!(out.body_soil[1])
+    dropzeros!(out.body_soil[2])
+    dropzeros!(out.body_soil[3])
+    dropzeros!(out.body_soil[4])
+
+    # Checking that everything is properly reset
+    for ii in 1:size(out.terrain, 1)
+        for jj in 1:size(out.terrain, 2)
+            @test (out.terrain[ii, jj] == 0.0)
+        end
+    end
+    @test isempty(nonzeros(out.body[1]))
+    @test isempty(nonzeros(out.body[2]))
+    @test isempty(nonzeros(out.body[3]))
+    @test isempty(nonzeros(out.body[4]))
+    @test isempty(nonzeros(out.body_soil[1]))
+    @test isempty(nonzeros(out.body_soil[2]))
+    @test isempty(nonzeros(out.body_soil[3]))
+    @test isempty(nonzeros(out.body_soil[4]))
+
+    # Resetting body_soil_pos
+    empty!(out.body_soil_pos)
+end
+
+"""
+"""
 function push_body_soil_pos(
     out::SimOut{B,I,T},
     ind::I,
