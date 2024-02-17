@@ -61,6 +61,39 @@ end
 
 """
 """
+function check_height(
+    out::SimOut{B,I,T},
+    ii::I,
+    jj::I,
+    terrain::T,
+    body_soil_1::T,
+    body_soil_2::T,
+    body_soil_3::T,
+    body_soil_4::T
+) where {B<:Bool,I<:Int64,T<:Float64}
+
+    # Checking terrain
+    if (!isnan(terrain))
+        @test (out.terrain[ii, jj] ≈ terrain)
+    end
+
+    # Checking body_soil
+    if (!isnan(body_soil_1))
+        @test (out.body_soil[1][ii, jj] ≈ body_soil_1)
+    end
+    if (!isnan(body_soil_2))
+        @test (out.body_soil[2][ii, jj] ≈ body_soil_2)
+    end
+    if (!isnan(body_soil_3))
+        @test (out.body_soil[3][ii, jj] ≈ body_soil_3)
+    end
+    if (!isnan(body_soil_4))
+        @test (out.body_soil[4][ii, jj] ≈ body_soil_4)
+    end
+end
+
+"""
+"""
 function reset_value_and_test(
     out::SimOut{B,I,T},
     terrain_pos::Vector{Vector{I}},
