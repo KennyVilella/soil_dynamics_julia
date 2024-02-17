@@ -166,3 +166,24 @@ function push_body_soil_pos(
 
     push!(out.body_soil_pos, BodySoil(ind, ii, jj, pos[1], pos[2], pos[3], h_soil))
 end
+
+"""
+"""
+function check_body_soil_pos(
+    body_soil_pos::BodySoil{I,T},
+    ind::I,
+    ii::I,
+    jj::I,
+    pos::Vector{T},
+    h_soil::T
+) where {B<:Bool,I<:Int64,T<:Float64}
+
+    # Checking the body soil position
+    @test (body_soil_pos.ind[1] == ind)
+    @test (body_soil_pos.ii[1] == ii)
+    @test (body_soil_pos.jj[1] == jj)
+    @test (body_soil_pos.x_b[1] ≈ pos[1])
+    @test (body_soil_pos.y_b[1] ≈ pos[2])
+    @test (body_soil_pos.z_b[1] ≈ pos[3])
+    @test (body_soil_pos.h_soil[1] ≈ h_soil)
+end
