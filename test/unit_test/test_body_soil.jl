@@ -193,5 +193,223 @@ out = SimOut(terrain, grid)
     # when the implementation change                                                       #
     #======================================================================================#
 
+    # Test: BS-UBS-12
+    pos = Vector{Float64}([0.0, 0.0, 0.0])
+    ori = angle_to_quat(0.0, pi / 2, 0.0, :ZYX)
+    set_height(out, 11, 11, NaN, 0.0, 0.1, 0.1, 0.15, NaN, NaN, NaN, NaN)
+    push_body_soil_pos(out, 1, 11, 11, [0.0, 0.0, 0.0], 0.05)
+    _update_body_soil!(out, pos, ori, grid, bucket)
+    check_height(out, 11, 11, NaN, 0.0, 0.0, NaN, NaN)
+    @test (isempty(out.body_soil_pos))
+    _reset_bucket_pose(bucket)
+    reset_value_and_test(out, Vector{Vector{Int64}}(),  [[1, 11, 11]], [[1, 11, 11]])
 
+    # Test: BS-UBS-13
+    pos = Vector{Float64}([0.0, 0.0, 0.0])
+    ori = angle_to_quat(0.0, pi / 2, 0.0, :ZYX)
+    set_height(out, 11, 11, NaN, 0.0, 0.1, 0.1, 0.195, NaN, NaN, NaN, NaN)
+    push_body_soil_pos(out, 1, 11, 11, [0.0, 0.0, 0.0], 0.095)
+    _update_body_soil!(out, pos, ori, grid, bucket)
+    check_height(out, 11, 11, NaN, 0.1, 0.2, NaN, NaN)
+    check_body_soil_pos(out.body_soil_pos[1], 1, 11, 11, [0.0, 0.0, 0.0], 0.1)
+    _reset_bucket_pose(bucket)
+    reset_value_and_test(out, Vector{Vector{Int64}}(),  [[1, 11, 11]], [[1, 11, 11]])
+
+    # Test: BS-UBS-14
+    pos = Vector{Float64}([cell_size_xy, 0.01, 0.0])
+    ori = Quaternion([1.0, 0.0, 0.0, 0.0])
+    out.body[1][11:13, 10:12] .= 0.0
+    out.body[2][11:13, 10:12] .= 0.1
+    set_height(out, 11, 11, NaN, NaN, NaN, 0.1, 0.2, NaN, NaN, NaN, NaN)
+    push_body_soil_pos(out, 1, 11, 11, [0.0, 0.0, 0.0], 0.1)
+    _update_body_soil!(out, pos, ori, grid, bucket)
+    check_height(out, 12, 11, NaN, 0.1, 0.2, NaN, NaN)
+    check_body_soil_pos(out.body_soil_pos[1], 1, 12, 11, [0.0, 0.0, 0.0], 0.1)
+    _reset_bucket_pose(bucket)
+    # Testing for second direction
+    set_height(out, 12, 11, NaN, 0.2, 0.3, 0.0, 0.0, NaN, NaN, NaN, NaN)
+    set_height(out, 11, 11, NaN, NaN, NaN, 0.1, 0.2, NaN, NaN, NaN, NaN)
+    out.body_soil_pos[1].ii[1] = 11
+    _update_body_soil!(out, pos, ori, grid, bucket)
+    check_height(out, 13, 11, NaN, 0.1, 0.2, NaN, NaN)
+    check_body_soil_pos(out.body_soil_pos[1], 1, 13, 11, [0.0, 0.0, 0.0], 0.1)
+    _reset_bucket_pose(bucket)
+    # Testing for third direction
+    set_height(out, 13, 11, NaN, 0.2, 0.3, 0.0, 0.0, NaN, NaN, NaN, NaN)
+    set_height(out, 11, 11, NaN, NaN, NaN, 0.1, 0.2, NaN, NaN, NaN, NaN)
+    out.body_soil_pos[1].ii[1] = 11
+    _update_body_soil!(out, pos, ori, grid, bucket)
+    check_height(out, 13, 12, NaN, 0.1, 0.2, NaN, NaN)
+    check_body_soil_pos(out.body_soil_pos[1], 1, 13, 12, [0.0, 0.0, 0.0], 0.1)
+    _reset_bucket_pose(bucket)
+    # Testing for fouth direction
+    set_height(out, 13, 12, NaN, 0.2, 0.3, 0.0, 0.0, NaN, NaN, NaN, NaN)
+    set_height(out, 11, 11, NaN, NaN, NaN, 0.1, 0.2, NaN, NaN, NaN, NaN)
+    out.body_soil_pos[1].ii[1] = 11
+    out.body_soil_pos[1].jj[1] = 11
+    _update_body_soil!(out, pos, ori, grid, bucket)
+    check_height(out, 12, 12, NaN, 0.1, 0.2, NaN, NaN)
+    check_body_soil_pos(out.body_soil_pos[1], 1, 12, 12, [0.0, 0.0, 0.0], 0.1)
+    _reset_bucket_pose(bucket)
+    # Testing for fifth direction
+    set_height(out, 12, 12, NaN, 0.2, 0.3, 0.0, 0.0, NaN, NaN, NaN, NaN)
+    set_height(out, 11, 11, NaN, NaN, NaN, 0.1, 0.2, NaN, NaN, NaN, NaN)
+    out.body_soil_pos[1].ii[1] = 11
+    out.body_soil_pos[1].jj[1] = 11
+    _update_body_soil!(out, pos, ori, grid, bucket)
+    check_height(out, 13, 10, NaN, 0.1, 0.2, NaN, NaN)
+    check_body_soil_pos(out.body_soil_pos[1], 1, 13, 10, [0.0, 0.0, 0.0], 0.1)
+    _reset_bucket_pose(bucket)
+    # Testing for sixth direction
+    set_height(out, 13, 10, NaN, 0.2, 0.3, 0.0, 0.0, NaN, NaN, NaN, NaN)
+    set_height(out, 11, 11, NaN, NaN, NaN, 0.1, 0.2, NaN, NaN, NaN, NaN)
+    out.body_soil_pos[1].ii[1] = 11
+    out.body_soil_pos[1].jj[1] = 11
+    _update_body_soil!(out, pos, ori, grid, bucket)
+    check_height(out, 12, 10, NaN, 0.1, 0.2, NaN, NaN)
+    check_body_soil_pos(out.body_soil_pos[1], 1, 12, 10, [0.0, 0.0, 0.0], 0.1)
+    _reset_bucket_pose(bucket)
+    # Testing for seventh direction
+    set_height(out, 12, 10, NaN, 0.2, 0.3, 0.0, 0.0, NaN, NaN, NaN, NaN)
+    set_height(out, 11, 11, NaN, NaN, NaN, 0.1, 0.2, NaN, NaN, NaN, NaN)
+    out.body_soil_pos[1].ii[1] = 11
+    out.body_soil_pos[1].jj[1] = 11
+    _update_body_soil!(out, pos, ori, grid, bucket)
+    check_height(out, 11, 12, NaN, 0.1, 0.2, NaN, NaN)
+    check_body_soil_pos(out.body_soil_pos[1], 1, 11, 12, [0.0, 0.0, 0.0], 0.1)
+    _reset_bucket_pose(bucket)
+    # Testing for eighth direction
+    set_height(out, 11, 12, NaN, 0.2, 0.3, 0.0, 0.0, NaN, NaN, NaN, NaN)
+    set_height(out, 11, 11, NaN, NaN, NaN, 0.1, 0.2, NaN, NaN, NaN, NaN)
+    out.body_soil_pos[1].jj[1] = 11
+    _update_body_soil!(out, pos, ori, grid, bucket)
+    check_height(out, 11, 11, NaN, 0.1, 0.2, NaN, NaN)
+    check_body_soil_pos(out.body_soil_pos[1], 1, 11, 11, [0.0, 0.0, 0.0], 0.1)
+    _reset_bucket_pose(bucket)
+    # Testing for ninth direction
+    set_height(out, 11, 11, NaN, 0.2, 0.3, 0.1, 0.2, NaN, NaN, NaN, NaN)
+    _update_body_soil!(out, pos, ori, grid, bucket)
+    check_height(out, 11, 10, NaN, 0.1, 0.2, NaN, NaN)
+    check_body_soil_pos(out.body_soil_pos[1], 1, 11, 10, [0.0, 0.0, 0.0], 0.1)
+    _reset_bucket_pose(bucket)
+    body_pos = [
+        [1, 11, 10], [1, 11, 11], [1, 11, 12], [1, 12, 10], [1, 12, 11],
+        [1, 12, 12], [1, 13, 10], [1, 13, 11], [1, 13, 12]]
+    reset_value_and_test(out, Vector{Vector{Int64}}(),  body_pos, [[1, 11, 10]])
+
+    # Test: BS-UBS-15
+    pos = Vector{Float64}([-0.01, -cell_size_xy, 0.0])
+    ori = Quaternion([1.0, 0.0, 0.0, 0.0])
+    out.body[1][10:12, 9:11] .= 0.0
+    out.body[2][10:12, 9:11] .= 0.1
+    set_height(out, 11, 11, NaN, NaN, NaN, 0.1, 0.2, NaN, NaN, NaN, NaN)
+    push_body_soil_pos(out, 1, 11, 11, [0.0, 0.0, 0.0], 0.1)
+    _update_body_soil!(out, pos, ori, grid, bucket)
+    check_height(out, 11, 10, NaN, 0.1, 0.2, NaN, NaN)
+    check_body_soil_pos(out.body_soil_pos[1], 1, 11, 10, [0.0, 0.0, 0.0], 0.1)
+    _reset_bucket_pose(bucket)
+    # Testing for second direction
+    set_height(out, 11, 10, NaN, 0.2, 0.3, 0.0, 0.0, NaN, NaN, NaN, NaN)
+    set_height(out, 11, 11, NaN, NaN, NaN, 0.1, 0.2, NaN, NaN, NaN, NaN)
+    out.body_soil_pos[1].jj[1] = 11
+    _update_body_soil!(out, pos, ori, grid, bucket)
+    check_height(out, 11, 9, NaN, 0.1, 0.2, NaN, NaN)
+    check_body_soil_pos(out.body_soil_pos[1], 1, 11, 9, [0.0, 0.0, 0.0], 0.1)
+    _reset_bucket_pose(bucket)
+    # Testing for third direction
+    set_height(out, 11, 9, NaN, 0.2, 0.3, 0.0, 0.0, NaN, NaN, NaN, NaN)
+    set_height(out, 11, 11, NaN, NaN, NaN, 0.1, 0.2, NaN, NaN, NaN, NaN)
+    out.body_soil_pos[1].jj[1] = 11
+    _update_body_soil!(out, pos, ori, grid, bucket)
+    check_height(out, 10, 9, NaN, 0.1, 0.2, NaN, NaN)
+    check_body_soil_pos(out.body_soil_pos[1], 1, 10, 9, [0.0, 0.0, 0.0], 0.1)
+    _reset_bucket_pose(bucket)
+    # Testing for fouth direction
+    set_height(out, 10, 9, NaN, 0.2, 0.3, 0.0, 0.0, NaN, NaN, NaN, NaN)
+    set_height(out, 11, 11, NaN, NaN, NaN, 0.1, 0.2, NaN, NaN, NaN, NaN)
+    out.body_soil_pos[1].ii[1] = 11
+    out.body_soil_pos[1].jj[1] = 11
+    _update_body_soil!(out, pos, ori, grid, bucket)
+    check_height(out, 10, 10, NaN, 0.1, 0.2, NaN, NaN)
+    check_body_soil_pos(out.body_soil_pos[1], 1, 10, 10, [0.0, 0.0, 0.0], 0.1)
+    _reset_bucket_pose(bucket)
+    # Testing for fifth direction
+    set_height(out, 10, 10, NaN, 0.2, 0.3, 0.0, 0.0, NaN, NaN, NaN, NaN)
+    set_height(out, 11, 11, NaN, NaN, NaN, 0.1, 0.2, NaN, NaN, NaN, NaN)
+    out.body_soil_pos[1].ii[1] = 11
+    out.body_soil_pos[1].jj[1] = 11
+    _update_body_soil!(out, pos, ori, grid, bucket)
+    check_height(out, 12, 9, NaN, 0.1, 0.2, NaN, NaN)
+    check_body_soil_pos(out.body_soil_pos[1], 1, 12, 9, [0.0, 0.0, 0.0], 0.1)
+    _reset_bucket_pose(bucket)
+    # Testing for sixth direction
+    set_height(out, 12, 9, NaN, 0.2, 0.3, 0.0, 0.0, NaN, NaN, NaN, NaN)
+    set_height(out, 11, 11, NaN, NaN, NaN, 0.1, 0.2, NaN, NaN, NaN, NaN)
+    out.body_soil_pos[1].ii[1] = 11
+    out.body_soil_pos[1].jj[1] = 11
+    _update_body_soil!(out, pos, ori, grid, bucket)
+    check_height(out, 12, 10, NaN, 0.1, 0.2, NaN, NaN)
+    check_body_soil_pos(out.body_soil_pos[1], 1, 12, 10, [0.0, 0.0, 0.0], 0.1)
+    _reset_bucket_pose(bucket)
+    # Testing for seventh direction
+    set_height(out, 12, 10, NaN, 0.2, 0.3, 0.0, 0.0, NaN, NaN, NaN, NaN)
+    set_height(out, 11, 11, NaN, NaN, NaN, 0.1, 0.2, NaN, NaN, NaN, NaN)
+    out.body_soil_pos[1].ii[1] = 11
+    out.body_soil_pos[1].jj[1] = 11
+    _update_body_soil!(out, pos, ori, grid, bucket)
+    check_height(out, 10, 11, NaN, 0.1, 0.2, NaN, NaN)
+    check_body_soil_pos(out.body_soil_pos[1], 1, 10, 11, [0.0, 0.0, 0.0], 0.1)
+    _reset_bucket_pose(bucket)
+    # Testing for eighth direction
+    set_height(out, 10, 11, NaN, 0.2, 0.3, 0.0, 0.0, NaN, NaN, NaN, NaN)
+    set_height(out, 11, 11, NaN, NaN, NaN, 0.1, 0.2, NaN, NaN, NaN, NaN)
+    out.body_soil_pos[1].ii[1] = 11
+    _update_body_soil!(out, pos, ori, grid, bucket)
+    check_height(out, 11, 11, NaN, 0.1, 0.2, NaN, NaN)
+    check_body_soil_pos(out.body_soil_pos[1], 1, 11, 11, [0.0, 0.0, 0.0], 0.1)
+    _reset_bucket_pose(bucket)
+    # Testing for ninth direction
+    set_height(out, 11, 11, NaN, 0.2, 0.3, 0.1, 0.2, NaN, NaN, NaN, NaN)
+    _update_body_soil!(out, pos, ori, grid, bucket)
+    check_height(out, 12, 11, NaN, 0.1, 0.2, NaN, NaN)
+    check_body_soil_pos(out.body_soil_pos[1], 1, 12, 11, [0.0, 0.0, 0.0], 0.1)
+    _reset_bucket_pose(bucket)
+    body_pos = [
+        [1, 10, 9], [1, 10, 10], [1, 10, 11], [1, 11, 9], [1, 11, 10],
+        [1, 11, 11], [1, 12, 9], [1, 12, 10], [1, 12, 11]]
+    reset_value_and_test(out, Vector{Vector{Int64}}(),  body_pos, [[1, 12, 11]])
+
+    # Test: BS-UBS-16
+    pos = Vector{Float64}([cell_size_xy, 0.01, 0.0])
+    ori = Quaternion([1.0, 0.0, 0.0, 0.0])
+    out.body[1][11:13, 10:12] .= 0.2
+    out.body[2][11:13, 10:12] .= 0.3
+    set_height(out, 11, 11, NaN, NaN, NaN, 0.1, 0.2, NaN, NaN, NaN, NaN)
+    set_height(out, 11, 10, NaN, 0.0, 0.1, NaN, NaN, NaN, NaN, NaN, NaN)
+    push_body_soil_pos(out, 1, 11, 11, [0.0, 0.0, 0.0], 0.1)
+    _update_body_soil!(out, pos, ori, grid, bucket)
+    check_height(out, 11, 10, NaN, 0.1, 0.2, NaN, NaN)
+    check_body_soil_pos(out.body_soil_pos[1], 1, 11, 10, [0.0, 0.0, 0.0], 0.1)
+    _reset_bucket_pose(bucket)
+    body_pos = [
+        [1, 11, 10], [1, 11, 11], [1, 11, 12], [1, 12, 10], [1, 12, 11],
+        [1, 12, 12], [1, 13, 10], [1, 13, 11], [1, 13, 12]]
+    reset_value_and_test(out, Vector{Vector{Int64}}(),  body_pos, [[1, 11, 10]])
+
+    # Test: BS-UBS-17
+    pos = Vector{Float64}([cell_size_xy, 0.01, 0.0])
+    ori = Quaternion([1.0, 0.0, 0.0, 0.0])
+    out.body[1][11:13, 10:12] .= 0.2
+    out.body[2][11:13, 10:12] .= 0.3
+    set_height(out, 11, 11, NaN, NaN, NaN, 0.1, 0.2, NaN, NaN, NaN, NaN)
+    set_height(out, 12, 10, NaN, -0.2, -0.1, NaN, NaN, NaN, NaN, NaN, NaN)
+    push_body_soil_pos(out, 1, 11, 11, [0.0, 0.0, 0.0], 0.1)
+    _update_body_soil!(out, pos, ori, grid, bucket)
+    check_height(out, 12, 10, NaN, -0.1, 0.0, NaN, NaN)
+    check_body_soil_pos(out.body_soil_pos[1], 1, 12, 10, [0.0, 0.0, 0.0], 0.1)
+    _reset_bucket_pose(bucket)
+    body_pos = [
+        [1, 11, 10], [1, 11, 11], [1, 11, 12], [1, 12, 10], [1, 12, 11],
+        [1, 12, 12], [1, 13, 10], [1, 13, 11], [1, 13, 12]]
+    reset_value_and_test(out, Vector{Vector{Int64}}(),  body_pos, [[1, 12, 10]])
 end
