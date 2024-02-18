@@ -317,3 +317,31 @@ Unit tests for the `_calc_bucket_pos!` function.
 | BP-CB-1   | Testing for a simple flat bucket in the XZ plane.                      |
 | BP-CB-2   | Testing for a simple flat bucket in the XY plane.                      |
 | BP-CB-3   | Testing for an arbitrary bucket. Results were obtained with a drawing. |
+
+### `_update_body_soil!`
+
+Unit tests for the `_update_body_soil!` function.
+The tests are separated into two categories:
+
+* Unit tests 1 - 11 are base tests.
+* Unit tests 12 - 17 are implementation specific and may need modification when changing the algorithm.
+
+| Test name | Description of the unit test                                           |
+| --------- | ---------------------------------------------------------------------- |
+| BS-UBS-1  | Testing for a one cell translation following the X axis when `body` and `body_soil` are on the first body layer. |
+| BS-UBS-2  | Testing for a one cell translation following the X axis when `body` and `body_soil` are on the first and second body layer, respectively. |
+| BS-UBS-3  | Testing for a one cell translation following the X axis when `body` and `body_soil` are on the second and first body layer, respectively. |
+| BS-UBS-4  | Testing for a one cell translation following the X axis when `body` and `body_soil` are on the second body layer. |
+| BS-UBS-5  | Testing for a pi/2 rotation around the Z axis when `body` and `body_soil` are on the first body layer. |
+| BS-UBS-6  | Testing for a pi/4 rotation around the Z axis when `body` and `body_soil` are on the first body layer. |
+| BS-UBS-7  | Testing for a one cell translation following the X axis combined to a pi/4 rotation around the Z axis when `body` and `body_soil` are on the first body layer. |
+| BS-UBS-8  | Testing for a pi rotation around the X and Z axis when `body_soil` is on the first body layer. Soil is avalanching to the `terrain`. Checking that a warning is issued. |
+| BS-UBS-9  | Testing for a pi/2 rotation around the Y axis when `body` and two `body_soil` are on the first body layer. The two `body_soil` are avalanching to the same position. |
+| BS-UBS-10 | Testing for a pi/2 rotation around the Y axis when `body` and one `body_soil` are on the first body layer, while a second `body_soil` is on the second body layer. The two `body_soil` are avalanching to the same position. |
+| BS-UBS-11 | Testing for a pi/2 rotation around the Y axis when `body` and one `body_soil` are on the second body layer, while a second `body_soil` is on the first body layer. The two `body_soil` are avalanching to the same position. |
+| BS-UBS-12 | Testing that soil column shorter than `cell_size_z` is not moved. `body` and `body_soil` are on the first body layer. No movement is applied. |
+| BS-UBS-13 | Testing that `h_soil` is properly rounded. `body` and `body_soil` are on the first body layer. No movement is applied. |
+| BS-UBS-14 | Testing that the direction in which the neighbouring cells are investigated is correct. To do so, the neighbouring cells are blocked one by one until all the neighbouring cells are investigated. `body` and `body_soil` are on the first body layer. A one cell translation following the X axis is applied. |
+| BS-UBS-15 | Testing that the direction in which the neighbouring cells are investigated is correct. To do so, the neighbouring cells are blocked one by one until all the neighbouring cells are investigated. `body` and `body_soil` are on the first body layer. A one cell translation following the -Y axis is applied. |
+| BS-UBS-16 | Testing that soil is moved to a neighbouring cell if vertical distance is low enough. `body` and `body_soil` are on the first body layer. A one cell translation following the X axis is applied. |
+| BS-UBS-17 | The same as BS-UBS-16 except that the new body location is lower than the previous location. |
