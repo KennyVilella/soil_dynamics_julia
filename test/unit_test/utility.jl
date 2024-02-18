@@ -61,6 +61,39 @@ end
 
 """
 """
+function check_height(
+    out::SimOut{B,I,T},
+    ii::I,
+    jj::I,
+    terrain::T,
+    body_soil_1::T,
+    body_soil_2::T,
+    body_soil_3::T,
+    body_soil_4::T
+) where {B<:Bool,I<:Int64,T<:Float64}
+
+    # Checking terrain
+    if (!isnan(terrain))
+        @test (out.terrain[ii, jj] ≈ terrain)
+    end
+
+    # Checking body_soil
+    if (!isnan(body_soil_1))
+        @test (out.body_soil[1][ii, jj] ≈ body_soil_1)
+    end
+    if (!isnan(body_soil_2))
+        @test (out.body_soil[2][ii, jj] ≈ body_soil_2)
+    end
+    if (!isnan(body_soil_3))
+        @test (out.body_soil[3][ii, jj] ≈ body_soil_3)
+    end
+    if (!isnan(body_soil_4))
+        @test (out.body_soil[4][ii, jj] ≈ body_soil_4)
+    end
+end
+
+"""
+"""
 function reset_value_and_test(
     out::SimOut{B,I,T},
     terrain_pos::Vector{Vector{I}},
@@ -132,4 +165,25 @@ function push_body_soil_pos(
 ) where {B<:Bool,I<:Int64,T<:Float64}
 
     push!(out.body_soil_pos, BodySoil(ind, ii, jj, pos[1], pos[2], pos[3], h_soil))
+end
+
+"""
+"""
+function check_body_soil_pos(
+    body_soil_pos::BodySoil{I,T},
+    ind::I,
+    ii::I,
+    jj::I,
+    pos::Vector{T},
+    h_soil::T
+) where {B<:Bool,I<:Int64,T<:Float64}
+
+    # Checking the body soil position
+    @test (body_soil_pos.ind[1] == ind)
+    @test (body_soil_pos.ii[1] == ii)
+    @test (body_soil_pos.jj[1] == jj)
+    @test (body_soil_pos.x_b[1] ≈ pos[1])
+    @test (body_soil_pos.y_b[1] ≈ pos[2])
+    @test (body_soil_pos.z_b[1] ≈ pos[3])
+    @test (body_soil_pos.h_soil[1] ≈ h_soil)
 end
