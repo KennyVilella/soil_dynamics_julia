@@ -14,6 +14,14 @@ cell_size_xy = 0.1
 cell_size_z = 0.1
 grid = GridParam(grid_size_x, grid_size_y, grid_size_z, cell_size_xy, cell_size_z)
 
+# Bucket properties
+o_pos_init = Vector{Float64}([0.0, 0.0, 0.0])
+j_pos_init = Vector{Float64}([0.0, 0.0, 0.0])
+b_pos_init = Vector{Float64}([0.0, 0.0, -0.5])
+t_pos_init = Vector{Float64}([0.7, 0.0, -0.5])
+bucket_width = 0.5
+bucket = BucketParam(o_pos_init, j_pos_init, b_pos_init, t_pos_init, bucket_width)
+
 # Terrain properties
 terrain = zeros(2 * grid.half_length_x + 1, 2 * grid.half_length_y + 1)
 out = SimOut(terrain, grid)
@@ -25,614 +33,319 @@ out = SimOut(terrain, grid)
 #                                                                                          #
 #==========================================================================================#
 @testset "_move_body_soil!" begin
-"""    # Setting dummy bucket
-    out.body[1][10, 15] = 0.3
-    out.body[2][10, 15] = 0.7
-    out.body[3][10, 15] = -0.2
-    out.body[4][10, 15] = 0.0
-    out.body_soil[1][10, 15] = 0.7
-    out.body_soil[2][10, 15] = 0.9
-    out.body_soil[3][10, 15] = 0.0
-    out.body_soil[4][10, 15] = 0.9
+    # Creating a lambda function to set the initial state
+    function set_init_state!(out, grid ,bucket)
+        # Calculating soil position on the bucket
+        pos1 = _calc_bucket_frame_pos(10, 15, 0.7, grid, bucket)
+        pos3 = _calc_bucket_frame_pos(10, 15, 0.0, grid, bucket)
 
-    # Testing when soil is avalanching on the terrain
-    push!(out.body_soil_pos, [1; 10; 15])
-    push!(out.body_soil_pos, [3; 10; 15])
+        # Setting bucket and soil height
+        set_height(out, 10, 15, NaN, 0.3, 0.7, 0.7, 0.9, -0.2, 0.0, 0.0, 0.9)
+        push_body_soil_pos(out, 1, 10, 15, pos1, 0.2)
+        push_body_soil_pos(out, 3, 10, 15, pos3, 0.9)
+    end
+
+    # Test: IC-MBS-1
+    set_init_state!(out, grid, bucket)
     ind, ii, jj, h_soil, wall_presence = _move_body_soil!(
-        out, 3, 10, 15, 0.3, 5, 7, 0.6, false
+        out, 3, 10, 15, 0.3, 5, 7, 0.6, false, grid, bucket
     )
     @test (h_soil == 0.0) && (wall_presence == false)
     @test (out.terrain[5, 7] ≈ 0.6)
-    @test (out.body_soil_pos == [[1; 10; 15], [3; 10; 15]])
-    # Resetting values
-    out.terrain[5, 7] = 0.0
-    empty!(out.body_soil_pos)
+    @test (length(out.body_soil_pos) == 2)
+    reset_value_and_test(
+        out, [[5, 7]], [[1, 10, 15], [3, 10, 15]], [[1, 10, 15], [3, 10, 15]]
+    )
 
-    # Testing when soil is avalanching below the first bucket layer
-    out.body[1][5, 7] = 0.1
-    out.body[2][5, 7] = 0.2
-    push!(out.body_soil_pos, [1; 10; 15])
-    push!(out.body_soil_pos, [3; 10; 15])
+    # Test: IC-MBS-2
+    set_init_state!(out, grid, bucket)
+    set_height(out, 5, 7, NaN, 0.0, 0.3, NaN, NaN, NaN, NaN, NaN, NaN)
     ind, ii, jj, h_soil, wall_presence = _move_body_soil!(
-        out, 3, 10, 15, 0.3, 5, 7, 0.6, false
+        out, 3, 10, 15, 0.3, 5, 7, 0.6, false, grid, bucket
+    )
+    @test (h_soil ≈ 0.6) && (wall_presence == true)
+    @test (length(out.body_soil_pos) == 2)
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(), [[1, 5, 7], [1, 10, 15], [3, 10, 15]],
+        [[1, 10, 15], [3, 10, 15]]
+    )
+
+    # Test: IC-MBS-3
+    set_init_state!(out, grid, bucket)
+    set_height(out, 5, 7, NaN, 0.1, 0.2, NaN, NaN, NaN, NaN, NaN, NaN)
+    ind, ii, jj, h_soil, wall_presence = _move_body_soil!(
+        out, 3, 10, 15, 0.3, 5, 7, 0.6, false, grid, bucket
     )
     @test (h_soil == 0.0) && (wall_presence == false)
     @test (out.terrain[5, 7] ≈ 0.6)
-    @test (out.body_soil_pos == [[1; 10; 15], [3; 10; 15]])
-    # Resetting values
-    out.terrain[5, 7] = 0.0
-    out.body[1][5, 7] = 0.0
-    out.body[2][5, 7] = 0.0
-    empty!(out.body_soil_pos)
-
-    # Testing when the first bucket layer is blocking the movement
-    out.body[1][5, 7] = 0.0
-    out.body[2][5, 7] = 0.3
-    push!(out.body_soil_pos, [1; 10; 15])
-    push!(out.body_soil_pos, [3; 10; 15])
-    ind, ii, jj, h_soil, wall_presence = _move_body_soil!(
-        out, 3, 10, 15, 0.3, 5, 7, 0.6, false
+    @test (length(out.body_soil_pos) == 2)
+    reset_value_and_test(
+        out, [[5, 7]], [[1, 5, 7], [1, 10, 15], [3, 10, 15]], [[1, 10, 15], [3, 10, 15]]
     )
-    @test (h_soil == 0.6) && (wall_presence == true)
-    @test (out.body_soil_pos == [[1; 10; 15], [3; 10; 15]])
-    # Resetting values
-    out.body[1][5, 7] = 0.0
-    out.body[2][5, 7] = 0.0
-    empty!(out.body_soil_pos)
 
-    # Testing when there is a lot of soil on the first bucket layer but soil is still
-    # avalanching on it
-    out.body[1][5, 7] = 0.0
-    out.body[2][5, 7] = 0.1
-    out.body_soil[1][5, 7] = 0.1
-    out.body_soil[2][5, 7] = 0.4
-    push!(out.body_soil_pos, [1; 10; 15])
-    push!(out.body_soil_pos, [3; 10; 15])
-    push!(out.body_soil_pos, [1; 5; 7])
+    # Test: IC-MBS-4
+    set_init_state!(out, grid, bucket)
+    set_height(out, 5, 7, NaN, 0.0, 0.2, NaN, NaN, NaN, NaN, NaN, NaN)
+    posA = _calc_bucket_frame_pos(5, 7, 0.2, grid, bucket)
     ind, ii, jj, h_soil, wall_presence = _move_body_soil!(
-        out, 3, 10, 15, 0.3, 5, 7, 0.6, false
+        out, 3, 10, 15, 0.3, 5, 7, 0.6, false, grid, bucket
     )
     @test (h_soil == 0.0) && (wall_presence == false)
-    @test (out.body_soil[1][5, 7] == 0.1) && (out.body_soil[2][5, 7] ≈ 1.0)
-    @test (out.body_soil_pos == [[1; 10; 15], [3; 10; 15], [1; 5; 7]])
-    # Resetting values
-    out.body[1][5, 7] = 0.0
-    out.body[2][5, 7] = 0.0
-    out.body_soil[1][5, 7] = 0.0
-    out.body_soil[2][5, 7] = 0.0
-    empty!(out.body_soil_pos)
+    check_height(out, 5, 7, NaN, 0.2, 0.8, NaN, NaN)
+    check_body_soil_pos(out.body_soil_pos[3], 1, 5, 7, posA, 0.6)
+    @test (length(out.body_soil_pos) == 3)
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(), [[1, 5, 7], [1, 10, 15], [3, 10, 15]],
+        [[1, 5, 7], [1, 10, 15], [3, 10, 15]]
+    )
 
-    # Testing when the soil is fully avalanching on the first bucket layer
-    out.body[1][5, 7] = 0.0
-    out.body[2][5, 7] = 0.2
-    push!(out.body_soil_pos, [1; 10; 15])
-    push!(out.body_soil_pos, [3; 10; 15])
+    # Test: IC-MBS-5
+    set_init_state!(out, grid, bucket)
+    set_height(out, 5, 7, NaN, 0.0, 0.1, 0.1, 0.4, NaN, NaN, NaN, NaN)
+    posA = _calc_bucket_frame_pos(5, 7, 0.1, grid, bucket)
+    push_body_soil_pos(out, 1, 5, 7, posA, 0.3)
     ind, ii, jj, h_soil, wall_presence = _move_body_soil!(
-        out, 3, 10, 15, 0.3, 5, 7, 0.6, false
+        out, 3, 10, 15, 0.3, 5, 7, 0.6, false, grid, bucket
     )
     @test (h_soil == 0.0) && (wall_presence == false)
-    @test (out.body_soil[1][5, 7] == 0.2) && (out.body_soil[2][5, 7] ≈ 0.8)
-    @test (out.body_soil_pos == [[1; 10; 15], [3; 10; 15], [1; 5; 7]])
-    # Resetting values
-    out.body[1][5, 7] = 0.0
-    out.body[2][5, 7] = 0.0
-    out.body_soil[1][5, 7] = 0.0
-    out.body_soil[2][5, 7] = 0.0
-    empty!(out.body_soil_pos)
-
-    # Testing when the soil is fully avalanching on the first bucket soil layer
-    out.body[1][5, 7] = 0.0
-    out.body[2][5, 7] = 0.1
-    out.body_soil[1][5, 7] = 0.1
-    out.body_soil[2][5, 7] = 0.2
-    push!(out.body_soil_pos, [1; 10; 15])
-    push!(out.body_soil_pos, [3; 10; 15])
-    push!(out.body_soil_pos, [1; 5; 7])
-    ind, ii, jj, h_soil, wall_presence = _move_body_soil!(
-        out, 3, 10, 15, 0.3, 5, 7, 0.6, false
+    check_height(out, 5, 7, NaN, 0.1, 1.0, NaN, NaN)
+    check_body_soil_pos(out.body_soil_pos[4], 1, 5, 7, posA, 0.6)
+    @test (length(out.body_soil_pos) == 4)
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(), [[1, 5, 7], [1, 10, 15], [3, 10, 15]],
+        [[1, 5, 7], [1, 10, 15], [3, 10, 15]]
     )
-    @test (h_soil == 0.0) && (wall_presence == false)
-    @test (out.body_soil[1][5, 7] == 0.1) && (out.body_soil[2][5, 7] ≈ 0.8)
-    @test (out.body_soil_pos == [[1; 10; 15], [3; 10; 15], [1; 5; 7]])
-    # Resetting values
-    out.body[1][5, 7] = 0.0
-    out.body[2][5, 7] = 0.0
-    out.body_soil[1][5, 7] = 0.0
-    out.body_soil[2][5, 7] = 0.0
-    empty!(out.body_soil_pos)
 
-    # Testing when soil is avalanching below the second bucket layer
-    out.body[3][5, 7] = 0.3
-    out.body[4][5, 7] = 0.6
-    push!(out.body_soil_pos, [1; 10; 15])
-    push!(out.body_soil_pos, [3; 10; 15])
+    # Test: IC-MBS-6
+    set_init_state!(out, grid, bucket)
+    set_height(out, 5, 7, NaN, NaN, NaN, NaN, NaN, 0.0, 0.6, 0.6, 0.7)
+    posA = _calc_bucket_frame_pos(5, 7, 0.6, grid, bucket)
+    push_body_soil_pos(out, 3, 5, 7, posA, 0.1)
     ind, ii, jj, h_soil, wall_presence = _move_body_soil!(
-        out, 3, 10, 15, 0.3, 5, 7, 0.6, false
+        out, 3, 10, 15, 0.3, 5, 7, 0.6, false, grid, bucket
+    )
+    @test (h_soil ≈ 0.6) && (wall_presence == true)
+    check_height(out, 5, 7, NaN, NaN, NaN, 0.6, 0.7)
+    @test (length(out.body_soil_pos) == 3)
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(), [[3, 5, 7], [1, 10, 15], [3, 10, 15]],
+        [[3, 5, 7], [1, 10, 15], [3, 10, 15]]
+    )
+
+    # Test: IC-MBS-7
+    set_init_state!(out, grid, bucket)
+    set_height(out, 5, 7, NaN, NaN, NaN, NaN, NaN, 0.3, 0.6, NaN, NaN)
+    ind, ii, jj, h_soil, wall_presence = _move_body_soil!(
+        out, 3, 10, 15, 0.3, 5, 7, 0.6, false, grid, bucket
     )
     @test (h_soil == 0.0) && (wall_presence == false)
     @test (out.terrain[5, 7] ≈ 0.6)
-    @test (out.body_soil_pos == [[1; 10; 15], [3; 10; 15]])
-    # Resetting values
-    out.terrain[5, 7] = 0.0
-    out.body[3][5, 7] = 0.0
-    out.body[4][5, 7] = 0.0
-    empty!(out.body_soil_pos)
-
-    # Testing when the second bucket layer is blocking the movement
-    out.body[3][5, 7] = 0.0
-    out.body[4][5, 7] = 0.6
-    out.body_soil[3][5, 7] = 0.6
-    out.body_soil[4][5, 7] = 0.7
-    push!(out.body_soil_pos, [1; 10; 15])
-    push!(out.body_soil_pos, [3; 10; 15])
-    push!(out.body_soil_pos, [3; 5; 7])
-    ind, ii, jj, h_soil, wall_presence = _move_body_soil!(
-        out, 3, 10, 15, 0.3, 5, 7, 0.6, false
+    @test (length(out.body_soil_pos) == 2)
+    reset_value_and_test(
+        out, [[5, 7]], [[3, 5, 7], [1, 10, 15], [3, 10, 15]], [[1, 10, 15], [3, 10, 15]]
     )
-    @test (h_soil == 0.6) && (wall_presence == true)
-    @test (out.body_soil[3][5, 7] == 0.6) && (out.body_soil[4][5, 7] == 0.7)
-    @test (out.body_soil_pos == [[1; 10; 15], [3; 10; 15], [3; 5; 7]])
-    # Resetting values
-    out.terrain[5, 7] = 0.0
-    out.body[3][5, 7] = 0.0
-    out.body[4][5, 7] = 0.0
-    out.body_soil[3][5, 7] = 0.0
-    out.body_soil[4][5, 7] = 0.0
-    empty!(out.body_soil_pos)
 
-    # Testing when there is a lot of soil on the second bucket layer but soil is still
-    # avalanching on it
-    out.body[3][5, 7] = -0.2
-    out.body[4][5, 7] = 0.0
-    out.body_soil[3][5, 7] = 0.0
-    out.body_soil[4][5, 7] = 0.3
-    push!(out.body_soil_pos, [1; 10; 15])
-    push!(out.body_soil_pos, [3; 10; 15])
-    push!(out.body_soil_pos, [3; 5; 7])
+    # Test: IC-MBS-8
+    set_init_state!(out, grid, bucket)
+    set_height(out, 5, 7, -0.2, NaN, NaN, NaN, NaN, -0.2, 0.0, NaN, NaN)
+    posA = _calc_bucket_frame_pos(5, 7, 0.0, grid, bucket)
     ind, ii, jj, h_soil, wall_presence = _move_body_soil!(
-        out, 3, 10, 15, 0.3, 5, 7, 0.6, false
+        out, 3, 10, 15, 0.3, 5, 7, 0.6, false, grid, bucket
     )
     @test (h_soil == 0.0) && (wall_presence == false)
-    @test (out.body_soil[3][5, 7] == 0.0) && (out.body_soil[4][5, 7] ≈ 0.9)
-    @test (out.body_soil_pos == [[1; 10; 15], [3; 10; 15], [3; 5; 7]])
-    # Resetting values
-    out.terrain[5, 7] = 0.0
-    out.body[3][5, 7] = 0.0
-    out.body[4][5, 7] = 0.0
-    out.body_soil[3][5, 7] = 0.0
-    out.body_soil[4][5, 7] = 0.0
-    empty!(out.body_soil_pos)
+    check_height(out, 5, 7, NaN, NaN, NaN, 0.0, 0.6)
+    @test (length(out.body_soil_pos) == 3)
+    reset_value_and_test(
+        out, [[5, 7]], [[3, 5, 7], [1, 10, 15], [3, 10, 15]],
+        [[3, 5, 7], [1, 10, 15], [3, 10, 15]]
+    )
 
-    # Testing when the soil is fully avalanching on the second bucket layer
-    out.body[3][5, 7] = -0.2
-    out.body[4][5, 7] = 0.0
-    push!(out.body_soil_pos, [1; 10; 15])
-    push!(out.body_soil_pos, [3; 10; 15])
+    # Test: IC-MBS-9
+    set_init_state!(out, grid, bucket)
+    set_height(out, 5, 7, -0.2, NaN, NaN, NaN, NaN, -0.2, 0.0, 0.0, 0.3)
+    posA = _calc_bucket_frame_pos(5, 7, 0.0, grid, bucket)
+    push_body_soil_pos(out, 3, 5, 7, posA, 0.3)
     ind, ii, jj, h_soil, wall_presence = _move_body_soil!(
-        out, 3, 10, 15, 0.3, 5, 7, 0.6, false
+        out, 3, 10, 15, 0.3, 5, 7, 0.6, false, grid, bucket
     )
     @test (h_soil == 0.0) && (wall_presence == false)
-    @test (out.body_soil[3][5, 7] == 0.0) && (out.body_soil[4][5, 7] ≈ 0.6)
-    @test (out.body_soil_pos == [[1; 10; 15], [3; 10; 15], [3; 5; 7]])
-    # Resetting values
-    out.terrain[5, 7] = 0.0
-    out.body[3][5, 7] = 0.0
-    out.body[4][5, 7] = 0.0
-    out.body_soil[3][5, 7] = 0.0
-    out.body_soil[4][5, 7] = 0.0
-    empty!(out.body_soil_pos)
-
-    # Testing when the soil is fully avalanching on the second bucket soil layer
-    out.body[3][5, 7] = -0.2
-    out.body[4][5, 7] = 0.0
-    out.body_soil[3][5, 7] = 0.0
-    out.body_soil[4][5, 7] = 0.2
-    push!(out.body_soil_pos, [1; 10; 15])
-    push!(out.body_soil_pos, [3; 10; 15])
-    push!(out.body_soil_pos, [3; 5; 7])
-    ind, ii, jj, h_soil, wall_presence = _move_body_soil!(
-        out, 3, 10, 15, 0.3, 5, 7, 0.6, false
+    check_height(out, 5, 7, NaN, NaN, NaN, 0.0, 0.9)
+    check_body_soil_pos(out.body_soil_pos[4], 3, 5, 7, posA, 0.6)
+    @test (length(out.body_soil_pos) == 4)
+    reset_value_and_test(
+        out, [[5, 7]], [[3, 5, 7], [1, 10, 15], [3, 10, 15]],
+        [[3, 5, 7], [1, 10, 15], [3, 10, 15]]
     )
-    @test (h_soil == 0.0) && (wall_presence == false)
-    @test (out.body_soil[3][5, 7] == 0.0) && (out.body_soil[4][5, 7] ≈ 0.8)
-    @test (out.body_soil_pos == [[1; 10; 15], [3; 10; 15], [3; 5; 7]])
-    # Resetting values
-    out.terrain[5, 7] = 0.0
-    out.body[3][5, 7] = 0.0
-    out.body[4][5, 7] = 0.0
-    out.body_soil[3][5, 7] = 0.0
-    out.body_soil[4][5, 7] = 0.0
-    empty!(out.body_soil_pos)
 
-    # Testing when there are two bucket layers and soil is fully filling the space (1)
-    out.body[1][5, 7] = 0.0
-    out.body[2][5, 7] = 0.1
-    out.body_soil[1][5, 7] = 0.1
-    out.body_soil[2][5, 7] = 0.2
-    out.body[3][5, 7] = 0.2
-    out.body[4][5, 7] = 0.4
-    push!(out.body_soil_pos, [1; 10; 15])
-    push!(out.body_soil_pos, [3; 10; 15])
-    push!(out.body_soil_pos, [1; 5; 7])
+    # Test: IC-MBS-10
+    set_init_state!(out, grid, bucket)
+    set_height(out, 5, 7, NaN, 0.0, 0.1, 0.1, 0.2, 0.2, 0.4, NaN, NaN)
+    posA = _calc_bucket_frame_pos(5, 7, 0.2, grid, bucket)
+    push_body_soil_pos(out, 1, 5, 7, posA, 0.2)
     ind, ii, jj, h_soil, wall_presence = _move_body_soil!(
-        out, 3, 10, 15, 0.3, 5, 7, 0.6, false
+        out, 3, 10, 15, 0.3, 5, 7, 0.6, false, grid, bucket
     )
-    @test (h_soil == 0.6) && (wall_presence == false)
+    @test (h_soil ≈ 0.6) && (wall_presence == false)
     @test (ind == 1) && (ii == 5) && (jj == 7)
-    @test (out.body_soil[1][5, 7] == 0.1) && (out.body_soil[2][5, 7] == 0.2)
-    @test (out.body_soil_pos == [[1; 10; 15], [3; 10; 15], [1; 5; 7]])
-    # Resetting values
-    out.body[1][5, 7] = 0.0
-    out.body[2][5, 7] = 0.0
-    out.body_soil[1][5, 7] = 0.0
-    out.body_soil[2][5, 7] = 0.0
-    out.body[3][5, 7] = 0.0
-    out.body[4][5, 7] = 0.0
-    empty!(out.body_soil_pos)
-
-    # Testing when there are two bucket layers and soil is fully filling the space (2)
-    out.body[1][5, 7] = 0.6
-    out.body[2][5, 7] = 0.7
-    out.body[3][5, 7] = 0.0
-    out.body[4][5, 7] = 0.1
-    out.body_soil[3][5, 7] = 0.1
-    out.body_soil[4][5, 7] = 0.6
-    push!(out.body_soil_pos, [1; 10; 15])
-    push!(out.body_soil_pos, [3; 10; 15])
-    push!(out.body_soil_pos, [3; 5; 7])
-    ind, ii, jj, h_soil, wall_presence = _move_body_soil!(
-        out, 3, 10, 15, 0.3, 5, 7, 0.6, false
+    check_height(out, 5, 7, NaN, 0.1, 0.2, NaN, NaN)
+    @test (length(out.body_soil_pos) == 3)
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(), [[1, 5, 7], [3, 5, 7], [1, 10, 15], [3, 10, 15]],
+        [[1, 5, 7], [1, 10, 15], [3, 10, 15]]
     )
-    @test (h_soil == 0.6) && (wall_presence == false)
-    @test (ind == 3) && (ii == 5) && (jj == 7)
-    @test (out.body_soil[3][5, 7] == 0.1) && (out.body_soil[4][5, 7] == 0.6)
-    @test (out.body_soil_pos == [[1; 10; 15], [3; 10; 15], [3; 5; 7]])
-    # Resetting values
-    out.body[1][5, 7] = 0.0
-    out.body[2][5, 7] = 0.0
-    out.body[3][5, 7] = 0.0
-    out.body[4][5, 7] = 0.0
-    out.body_soil[3][5, 7] = 0.0
-    out.body_soil[4][5, 7] = 0.0
-    empty!(out.body_soil_pos)
 
-    # Testing when there are two bucket layers and the soil is fully avalanching on the
-    # bucket (1)
-    out.body[1][5, 7] = 0.0
-    out.body[2][5, 7] = 0.2
-    out.body[3][5, 7] = 0.8
-    out.body[4][5, 7] = 0.9
-    push!(out.body_soil_pos, [1; 10; 15])
-    push!(out.body_soil_pos, [3; 10; 15])
+    # Test: IC-MBS-11
+    set_init_state!(out, grid, bucket)
+    set_height(out, 5, 7, NaN, 0.0, 0.2, NaN, NaN, 0.8, 0.9, NaN, NaN)
+    posA = _calc_bucket_frame_pos(5, 7, 0.2, grid, bucket)
     ind, ii, jj, h_soil, wall_presence = _move_body_soil!(
-        out, 3, 10, 15, 0.3, 5, 7, 0.6, false
+        out, 3, 10, 15, 0.3, 5, 7, 0.6, false, grid, bucket
     )
     @test (h_soil == 0.0) && (wall_presence == false)
-    @test (out.body_soil[1][5, 7] == 0.2) && (out.body_soil[2][5, 7] ≈ 0.8)
-    @test (out.body_soil_pos == [[1; 10; 15], [3; 10; 15], [1; 5; 7]])
-    # Resetting values
-    out.body[1][5, 7] = 0.0
-    out.body[2][5, 7] = 0.0
-    out.body_soil[1][5, 7] = 0.0
-    out.body_soil[2][5, 7] = 0.0
-    out.body[3][5, 7] = 0.0
-    out.body[4][5, 7] = 0.0
-    empty!(out.body_soil_pos)
-
-    # Testing when there are two bucket layers and the soil is fully avalanching on the
-    # bucket (2)
-    out.body[1][5, 7] = 0.8
-    out.body[2][5, 7] = 0.9
-    out.body[3][5, 7] = -0.1
-    out.body[4][5, 7] = 0.0
-    push!(out.body_soil_pos, [1; 10; 15])
-    push!(out.body_soil_pos, [3; 10; 15])
-    ind, ii, jj, h_soil, wall_presence = _move_body_soil!(
-        out, 3, 10, 15, 0.3, 5, 7, 0.6, false
+    check_height(out, 5, 7, NaN, 0.2, 0.8, NaN, NaN)
+    check_body_soil_pos(out.body_soil_pos[3], 1, 5, 7, posA, 0.6)
+    @test (length(out.body_soil_pos) == 3)
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(), [[1, 5, 7], [3, 5, 7], [1, 10, 15], [3, 10, 15]],
+        [[1, 5, 7], [1, 10, 15], [3, 10, 15]]
     )
-    @test (h_soil == 0.0) && (wall_presence == false)
-    @test (out.body_soil[3][5, 7] == 0.0) && (out.body_soil[4][5, 7] ≈ 0.6)
-    @test (out.body_soil_pos == [[1; 10; 15], [3; 10; 15], [3; 5; 7]])
-    # Resetting values
-    out.body[1][5, 7] = 0.0
-    out.body[2][5, 7] = 0.0
-    out.body[3][5, 7] = 0.0
-    out.body[4][5, 7] = 0.0
-    out.body_soil[3][5, 7] = 0.0
-    out.body_soil[4][5, 7] = 0.0
-    empty!(out.body_soil_pos)
 
-    # Testing when there are two bucket layers and the soil is fully avalanching on the
-    # bucket soil (1)
-    out.body[1][5, 7] = 0.0
-    out.body[2][5, 7] = 0.1
-    out.body_soil[1][5, 7] = 0.1
-    out.body_soil[2][5, 7] = 0.2
-    out.body[3][5, 7] = 0.9
-    out.body[4][5, 7] = 1.0
-    push!(out.body_soil_pos, [1; 10; 15])
-    push!(out.body_soil_pos, [3; 10; 15])
-    push!(out.body_soil_pos, [1; 5; 7])
+    # Test: IC-MBS-12
+    set_init_state!(out, grid, bucket)
+    set_height(out, 5, 7, NaN, 0.0, 0.1, NaN, NaN, 0.4, 0.9, NaN, NaN)
+    posA = _calc_bucket_frame_pos(5, 7, 0.1, grid, bucket)
     ind, ii, jj, h_soil, wall_presence = _move_body_soil!(
-        out, 3, 10, 15, 0.3, 5, 7, 0.6, false
-    )
-    @test (h_soil == 0.0) && (wall_presence == false)
-    @test (out.body_soil[1][5, 7] == 0.1) && (out.body_soil[2][5, 7] ≈ 0.8)
-    @test (out.body_soil_pos == [[1; 10; 15], [3; 10; 15], [1; 5; 7]])
-    # Resetting values
-    out.body[1][5, 7] = 0.0
-    out.body[2][5, 7] = 0.0
-    out.body_soil[1][5, 7] = 0.0
-    out.body_soil[2][5, 7] = 0.0
-    out.body[3][5, 7] = 0.0
-    out.body[4][5, 7] = 0.0
-    empty!(out.body_soil_pos)
-
-    # Testing when there are two bucket layers and the soil is fully avalanching on the
-    # bucket soil (2)
-    out.body[1][5, 7] = 0.8
-    out.body[2][5, 7] = 0.9
-    out.body[3][5, 7] = -0.1
-    out.body[4][5, 7] = 0.0
-    out.body_soil[3][5, 7] = 0.0
-    out.body_soil[4][5, 7] = 0.2
-    push!(out.body_soil_pos, [1; 10; 15])
-    push!(out.body_soil_pos, [3; 10; 15])
-    push!(out.body_soil_pos, [3; 5; 7])
-    ind, ii, jj, h_soil, wall_presence = _move_body_soil!(
-        out, 3, 10, 15, 0.3, 5, 7, 0.6, false
-    )
-    @test (h_soil == 0.0) && (wall_presence == false)
-    @test (out.body_soil[3][5, 7] == 0.0) && (out.body_soil[4][5, 7] ≈ 0.8)
-    @test (out.body_soil_pos == [[1; 10; 15], [3; 10; 15], [3; 5; 7]])
-    # Resetting values
-    out.body[1][5, 7] = 0.0
-    out.body[2][5, 7] = 0.0
-    out.body[3][5, 7] = 0.0
-    out.body[4][5, 7] = 0.0
-    out.body_soil[3][5, 7] = 0.0
-    out.body_soil[4][5, 7] = 0.0
-    empty!(out.body_soil_pos)
-
-    # Testing when there are two bucket layers and the soil is fully avalanching on the
-    # bucket soil (3)
-    out.body[1][5, 7] = 0.0
-    out.body[2][5, 7] = 0.2
-    out.body_soil[1][5, 7] = 0.2
-    out.body_soil[2][5, 7] = 0.3
-    out.body[3][5, 7] = 0.9
-    out.body[4][5, 7] = 1.0
-    push!(out.body_soil_pos, [1; 10; 15])
-    push!(out.body_soil_pos, [3; 10; 15])
-    push!(out.body_soil_pos, [1; 5; 7])
-    ind, ii, jj, h_soil, wall_presence = _move_body_soil!(
-        out, 3, 10, 15, 0.3, 5, 7, 0.6, false
-    )
-    @test (h_soil == 0.0) && (wall_presence == false)
-    @test (out.body_soil[1][5, 7] == 0.2) && (out.body_soil[2][5, 7] ≈ 0.9)
-    @test (out.body_soil_pos == [[1; 10; 15], [3; 10; 15], [1; 5; 7]])
-    # Resetting values
-    out.body[1][5, 7] = 0.0
-    out.body[2][5, 7] = 0.0
-    out.body_soil[1][5, 7] = 0.0
-    out.body_soil[2][5, 7] = 0.0
-    out.body[3][5, 7] = 0.0
-    out.body[4][5, 7] = 0.0
-    empty!(out.body_soil_pos)
-
-    # Testing when there are two bucket layers and the soil is fully avalanching on the
-    # bucket soil (4)
-    out.body[1][5, 7] = 0.9
-    out.body[2][5, 7] = 1.0
-    out.body[3][5, 7] = 0.0
-    out.body[4][5, 7] = 0.1
-    out.body_soil[3][5, 7] = 0.1
-    out.body_soil[4][5, 7] = 0.6
-    push!(out.body_soil_pos, [1; 10; 15])
-    push!(out.body_soil_pos, [3; 10; 15])
-    push!(out.body_soil_pos, [3; 5; 7])
-    ind, ii, jj, h_soil, wall_presence = _move_body_soil!(
-        out, 3, 10, 15, 0.3, 5, 7, 0.1, false
-    )
-    @test (h_soil == 0.0) && (wall_presence == false)
-    @test (out.body_soil[3][5, 7] == 0.1) && (out.body_soil[4][5, 7] ≈ 0.7)
-    @test (out.body_soil_pos == [[1; 10; 15], [3; 10; 15], [3; 5; 7]])
-    # Resetting values
-    out.body[1][5, 7] = 0.0
-    out.body[2][5, 7] = 0.0
-    out.body[3][5, 7] = 0.0
-    out.body[4][5, 7] = 0.0
-    out.body_soil[3][5, 7] = 0.0
-    out.body_soil[4][5, 7] = 0.0
-    empty!(out.body_soil_pos)
-
-    # Testing when there are two bucket layers and the soil is partially avalanching on the
-    # bucket (1)
-    out.body[1][5, 7] = 0.0
-    out.body[2][5, 7] = 0.1
-    out.body[3][5, 7] = 0.4
-    out.body[4][5, 7] = 0.9
-    push!(out.body_soil_pos, [1; 10; 15])
-    push!(out.body_soil_pos, [3; 10; 15])
-    ind, ii, jj, h_soil, wall_presence = _move_body_soil!(
-        out, 3, 10, 15, 0.3, 5, 7, 0.6, false
+        out, 3, 10, 15, 0.3, 5, 7, 0.6, false, grid, bucket
     )
     @test (h_soil ≈ 0.3) && (wall_presence == false)
     @test (ind == 1) && (ii == 5) && (jj == 7)
-    @test (out.body_soil[1][5, 7] == 0.1) && (out.body_soil[2][5, 7] ≈ 0.4)
-    @test (out.body_soil_pos == [[1; 10; 15], [3; 10; 15], [1; 5; 7]])
-    # Resetting values
-    out.body[1][5, 7] = 0.0
-    out.body[2][5, 7] = 0.0
-    out.body_soil[1][5, 7] = 0.0
-    out.body_soil[2][5, 7] = 0.0
-    out.body[3][5, 7] = 0.0
-    out.body[4][5, 7] = 0.0
-    empty!(out.body_soil_pos)
-
-    # Testing when there are two bucket layers and the soil is partially avalanching on the
-    # bucket (2)
-    out.body[1][5, 7] = 0.3
-    out.body[2][5, 7] = 0.9
-    out.body[3][5, 7] = -0.1
-    out.body[4][5, 7] = 0.2
-    push!(out.body_soil_pos, [1; 10; 15])
-    push!(out.body_soil_pos, [3; 10; 15])
-    ind, ii, jj, h_soil, wall_presence = _move_body_soil!(
-        out, 3, 10, 15, 0.3, 5, 7, 0.6, false
+    check_height(out, 5, 7, NaN, 0.1, 0.4, NaN, NaN)
+    check_body_soil_pos(out.body_soil_pos[3], 1, 5, 7, posA, 0.3)
+    @test (length(out.body_soil_pos) == 3)
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(), [[1, 5, 7], [3, 5, 7], [1, 10, 15], [3, 10, 15]],
+        [[1, 5, 7], [1, 10, 15], [3, 10, 15]]
     )
-    @test (h_soil ≈ 0.5) && (wall_presence == false)
-    @test (ind == 3) && (ii == 5) && (jj == 7)
-    @test (out.body_soil[3][5, 7] == 0.2) && (out.body_soil[4][5, 7] ≈ 0.3)
-    @test (out.body_soil_pos == [[1; 10; 15], [3; 10; 15], [3; 5; 7]])
-    # Resetting values
-    out.body[1][5, 7] = 0.0
-    out.body[2][5, 7] = 0.0
-    out.body[3][5, 7] = 0.0
-    out.body[4][5, 7] = 0.0
-    out.body_soil[3][5, 7] = 0.0
-    out.body_soil[4][5, 7] = 0.0
-    empty!(out.body_soil_pos)
 
-    # Testing when there are two bucket layers and the soil is partially avalanching on the
-    # bucket soil (1)
-    out.body[1][5, 7] = 0.0
-    out.body[2][5, 7] = 0.1
-    out.body_soil[1][5, 7] = 0.1
-    out.body_soil[2][5, 7] = 0.2
-    out.body[3][5, 7] = 0.4
-    out.body[4][5, 7] = 0.5
-    push!(out.body_soil_pos, [1; 10; 15])
-    push!(out.body_soil_pos, [3; 10; 15])
-    push!(out.body_soil_pos, [1; 5; 7])
+    # Test: IC-MBS-13
+    set_init_state!(out, grid, bucket)
+    set_height(out, 5, 7, NaN, 0.0, 0.1, 0.1, 0.2, 0.9, 1.0, NaN, NaN)
+    posA = _calc_bucket_frame_pos(5, 7, 0.1, grid, bucket)
+    push_body_soil_pos(out, 1, 5, 7, posA, 0.1)
     ind, ii, jj, h_soil, wall_presence = _move_body_soil!(
-        out, 3, 10, 15, 0.3, 5, 7, 0.6, false
+        out, 3, 10, 15, 0.3, 5, 7, 0.6, false, grid, bucket
+    )
+    @test (h_soil == 0.0) && (wall_presence == false)
+    check_height(out, 5, 7, NaN, 0.1, 0.8, NaN, NaN)
+    check_body_soil_pos(out.body_soil_pos[4], 1, 5, 7, posA, 0.6)
+    @test (length(out.body_soil_pos) == 4)
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(), [[1, 5, 7], [3, 5, 7], [1, 10, 15], [3, 10, 15]],
+        [[1, 5, 7], [1, 10, 15], [3, 10, 15]]
+    )
+
+    # Test: IC-MBS-14
+    set_init_state!(out, grid, bucket)
+    set_height(out, 5, 7, NaN, 0.0, 0.1, 0.1, 0.2, 0.4, 0.5, NaN, NaN)
+    posA = _calc_bucket_frame_pos(5, 7, 0.1, grid, bucket)
+    push_body_soil_pos(out, 1, 5, 7, posA, 0.1)
+    ind, ii, jj, h_soil, wall_presence = _move_body_soil!(
+        out, 3, 10, 15, 0.3, 5, 7, 0.6, false, grid, bucket
     )
     @test (h_soil ≈ 0.4) && (wall_presence == false)
     @test (ind == 1) && (ii == 5) && (jj == 7)
-    @test (out.body_soil[1][5, 7] == 0.1) && (out.body_soil[2][5, 7] ≈ 0.4)
-    @test (out.body_soil_pos == [[1; 10; 15], [3; 10; 15], [1; 5; 7]])
-    # Resetting values
-    out.body[1][5, 7] = 0.0
-    out.body[2][5, 7] = 0.0
-    out.body_soil[1][5, 7] = 0.0
-    out.body_soil[2][5, 7] = 0.0
-    out.body[3][5, 7] = 0.0
-    out.body[4][5, 7] = 0.0
-    empty!(out.body_soil_pos)
+    check_height(out, 5, 7, NaN, 0.1, 0.4, NaN, NaN)
+    check_body_soil_pos(out.body_soil_pos[4], 1, 5, 7, posA, 0.2)
+    @test (length(out.body_soil_pos) == 4)
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(), [[1, 5, 7], [3, 5, 7], [1, 10, 15], [3, 10, 15]],
+        [[1, 5, 7], [1, 10, 15], [3, 10, 15]]
+    )
 
-    # Testing when there are two bucket layers and the soil is partially avalanching on the
-    # bucket soil (2)
-    out.body[1][5, 7] = 0.6
-    out.body[2][5, 7] = 0.9
-    out.body[3][5, 7] = -0.1
-    out.body[4][5, 7] = 0.0
-    out.body_soil[3][5, 7] = 0.0
-    out.body_soil[4][5, 7] = 0.2
-    push!(out.body_soil_pos, [1; 10; 15])
-    push!(out.body_soil_pos, [3; 10; 15])
-    push!(out.body_soil_pos, [3; 5; 7])
+    # Test: IC-MBS-15
+    set_init_state!(out, grid, bucket)
+    set_height(out, 5, 7, NaN, 0.6, 0.7, NaN, NaN, 0.0, 0.1, 0.1, 0.6)
+    posA = _calc_bucket_frame_pos(5, 7, 0.1, grid, bucket)
+    push_body_soil_pos(out, 3, 5, 7, posA, 0.5)
     ind, ii, jj, h_soil, wall_presence = _move_body_soil!(
-        out, 3, 10, 15, 0.3, 5, 7, 0.6, false
+        out, 3, 10, 15, 0.3, 5, 7, 0.6, false, grid, bucket
+    )
+    @test (h_soil ≈ 0.6) && (wall_presence == false)
+    @test (ind == 3) && (ii == 5) && (jj == 7)
+    check_height(out, 5, 7, NaN, NaN, NaN, 0.1, 0.6)
+    @test (length(out.body_soil_pos) == 3)
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(), [[1, 5, 7], [3, 5, 7], [1, 10, 15], [3, 10, 15]],
+        [[3, 5, 7], [1, 10, 15], [3, 10, 15]]
+    )
+
+    # Test: IC-MBS-16
+    set_init_state!(out, grid, bucket)
+    set_height(out, 5, 7, -0.1, 0.8, 0.9, NaN, NaN, -0.1, 0.0, NaN, NaN)
+    posA = _calc_bucket_frame_pos(5, 7, 0.0, grid, bucket)
+    ind, ii, jj, h_soil, wall_presence = _move_body_soil!(
+        out, 3, 10, 15, 0.3, 5, 7, 0.6, false, grid, bucket
+    )
+    @test (h_soil == 0.0) && (wall_presence == false)
+    check_height(out, 5, 7, NaN, NaN, NaN, 0.0, 0.6)
+    check_body_soil_pos(out.body_soil_pos[3], 3, 5, 7, posA, 0.6)
+    @test (length(out.body_soil_pos) == 3)
+    reset_value_and_test(
+        out, [[5, 7]], [[1, 5, 7], [3, 5, 7], [1, 10, 15], [3, 10, 15]],
+        [[3, 5, 7], [1, 10, 15], [3, 10, 15]]
+    )
+
+    # Test: IC-MBS-17
+    set_init_state!(out, grid, bucket)
+    set_height(out, 5, 7, -0.1, 0.3, 0.9, NaN, NaN, -0.1, 0.2, NaN, NaN)
+    posA = _calc_bucket_frame_pos(5, 7, 0.2, grid, bucket)
+    ind, ii, jj, h_soil, wall_presence = _move_body_soil!(
+        out, 3, 10, 15, 0.3, 5, 7, 0.6, false, grid, bucket
+    )
+    @test (h_soil ≈ 0.5) && (wall_presence == false)
+    @test (ind == 3) && (ii == 5) && (jj == 7)
+    check_height(out, 5, 7, NaN, NaN, NaN, 0.2, 0.3)
+    check_body_soil_pos(out.body_soil_pos[3], 3, 5, 7, posA, 0.1)
+    @test (length(out.body_soil_pos) == 3)
+    reset_value_and_test(
+        out, [[5, 7]], [[1, 5, 7], [3, 5, 7], [1, 10, 15], [3, 10, 15]],
+        [[3, 5, 7], [1, 10, 15], [3, 10, 15]]
+    )
+
+    # Test: IC-MBS-18
+    set_init_state!(out, grid, bucket)
+    set_height(out, 5, 7, -0.1, 0.8, 0.9, NaN, NaN, -0.1, 0.0, 0.0, 0.2)
+    posA = _calc_bucket_frame_pos(5, 7, 0.0, grid, bucket)
+    push_body_soil_pos(out, 3, 5, 7, posA, 0.2)
+    ind, ii, jj, h_soil, wall_presence = _move_body_soil!(
+        out, 3, 10, 15, 0.3, 5, 7, 0.6, false, grid, bucket
+    )
+    @test (h_soil == 0.0) && (wall_presence == false)
+    check_height(out, 5, 7, NaN, NaN, NaN, 0.0, 0.8)
+    check_body_soil_pos(out.body_soil_pos[4], 3, 5, 7, posA, 0.6)
+    @test (length(out.body_soil_pos) == 4)
+    reset_value_and_test(
+        out, [[5, 7]], [[1, 5, 7], [3, 5, 7], [1, 10, 15], [3, 10, 15]],
+        [[3, 5, 7], [1, 10, 15], [3, 10, 15]]
+    )
+
+    # Test: IC-MBS-19
+    set_init_state!(out, grid, bucket)
+    set_height(out, 5, 7, -0.1, 0.6, 0.9, NaN, NaN, -0.1, 0.0, 0.0, 0.2)
+    posA = _calc_bucket_frame_pos(5, 7, 0.0, grid, bucket)
+    push_body_soil_pos(out, 3, 5, 7, posA, 0.2)
+    ind, ii, jj, h_soil, wall_presence = _move_body_soil!(
+        out, 3, 10, 15, 0.3, 5, 7, 0.6, false, grid, bucket
     )
     @test (h_soil ≈ 0.2) && (wall_presence == false)
     @test (ind == 3) && (ii == 5) && (jj == 7)
-    @test (out.body_soil[3][5, 7] == 0.0) && (out.body_soil[4][5, 7] ≈ 0.6)
-    @test (out.body_soil_pos == [[1; 10; 15], [3; 10; 15], [3; 5; 7]])
-    # Resetting values
-    out.body[1][5, 7] = 0.0
-    out.body[2][5, 7] = 0.0
-    out.body[3][5, 7] = 0.0
-    out.body[4][5, 7] = 0.0
-    out.body_soil[3][5, 7] = 0.0
-    out.body_soil[4][5, 7] = 0.0
-    empty!(out.body_soil_pos)
-
-    # Testing when there are two bucket layers and the soil is partially avalanching on the
-    # bucket soil (3)
-    out.body[1][5, 7] = 0.0
-    out.body[2][5, 7] = 0.2
-    out.body_soil[1][5, 7] = 0.2
-    out.body_soil[2][5, 7] = 0.3
-    out.body[3][5, 7] = 0.4
-    out.body[4][5, 7] = 0.5
-    push!(out.body_soil_pos, [1; 10; 15])
-    push!(out.body_soil_pos, [3; 10; 15])
-    push!(out.body_soil_pos, [1; 5; 7])
-    ind, ii, jj, h_soil, wall_presence = _move_body_soil!(
-        out, 3, 10, 15, 0.3, 5, 7, 0.3, false
+    check_height(out, 5, 7, NaN, NaN, NaN, 0.0, 0.6)
+    check_body_soil_pos(out.body_soil_pos[4], 3, 5, 7, posA, 0.4)
+    @test (length(out.body_soil_pos) == 4)
+    reset_value_and_test(
+        out, [[5, 7]], [[1, 5, 7], [3, 5, 7], [1, 10, 15], [3, 10, 15]],
+        [[3, 5, 7], [1, 10, 15], [3, 10, 15]]
     )
-    @test (h_soil ≈ 0.2) && (wall_presence == false)
-    @test (ind == 1) && (ii == 5) && (jj == 7)
-    @test (out.body_soil[1][5, 7] == 0.2) && (out.body_soil[2][5, 7] ≈ 0.4)
-    @test (out.body_soil_pos == [[1; 10; 15], [3; 10; 15], [1; 5; 7]])
-    # Resetting values
-    out.body[1][5, 7] = 0.0
-    out.body[2][5, 7] = 0.0
-    out.body_soil[1][5, 7] = 0.0
-    out.body_soil[2][5, 7] = 0.0
-    out.body[3][5, 7] = 0.0
-    out.body[4][5, 7] = 0.0
-    empty!(out.body_soil_pos)
-
-    # Testing when there are two bucket layers and the soil is partially avalanching on the
-    # bucket soil (4)
-    out.body[1][5, 7] = 0.7
-    out.body[2][5, 7] = 0.8
-    out.body[3][5, 7] = 0.0
-    out.body[4][5, 7] = 0.1
-    out.body_soil[3][5, 7] = 0.1
-    out.body_soil[4][5, 7] = 0.6
-    push!(out.body_soil_pos, [1; 10; 15])
-    push!(out.body_soil_pos, [3; 10; 15])
-    push!(out.body_soil_pos, [3; 5; 7])
-    ind, ii, jj, h_soil, wall_presence = _move_body_soil!(
-        out, 3, 10, 15, 0.3, 5, 7, 0.3, false
-    )
-    @test (h_soil ≈ 0.2) && (wall_presence == false)
-    @test (ind == 3) && (ii == 5) && (jj == 7)
-    @test (out.body_soil[3][5, 7] == 0.1) && (out.body_soil[4][5, 7] ≈ 0.7)
-    @test (out.body_soil_pos == [[1; 10; 15], [3; 10; 15], [3; 5; 7]])
-    # Resetting values
-    out.body[1][5, 7] = 0.0
-    out.body[2][5, 7] = 0.0
-    out.body[3][5, 7] = 0.0
-    out.body[4][5, 7] = 0.0
-    out.body_soil[3][5, 7] = 0.0
-    out.body_soil[4][5, 7] = 0.0
-    empty!(out.body_soil_pos)
-
-    # Resetting dummy bucket value
-    out.body[1][10, 15] = 0.0
-    out.body[2][10, 15] = 0.0
-    out.body[3][10, 15] = 0.0
-    out.body[4][10, 15] = 0.0
-    out.body_soil[1][10, 15] = 0.0
-    out.body_soil[2][10, 15] = 0.0
-    out.body_soil[3][10, 15] = 0.0
-    out.body_soil[4][10, 15] = 0.0
-
-    # Removing zeros from Sparse matrices
-    dropzeros!(out.body[1])
-    dropzeros!(out.body[2])
-    dropzeros!(out.body[3])
-    dropzeros!(out.body[4])
-    dropzeros!(out.body_soil[1])
-    dropzeros!(out.body_soil[2])
-    dropzeros!(out.body_soil[3])
-    dropzeros!(out.body_soil[4])
-
-    # Checking that nothing has been unexpectedly modified
-    @test all(out.terrain[:, :] .== 0.0)
-    @test isempty(nonzeros(out.body[1]))
-    @test isempty(nonzeros(out.body[2]))
-    @test isempty(nonzeros(out.body[3]))
-    @test isempty(nonzeros(out.body[4]))
-    @test isempty(nonzeros(out.body_soil[1]))
-    @test isempty(nonzeros(out.body_soil[2]))
-    @test isempty(nonzeros(out.body_soil[3]))
-    @test isempty(nonzeros(out.body_soil[4]))
-"""
 end
 
 @testset "_move_intersecting_body_soil!" begin
