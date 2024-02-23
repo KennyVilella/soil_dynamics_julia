@@ -1408,6 +1408,6067 @@ end
         out, [[13, 15]], body_pos,
         [[1, 10, 15], [3, 10, 15], [1, 11, 15], [1, 12, 15], [3, 12, 15]])
 
+    # Test: IC-MIBS-51
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.0, 0.1, 0.1, 0.2, 0.5, 0.7, 0.7, 0.9)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    posA = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.7, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, posA, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.2)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 11, 15, NaN, 0.1, 0.5, 0.7, 0.9)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 1, 11, 15, posA, 0.3)
+    @test (length(out.body_soil_pos) == 5)
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(), [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15]])
+
+    # Test: IC-MIBS-52
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.0, 0.1, 0.1, 0.2, 0.4, 0.7, 0.7, 0.9)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    posA = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.7, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, posA, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.2)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 11, 15, NaN, 0.1, 0.4, 0.7, 0.9)
+    @test (out.terrain[12, 15] ≈ 0.1)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 1, 11, 15, posA, 0.2)
+    @test (length(out.body_soil_pos) == 5)
+    reset_value_and_test(
+        out, [[12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15]])
+
+    # Test: IC-MIBS-53
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.0, 0.1, 0.1, 0.6, 0.7, 0.8, 0.8, 0.9)
+    set_height(out, 12, 15, 0.1, 0.2, 0.4, NaN, NaN, NaN, NaN, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    posA = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, posA, 0.5)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.1)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 11, 15, NaN, 0.1, 0.7, 0.8, 0.9)
+    @test (out.terrain[12, 15] ≈ 0.3)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 1, 11, 15, posA, 0.1)
+    @test (length(out.body_soil_pos) == 5)
+    reset_value_and_test(
+        out, [[12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15]])
+
+    # Test: IC-MIBS-54
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.0, 0.3, 0.3, 0.4, 0.5, 0.8, 0.8, 0.9)
+    set_height(out, 12, 15, NaN, 0.0, 0.3, NaN, NaN, NaN, NaN, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    posA = _calc_bucket_frame_pos(11, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, posA, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.1)
+    posB = _calc_bucket_frame_pos(12, 15, 0.3, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 11, 15, NaN, 0.3, 0.5, 0.8, 0.9)
+    check_height(out, 12, 15, NaN, 0.3, 0.5, NaN, NaN)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 1, 11, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[6], 1, 12, 15, posB, 0.2)
+    @test (length(out.body_soil_pos) == 6)
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(),
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15]])
+
+    # Test: IC-MIBS-55
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.0, 0.3, 0.3, 0.4, 0.5, 0.8, 0.8, 0.9)
+    set_height(out, 12, 15, NaN, 0.0, 0.3, 0.3, 0.4, NaN, NaN, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    posA = _calc_bucket_frame_pos(11, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, posA, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.1)
+    posB = _calc_bucket_frame_pos(12, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 12, 15, posB, 0.1)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 11, 15, NaN, 0.3, 0.5, 0.8, 0.9)
+    check_height(out, 12, 15, NaN, 0.3, 0.6, NaN, NaN)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[6], 1, 11, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[7], 1, 12, 15, posB, 0.2)
+    @test (length(out.body_soil_pos) == 7)
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(),
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15]])
+
+    # Test: IC-MIBS-56
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.0, 0.3, 0.3, 0.4, 0.5, 0.8, 0.8, 0.9)
+    set_height(out, 12, 15, NaN, 0.3, 0.5, NaN, NaN, NaN, NaN, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    posA = _calc_bucket_frame_pos(11, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, posA, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.1)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 11, 15, NaN, 0.3, 0.5, 0.8, 0.9)
+    @test (out.terrain[10, 16] ≈ 0.2)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 1, 11, 15, posA, 0.1)
+    @test (length(out.body_soil_pos) == 5)
+    reset_value_and_test(
+        out, [[10, 16]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15]])
+
+    # Test: IC-MIBS-57
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.0, 0.1, 0.1, 0.6, 0.7, 0.8, 0.8, 0.9)
+    set_height(out, 12, 15, 0.1, NaN, NaN, NaN, NaN, 0.2, 0.4, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    posA = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, posA, 0.5)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.1)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 11, 15, NaN, 0.1, 0.7, 0.8, 0.9)
+    @test (out.terrain[12, 15] ≈ 0.3)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 1, 11, 15, posA, 0.1)
+    @test (length(out.body_soil_pos) == 5)
+    reset_value_and_test(
+        out, [[12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [3, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15]])
+
+    # Test: IC-MIBS-58
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.0, 0.3, 0.3, 0.4, 0.5, 0.8, 0.8, 0.9)
+    set_height(out, 12, 15, NaN, NaN, NaN, NaN, NaN, 0.0, 0.3, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    posA = _calc_bucket_frame_pos(11, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, posA, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.1)
+    posB = _calc_bucket_frame_pos(12, 15, 0.3, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 11, 15, NaN, 0.3, 0.5, 0.8, 0.9)
+    check_height(out, 12, 15, NaN, NaN, NaN, 0.3, 0.5)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 1, 11, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[6], 3, 12, 15, posB, 0.2)
+    @test (length(out.body_soil_pos) == 6)
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(),
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [3, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [3, 12, 15]])
+
+    # Test: IC-MIBS-59
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.0, 0.3, 0.3, 0.4, 0.5, 0.8, 0.8, 0.9)
+    set_height(out, 12, 15, NaN, NaN, NaN, NaN, NaN, 0.0, 0.3, 0.3, 0.4)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    posA = _calc_bucket_frame_pos(11, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, posA, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.1)
+    posB = _calc_bucket_frame_pos(12, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 3, 12, 15, posB, 0.1)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 11, 15, NaN, 0.3, 0.5, 0.8, 0.9)
+    check_height(out, 12, 15, NaN, NaN, NaN, 0.3, 0.6)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[6], 1, 11, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[7], 3, 12, 15, posB, 0.2)
+    @test (length(out.body_soil_pos) == 7)
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(),
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [3, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [3, 12, 15]])
+
+    # Test: IC-MIBS-60
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.0, 0.3, 0.3, 0.4, 0.5, 0.8, 0.8, 0.9)
+    set_height(out, 12, 15, NaN, NaN, NaN, NaN, NaN, 0.3, 0.5, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    posA = _calc_bucket_frame_pos(11, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, posA, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.1)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 11, 15, NaN, 0.3, 0.5, 0.8, 0.9)
+    @test (out.terrain[10, 16] ≈ 0.2)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 1, 11, 15, posA, 0.1)
+    @test (length(out.body_soil_pos) == 5)
+    reset_value_and_test(
+        out, [[10, 16]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [3, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15]])
+
+    # Test: IC-MIBS-61
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.0, 0.1, 0.1, 0.6, 0.7, 0.8, 0.8, 0.9)
+    set_height(out, 12, 15, NaN, 0.1, 0.4, NaN, NaN, 0.7, 0.9, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    posA = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, posA, 0.5)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.1)
+    posB = _calc_bucket_frame_pos(12, 15, 0.4, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 11, 15, NaN, 0.1, 0.7, 0.8, 0.9)
+    check_height(out, 12, 15, NaN, 0.4, 0.6, NaN, NaN)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 1, 11, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[6], 1, 12, 15, posB, 0.2)
+    @test (length(out.body_soil_pos) == 6)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(), body_pos,
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15]])
+
+    # Test: IC-MIBS-62
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.0, 0.1, 0.1, 0.6, 0.7, 0.8, 0.8, 0.9)
+    set_height(out, 12, 15, NaN, 0.1, 0.4, NaN, NaN, 0.5, 0.9, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    posA = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, posA, 0.5)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.1)
+    posB = _calc_bucket_frame_pos(12, 15, 0.4, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 11, 15, NaN, 0.1, 0.7, 0.8, 0.9)
+    check_height(out, 12, 15, NaN, 0.4, 0.5, NaN, NaN)
+    @test (out.terrain[13, 15] ≈ 0.1)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 1, 11, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[6], 1, 12, 15, posB, 0.1)
+    @test (length(out.body_soil_pos) == 6)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(
+        out, [[13, 15]], body_pos,
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15]])
+
+    # Test: IC-MIBS-63
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.0, 0.1, 0.1, 0.6, 0.7, 0.8, 0.8, 0.9)
+    set_height(out, 12, 15, NaN, 0.1, 0.2, 0.2, 0.3, 0.7, 0.9, 0.9, 1.3)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    posA = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, posA, 0.5)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.1)
+    posB = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(12, 15, 0.9, grid, bucket)
+    push_body_soil_pos(out, 1, 12, 15, posB, 0.1)
+    push_body_soil_pos(out, 3, 12, 15, pos3, 0.4)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 11, 15, NaN, 0.1, 0.7, 0.8, 0.9)
+    check_height(out, 12, 15, NaN, 0.2, 0.5, 0.9, 1.3)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[7], 1, 11, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[8], 1, 12, 15, posB, 0.2)
+    @test (length(out.body_soil_pos) == 8)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    body_soil_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(out, Vector{Vector{Int64}}(), body_pos, body_soil_pos)
+
+    # Test: IC-MIBS-64
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.0, 0.1, 0.1, 0.6, 0.7, 0.8, 0.8, 0.9)
+    set_height(out, 12, 15, NaN, 0.1, 0.2, 0.2, 0.3, 0.4, 0.9, 0.9, 1.3)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    posA = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, posA, 0.5)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.1)
+    posB = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(12, 15, 0.9, grid, bucket)
+    push_body_soil_pos(out, 1, 12, 15, posB, 0.1)
+    push_body_soil_pos(out, 3, 12, 15, pos3, 0.4)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 11, 15, NaN, 0.1, 0.7, 0.8, 0.9)
+    check_height(out, 12, 15, NaN, 0.2, 0.4, 0.9, 1.3)
+    @test (out.terrain[13, 15] ≈ 0.1)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[7], 1, 11, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[8], 1, 12, 15, posB, 0.1)
+    @test (length(out.body_soil_pos) == 8)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    body_soil_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(out, [[13, 15]], body_pos, body_soil_pos)
+
+    # Test: IC-MIBS-65
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.0, 0.1, 0.1, 0.6, 0.7, 0.8, 0.8, 0.9)
+    set_height(out, 12, 15, NaN, 0.1, 0.2, 0.2, 0.4, 0.4, 0.9, 0.9, 1.3)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    posA = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, posA, 0.5)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.1)
+    pos1 = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(12, 15, 0.9, grid, bucket)
+    push_body_soil_pos(out, 1, 12, 15, pos1, 0.2)
+    push_body_soil_pos(out, 3, 12, 15, pos3, 0.4)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 11, 15, NaN, 0.1, 0.7, 0.8, 0.9)
+    @test (out.terrain[13, 15] ≈ 0.2)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[7], 1, 11, 15, posA, 0.1)
+    @test (length(out.body_soil_pos) == 7)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    body_soil_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(out, [[13, 15]], body_pos, body_soil_pos)
+
+    # Test: IC-MIBS-66
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.0, 0.1, 0.1, 0.6, 0.7, 0.8, 0.8, 0.9)
+    set_height(out, 12, 15, NaN, 0.7, 0.9, NaN, NaN, 0.1, 0.4, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    posA = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, posA, 0.5)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.1)
+    posB = _calc_bucket_frame_pos(12, 15, 0.4, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 11, 15, NaN, 0.1, 0.7, 0.8, 0.9)
+    check_height(out, 12, 15, NaN, NaN, NaN, 0.4, 0.6)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 1, 11, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[6], 3, 12, 15, posB, 0.2)
+    @test (length(out.body_soil_pos) == 6)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(), body_pos,
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [3, 12, 15]])
+
+    # Test: IC-MIBS-67
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.0, 0.1, 0.1, 0.6, 0.7, 0.8, 0.8, 0.9)
+    set_height(out, 12, 15, NaN, 0.5, 0.9, NaN, NaN, 0.1, 0.4, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    posA = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, posA, 0.5)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.1)
+    posB = _calc_bucket_frame_pos(12, 15, 0.4, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 11, 15, NaN, 0.1, 0.7, 0.8, 0.9)
+    check_height(out, 12, 15, NaN, NaN, NaN, 0.4, 0.5)
+    @test (out.terrain[13, 15] ≈ 0.1)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 1, 11, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[6], 3, 12, 15, posB, 0.1)
+    @test (length(out.body_soil_pos) == 6)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(
+        out, [[13, 15]], body_pos,
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [3, 12, 15]])
+
+    # Test: IC-MIBS-68
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.0, 0.1, 0.1, 0.6, 0.7, 0.8, 0.8, 0.9)
+    set_height(out, 12, 15, NaN, 0.7, 0.9, 0.9, 1.3, 0.1, 0.2, 0.2, 0.3)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    posA = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, posA, 0.5)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.1)
+    pos1 = _calc_bucket_frame_pos(12, 15, 0.9, grid, bucket)
+    posB = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    push_body_soil_pos(out, 1, 12, 15, pos1, 0.4)
+    push_body_soil_pos(out, 3, 12, 15, posB, 0.1)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 11, 15, NaN, 0.1, 0.7, 0.8, 0.9)
+    check_height(out, 12, 15, NaN, 0.9, 1.3, 0.2, 0.5)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[7], 1, 11, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[8], 3, 12, 15, posB, 0.2)
+    @test (length(out.body_soil_pos) == 8)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    body_soil_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(out, Vector{Vector{Int64}}(), body_pos, body_soil_pos)
+
+    # Test: IC-MIBS-69
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.0, 0.1, 0.1, 0.6, 0.7, 0.8, 0.8, 0.9)
+    set_height(out, 12, 15, NaN, 0.4, 0.9, 0.9, 1.3, 0.1, 0.2, 0.2, 0.3)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    posA = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, posA, 0.5)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.1)
+    pos1 = _calc_bucket_frame_pos(12, 15, 0.9, grid, bucket)
+    posB = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    push_body_soil_pos(out, 1, 12, 15, pos1, 0.4)
+    push_body_soil_pos(out, 3, 12, 15, posB, 0.1)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 11, 15, NaN, 0.1, 0.7, 0.8, 0.9)
+    check_height(out, 12, 15, NaN, 0.9, 1.3, 0.2, 0.4)
+    @test (out.terrain[13, 15] ≈ 0.1)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[7], 1, 11, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[8], 3, 12, 15, posB, 0.1)
+    @test (length(out.body_soil_pos) == 8)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    body_soil_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(out, [[13, 15]], body_pos, body_soil_pos)
+
+    # Test: IC-MIBS-70
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.0, 0.1, 0.1, 0.6, 0.7, 0.8, 0.8, 0.9)
+    set_height(out, 12, 15, NaN, 0.4, 0.9, 0.9, 1.3, 0.1, 0.2, 0.2, 0.4)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    posA = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, posA, 0.5)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.1)
+    pos1 = _calc_bucket_frame_pos(12, 15, 0.9, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    push_body_soil_pos(out, 1, 12, 15, pos1, 0.4)
+    push_body_soil_pos(out, 3, 12, 15, pos3, 0.2)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 11, 15, NaN, 0.1, 0.7, 0.8, 0.9)
+    @test (out.terrain[13, 15] ≈ 0.2)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[7], 1, 11, 15, posA, 0.1)
+    @test (length(out.body_soil_pos) == 7)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    body_soil_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(out, [[13, 15]], body_pos, body_soil_pos)
+
+    # Test: IC-MIBS-71
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.0, 0.1, 0.1, 0.4, 0.4, 0.7, 0.7, 0.9)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.7, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.3)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.2)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    @test (out.terrain[12, 15] ≈ 0.3)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    @test (length(out.body_soil_pos) == 4)
+    reset_value_and_test(
+        out, [[12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15]])
+
+    # Test: IC-MIBS-72
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.0, 0.1, 0.1, 0.7, 0.7, 0.8, 0.8, 0.9)
+    set_height(out, 12, 15, 0.1, 0.2, 0.4, NaN, NaN, NaN, NaN, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.6)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.1)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    @test (out.terrain[12, 15] ≈ 0.4)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    @test (length(out.body_soil_pos) == 4)
+    reset_value_and_test(
+        out, [[12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15]])
+
+    # Test: IC-MIBS-73
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.0, 0.3, 0.3, 0.5, 0.5, 0.8, 0.8, 0.9)
+    set_height(out, 12, 15, NaN, 0.0, 0.3, NaN, NaN, NaN, NaN, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.2)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.1)
+    posA = _calc_bucket_frame_pos(12, 15, 0.3, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 12, 15, NaN, 0.3, 0.6, NaN, NaN)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 1, 12, 15, posA, 0.3)
+    @test (length(out.body_soil_pos) == 5)
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(),
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15]])
+
+    # Test: IC-MIBS-74
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.0, 0.3, 0.3, 0.5, 0.5, 0.8, 0.8, 0.9)
+    set_height(out, 12, 15, NaN, 0.0, 0.3, 0.3, 0.4, NaN, NaN, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.2)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.1)
+    posA = _calc_bucket_frame_pos(12, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 12, 15, posA, 0.1)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 12, 15, NaN, 0.3, 0.7, NaN, NaN)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[6], 1, 12, 15, posA, 0.3)
+    @test (length(out.body_soil_pos) == 6)
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(),
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15]])
+
+    # Test: IC-MIBS-75
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.0, 0.3, 0.3, 0.5, 0.5, 0.8, 0.8, 0.9)
+    set_height(out, 12, 15, NaN, 0.3, 0.5, NaN, NaN, NaN, NaN, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.2)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.1)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    @test (out.terrain[10, 16] ≈ 0.3)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    @test (length(out.body_soil_pos) == 4)
+    reset_value_and_test(
+        out, [[10, 16]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15]])
+
+    # Test: IC-MIBS-76
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.0, 0.1, 0.1, 0.7, 0.7, 0.8, 0.8, 0.9)
+    set_height(out, 12, 15, 0.1, NaN, NaN, NaN, NaN, 0.2, 0.4, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.6)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.1)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    @test (out.terrain[12, 15] ≈ 0.4)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    @test (length(out.body_soil_pos) == 4)
+    reset_value_and_test(
+        out, [[12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [3, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15]])
+
+    # Test: IC-MIBS-77
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.0, 0.3, 0.3, 0.5, 0.5, 0.8, 0.8, 0.9)
+    set_height(out, 12, 15, NaN, NaN, NaN, NaN, NaN, 0.0, 0.3, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.2)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.1)
+    posA = _calc_bucket_frame_pos(12, 15, 0.3, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 12, 15, NaN, NaN, NaN, 0.3, 0.6)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 3, 12, 15, posA, 0.3)
+    @test (length(out.body_soil_pos) == 5)
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(),
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [3, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [3, 12, 15]])
+
+    # Test: IC-MIBS-78
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.0, 0.3, 0.3, 0.5, 0.5, 0.8, 0.8, 0.9)
+    set_height(out, 12, 15, NaN, NaN, NaN, NaN, NaN, 0.0, 0.3, 0.3, 0.4)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.2)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.1)
+    posA = _calc_bucket_frame_pos(12, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 3, 12, 15, posA, 0.1)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 12, 15, NaN, NaN, NaN, 0.3, 0.7)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[6], 3, 12, 15, posA, 0.3)
+    @test (length(out.body_soil_pos) == 6)
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(),
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [3, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [3, 12, 15]])
+
+    # Test: IC-MIBS-79
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.0, 0.3, 0.3, 0.5, 0.5, 0.8, 0.8, 0.9)
+    set_height(out, 12, 15, NaN, NaN, NaN, NaN, NaN, 0.3, 0.5, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.2)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.1)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    @test (out.terrain[10, 16] ≈ 0.3)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    @test (length(out.body_soil_pos) == 4)
+    reset_value_and_test(
+        out, [[10, 16]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [3, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15]])
+
+    # Test: IC-MIBS-80
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.0, 0.1, 0.1, 0.7, 0.7, 0.8, 0.8, 0.9)
+    set_height(out, 12, 15, NaN, 0.1, 0.4, NaN, NaN, 0.7, 0.9, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.6)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.1)
+    posA = _calc_bucket_frame_pos(12, 15, 0.4, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 12, 15, NaN, 0.4, 0.7, NaN, NaN)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 1, 12, 15, posA, 0.3)
+    @test (length(out.body_soil_pos) == 5)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(), body_pos,
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15]])
+
+    # Test: IC-MIBS-81
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.0, 0.1, 0.1, 0.7, 0.7, 0.8, 0.8, 0.9)
+    set_height(out, 12, 15, NaN, 0.1, 0.4, NaN, NaN, 0.5, 0.9, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.6)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.1)
+    posA = _calc_bucket_frame_pos(12, 15, 0.4, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 12, 15, NaN, 0.4, 0.5, NaN, NaN)
+    @test (out.terrain[13, 15] ≈ 0.2)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 1, 12, 15, posA, 0.1)
+    @test (length(out.body_soil_pos) == 5)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(
+        out, [[13, 15]], body_pos,
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15]])
+
+    # Test: IC-MIBS-82
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.0, 0.1, 0.1, 0.7, 0.7, 0.8, 0.8, 0.9)
+    set_height(out, 12, 15, NaN, 0.1, 0.2, 0.2, 0.3, 0.7, 0.9, 0.9, 1.3)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.6)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.1)
+    posA = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(12, 15, 0.9, grid, bucket)
+    push_body_soil_pos(out, 1, 12, 15, posA, 0.1)
+    push_body_soil_pos(out, 3, 12, 15, pos3, 0.4)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 12, 15, NaN, 0.2, 0.6, 0.9, 1.3)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[7], 1, 12, 15, posA, 0.3)
+    @test (length(out.body_soil_pos) == 7)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    body_soil_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(out, Vector{Vector{Int64}}(), body_pos, body_soil_pos)
+
+    # Test: IC-MIBS-83
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.0, 0.1, 0.1, 0.7, 0.7, 0.8, 0.8, 0.9)
+    set_height(out, 12, 15, NaN, 0.1, 0.2, 0.2, 0.3, 0.4, 0.9, 0.9, 1.3)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.6)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.1)
+    posA = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(12, 15, 0.9, grid, bucket)
+    push_body_soil_pos(out, 1, 12, 15, posA, 0.1)
+    push_body_soil_pos(out, 3, 12, 15, pos3, 0.4)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 12, 15, NaN, 0.2, 0.4, 0.9, 1.3)
+    @test (out.terrain[13, 15] ≈ 0.2)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[7], 1, 12, 15, posA, 0.1)
+    @test (length(out.body_soil_pos) == 7)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    body_soil_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(out, [[13, 15]], body_pos, body_soil_pos)
+
+    # Test: IC-MIBS-84
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.0, 0.1, 0.1, 0.7, 0.7, 0.8, 0.8, 0.9)
+    set_height(out, 12, 15, NaN, 0.1, 0.2, 0.2, 0.4, 0.4, 0.9, 0.9, 1.3)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.6)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.1)
+    pos1 = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(12, 15, 0.9, grid, bucket)
+    push_body_soil_pos(out, 1, 12, 15, pos1, 0.2)
+    push_body_soil_pos(out, 3, 12, 15, pos3, 0.4)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    @test (out.terrain[13, 15] ≈ 0.3)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    @test (length(out.body_soil_pos) == 6)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    body_soil_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(out, [[13, 15]], body_pos, body_soil_pos)
+
+    # Test: IC-MIBS-85
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.0, 0.1, 0.1, 0.7, 0.7, 0.8, 0.8, 0.9)
+    set_height(out, 12, 15, NaN, 0.7, 0.9, NaN, NaN, 0.1, 0.4, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.6)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.1)
+    posA = _calc_bucket_frame_pos(12, 15, 0.4, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 12, 15, NaN, NaN, NaN, 0.4, 0.7)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 3, 12, 15, posA, 0.3)
+    @test (length(out.body_soil_pos) == 5)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(), body_pos,
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [3, 12, 15]])
+
+    # Test: IC-MIBS-86
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.0, 0.1, 0.1, 0.7, 0.7, 0.8, 0.8, 0.9)
+    set_height(out, 12, 15, NaN, 0.5, 0.9, NaN, NaN, 0.1, 0.4, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.6)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.1)
+    posA = _calc_bucket_frame_pos(12, 15, 0.4, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 12, 15, NaN, NaN, NaN, 0.4, 0.5)
+    @test (out.terrain[13, 15] ≈ 0.2)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 3, 12, 15, posA, 0.1)
+    @test (length(out.body_soil_pos) == 5)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(
+        out, [[13, 15]], body_pos,
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [3, 12, 15]])
+
+    # Test: IC-MIBS-87
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.0, 0.1, 0.1, 0.7, 0.7, 0.8, 0.8, 0.9)
+    set_height(out, 12, 15, NaN, 0.7, 0.9, 0.9, 1.3, 0.1, 0.2, 0.2, 0.3)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.6)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.1)
+    pos1 = _calc_bucket_frame_pos(12, 15, 0.9, grid, bucket)
+    posA = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    push_body_soil_pos(out, 1, 12, 15, pos1, 0.4)
+    push_body_soil_pos(out, 3, 12, 15, posA, 0.1)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 12, 15, NaN, 0.9, 1.3, 0.2, 0.6)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[7], 3, 12, 15, posA, 0.3)
+    @test (length(out.body_soil_pos) == 7)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    body_soil_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(out, Vector{Vector{Int64}}(), body_pos, body_soil_pos)
+
+    # Test: IC-MIBS-88
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.0, 0.1, 0.1, 0.7, 0.7, 0.8, 0.8, 0.9)
+    set_height(out, 12, 15, NaN, 0.4, 0.9, 0.9, 1.3, 0.1, 0.2, 0.2, 0.3)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.6)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.1)
+    pos1 = _calc_bucket_frame_pos(12, 15, 0.9, grid, bucket)
+    posA = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    push_body_soil_pos(out, 1, 12, 15, pos1, 0.4)
+    push_body_soil_pos(out, 3, 12, 15, posA, 0.1)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 12, 15, NaN, 0.9, 1.3, 0.2, 0.4)
+    @test (out.terrain[13, 15] ≈ 0.2)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[7], 3, 12, 15, posA, 0.1)
+    @test (length(out.body_soil_pos) == 7)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    body_soil_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(out, [[13, 15]], body_pos, body_soil_pos)
+
+    # Test: IC-MIBS-89
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.0, 0.1, 0.1, 0.7, 0.7, 0.8, 0.8, 0.9)
+    set_height(out, 12, 15, NaN, 0.4, 0.9, 0.9, 1.3, 0.1, 0.2, 0.2, 0.4)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.6)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.1)
+    pos1 = _calc_bucket_frame_pos(12, 15, 0.9, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    push_body_soil_pos(out, 1, 12, 15, pos1, 0.4)
+    push_body_soil_pos(out, 3, 12, 15, pos3, 0.2)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    @test (out.terrain[13, 15] ≈ 0.3)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    @test (length(out.body_soil_pos) == 6)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    body_soil_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(out, [[13, 15]], body_pos, body_soil_pos)
+
+    # Test: IC-MIBS-90
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.5, 0.7, NaN, NaN, 0.0, 0.2, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    posA = _calc_bucket_frame_pos(11, 15, 0.2, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 11, 15, NaN, NaN, NaN, 0.2, 0.5)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[3], 3, 11, 15, posA, 0.3)
+    @test (length(out.body_soil_pos) == 3)
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(), [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15]],
+        [[1, 10, 15], [3, 10, 15], [3, 11, 15]])
+
+    # Test: IC-MIBS-91
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.4, 0.7, NaN, NaN, 0.0, 0.2, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    posA = _calc_bucket_frame_pos(11, 15, 0.2, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 11, 15, NaN, NaN, NaN, 0.2, 0.4)
+    @test (out.terrain[12, 15] ≈ 0.1)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[3], 3, 11, 15, posA, 0.2)
+    @test (length(out.body_soil_pos) == 3)
+    reset_value_and_test(
+        out, [[12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15]],
+        [[1, 10, 15], [3, 10, 15], [3, 11, 15]])
+
+    # Test: IC-MIBS-92
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.3, 0.7, NaN, NaN, 0.0, 0.2, NaN, NaN)
+    set_height(out, 12, 15, 0.2, 0.3, 0.4, NaN, NaN, NaN, NaN, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    posA = _calc_bucket_frame_pos(11, 15, 0.2, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 11, 15, NaN, NaN, NaN, 0.2, 0.3)
+    @test (out.terrain[12, 15] ≈ 0.4)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[3], 3, 11, 15, posA, 0.1)
+    @test (length(out.body_soil_pos) == 3)
+    reset_value_and_test(
+        out, [[12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [3, 11, 15]])
+
+    # Test: IC-MIBS-93
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.3, 0.7, NaN, NaN, 0.0, 0.2, NaN, NaN)
+    set_height(out, 12, 15, NaN, 0.0, 0.2, NaN, NaN, NaN, NaN, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    posA = _calc_bucket_frame_pos(11, 15, 0.2, grid, bucket)
+    posB = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 11, 15, NaN, NaN, NaN, 0.2, 0.3)
+    check_height(out, 12, 15, NaN, 0.2, 0.4, NaN, NaN)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[3], 3, 11, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[4], 1, 12, 15, posB, 0.2)
+    @test (length(out.body_soil_pos) == 4)
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(),
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [3, 11, 15], [1, 12, 15]])
+
+    # Test: IC-MIBS-94
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.3, 0.7, NaN, NaN, 0.0, 0.2, NaN, NaN)
+    set_height(out, 12, 15, NaN, 0.0, 0.2, 0.2, 0.4, NaN, NaN, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    posA = _calc_bucket_frame_pos(11, 15, 0.2, grid, bucket)
+    posB = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    push_body_soil_pos(out, 1, 12, 15, posB, 0.2)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 11, 15, NaN, NaN, NaN, 0.2, 0.3)
+    check_height(out, 12, 15, NaN, 0.2, 0.6, NaN, NaN)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[4], 3, 11, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[5], 1, 12, 15, posB, 0.2)
+    @test (length(out.body_soil_pos) == 5)
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(),
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [3, 11, 15], [1, 12, 15]])
+
+    # Test: IC-MIBS-95
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.3, 0.7, NaN, NaN, 0.0, 0.2, NaN, NaN)
+    set_height(out, 12, 15, NaN, 0.2, 0.3, NaN, NaN, NaN, NaN, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    posA = _calc_bucket_frame_pos(11, 15, 0.2, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 11, 15, NaN, NaN, NaN, 0.2, 0.3)
+    @test (out.terrain[10, 16] ≈ 0.2)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[3], 3, 11, 15, posA, 0.1)
+    @test (length(out.body_soil_pos) == 3)
+    reset_value_and_test(
+        out, [[10, 16]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [3, 11, 15]])
+
+    # Test: IC-MIBS-96
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.3, 0.7, NaN, NaN, 0.0, 0.2, NaN, NaN)
+    set_height(out, 12, 15, 0.2, NaN, NaN, NaN, NaN, 0.3, 0.4, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    posA = _calc_bucket_frame_pos(11, 15, 0.2, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 11, 15, NaN, NaN, NaN, 0.2, 0.3)
+    @test (out.terrain[12, 15] ≈ 0.4)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[3], 3, 11, 15, posA, 0.1)
+    @test (length(out.body_soil_pos) == 3)
+    reset_value_and_test(
+        out, [[12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [3, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [3, 11, 15]])
+
+    # Test: IC-MIBS-97
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.3, 0.7, NaN, NaN, 0.0, 0.2, NaN, NaN)
+    set_height(out, 12, 15, NaN, NaN, NaN, NaN, NaN, 0.0, 0.2, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    posA = _calc_bucket_frame_pos(11, 15, 0.2, grid, bucket)
+    posB = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 11, 15, NaN, NaN, NaN, 0.2, 0.3)
+    check_height(out, 12, 15, NaN, NaN, NaN, 0.2, 0.4)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[3], 3, 11, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[4], 3, 12, 15, posB, 0.2)
+    @test (length(out.body_soil_pos) == 4)
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(),
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [3, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [3, 11, 15], [3, 12, 15]])
+
+    # Test: IC-MIBS-98
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.6, 0.8, NaN, NaN, 0.0, 0.4, NaN, NaN)
+    set_height(out, 12, 15, NaN, NaN, NaN, NaN, NaN, 0.0, 0.1, 0.1, 0.2)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    posA = _calc_bucket_frame_pos(11, 15, 0.4, grid, bucket)
+    posB = _calc_bucket_frame_pos(12, 15, 0.1, grid, bucket)
+    push_body_soil_pos(out, 3, 12, 15, posB, 0.1)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 11, 15, NaN, NaN, NaN, 0.4, 0.6)
+    check_height(out, 12, 15, NaN, NaN, NaN, 0.1, 0.3)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[4], 3, 11, 15, posA, 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 3, 12, 15, posB, 0.1)
+    @test (length(out.body_soil_pos) == 5)
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(),
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [3, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [3, 11, 15], [3, 12, 15]])
+
+    # Test: IC-MIBS-99
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.3, 0.7, NaN, NaN, 0.0, 0.2, NaN, NaN)
+    set_height(out, 12, 15, NaN, NaN, NaN, NaN, NaN, 0.2, 0.3, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    posA = _calc_bucket_frame_pos(11, 15, 0.2, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 11, 15, NaN, NaN, NaN, 0.2, 0.3)
+    @test (out.terrain[10, 16] ≈ 0.2)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[3], 3, 11, 15, posA, 0.1)
+    @test (length(out.body_soil_pos) == 3)
+    reset_value_and_test(
+        out, [[10, 16]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [3, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [3, 11, 15]])
+
+    # Test: IC-MIBS-100
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.3, 0.7, NaN, NaN, 0.0, 0.2, NaN, NaN)
+    set_height(out, 12, 15, NaN, 0.0, 0.2, NaN, NaN, 0.7, 0.8, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    posA = _calc_bucket_frame_pos(11, 15, 0.2, grid, bucket)
+    posB = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 11, 15, NaN, NaN, NaN, 0.2, 0.3)
+    check_height(out, 12, 15, NaN, 0.2, 0.4, NaN, NaN)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[3], 3, 11, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[4], 1, 12, 15, posB, 0.2)
+    @test (length(out.body_soil_pos) == 4)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(), body_pos,
+        [[1, 10, 15], [3, 10, 15], [3, 11, 15], [1, 12, 15]])
+
+    # Test: IC-MIBS-101
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.3, 0.7, NaN, NaN, 0.0, 0.2, NaN, NaN)
+    set_height(out, 12, 15, NaN, 0.0, 0.2, NaN, NaN, 0.3, 0.8, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    posA = _calc_bucket_frame_pos(11, 15, 0.2, grid, bucket)
+    posB = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 11, 15, NaN, NaN, NaN, 0.2, 0.3)
+    check_height(out, 12, 15, NaN, 0.2, 0.3, NaN, NaN)
+    @test (out.terrain[13, 15] ≈ 0.1)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[3], 3, 11, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[4], 1, 12, 15, posB, 0.1)
+    @test (length(out.body_soil_pos) == 4)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(
+        out, [[13, 15]], body_pos,
+        [[1, 10, 15], [3, 10, 15], [3, 11, 15], [1, 12, 15]])
+
+    # Test: IC-MIBS-102
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.3, 0.7, NaN, NaN, 0.0, 0.2, NaN, NaN)
+    set_height(out, 12, 15, NaN, 0.0, 0.2, 0.2, 0.3, 0.7, 0.8, 0.8, 0.9)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    posA = _calc_bucket_frame_pos(11, 15, 0.2, grid, bucket)
+    posB = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(12, 15, 0.8, grid, bucket)
+    push_body_soil_pos(out, 1, 12, 15, posB, 0.1)
+    push_body_soil_pos(out, 3, 12, 15, pos3, 0.1)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 11, 15, NaN, NaN, NaN, 0.2, 0.3)
+    check_height(out, 12, 15, NaN, 0.2, 0.5, 0.8, 0.9)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 3, 11, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[6], 1, 12, 15, posB, 0.2)
+    @test (length(out.body_soil_pos) == 6)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(), body_pos,
+        [[1, 10, 15], [3, 10, 15], [3, 11, 15], [1, 12, 15], [3, 12, 15]])
+
+    # Test: IC-MIBS-103
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.3, 0.7, NaN, NaN, 0.0, 0.2, NaN, NaN)
+    set_height(out, 12, 15, NaN, 0.0, 0.2, 0.2, 0.3, 0.4, 0.8, 0.8, 0.9)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    posA = _calc_bucket_frame_pos(11, 15, 0.2, grid, bucket)
+    posB = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(12, 15, 0.8, grid, bucket)
+    push_body_soil_pos(out, 1, 12, 15, posB, 0.1)
+    push_body_soil_pos(out, 3, 12, 15, pos3, 0.1)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 11, 15, NaN, NaN, NaN, 0.2, 0.3)
+    check_height(out, 12, 15, NaN, 0.2, 0.4, 0.8, 0.9)
+    @test (out.terrain[13, 15] ≈ 0.1)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 3, 11, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[6], 1, 12, 15, posB, 0.1)
+    @test (length(out.body_soil_pos) == 6)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(
+        out, [[13, 15]], body_pos,
+        [[1, 10, 15], [3, 10, 15], [3, 11, 15], [1, 12, 15], [3, 12, 15]])
+
+    # Test: IC-MIBS-104
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.3, 0.7, NaN, NaN, 0.0, 0.2, NaN, NaN)
+    set_height(out, 12, 15, NaN, 0.0, 0.2, 0.2, 0.3, 0.3, 0.8, 0.8, 0.9)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    posA = _calc_bucket_frame_pos(11, 15, 0.2, grid, bucket)
+    pos1 = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(12, 15, 0.8, grid, bucket)
+    push_body_soil_pos(out, 1, 12, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 12, 15, pos3, 0.1)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 11, 15, NaN, NaN, NaN, 0.2, 0.3)
+    @test (out.terrain[13, 15] ≈ 0.2)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 3, 11, 15, posA, 0.1)
+    @test (length(out.body_soil_pos) == 5)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(
+        out, [[13, 15]], body_pos,
+        [[1, 10, 15], [3, 10, 15], [3, 11, 15], [1, 12, 15], [3, 12, 15]])
+
+    # Test: IC-MIBS-105
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.3, 0.7, NaN, NaN, 0.0, 0.2, NaN, NaN)
+    set_height(out, 12, 15, NaN, 0.7, 0.8, NaN, NaN, 0.0, 0.2, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    posA = _calc_bucket_frame_pos(11, 15, 0.2, grid, bucket)
+    posB = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 11, 15, NaN, NaN, NaN, 0.2, 0.3)
+    check_height(out, 12, 15, NaN, NaN, NaN, 0.2, 0.4)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[3], 3, 11, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[4], 3, 12, 15, posB, 0.2)
+    @test (length(out.body_soil_pos) == 4)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(), body_pos,
+        [[1, 10, 15], [3, 10, 15], [3, 11, 15], [3, 12, 15]])
+
+    # Test: IC-MIBS-106
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.3, 0.7, NaN, NaN, 0.0, 0.2, NaN, NaN)
+    set_height(out, 12, 15, NaN, 0.3, 0.8, NaN, NaN, 0.0, 0.2, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    posA = _calc_bucket_frame_pos(11, 15, 0.2, grid, bucket)
+    posB = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 11, 15, NaN, NaN, NaN, 0.2, 0.3)
+    check_height(out, 12, 15, NaN, NaN, NaN, 0.2, 0.3)
+    @test (out.terrain[13, 15] ≈ 0.1)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[3], 3, 11, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[4], 3, 12, 15, posB, 0.1)
+    @test (length(out.body_soil_pos) == 4)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(
+        out, [[13, 15]], body_pos,
+        [[1, 10, 15], [3, 10, 15], [3, 11, 15], [3, 12, 15]])
+
+    # Test: IC-MIBS-107
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.3, 0.7, NaN, NaN, 0.0, 0.2, NaN, NaN)
+    set_height(out, 12, 15, NaN, 0.7, 0.8, 0.8, 0.9, 0.0, 0.2, 0.2, 0.3)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    posA = _calc_bucket_frame_pos(11, 15, 0.2, grid, bucket)
+    pos1 = _calc_bucket_frame_pos(12, 15, 0.8, grid, bucket)
+    posB = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    push_body_soil_pos(out, 1, 12, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 12, 15, posB, 0.1)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 11, 15, NaN, NaN, NaN, 0.2, 0.3)
+    check_height(out, 12, 15, NaN, 0.8, 0.9, 0.2, 0.5)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 3, 11, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[6], 3, 12, 15, posB, 0.2)
+    @test (length(out.body_soil_pos) == 6)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(), body_pos,
+        [[1, 10, 15], [3, 10, 15], [3, 11, 15], [1, 12, 15], [3, 12, 15]])
+
+    # Test: IC-MIBS-108
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.3, 0.7, NaN, NaN, 0.0, 0.2, NaN, NaN)
+    set_height(out, 12, 15, NaN, 0.4, 0.8, 0.8, 0.9, 0.0, 0.2, 0.2, 0.3)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    posA = _calc_bucket_frame_pos(11, 15, 0.2, grid, bucket)
+    pos1 = _calc_bucket_frame_pos(12, 15, 0.8, grid, bucket)
+    posB = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    push_body_soil_pos(out, 1, 12, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 12, 15, posB, 0.1)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 11, 15, NaN, NaN, NaN, 0.2, 0.3)
+    check_height(out, 12, 15, NaN, 0.8, 0.9, 0.2, 0.4)
+    @test (out.terrain[13, 15] ≈ 0.1)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 3, 11, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[6], 3, 12, 15, posB, 0.1)
+    @test (length(out.body_soil_pos) == 6)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(
+        out, [[13, 15]], body_pos,
+        [[1, 10, 15], [3, 10, 15], [3, 11, 15], [1, 12, 15], [3, 12, 15]])
+
+    # Test: IC-MIBS-109
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.3, 0.7, NaN, NaN, 0.0, 0.2, NaN, NaN)
+    set_height(out, 12, 15, NaN, 0.3, 0.8, 0.8, 0.9, 0.0, 0.2, 0.2, 0.3)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    posA = _calc_bucket_frame_pos(11, 15, 0.2, grid, bucket)
+    pos1 = _calc_bucket_frame_pos(12, 15, 0.8, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    push_body_soil_pos(out, 1, 12, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 12, 15, pos3, 0.1)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 11, 15, NaN, NaN, NaN, 0.2, 0.3)
+    @test (out.terrain[13, 15] ≈ 0.2)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 3, 11, 15, posA, 0.1)
+    @test (length(out.body_soil_pos) == 5)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(
+        out, [[13, 15]], body_pos,
+        [[1, 10, 15], [3, 10, 15], [3, 11, 15], [1, 12, 15], [3, 12, 15]])
+
+    # Test: IC-MIBS-110
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.5, 0.7, 0.7, 0.9, 0.0, 0.1, 0.1, 0.2)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.7, grid, bucket)
+    posA = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.2)
+    push_body_soil_pos(out, 3, 11, 15, posA, 0.1)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 11, 15, NaN, 0.7, 0.9, 0.1, 0.5)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 3, 11, 15, posA, 0.3)
+    @test (length(out.body_soil_pos) == 5)
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(), [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15]])
+
+    # Test: IC-MIBS-111
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.4, 0.7, 0.7, 0.9, 0.0, 0.1, 0.1, 0.2)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.7, grid, bucket)
+    posA = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.2)
+    push_body_soil_pos(out, 3, 11, 15, posA, 0.1)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 11, 15, NaN, 0.7, 0.9, 0.1, 0.4)
+    @test (out.terrain[12, 15] ≈ 0.1)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 3, 11, 15, posA, 0.2)
+    @test (length(out.body_soil_pos) == 5)
+    reset_value_and_test(
+        out, [[12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15]])
+
+    # Test: IC-MIBS-112
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.7, 0.8, 0.8, 0.9, 0.0, 0.1, 0.1, 0.6)
+    set_height(out, 12, 15, 0.1, 0.2, 0.4, NaN, NaN, NaN, NaN, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    posA = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, posA, 0.5)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 11, 15, NaN, 0.8, 0.9, 0.1, 0.7)
+    @test (out.terrain[12, 15] ≈ 0.3)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 3, 11, 15, posA, 0.1)
+    @test (length(out.body_soil_pos) == 5)
+    reset_value_and_test(
+        out, [[12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15]])
+
+    # Test: IC-MIBS-113
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.5, 0.8, 0.8, 0.9, 0.0, 0.3, 0.3, 0.4)
+    set_height(out, 12, 15, NaN, 0.0, 0.3, NaN, NaN, NaN, NaN, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    posA = _calc_bucket_frame_pos(11, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, posA, 0.1)
+    posB = _calc_bucket_frame_pos(12, 15, 0.3, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 11, 15, NaN, 0.8, 0.9, 0.3, 0.5)
+    check_height(out, 12, 15, NaN, 0.3, 0.5, NaN, NaN)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 3, 11, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[6], 1, 12, 15, posB, 0.2)
+    @test (length(out.body_soil_pos) == 6)
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(),
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15]])
+
+    # Test: IC-MIBS-114
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.5, 0.8, 0.8, 0.9, 0.0, 0.3, 0.3, 0.4)
+    set_height(out, 12, 15, NaN, 0.0, 0.3, 0.3, 0.4, NaN, NaN, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    posA = _calc_bucket_frame_pos(11, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, posA, 0.1)
+    posB = _calc_bucket_frame_pos(12, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 12, 15, posB, 0.1)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 11, 15, NaN, 0.8, 0.9, 0.3, 0.5)
+    check_height(out, 12, 15, NaN, 0.3, 0.6, NaN, NaN)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[6], 3, 11, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[7], 1, 12, 15, posB, 0.2)
+    @test (length(out.body_soil_pos) == 7)
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(),
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15]])
+
+    # Test: IC-MIBS-115
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.5, 0.8, 0.8, 0.9, 0.0, 0.3, 0.3, 0.4)
+    set_height(out, 12, 15, NaN, 0.3, 0.5, NaN, NaN, NaN, NaN, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    posA = _calc_bucket_frame_pos(11, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, posA, 0.1)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 11, 15, NaN, 0.8, 0.9, 0.3, 0.5)
+    @test (out.terrain[10, 16] ≈ 0.2)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 3, 11, 15, posA, 0.1)
+    @test (length(out.body_soil_pos) == 5)
+    reset_value_and_test(
+        out, [[10, 16]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15]])
+
+    # Test: IC-MIBS-116
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.7, 0.8, 0.8, 0.9, 0.0, 0.1, 0.1, 0.6)
+    set_height(out, 12, 15, 0.1, NaN, NaN, NaN, NaN, 0.2, 0.4, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    posA = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, posA, 0.5)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 11, 15, NaN, 0.8, 0.9, 0.1, 0.7)
+    @test (out.terrain[12, 15] ≈ 0.3)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 3, 11, 15, posA, 0.1)
+    @test (length(out.body_soil_pos) == 5)
+    reset_value_and_test(
+        out, [[12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [3, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15]])
+
+    # Test: IC-MIBS-117
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.5, 0.8, 0.8, 0.9, 0.0, 0.3, 0.3, 0.4)
+    set_height(out, 12, 15, NaN, NaN, NaN, NaN, NaN, 0.0, 0.3, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    posA = _calc_bucket_frame_pos(11, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, posA, 0.1)
+    posB = _calc_bucket_frame_pos(12, 15, 0.3, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 11, 15, NaN, 0.8, 0.9, 0.3, 0.5)
+    check_height(out, 12, 15, NaN, NaN, NaN, 0.3, 0.5)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 3, 11, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[6], 3, 12, 15, posB, 0.2)
+    @test (length(out.body_soil_pos) == 6)
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(),
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [3, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [3, 12, 15]])
+
+    # Test: IC-MIBS-118
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.5, 0.8, 0.8, 0.9, 0.0, 0.3, 0.3, 0.4)
+    set_height(out, 12, 15, NaN, NaN, NaN, NaN, NaN, 0.0, 0.3, 0.3, 0.4)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    posA = _calc_bucket_frame_pos(11, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, posA, 0.1)
+    posB = _calc_bucket_frame_pos(12, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 3, 12, 15, posB, 0.1)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 11, 15, NaN, 0.8, 0.9, 0.3, 0.5)
+    check_height(out, 12, 15, NaN, NaN, NaN, 0.3, 0.6)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[6], 3, 11, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[7], 3, 12, 15, posB, 0.2)
+    @test (length(out.body_soil_pos) == 7)
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(),
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [3, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [3, 12, 15]])
+
+    # Test: IC-MIBS-119
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.5, 0.8, 0.8, 0.9, 0.0, 0.3, 0.3, 0.4)
+    set_height(out, 12, 15, NaN, NaN, NaN, NaN, NaN, 0.3, 0.5, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    posA = _calc_bucket_frame_pos(11, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, posA, 0.1)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 11, 15, NaN, 0.8, 0.9, 0.3, 0.5)
+    @test (out.terrain[10, 16] ≈ 0.2)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 3, 11, 15, posA, 0.1)
+    @test (length(out.body_soil_pos) == 5)
+    reset_value_and_test(
+        out, [[10, 16]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [3, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15]])
+
+    # Test: IC-MIBS-120
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.7, 0.8, 0.8, 0.9, 0.0, 0.1, 0.1, 0.6)
+    set_height(out, 12, 15, NaN, 0.1, 0.4, NaN, NaN, 0.7, 0.9, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    posA = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, posA, 0.5)
+    posB = _calc_bucket_frame_pos(12, 15, 0.4, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 11, 15, NaN, 0.8, 0.9, 0.1, 0.7)
+    check_height(out, 12, 15, NaN, 0.4, 0.6, NaN, NaN)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 3, 11, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[6], 1, 12, 15, posB, 0.2)
+    @test (length(out.body_soil_pos) == 6)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(), body_pos,
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15]])
+
+    # Test: IC-MIBS-121
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.7, 0.8, 0.8, 0.9, 0.0, 0.1, 0.1, 0.6)
+    set_height(out, 12, 15, NaN, 0.1, 0.4, NaN, NaN, 0.5, 0.9, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    posA = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, posA, 0.5)
+    posB = _calc_bucket_frame_pos(12, 15, 0.4, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 11, 15, NaN, 0.8, 0.9, 0.1, 0.7)
+    check_height(out, 12, 15, NaN, 0.4, 0.5, NaN, NaN)
+    @test (out.terrain[13, 15] ≈ 0.1)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 3, 11, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[6], 1, 12, 15, posB, 0.1)
+    @test (length(out.body_soil_pos) == 6)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(
+        out, [[13, 15]], body_pos,
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15]])
+
+    # Test: IC-MIBS-122
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.7, 0.8, 0.8, 0.9, 0.0, 0.1, 0.1, 0.6)
+    set_height(out, 12, 15, NaN, 0.1, 0.2, 0.2, 0.3, 0.7, 0.9, 0.9, 1.3)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    posA = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, posA, 0.5)
+    posB = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(12, 15, 0.9, grid, bucket)
+    push_body_soil_pos(out, 1, 12, 15, posB, 0.1)
+    push_body_soil_pos(out, 3, 12, 15, pos3, 0.4)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 11, 15, NaN, 0.8, 0.9, 0.1, 0.7)
+    check_height(out, 12, 15, NaN, 0.2, 0.5, 0.9, 1.3)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[7], 3, 11, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[8], 1, 12, 15, posB, 0.2)
+    @test (length(out.body_soil_pos) == 8)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    body_soil_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(out, Vector{Vector{Int64}}(), body_pos, body_soil_pos)
+
+    # Test: IC-MIBS-123
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.7, 0.8, 0.8, 0.9, 0.0, 0.1, 0.1, 0.6)
+    set_height(out, 12, 15, NaN, 0.1, 0.2, 0.2, 0.3, 0.4, 0.9, 0.9, 1.3)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    posA = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, posA, 0.5)
+    posB = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(12, 15, 0.9, grid, bucket)
+    push_body_soil_pos(out, 1, 12, 15, posB, 0.1)
+    push_body_soil_pos(out, 3, 12, 15, pos3, 0.4)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 11, 15, NaN, 0.8, 0.9, 0.1, 0.7)
+    check_height(out, 12, 15, NaN, 0.2, 0.4, 0.9, 1.3)
+    @test (out.terrain[13, 15] ≈ 0.1)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[7], 3, 11, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[8], 1, 12, 15, posB, 0.1)
+    @test (length(out.body_soil_pos) == 8)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    body_soil_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(out, [[13, 15]], body_pos, body_soil_pos)
+
+    # Test: IC-MIBS-124
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.7, 0.8, 0.8, 0.9, 0.0, 0.1, 0.1, 0.6)
+    set_height(out, 12, 15, NaN, 0.1, 0.2, 0.2, 0.4, 0.4, 0.9, 0.9, 1.3)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    posA = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, posA, 0.5)
+    pos1 = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(12, 15, 0.9, grid, bucket)
+    push_body_soil_pos(out, 1, 12, 15, pos1, 0.2)
+    push_body_soil_pos(out, 3, 12, 15, pos3, 0.4)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 11, 15, NaN, 0.8, 0.9, 0.1, 0.7)
+    @test (out.terrain[13, 15] ≈ 0.2)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[7], 3, 11, 15, posA, 0.1)
+    @test (length(out.body_soil_pos) == 7)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    body_soil_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(out, [[13, 15]], body_pos, body_soil_pos)
+
+    # Test: IC-MIBS-125
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.7, 0.8, 0.8, 0.9, 0.0, 0.1, 0.1, 0.6)
+    set_height(out, 12, 15, NaN, 0.7, 0.9, NaN, NaN, 0.1, 0.4, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    posA = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, posA, 0.5)
+    posB = _calc_bucket_frame_pos(12, 15, 0.4, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 11, 15, NaN, 0.8, 0.9, 0.1, 0.7)
+    check_height(out, 12, 15, NaN, NaN, NaN, 0.4, 0.6)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 3, 11, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[6], 3, 12, 15, posB, 0.2)
+    @test (length(out.body_soil_pos) == 6)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(), body_pos,
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [3, 12, 15]])
+
+    # Test: IC-MIBS-126
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.7, 0.8, 0.8, 0.9, 0.0, 0.1, 0.1, 0.6)
+    set_height(out, 12, 15, NaN, 0.5, 0.9, NaN, NaN, 0.1, 0.4, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    posA = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, posA, 0.5)
+    posB = _calc_bucket_frame_pos(12, 15, 0.4, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 11, 15, NaN, 0.8, 0.9, 0.1, 0.7)
+    check_height(out, 12, 15, NaN, NaN, NaN, 0.4, 0.5)
+    @test (out.terrain[13, 15] ≈ 0.1)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 3, 11, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[6], 3, 12, 15, posB, 0.1)
+    @test (length(out.body_soil_pos) == 6)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(
+        out, [[13, 15]], body_pos,
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [3, 12, 15]])
+
+    # Test: IC-MIBS-127
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.7, 0.8, 0.8, 0.9, 0.0, 0.1, 0.1, 0.6)
+    set_height(out, 12, 15, NaN, 0.7, 0.9, 0.9, 1.3, 0.1, 0.2, 0.2, 0.3)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    posA = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, posA, 0.5)
+    pos1 = _calc_bucket_frame_pos(12, 15, 0.9, grid, bucket)
+    posB = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    push_body_soil_pos(out, 1, 12, 15, pos1, 0.4)
+    push_body_soil_pos(out, 3, 12, 15, posB, 0.1)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 11, 15, NaN, 0.8, 0.9, 0.1, 0.7)
+    check_height(out, 12, 15, NaN, 0.9, 1.3, 0.2, 0.5)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[7], 3, 11, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[8], 3, 12, 15, posB, 0.2)
+    @test (length(out.body_soil_pos) == 8)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    body_soil_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(out, Vector{Vector{Int64}}(), body_pos, body_soil_pos)
+
+    # Test: IC-MIBS-128
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.7, 0.8, 0.8, 0.9, 0.0, 0.1, 0.1, 0.6)
+    set_height(out, 12, 15, NaN, 0.4, 0.9, 0.9, 1.3, 0.1, 0.2, 0.2, 0.3)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    posA = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, posA, 0.5)
+    pos1 = _calc_bucket_frame_pos(12, 15, 0.9, grid, bucket)
+    posB = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    push_body_soil_pos(out, 1, 12, 15, pos1, 0.4)
+    push_body_soil_pos(out, 3, 12, 15, posB, 0.1)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 11, 15, NaN, 0.8, 0.9, 0.1, 0.7)
+    check_height(out, 12, 15, NaN, 0.9, 1.3, 0.2, 0.4)
+    @test (out.terrain[13, 15] ≈ 0.1)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[7], 3, 11, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[8], 3, 12, 15, posB, 0.1)
+    @test (length(out.body_soil_pos) == 8)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    body_soil_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(out, [[13, 15]], body_pos, body_soil_pos)
+
+    # Test: IC-MIBS-129
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.7, 0.8, 0.8, 0.9, 0.0, 0.1, 0.1, 0.6)
+    set_height(out, 12, 15, NaN, 0.4, 0.9, 0.9, 1.3, 0.1, 0.2, 0.2, 0.4)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    posA = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, posA, 0.5)
+    pos1 = _calc_bucket_frame_pos(12, 15, 0.9, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    push_body_soil_pos(out, 1, 12, 15, pos1, 0.4)
+    push_body_soil_pos(out, 3, 12, 15, pos3, 0.2)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 11, 15, NaN, 0.8, 0.9, 0.1, 0.7)
+    @test (out.terrain[13, 15] ≈ 0.2)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[7], 3, 11, 15, posA, 0.1)
+    @test (length(out.body_soil_pos) == 7)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    body_soil_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(out, [[13, 15]], body_pos, body_soil_pos)
+
+    # Test: IC-MIBS-130
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.4, 0.7, 0.7, 0.9, 0.0, 0.1, 0.1, 0.4)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.7, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.2)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.3)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    @test (out.terrain[12, 15] ≈ 0.3)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    @test (length(out.body_soil_pos) == 4)
+    reset_value_and_test(
+        out, [[12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15]])
+
+    # Test: IC-MIBS-131
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.7, 0.8, 0.8, 0.9, 0.0, 0.1, 0.1, 0.7)
+    set_height(out, 12, 15, 0.1, 0.2, 0.4, NaN, NaN, NaN, NaN, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.6)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    @test (out.terrain[12, 15] ≈ 0.4)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    @test (length(out.body_soil_pos) == 4)
+    reset_value_and_test(
+        out, [[12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15]])
+
+    # Test: IC-MIBS-132
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.5, 0.8, 0.8, 0.9, 0.0, 0.3, 0.3, 0.5)
+    set_height(out, 12, 15, NaN, 0.0, 0.3, NaN, NaN, NaN, NaN, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.2)
+    posA = _calc_bucket_frame_pos(12, 15, 0.3, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 12, 15, NaN, 0.3, 0.6, NaN, NaN)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 1, 12, 15, posA, 0.3)
+    @test (length(out.body_soil_pos) == 5)
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(),
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15]])
+
+    # Test: IC-MIBS-133
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.5, 0.8, 0.8, 0.9, 0.0, 0.3, 0.3, 0.5)
+    set_height(out, 12, 15, NaN, 0.0, 0.3, 0.3, 0.4, NaN, NaN, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.2)
+    posA = _calc_bucket_frame_pos(12, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 12, 15, posA, 0.1)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 12, 15, NaN, 0.3, 0.7, NaN, NaN)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[6], 1, 12, 15, posA, 0.3)
+    @test (length(out.body_soil_pos) == 6)
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(),
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15]])
+
+    # Test: IC-MIBS-134
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.5, 0.8, 0.8, 0.9, 0.0, 0.3, 0.3, 0.5)
+    set_height(out, 12, 15, NaN, 0.3, 0.5, NaN, NaN, NaN, NaN, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.2)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    @test (out.terrain[10, 16] ≈ 0.3)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    @test (length(out.body_soil_pos) == 4)
+    reset_value_and_test(
+        out, [[10, 16]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15]])
+
+    # Test: IC-MIBS-135
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.7, 0.8, 0.8, 0.9, 0.0, 0.1, 0.1, 0.7)
+    set_height(out, 12, 15, 0.1, NaN, NaN, NaN, NaN, 0.2, 0.4, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.6)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    @test (out.terrain[12, 15] ≈ 0.4)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    @test (length(out.body_soil_pos) == 4)
+    reset_value_and_test(
+        out, [[12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [3, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15]])
+
+    # Test: IC-MIBS-136
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.5, 0.8, 0.8, 0.9, 0.0, 0.3, 0.3, 0.5)
+    set_height(out, 12, 15, NaN, NaN, NaN, NaN, NaN, 0.0, 0.3, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.2)
+    posA = _calc_bucket_frame_pos(12, 15, 0.3, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 12, 15, NaN, NaN, NaN, 0.3, 0.6)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 3, 12, 15, posA, 0.3)
+    @test (length(out.body_soil_pos) == 5)
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(),
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [3, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [3, 12, 15]])
+
+    # Test: IC-MIBS-137
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.5, 0.8, 0.8, 0.9, 0.0, 0.3, 0.3, 0.5)
+    set_height(out, 12, 15, NaN, NaN, NaN, NaN, NaN, 0.0, 0.3, 0.3, 0.4)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.2)
+    posA = _calc_bucket_frame_pos(12, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 3, 12, 15, posA, 0.1)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 12, 15, NaN, NaN, NaN, 0.3, 0.7)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[6], 3, 12, 15, posA, 0.3)
+    @test (length(out.body_soil_pos) == 6)
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(),
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [3, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [3, 12, 15]])
+
+    # Test: IC-MIBS-138
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.5, 0.8, 0.8, 0.9, 0.0, 0.3, 0.3, 0.5)
+    set_height(out, 12, 15, NaN, NaN, NaN, NaN, NaN, 0.3, 0.5, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.2)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    @test (out.terrain[10, 16] ≈ 0.3)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    @test (length(out.body_soil_pos) == 4)
+    reset_value_and_test(
+        out, [[10, 16]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [3, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15]])
+
+    # Test: IC-MIBS-139
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.7, 0.8, 0.8, 0.9, 0.0, 0.1, 0.1, 0.7)
+    set_height(out, 12, 15, NaN, 0.1, 0.4, NaN, NaN, 0.7, 0.9, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.6)
+    posA = _calc_bucket_frame_pos(12, 15, 0.4, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 12, 15, NaN, 0.4, 0.7, NaN, NaN)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 1, 12, 15, posA, 0.3)
+    @test (length(out.body_soil_pos) == 5)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(), body_pos,
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15]])
+
+    # Test: IC-MIBS-140
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.7, 0.8, 0.8, 0.9, 0.0, 0.1, 0.1, 0.7)
+    set_height(out, 12, 15, NaN, 0.1, 0.4, NaN, NaN, 0.5, 0.9, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.6)
+    posA = _calc_bucket_frame_pos(12, 15, 0.4, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 12, 15, NaN, 0.4, 0.5, NaN, NaN)
+    @test (out.terrain[13, 15] ≈ 0.2)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 1, 12, 15, posA, 0.1)
+    @test (length(out.body_soil_pos) == 5)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(
+        out, [[13, 15]], body_pos,
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15]])
+
+    # Test: IC-MIBS-141
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.7, 0.8, 0.8, 0.9, 0.0, 0.1, 0.1, 0.7)
+    set_height(out, 12, 15, NaN, 0.1, 0.2, 0.2, 0.3, 0.7, 0.9, 0.9, 1.3)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.6)
+    posA = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(12, 15, 0.9, grid, bucket)
+    push_body_soil_pos(out, 1, 12, 15, posA, 0.1)
+    push_body_soil_pos(out, 3, 12, 15, pos3, 0.4)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 12, 15, NaN, 0.2, 0.6, 0.9, 1.3)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[7], 1, 12, 15, posA, 0.3)
+    @test (length(out.body_soil_pos) == 7)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    body_soil_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(out, Vector{Vector{Int64}}(), body_pos, body_soil_pos)
+
+    # Test: IC-MIBS-142
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.7, 0.8, 0.8, 0.9, 0.0, 0.1, 0.1, 0.7)
+    set_height(out, 12, 15, NaN, 0.1, 0.2, 0.2, 0.3, 0.4, 0.9, 0.9, 1.3)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.6)
+    posA = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(12, 15, 0.9, grid, bucket)
+    push_body_soil_pos(out, 1, 12, 15, posA, 0.1)
+    push_body_soil_pos(out, 3, 12, 15, pos3, 0.4)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 12, 15, NaN, 0.2, 0.4, 0.9, 1.3)
+    @test (out.terrain[13, 15] ≈ 0.2)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[7], 1, 12, 15, posA, 0.1)
+    @test (length(out.body_soil_pos) == 7)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    body_soil_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(out, [[13, 15]], body_pos, body_soil_pos)
+
+    # Test: IC-MIBS-143
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.7, 0.8, 0.8, 0.9, 0.0, 0.1, 0.1, 0.7)
+    set_height(out, 12, 15, NaN, 0.1, 0.2, 0.2, 0.4, 0.4, 0.9, 0.9, 1.3)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.6)
+    pos1 = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(12, 15, 0.9, grid, bucket)
+    push_body_soil_pos(out, 1, 12, 15, pos1, 0.2)
+    push_body_soil_pos(out, 3, 12, 15, pos3, 0.4)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    @test (out.terrain[13, 15] ≈ 0.3)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    @test (length(out.body_soil_pos) == 6)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    body_soil_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(out, [[13, 15]], body_pos, body_soil_pos)
+
+    # Test: IC-MIBS-144
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.7, 0.8, 0.8, 0.9, 0.0, 0.1, 0.1, 0.7)
+    set_height(out, 12, 15, NaN, 0.7, 0.9, NaN, NaN, 0.1, 0.4, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.6)
+    posA = _calc_bucket_frame_pos(12, 15, 0.4, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 12, 15, NaN, NaN, NaN, 0.4, 0.7)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 3, 12, 15, posA, 0.3)
+    @test (length(out.body_soil_pos) == 5)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(), body_pos,
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [3, 12, 15]])
+
+    # Test: IC-MIBS-145
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.7, 0.8, 0.8, 0.9, 0.0, 0.1, 0.1, 0.7)
+    set_height(out, 12, 15, NaN, 0.5, 0.9, NaN, NaN, 0.1, 0.4, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.6)
+    posA = _calc_bucket_frame_pos(12, 15, 0.4, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 12, 15, NaN, NaN, NaN, 0.4, 0.5)
+    @test (out.terrain[13, 15] ≈ 0.2)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 3, 12, 15, posA, 0.1)
+    @test (length(out.body_soil_pos) == 5)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(
+        out, [[13, 15]], body_pos,
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [3, 12, 15]])
+
+    # Test: IC-MIBS-146
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.7, 0.8, 0.8, 0.9, 0.0, 0.1, 0.1, 0.7)
+    set_height(out, 12, 15, NaN, 0.7, 0.9, 0.9, 1.3, 0.1, 0.2, 0.2, 0.3)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.6)
+    pos1 = _calc_bucket_frame_pos(12, 15, 0.9, grid, bucket)
+    posA = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    push_body_soil_pos(out, 1, 12, 15, pos1, 0.4)
+    push_body_soil_pos(out, 3, 12, 15, posA, 0.1)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 12, 15, NaN, 0.9, 1.3, 0.2, 0.6)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[7], 3, 12, 15, posA, 0.3)
+    @test (length(out.body_soil_pos) == 7)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    body_soil_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(out, Vector{Vector{Int64}}(), body_pos, body_soil_pos)
+
+    # Test: IC-MIBS-147
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.7, 0.8, 0.8, 0.9, 0.0, 0.1, 0.1, 0.7)
+    set_height(out, 12, 15, NaN, 0.4, 0.9, 0.9, 1.3, 0.1, 0.2, 0.2, 0.3)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.6)
+    pos1 = _calc_bucket_frame_pos(12, 15, 0.9, grid, bucket)
+    posA = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    push_body_soil_pos(out, 1, 12, 15, pos1, 0.4)
+    push_body_soil_pos(out, 3, 12, 15, posA, 0.1)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 12, 15, NaN, 0.9, 1.3, 0.2, 0.4)
+    @test (out.terrain[13, 15] ≈ 0.2)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[7], 3, 12, 15, posA, 0.1)
+    @test (length(out.body_soil_pos) == 7)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    body_soil_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(out, [[13, 15]], body_pos, body_soil_pos)
+
+    # Test: IC-MIBS-148
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.7, 0.8, 0.8, 0.9, 0.0, 0.1, 0.1, 0.7)
+    set_height(out, 12, 15, NaN, 0.4, 0.9, 0.9, 1.3, 0.1, 0.2, 0.2, 0.4)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.6)
+    pos1 = _calc_bucket_frame_pos(12, 15, 0.9, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    push_body_soil_pos(out, 1, 12, 15, pos1, 0.4)
+    push_body_soil_pos(out, 3, 12, 15, pos3, 0.2)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    @test (out.terrain[13, 15] ≈ 0.3)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    @test (length(out.body_soil_pos) == 6)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    body_soil_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(out, [[13, 15]], body_pos, body_soil_pos)
+
+    # Test: IC-MIBS-149
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.0, 0.2, NaN, NaN, 0.5, 0.7, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    posA = _calc_bucket_frame_pos(11, 15, 0.2, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 11, 15, NaN, 0.2, 0.5, NaN, NaN)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[3], 1, 11, 15, posA, 0.3)
+    @test (length(out.body_soil_pos) == 3)
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(), [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15]])
+
+    # Test: IC-MIBS-150
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.0, 0.2, NaN, NaN, 0.4, 0.7, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    posA = _calc_bucket_frame_pos(11, 15, 0.2, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 11, 15, NaN, 0.2, 0.4, NaN, NaN)
+    @test (out.terrain[12, 15] ≈ 0.1)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[3], 1, 11, 15, posA, 0.2)
+    @test (length(out.body_soil_pos) == 3)
+    reset_value_and_test(
+        out, [[12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15]])
+
+    # Test: IC-MIBS-151
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.0, 0.2, NaN, NaN, 0.3, 0.7, NaN, NaN)
+    set_height(out, 12, 15, 0.2, 0.3, 0.4, NaN, NaN, NaN, NaN, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    posA = _calc_bucket_frame_pos(11, 15, 0.2, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 11, 15, NaN, 0.2, 0.3, NaN, NaN)
+    @test (out.terrain[12, 15] ≈ 0.4)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[3], 1, 11, 15, posA, 0.1)
+    @test (length(out.body_soil_pos) == 3)
+    reset_value_and_test(
+        out, [[12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15]])
+
+    # Test: IC-MIBS-152
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.0, 0.2, NaN, NaN, 0.3, 0.7, NaN, NaN)
+    set_height(out, 12, 15, NaN, 0.0, 0.2, NaN, NaN, NaN, NaN, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    posA = _calc_bucket_frame_pos(11, 15, 0.2, grid, bucket)
+    posB = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 11, 15, NaN, 0.2, 0.3, NaN, NaN)
+    check_height(out, 12, 15, NaN, 0.2, 0.4, NaN, NaN)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[3], 1, 11, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[4], 1, 12, 15, posB, 0.2)
+    @test (length(out.body_soil_pos) == 4)
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(),
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [1, 12, 15]])
+
+    # Test: IC-MIBS-153
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.0, 0.2, NaN, NaN, 0.3, 0.7, NaN, NaN)
+    set_height(out, 12, 15, NaN, 0.0, 0.2, 0.2, 0.4, NaN, NaN, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    posA = _calc_bucket_frame_pos(11, 15, 0.2, grid, bucket)
+    posB = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    push_body_soil_pos(out, 1, 12, 15, posB, 0.2)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 11, 15, NaN, 0.2, 0.3, NaN, NaN)
+    check_height(out, 12, 15, NaN, 0.2, 0.6, NaN, NaN)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[4], 1, 11, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[5], 1, 12, 15, posB, 0.2)
+    @test (length(out.body_soil_pos) == 5)
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(),
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [1, 12, 15]])
+
+    # Test: IC-MIBS-154
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.0, 0.2, NaN, NaN, 0.3, 0.7, NaN, NaN)
+    set_height(out, 12, 15, NaN, 0.2, 0.3, NaN, NaN, NaN, NaN, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    posA = _calc_bucket_frame_pos(11, 15, 0.2, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 11, 15, NaN, 0.2, 0.3, NaN, NaN)
+    @test (out.terrain[10, 16] ≈ 0.2)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[3], 1, 11, 15, posA, 0.1)
+    @test (length(out.body_soil_pos) == 3)
+    reset_value_and_test(
+        out, [[10, 16]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15]])
+
+    # Test: IC-MIBS-155
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.0, 0.2, NaN, NaN, 0.3, 0.7, NaN, NaN)
+    set_height(out, 12, 15, 0.2, NaN, NaN, NaN, NaN, 0.3, 0.4, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    posA = _calc_bucket_frame_pos(11, 15, 0.2, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 11, 15, NaN, 0.2, 0.3, NaN, NaN)
+    @test (out.terrain[12, 15] ≈ 0.4)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[3], 1, 11, 15, posA, 0.1)
+    @test (length(out.body_soil_pos) == 3)
+    reset_value_and_test(
+        out, [[12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [3, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15]])
+
+    # Test: IC-MIBS-156
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.0, 0.2, NaN, NaN, 0.3, 0.7, NaN, NaN)
+    set_height(out, 12, 15, NaN, NaN, NaN, NaN, NaN, 0.0, 0.2, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    posA = _calc_bucket_frame_pos(11, 15, 0.2, grid, bucket)
+    posB = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 11, 15, NaN, 0.2, 0.3, NaN, NaN)
+    check_height(out, 12, 15, NaN, NaN, NaN, 0.2, 0.4)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[3], 1, 11, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[4], 3, 12, 15, posB, 0.2)
+    @test (length(out.body_soil_pos) == 4)
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(),
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [3, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 12, 15]])
+
+    # Test: IC-MIBS-157
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.0, 0.4, NaN, NaN, 0.6, 0.8, NaN, NaN)
+    set_height(out, 12, 15, NaN, NaN, NaN, NaN, NaN, 0.0, 0.1, 0.1, 0.2)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    posA = _calc_bucket_frame_pos(11, 15, 0.4, grid, bucket)
+    posB = _calc_bucket_frame_pos(12, 15, 0.1, grid, bucket)
+    push_body_soil_pos(out, 3, 12, 15, posB, 0.1)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 11, 15, NaN, 0.4, 0.6, NaN, NaN)
+    check_height(out, 12, 15, NaN, NaN, NaN, 0.1, 0.3)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[4], 1, 11, 15, posA, 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 3, 12, 15, posB, 0.1)
+    @test (length(out.body_soil_pos) == 5)
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(),
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [3, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 12, 15]])
+
+    # Test: IC-MIBS-158
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.0, 0.2, NaN, NaN, 0.3, 0.7, NaN, NaN)
+    set_height(out, 12, 15, NaN, NaN, NaN, NaN, NaN, 0.2, 0.3, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    posA = _calc_bucket_frame_pos(11, 15, 0.2, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 11, 15, NaN, 0.2, 0.3, NaN, NaN)
+    @test (out.terrain[10, 16] ≈ 0.2)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[3], 1, 11, 15, posA, 0.1)
+    @test (length(out.body_soil_pos) == 3)
+    reset_value_and_test(
+        out, [[10, 16]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [3, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15]])
+
+    # Test: IC-MIBS-159
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.0, 0.2, NaN, NaN, 0.3, 0.7, NaN, NaN)
+    set_height(out, 12, 15, NaN, 0.0, 0.2, NaN, NaN, 0.7, 0.8, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    posA = _calc_bucket_frame_pos(11, 15, 0.2, grid, bucket)
+    posB = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 11, 15, NaN, 0.2, 0.3, NaN, NaN)
+    check_height(out, 12, 15, NaN, 0.2, 0.4, NaN, NaN)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[3], 1, 11, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[4], 1, 12, 15, posB, 0.2)
+    @test (length(out.body_soil_pos) == 4)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(), body_pos,
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [1, 12, 15]])
+
+    # Test: IC-MIBS-160
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.0, 0.2, NaN, NaN, 0.3, 0.7, NaN, NaN)
+    set_height(out, 12, 15, NaN, 0.0, 0.2, NaN, NaN, 0.3, 0.8, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    posA = _calc_bucket_frame_pos(11, 15, 0.2, grid, bucket)
+    posB = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 11, 15, NaN, 0.2, 0.3, NaN, NaN)
+    check_height(out, 12, 15, NaN, 0.2, 0.3, NaN, NaN)
+    @test (out.terrain[13, 15] ≈ 0.1)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[3], 1, 11, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[4], 1, 12, 15, posB, 0.1)
+    @test (length(out.body_soil_pos) == 4)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(
+        out, [[13, 15]], body_pos,
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [1, 12, 15]])
+
+    # Test: IC-MIBS-161
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.0, 0.2, NaN, NaN, 0.3, 0.7, NaN, NaN)
+    set_height(out, 12, 15, NaN, 0.0, 0.2, 0.2, 0.3, 0.7, 0.8, 0.8, 0.9)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    posA = _calc_bucket_frame_pos(11, 15, 0.2, grid, bucket)
+    posB = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(12, 15, 0.8, grid, bucket)
+    push_body_soil_pos(out, 1, 12, 15, posB, 0.1)
+    push_body_soil_pos(out, 3, 12, 15, pos3, 0.1)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 11, 15, NaN, 0.2, 0.3, NaN, NaN)
+    check_height(out, 12, 15, NaN, 0.2, 0.5, 0.8, 0.9)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 1, 11, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[6], 1, 12, 15, posB, 0.2)
+    @test (length(out.body_soil_pos) == 6)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(), body_pos,
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [1, 12, 15], [3, 12, 15]])
+
+    # Test: IC-MIBS-162
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.0, 0.2, NaN, NaN, 0.3, 0.7, NaN, NaN)
+    set_height(out, 12, 15, NaN, 0.0, 0.2, 0.2, 0.3, 0.4, 0.8, 0.8, 0.9)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    posA = _calc_bucket_frame_pos(11, 15, 0.2, grid, bucket)
+    posB = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(12, 15, 0.8, grid, bucket)
+    push_body_soil_pos(out, 1, 12, 15, posB, 0.1)
+    push_body_soil_pos(out, 3, 12, 15, pos3, 0.1)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 11, 15, NaN, 0.2, 0.3, NaN, NaN)
+    check_height(out, 12, 15, NaN, 0.2, 0.4, 0.8, 0.9)
+    @test (out.terrain[13, 15] ≈ 0.1)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 1, 11, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[6], 1, 12, 15, posB, 0.1)
+    @test (length(out.body_soil_pos) == 6)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(
+        out, [[13, 15]], body_pos,
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [1, 12, 15], [3, 12, 15]])
+
+    # Test: IC-MIBS-163
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.0, 0.2, NaN, NaN, 0.3, 0.7, NaN, NaN)
+    set_height(out, 12, 15, NaN, 0.0, 0.2, 0.2, 0.3, 0.3, 0.8, 0.8, 0.9)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    posA = _calc_bucket_frame_pos(11, 15, 0.2, grid, bucket)
+    pos1 = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(12, 15, 0.8, grid, bucket)
+    push_body_soil_pos(out, 1, 12, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 12, 15, pos3, 0.1)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 11, 15, NaN, 0.2, 0.3, NaN, NaN)
+    @test (out.terrain[13, 15] ≈ 0.2)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 1, 11, 15, posA, 0.1)
+    @test (length(out.body_soil_pos) == 5)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(
+        out, [[13, 15]], body_pos,
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [1, 12, 15], [3, 12, 15]])
+
+    # Test: IC-MIBS-164
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.0, 0.2, NaN, NaN, 0.3, 0.7, NaN, NaN)
+    set_height(out, 12, 15, NaN, 0.7, 0.8, NaN, NaN, 0.0, 0.2, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    posA = _calc_bucket_frame_pos(11, 15, 0.2, grid, bucket)
+    posB = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 11, 15, NaN, 0.2, 0.3, NaN, NaN)
+    check_height(out, 12, 15, NaN, NaN, NaN, 0.2, 0.4)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[3], 1, 11, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[4], 3, 12, 15, posB, 0.2)
+    @test (length(out.body_soil_pos) == 4)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(), body_pos,
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 12, 15]])
+
+    # Test: IC-MIBS-165
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.0, 0.2, NaN, NaN, 0.3, 0.7, NaN, NaN)
+    set_height(out, 12, 15, NaN, 0.3, 0.8, NaN, NaN, 0.0, 0.2, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    posA = _calc_bucket_frame_pos(11, 15, 0.2, grid, bucket)
+    posB = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 11, 15, NaN, 0.2, 0.3, NaN, NaN)
+    check_height(out, 12, 15, NaN, NaN, NaN, 0.2, 0.3)
+    @test (out.terrain[13, 15] ≈ 0.1)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[3], 1, 11, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[4], 3, 12, 15, posB, 0.1)
+    @test (length(out.body_soil_pos) == 4)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(
+        out, [[13, 15]], body_pos,
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 12, 15]])
+
+    # Test: IC-MIBS-166
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.0, 0.2, NaN, NaN, 0.3, 0.7, NaN, NaN)
+    set_height(out, 12, 15, NaN, 0.7, 0.8, 0.8, 0.9, 0.0, 0.2, 0.2, 0.3)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    posA = _calc_bucket_frame_pos(11, 15, 0.2, grid, bucket)
+    pos1 = _calc_bucket_frame_pos(12, 15, 0.8, grid, bucket)
+    posB = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    push_body_soil_pos(out, 1, 12, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 12, 15, posB, 0.1)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 11, 15, NaN, 0.2, 0.3, NaN, NaN)
+    check_height(out, 12, 15, NaN, 0.8, 0.9, 0.2, 0.5)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 1, 11, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[6], 3, 12, 15, posB, 0.2)
+    @test (length(out.body_soil_pos) == 6)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(), body_pos,
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [1, 12, 15], [3, 12, 15]])
+
+    # Test: IC-MIBS-167
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.0, 0.2, NaN, NaN, 0.3, 0.7, NaN, NaN)
+    set_height(out, 12, 15, NaN, 0.4, 0.8, 0.8, 0.9, 0.0, 0.2, 0.2, 0.3)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    posA = _calc_bucket_frame_pos(11, 15, 0.2, grid, bucket)
+    pos1 = _calc_bucket_frame_pos(12, 15, 0.8, grid, bucket)
+    posB = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    push_body_soil_pos(out, 1, 12, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 12, 15, posB, 0.1)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 11, 15, NaN, 0.2, 0.3, NaN, NaN)
+    check_height(out, 12, 15, NaN, 0.8, 0.9, 0.2, 0.4)
+    @test (out.terrain[13, 15] ≈ 0.1)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 1, 11, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[6], 3, 12, 15, posB, 0.1)
+    @test (length(out.body_soil_pos) == 6)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(
+        out, [[13, 15]], body_pos,
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [1, 12, 15], [3, 12, 15]])
+
+    # Test: IC-MIBS-168
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.0, 0.2, NaN, NaN, 0.3, 0.7, NaN, NaN)
+    set_height(out, 12, 15, NaN, 0.3, 0.8, 0.8, 0.9, 0.0, 0.2, 0.2, 0.3)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    posA = _calc_bucket_frame_pos(11, 15, 0.2, grid, bucket)
+    pos1 = _calc_bucket_frame_pos(12, 15, 0.8, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    push_body_soil_pos(out, 1, 12, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 12, 15, pos3, 0.1)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 11, 15, NaN, 0.2, 0.3, NaN, NaN)
+    @test (out.terrain[13, 15] ≈ 0.2)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 1, 11, 15, posA, 0.1)
+    @test (length(out.body_soil_pos) == 5)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(
+        out, [[13, 15]], body_pos,
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [1, 12, 15], [3, 12, 15]])
+
+    # Test: IC-MIBS-169
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.0, 0.1, 0.1, 0.2, 0.5, 0.7, 0.7, 0.9)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    posA = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.7, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, posA, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.2)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 11, 15, NaN, 0.1, 0.5, 0.7, 0.9)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 1, 11, 15, posA, 0.3)
+    @test (length(out.body_soil_pos) == 5)
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(), [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15]])
+
+    # Test: IC-MIBS-170
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.0, 0.1, 0.1, 0.2, 0.4, 0.7, 0.7, 0.9)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    posA = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.7, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, posA, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.2)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 11, 15, NaN, 0.1, 0.4, 0.7, 0.9)
+    @test (out.terrain[12, 15] ≈ 0.1)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 1, 11, 15, posA, 0.2)
+    @test (length(out.body_soil_pos) == 5)
+    reset_value_and_test(
+        out, [[12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15]])
+
+    # Test: IC-MIBS-171
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.0, 0.1, 0.1, 0.6, 0.7, 0.8, 0.8, 0.9)
+    set_height(out, 12, 15, 0.1, 0.2, 0.4, NaN, NaN, NaN, NaN, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    posA = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, posA, 0.5)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.1)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 11, 15, NaN, 0.1, 0.7, 0.8, 0.9)
+    @test (out.terrain[12, 15] ≈ 0.3)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 1, 11, 15, posA, 0.1)
+    @test (length(out.body_soil_pos) == 5)
+    reset_value_and_test(
+        out, [[12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15]])
+
+    # Test: IC-MIBS-172
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.0, 0.3, 0.3, 0.4, 0.5, 0.8, 0.8, 0.9)
+    set_height(out, 12, 15, NaN, 0.0, 0.3, NaN, NaN, NaN, NaN, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    posA = _calc_bucket_frame_pos(11, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, posA, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.1)
+    posB = _calc_bucket_frame_pos(12, 15, 0.3, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 11, 15, NaN, 0.3, 0.5, 0.8, 0.9)
+    check_height(out, 12, 15, NaN, 0.3, 0.5, NaN, NaN)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 1, 11, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[6], 1, 12, 15, posB, 0.2)
+    @test (length(out.body_soil_pos) == 6)
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(),
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15]])
+
+    # Test: IC-MIBS-173
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.0, 0.3, 0.3, 0.4, 0.5, 0.8, 0.8, 0.9)
+    set_height(out, 12, 15, NaN, 0.0, 0.3, 0.3, 0.4, NaN, NaN, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    posA = _calc_bucket_frame_pos(11, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, posA, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.1)
+    posB = _calc_bucket_frame_pos(12, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 12, 15, posB, 0.1)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 11, 15, NaN, 0.3, 0.5, 0.8, 0.9)
+    check_height(out, 12, 15, NaN, 0.3, 0.6, NaN, NaN)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[6], 1, 11, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[7], 1, 12, 15, posB, 0.2)
+    @test (length(out.body_soil_pos) == 7)
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(),
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15]])
+
+    # Test: IC-MIBS-174
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.0, 0.3, 0.3, 0.4, 0.5, 0.8, 0.8, 0.9)
+    set_height(out, 12, 15, NaN, 0.3, 0.5, NaN, NaN, NaN, NaN, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    posA = _calc_bucket_frame_pos(11, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, posA, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.1)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 11, 15, NaN, 0.3, 0.5, 0.8, 0.9)
+    @test (out.terrain[10, 16] ≈ 0.2)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 1, 11, 15, posA, 0.1)
+    @test (length(out.body_soil_pos) == 5)
+    reset_value_and_test(
+        out, [[10, 16]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15]])
+
+    # Test: IC-MIBS-175
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.0, 0.1, 0.1, 0.6, 0.7, 0.8, 0.8, 0.9)
+    set_height(out, 12, 15, 0.1, NaN, NaN, NaN, NaN, 0.2, 0.4, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    posA = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, posA, 0.5)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.1)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 11, 15, NaN, 0.1, 0.7, 0.8, 0.9)
+    @test (out.terrain[12, 15] ≈ 0.3)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 1, 11, 15, posA, 0.1)
+    @test (length(out.body_soil_pos) == 5)
+    reset_value_and_test(
+        out, [[12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [3, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15]])
+
+    # Test: IC-MIBS-176
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.0, 0.3, 0.3, 0.4, 0.5, 0.8, 0.8, 0.9)
+    set_height(out, 12, 15, NaN, NaN, NaN, NaN, NaN, 0.0, 0.3, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    posA = _calc_bucket_frame_pos(11, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, posA, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.1)
+    posB = _calc_bucket_frame_pos(12, 15, 0.3, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 11, 15, NaN, 0.3, 0.5, 0.8, 0.9)
+    check_height(out, 12, 15, NaN, NaN, NaN, 0.3, 0.5)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 1, 11, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[6], 3, 12, 15, posB, 0.2)
+    @test (length(out.body_soil_pos) == 6)
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(),
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [3, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [3, 12, 15]])
+
+    # Test: IC-MIBS-177
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.0, 0.3, 0.3, 0.4, 0.5, 0.8, 0.8, 0.9)
+    set_height(out, 12, 15, NaN, NaN, NaN, NaN, NaN, 0.0, 0.3, 0.3, 0.4)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    posA = _calc_bucket_frame_pos(11, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, posA, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.1)
+    posB = _calc_bucket_frame_pos(12, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 3, 12, 15, posB, 0.1)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 11, 15, NaN, 0.3, 0.5, 0.8, 0.9)
+    check_height(out, 12, 15, NaN, NaN, NaN, 0.3, 0.6)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[6], 1, 11, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[7], 3, 12, 15, posB, 0.2)
+    @test (length(out.body_soil_pos) == 7)
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(),
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [3, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [3, 12, 15]])
+
+    # Test: IC-MIBS-178
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.0, 0.3, 0.3, 0.4, 0.5, 0.8, 0.8, 0.9)
+    set_height(out, 12, 15, NaN, NaN, NaN, NaN, NaN, 0.3, 0.5, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    posA = _calc_bucket_frame_pos(11, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, posA, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.1)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 11, 15, NaN, 0.3, 0.5, 0.8, 0.9)
+    @test (out.terrain[10, 16] ≈ 0.2)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 1, 11, 15, posA, 0.1)
+    @test (length(out.body_soil_pos) == 5)
+    reset_value_and_test(
+        out, [[10, 16]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [3, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15]])
+
+    # Test: IC-MIBS-179
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.0, 0.1, 0.1, 0.6, 0.7, 0.8, 0.8, 0.9)
+    set_height(out, 12, 15, NaN, 0.1, 0.4, NaN, NaN, 0.7, 0.9, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    posA = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, posA, 0.5)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.1)
+    posB = _calc_bucket_frame_pos(12, 15, 0.4, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 11, 15, NaN, 0.1, 0.7, 0.8, 0.9)
+    check_height(out, 12, 15, NaN, 0.4, 0.6, NaN, NaN)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 1, 11, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[6], 1, 12, 15, posB, 0.2)
+    @test (length(out.body_soil_pos) == 6)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(), body_pos,
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15]])
+
+    # Test: IC-MIBS-180
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.0, 0.1, 0.1, 0.6, 0.7, 0.8, 0.8, 0.9)
+    set_height(out, 12, 15, NaN, 0.1, 0.4, NaN, NaN, 0.5, 0.9, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    posA = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, posA, 0.5)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.1)
+    posB = _calc_bucket_frame_pos(12, 15, 0.4, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 11, 15, NaN, 0.1, 0.7, 0.8, 0.9)
+    check_height(out, 12, 15, NaN, 0.4, 0.5, NaN, NaN)
+    @test (out.terrain[13, 15] ≈ 0.1)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 1, 11, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[6], 1, 12, 15, posB, 0.1)
+    @test (length(out.body_soil_pos) == 6)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(
+        out, [[13, 15]], body_pos,
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15]])
+
+    # Test: IC-MIBS-181
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.0, 0.1, 0.1, 0.6, 0.7, 0.8, 0.8, 0.9)
+    set_height(out, 12, 15, NaN, 0.1, 0.2, 0.2, 0.3, 0.7, 0.9, 0.9, 1.3)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    posA = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, posA, 0.5)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.1)
+    posB = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(12, 15, 0.9, grid, bucket)
+    push_body_soil_pos(out, 1, 12, 15, posB, 0.1)
+    push_body_soil_pos(out, 3, 12, 15, pos3, 0.4)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 11, 15, NaN, 0.1, 0.7, 0.8, 0.9)
+    check_height(out, 12, 15, NaN, 0.2, 0.5, 0.9, 1.3)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[7], 1, 11, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[8], 1, 12, 15, posB, 0.2)
+    @test (length(out.body_soil_pos) == 8)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    body_soil_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(out, Vector{Vector{Int64}}(), body_pos, body_soil_pos)
+
+    # Test: IC-MIBS-182
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.0, 0.1, 0.1, 0.6, 0.7, 0.8, 0.8, 0.9)
+    set_height(out, 12, 15, NaN, 0.1, 0.2, 0.2, 0.3, 0.4, 0.9, 0.9, 1.3)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    posA = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, posA, 0.5)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.1)
+    posB = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(12, 15, 0.9, grid, bucket)
+    push_body_soil_pos(out, 1, 12, 15, posB, 0.1)
+    push_body_soil_pos(out, 3, 12, 15, pos3, 0.4)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 11, 15, NaN, 0.1, 0.7, 0.8, 0.9)
+    check_height(out, 12, 15, NaN, 0.2, 0.4, 0.9, 1.3)
+    @test (out.terrain[13, 15] ≈ 0.1)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[7], 1, 11, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[8], 1, 12, 15, posB, 0.1)
+    @test (length(out.body_soil_pos) == 8)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    body_soil_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(out, [[13, 15]], body_pos, body_soil_pos)
+
+    # Test: IC-MIBS-183
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.0, 0.1, 0.1, 0.6, 0.7, 0.8, 0.8, 0.9)
+    set_height(out, 12, 15, NaN, 0.1, 0.2, 0.2, 0.4, 0.4, 0.9, 0.9, 1.3)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    posA = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, posA, 0.5)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.1)
+    pos1 = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(12, 15, 0.9, grid, bucket)
+    push_body_soil_pos(out, 1, 12, 15, pos1, 0.2)
+    push_body_soil_pos(out, 3, 12, 15, pos3, 0.4)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 11, 15, NaN, 0.1, 0.7, 0.8, 0.9)
+    @test (out.terrain[13, 15] ≈ 0.2)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[7], 1, 11, 15, posA, 0.1)
+    @test (length(out.body_soil_pos) == 7)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    body_soil_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(out, [[13, 15]], body_pos, body_soil_pos)
+
+    # Test: IC-MIBS-184
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.0, 0.1, 0.1, 0.6, 0.7, 0.8, 0.8, 0.9)
+    set_height(out, 12, 15, NaN, 0.7, 0.9, NaN, NaN, 0.1, 0.4, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    posA = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, posA, 0.5)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.1)
+    posB = _calc_bucket_frame_pos(12, 15, 0.4, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 11, 15, NaN, 0.1, 0.7, 0.8, 0.9)
+    check_height(out, 12, 15, NaN, NaN, NaN, 0.4, 0.6)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 1, 11, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[6], 3, 12, 15, posB, 0.2)
+    @test (length(out.body_soil_pos) == 6)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(), body_pos,
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [3, 12, 15]])
+
+    # Test: IC-MIBS-185
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.0, 0.1, 0.1, 0.6, 0.7, 0.8, 0.8, 0.9)
+    set_height(out, 12, 15, NaN, 0.5, 0.9, NaN, NaN, 0.1, 0.4, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    posA = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, posA, 0.5)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.1)
+    posB = _calc_bucket_frame_pos(12, 15, 0.4, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 11, 15, NaN, 0.1, 0.7, 0.8, 0.9)
+    check_height(out, 12, 15, NaN, NaN, NaN, 0.4, 0.5)
+    @test (out.terrain[13, 15] ≈ 0.1)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 1, 11, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[6], 3, 12, 15, posB, 0.1)
+    @test (length(out.body_soil_pos) == 6)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(
+        out, [[13, 15]], body_pos,
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [3, 12, 15]])
+
+    # Test: IC-MIBS-186
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.0, 0.1, 0.1, 0.6, 0.7, 0.8, 0.8, 0.9)
+    set_height(out, 12, 15, NaN, 0.7, 0.9, 0.9, 1.3, 0.1, 0.2, 0.2, 0.3)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    posA = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, posA, 0.5)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.1)
+    pos1 = _calc_bucket_frame_pos(12, 15, 0.9, grid, bucket)
+    posB = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    push_body_soil_pos(out, 1, 12, 15, pos1, 0.4)
+    push_body_soil_pos(out, 3, 12, 15, posB, 0.1)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 11, 15, NaN, 0.1, 0.7, 0.8, 0.9)
+    check_height(out, 12, 15, NaN, 0.9, 1.3, 0.2, 0.5)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[7], 1, 11, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[8], 3, 12, 15, posB, 0.2)
+    @test (length(out.body_soil_pos) == 8)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    body_soil_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(out, Vector{Vector{Int64}}(), body_pos, body_soil_pos)
+
+    # Test: IC-MIBS-187
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.0, 0.1, 0.1, 0.6, 0.7, 0.8, 0.8, 0.9)
+    set_height(out, 12, 15, NaN, 0.4, 0.9, 0.9, 1.3, 0.1, 0.2, 0.2, 0.3)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    posA = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, posA, 0.5)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.1)
+    pos1 = _calc_bucket_frame_pos(12, 15, 0.9, grid, bucket)
+    posB = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    push_body_soil_pos(out, 1, 12, 15, pos1, 0.4)
+    push_body_soil_pos(out, 3, 12, 15, posB, 0.1)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 11, 15, NaN, 0.1, 0.7, 0.8, 0.9)
+    check_height(out, 12, 15, NaN, 0.9, 1.3, 0.2, 0.4)
+    @test (out.terrain[13, 15] ≈ 0.1)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[7], 1, 11, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[8], 3, 12, 15, posB, 0.1)
+    @test (length(out.body_soil_pos) == 8)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    body_soil_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(out, [[13, 15]], body_pos, body_soil_pos)
+
+    # Test: IC-MIBS-188
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.0, 0.1, 0.1, 0.6, 0.7, 0.8, 0.8, 0.9)
+    set_height(out, 12, 15, NaN, 0.4, 0.9, 0.9, 1.3, 0.1, 0.2, 0.2, 0.4)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    posA = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, posA, 0.5)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.1)
+    pos1 = _calc_bucket_frame_pos(12, 15, 0.9, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    push_body_soil_pos(out, 1, 12, 15, pos1, 0.4)
+    push_body_soil_pos(out, 3, 12, 15, pos3, 0.2)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 11, 15, NaN, 0.1, 0.7, 0.8, 0.9)
+    @test (out.terrain[13, 15] ≈ 0.2)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[7], 1, 11, 15, posA, 0.1)
+    @test (length(out.body_soil_pos) == 7)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    body_soil_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(out, [[13, 15]], body_pos, body_soil_pos)
+
+    # Test: IC-MIBS-189
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.0, 0.1, 0.1, 0.4, 0.4, 0.7, 0.7, 0.9)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.7, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.3)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.2)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    @test (out.terrain[12, 15] ≈ 0.3)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    @test (length(out.body_soil_pos) == 4)
+    reset_value_and_test(
+        out, [[12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15]])
+
+    # Test: IC-MIBS-190
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.0, 0.1, 0.1, 0.7, 0.7, 0.8, 0.8, 0.9)
+    set_height(out, 12, 15, 0.1, 0.2, 0.4, NaN, NaN, NaN, NaN, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.6)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.1)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    @test (out.terrain[12, 15] ≈ 0.4)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    @test (length(out.body_soil_pos) == 4)
+    reset_value_and_test(
+        out, [[12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15]])
+
+    # Test: IC-MIBS-191
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.0, 0.3, 0.3, 0.5, 0.5, 0.8, 0.8, 0.9)
+    set_height(out, 12, 15, NaN, 0.0, 0.3, NaN, NaN, NaN, NaN, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.2)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.1)
+    posA = _calc_bucket_frame_pos(12, 15, 0.3, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 12, 15, NaN, 0.3, 0.6, NaN, NaN)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 1, 12, 15, posA, 0.3)
+    @test (length(out.body_soil_pos) == 5)
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(),
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15]])
+
+    # Test: IC-MIBS-192
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.0, 0.3, 0.3, 0.5, 0.5, 0.8, 0.8, 0.9)
+    set_height(out, 12, 15, NaN, 0.0, 0.3, 0.3, 0.4, NaN, NaN, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.2)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.1)
+    posA = _calc_bucket_frame_pos(12, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 12, 15, posA, 0.1)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 12, 15, NaN, 0.3, 0.7, NaN, NaN)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[6], 1, 12, 15, posA, 0.3)
+    @test (length(out.body_soil_pos) == 6)
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(),
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15]])
+
+    # Test: IC-MIBS-193
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.0, 0.3, 0.3, 0.5, 0.5, 0.8, 0.8, 0.9)
+    set_height(out, 12, 15, NaN, 0.3, 0.5, NaN, NaN, NaN, NaN, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.2)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.1)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    @test (out.terrain[10, 16] ≈ 0.3)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    @test (length(out.body_soil_pos) == 4)
+    reset_value_and_test(
+        out, [[10, 16]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15]])
+
+    # Test: IC-MIBS-194
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.0, 0.1, 0.1, 0.7, 0.7, 0.8, 0.8, 0.9)
+    set_height(out, 12, 15, 0.1, NaN, NaN, NaN, NaN, 0.2, 0.4, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.6)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.1)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    @test (out.terrain[12, 15] ≈ 0.4)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    @test (length(out.body_soil_pos) == 4)
+    reset_value_and_test(
+        out, [[12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [3, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15]])
+
+    # Test: IC-MIBS-195
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.0, 0.3, 0.3, 0.5, 0.5, 0.8, 0.8, 0.9)
+    set_height(out, 12, 15, NaN, NaN, NaN, NaN, NaN, 0.0, 0.3, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.2)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.1)
+    posA = _calc_bucket_frame_pos(12, 15, 0.3, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 12, 15, NaN, NaN, NaN, 0.3, 0.6)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 3, 12, 15, posA, 0.3)
+    @test (length(out.body_soil_pos) == 5)
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(),
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [3, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [3, 12, 15]])
+
+    # Test: IC-MIBS-196
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.0, 0.3, 0.3, 0.5, 0.5, 0.8, 0.8, 0.9)
+    set_height(out, 12, 15, NaN, NaN, NaN, NaN, NaN, 0.0, 0.3, 0.3, 0.4)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.2)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.1)
+    posA = _calc_bucket_frame_pos(12, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 3, 12, 15, posA, 0.1)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 12, 15, NaN, NaN, NaN, 0.3, 0.7)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[6], 3, 12, 15, posA, 0.3)
+    @test (length(out.body_soil_pos) == 6)
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(),
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [3, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [3, 12, 15]])
+
+    # Test: IC-MIBS-197
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.0, 0.3, 0.3, 0.5, 0.5, 0.8, 0.8, 0.9)
+    set_height(out, 12, 15, NaN, NaN, NaN, NaN, NaN, 0.3, 0.5, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.2)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.1)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    @test (out.terrain[10, 16] ≈ 0.3)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    @test (length(out.body_soil_pos) == 4)
+    reset_value_and_test(
+        out, [[10, 16]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [3, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15]])
+
+    # Test: IC-MIBS-198
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.0, 0.1, 0.1, 0.7, 0.7, 0.8, 0.8, 0.9)
+    set_height(out, 12, 15, NaN, 0.1, 0.4, NaN, NaN, 0.7, 0.9, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.6)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.1)
+    posA = _calc_bucket_frame_pos(12, 15, 0.4, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 12, 15, NaN, 0.4, 0.7, NaN, NaN)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 1, 12, 15, posA, 0.3)
+    @test (length(out.body_soil_pos) == 5)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(), body_pos,
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15]])
+
+    # Test: IC-MIBS-199
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.0, 0.1, 0.1, 0.7, 0.7, 0.8, 0.8, 0.9)
+    set_height(out, 12, 15, NaN, 0.1, 0.4, NaN, NaN, 0.5, 0.9, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.6)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.1)
+    posA = _calc_bucket_frame_pos(12, 15, 0.4, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 12, 15, NaN, 0.4, 0.5, NaN, NaN)
+    @test (out.terrain[13, 15] ≈ 0.2)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 1, 12, 15, posA, 0.1)
+    @test (length(out.body_soil_pos) == 5)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(
+        out, [[13, 15]], body_pos,
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15]])
+
+    # Test: IC-MIBS-200
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.0, 0.1, 0.1, 0.7, 0.7, 0.8, 0.8, 0.9)
+    set_height(out, 12, 15, NaN, 0.1, 0.2, 0.2, 0.3, 0.7, 0.9, 0.9, 1.3)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.6)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.1)
+    posA = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(12, 15, 0.9, grid, bucket)
+    push_body_soil_pos(out, 1, 12, 15, posA, 0.1)
+    push_body_soil_pos(out, 3, 12, 15, pos3, 0.4)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 12, 15, NaN, 0.2, 0.6, 0.9, 1.3)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[7], 1, 12, 15, posA, 0.3)
+    @test (length(out.body_soil_pos) == 7)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    body_soil_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(out, Vector{Vector{Int64}}(), body_pos, body_soil_pos)
+
+    # Test: IC-MIBS-201
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.0, 0.1, 0.1, 0.7, 0.7, 0.8, 0.8, 0.9)
+    set_height(out, 12, 15, NaN, 0.1, 0.2, 0.2, 0.3, 0.4, 0.9, 0.9, 1.3)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.6)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.1)
+    posA = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(12, 15, 0.9, grid, bucket)
+    push_body_soil_pos(out, 1, 12, 15, posA, 0.1)
+    push_body_soil_pos(out, 3, 12, 15, pos3, 0.4)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 12, 15, NaN, 0.2, 0.4, 0.9, 1.3)
+    @test (out.terrain[13, 15] ≈ 0.2)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[7], 1, 12, 15, posA, 0.1)
+    @test (length(out.body_soil_pos) == 7)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    body_soil_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(out, [[13, 15]], body_pos, body_soil_pos)
+
+    # Test: IC-MIBS-202
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.0, 0.1, 0.1, 0.7, 0.7, 0.8, 0.8, 0.9)
+    set_height(out, 12, 15, NaN, 0.1, 0.2, 0.2, 0.4, 0.4, 0.9, 0.9, 1.3)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.6)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.1)
+    pos1 = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(12, 15, 0.9, grid, bucket)
+    push_body_soil_pos(out, 1, 12, 15, pos1, 0.2)
+    push_body_soil_pos(out, 3, 12, 15, pos3, 0.4)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    @test (out.terrain[13, 15] ≈ 0.3)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    @test (length(out.body_soil_pos) == 6)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    body_soil_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(out, [[13, 15]], body_pos, body_soil_pos)
+
+    # Test: IC-MIBS-203
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.0, 0.1, 0.1, 0.7, 0.7, 0.8, 0.8, 0.9)
+    set_height(out, 12, 15, NaN, 0.7, 0.9, NaN, NaN, 0.1, 0.4, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.6)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.1)
+    posA = _calc_bucket_frame_pos(12, 15, 0.4, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 12, 15, NaN, NaN, NaN, 0.4, 0.7)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 3, 12, 15, posA, 0.3)
+    @test (length(out.body_soil_pos) == 5)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(), body_pos,
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [3, 12, 15]])
+
+    # Test: IC-MIBS-204
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.0, 0.1, 0.1, 0.7, 0.7, 0.8, 0.8, 0.9)
+    set_height(out, 12, 15, NaN, 0.5, 0.9, NaN, NaN, 0.1, 0.4, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.6)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.1)
+    posA = _calc_bucket_frame_pos(12, 15, 0.4, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 12, 15, NaN, NaN, NaN, 0.4, 0.5)
+    @test (out.terrain[13, 15] ≈ 0.2)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 3, 12, 15, posA, 0.1)
+    @test (length(out.body_soil_pos) == 5)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(
+        out, [[13, 15]], body_pos,
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [3, 12, 15]])
+
+    # Test: IC-MIBS-205
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.0, 0.1, 0.1, 0.7, 0.7, 0.8, 0.8, 0.9)
+    set_height(out, 12, 15, NaN, 0.7, 0.9, 0.9, 1.3, 0.1, 0.2, 0.2, 0.3)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.6)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.1)
+    pos1 = _calc_bucket_frame_pos(12, 15, 0.9, grid, bucket)
+    posA = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    push_body_soil_pos(out, 1, 12, 15, pos1, 0.4)
+    push_body_soil_pos(out, 3, 12, 15, posA, 0.1)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 12, 15, NaN, 0.9, 1.3, 0.2, 0.6)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[7], 3, 12, 15, posA, 0.3)
+    @test (length(out.body_soil_pos) == 7)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    body_soil_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(out, Vector{Vector{Int64}}(), body_pos, body_soil_pos)
+
+    # Test: IC-MIBS-206
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.0, 0.1, 0.1, 0.7, 0.7, 0.8, 0.8, 0.9)
+    set_height(out, 12, 15, NaN, 0.4, 0.9, 0.9, 1.3, 0.1, 0.2, 0.2, 0.3)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.6)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.1)
+    pos1 = _calc_bucket_frame_pos(12, 15, 0.9, grid, bucket)
+    posA = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    push_body_soil_pos(out, 1, 12, 15, pos1, 0.4)
+    push_body_soil_pos(out, 3, 12, 15, posA, 0.1)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 12, 15, NaN, 0.9, 1.3, 0.2, 0.4)
+    @test (out.terrain[13, 15] ≈ 0.2)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[7], 3, 12, 15, posA, 0.1)
+    @test (length(out.body_soil_pos) == 7)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    body_soil_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(out, [[13, 15]], body_pos, body_soil_pos)
+
+    # Test: IC-MIBS-207
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.0, 0.1, 0.1, 0.7, 0.7, 0.8, 0.8, 0.9)
+    set_height(out, 12, 15, NaN, 0.4, 0.9, 0.9, 1.3, 0.1, 0.2, 0.2, 0.4)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.6)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.1)
+    pos1 = _calc_bucket_frame_pos(12, 15, 0.9, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    push_body_soil_pos(out, 1, 12, 15, pos1, 0.4)
+    push_body_soil_pos(out, 3, 12, 15, pos3, 0.2)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    @test (out.terrain[13, 15] ≈ 0.3)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    @test (length(out.body_soil_pos) == 6)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    body_soil_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(out, [[13, 15]], body_pos, body_soil_pos)
+
+    # Test: IC-MIBS-208
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.5, 0.7, NaN, NaN, 0.0, 0.2, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    posA = _calc_bucket_frame_pos(11, 15, 0.2, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 11, 15, NaN, NaN, NaN, 0.2, 0.5)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[3], 3, 11, 15, posA, 0.3)
+    @test (length(out.body_soil_pos) == 3)
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(), [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15]],
+        [[1, 10, 15], [3, 10, 15], [3, 11, 15]])
+
+    # Test: IC-MIBS-209
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.4, 0.7, NaN, NaN, 0.0, 0.2, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    posA = _calc_bucket_frame_pos(11, 15, 0.2, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 11, 15, NaN, NaN, NaN, 0.2, 0.4)
+    @test (out.terrain[12, 15] ≈ 0.1)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[3], 3, 11, 15, posA, 0.2)
+    @test (length(out.body_soil_pos) == 3)
+    reset_value_and_test(
+        out, [[12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15]],
+        [[1, 10, 15], [3, 10, 15], [3, 11, 15]])
+
+    # Test: IC-MIBS-210
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.3, 0.7, NaN, NaN, 0.0, 0.2, NaN, NaN)
+    set_height(out, 12, 15, 0.2, 0.3, 0.4, NaN, NaN, NaN, NaN, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    posA = _calc_bucket_frame_pos(11, 15, 0.2, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 11, 15, NaN, NaN, NaN, 0.2, 0.3)
+    @test (out.terrain[12, 15] ≈ 0.4)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[3], 3, 11, 15, posA, 0.1)
+    @test (length(out.body_soil_pos) == 3)
+    reset_value_and_test(
+        out, [[12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [3, 11, 15]])
+
+    # Test: IC-MIBS-211
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.3, 0.7, NaN, NaN, 0.0, 0.2, NaN, NaN)
+    set_height(out, 12, 15, NaN, 0.0, 0.2, NaN, NaN, NaN, NaN, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    posA = _calc_bucket_frame_pos(11, 15, 0.2, grid, bucket)
+    posB = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 11, 15, NaN, NaN, NaN, 0.2, 0.3)
+    check_height(out, 12, 15, NaN, 0.2, 0.4, NaN, NaN)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[3], 3, 11, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[4], 1, 12, 15, posB, 0.2)
+    @test (length(out.body_soil_pos) == 4)
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(),
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [3, 11, 15], [1, 12, 15]])
+
+    # Test: IC-MIBS-212
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.3, 0.7, NaN, NaN, 0.0, 0.2, NaN, NaN)
+    set_height(out, 12, 15, NaN, 0.0, 0.2, 0.2, 0.4, NaN, NaN, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    posA = _calc_bucket_frame_pos(11, 15, 0.2, grid, bucket)
+    posB = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    push_body_soil_pos(out, 1, 12, 15, posB, 0.2)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 11, 15, NaN, NaN, NaN, 0.2, 0.3)
+    check_height(out, 12, 15, NaN, 0.2, 0.6, NaN, NaN)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[4], 3, 11, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[5], 1, 12, 15, posB, 0.2)
+    @test (length(out.body_soil_pos) == 5)
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(),
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [3, 11, 15], [1, 12, 15]])
+
+    # Test: IC-MIBS-213
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.3, 0.7, NaN, NaN, 0.0, 0.2, NaN, NaN)
+    set_height(out, 12, 15, NaN, 0.2, 0.3, NaN, NaN, NaN, NaN, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    posA = _calc_bucket_frame_pos(11, 15, 0.2, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 11, 15, NaN, NaN, NaN, 0.2, 0.3)
+    @test (out.terrain[10, 16] ≈ 0.2)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[3], 3, 11, 15, posA, 0.1)
+    @test (length(out.body_soil_pos) == 3)
+    reset_value_and_test(
+        out, [[10, 16]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [3, 11, 15]])
+
+    # Test: IC-MIBS-214
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.3, 0.7, NaN, NaN, 0.0, 0.2, NaN, NaN)
+    set_height(out, 12, 15, 0.2, NaN, NaN, NaN, NaN, 0.3, 0.4, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    posA = _calc_bucket_frame_pos(11, 15, 0.2, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 11, 15, NaN, NaN, NaN, 0.2, 0.3)
+    @test (out.terrain[12, 15] ≈ 0.4)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[3], 3, 11, 15, posA, 0.1)
+    @test (length(out.body_soil_pos) == 3)
+    reset_value_and_test(
+        out, [[12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [3, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [3, 11, 15]])
+
+    # Test: IC-MIBS-215
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.3, 0.7, NaN, NaN, 0.0, 0.2, NaN, NaN)
+    set_height(out, 12, 15, NaN, NaN, NaN, NaN, NaN, 0.0, 0.2, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    posA = _calc_bucket_frame_pos(11, 15, 0.2, grid, bucket)
+    posB = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 11, 15, NaN, NaN, NaN, 0.2, 0.3)
+    check_height(out, 12, 15, NaN, NaN, NaN, 0.2, 0.4)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[3], 3, 11, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[4], 3, 12, 15, posB, 0.2)
+    @test (length(out.body_soil_pos) == 4)
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(),
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [3, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [3, 11, 15], [3, 12, 15]])
+
+    # Test: IC-MIBS-216
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.6, 0.8, NaN, NaN, 0.0, 0.4, NaN, NaN)
+    set_height(out, 12, 15, NaN, NaN, NaN, NaN, NaN, 0.0, 0.1, 0.1, 0.2)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    posA = _calc_bucket_frame_pos(11, 15, 0.4, grid, bucket)
+    posB = _calc_bucket_frame_pos(12, 15, 0.1, grid, bucket)
+    push_body_soil_pos(out, 3, 12, 15, posB, 0.1)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 11, 15, NaN, NaN, NaN, 0.4, 0.6)
+    check_height(out, 12, 15, NaN, NaN, NaN, 0.1, 0.3)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[4], 3, 11, 15, posA, 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 3, 12, 15, posB, 0.1)
+    @test (length(out.body_soil_pos) == 5)
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(),
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [3, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [3, 11, 15], [3, 12, 15]])
+
+    # Test: IC-MIBS-217
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.3, 0.7, NaN, NaN, 0.0, 0.2, NaN, NaN)
+    set_height(out, 12, 15, NaN, NaN, NaN, NaN, NaN, 0.2, 0.3, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    posA = _calc_bucket_frame_pos(11, 15, 0.2, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 11, 15, NaN, NaN, NaN, 0.2, 0.3)
+    @test (out.terrain[10, 16] ≈ 0.2)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[3], 3, 11, 15, posA, 0.1)
+    @test (length(out.body_soil_pos) == 3)
+    reset_value_and_test(
+        out, [[10, 16]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [3, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [3, 11, 15]])
+
+    # Test: IC-MIBS-218
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.3, 0.7, NaN, NaN, 0.0, 0.2, NaN, NaN)
+    set_height(out, 12, 15, NaN, 0.0, 0.2, NaN, NaN, 0.7, 0.8, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    posA = _calc_bucket_frame_pos(11, 15, 0.2, grid, bucket)
+    posB = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 11, 15, NaN, NaN, NaN, 0.2, 0.3)
+    check_height(out, 12, 15, NaN, 0.2, 0.4, NaN, NaN)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[3], 3, 11, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[4], 1, 12, 15, posB, 0.2)
+    @test (length(out.body_soil_pos) == 4)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(), body_pos,
+        [[1, 10, 15], [3, 10, 15], [3, 11, 15], [1, 12, 15]])
+
+    # Test: IC-MIBS-219
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.3, 0.7, NaN, NaN, 0.0, 0.2, NaN, NaN)
+    set_height(out, 12, 15, NaN, 0.0, 0.2, NaN, NaN, 0.3, 0.8, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    posA = _calc_bucket_frame_pos(11, 15, 0.2, grid, bucket)
+    posB = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 11, 15, NaN, NaN, NaN, 0.2, 0.3)
+    check_height(out, 12, 15, NaN, 0.2, 0.3, NaN, NaN)
+    @test (out.terrain[13, 15] ≈ 0.1)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[3], 3, 11, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[4], 1, 12, 15, posB, 0.1)
+    @test (length(out.body_soil_pos) == 4)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(
+        out, [[13, 15]], body_pos,
+        [[1, 10, 15], [3, 10, 15], [3, 11, 15], [1, 12, 15]])
+
+    # Test: IC-MIBS-220
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.3, 0.7, NaN, NaN, 0.0, 0.2, NaN, NaN)
+    set_height(out, 12, 15, NaN, 0.0, 0.2, 0.2, 0.3, 0.7, 0.8, 0.8, 0.9)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    posA = _calc_bucket_frame_pos(11, 15, 0.2, grid, bucket)
+    posB = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(12, 15, 0.8, grid, bucket)
+    push_body_soil_pos(out, 1, 12, 15, posB, 0.1)
+    push_body_soil_pos(out, 3, 12, 15, pos3, 0.1)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 11, 15, NaN, NaN, NaN, 0.2, 0.3)
+    check_height(out, 12, 15, NaN, 0.2, 0.5, 0.8, 0.9)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 3, 11, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[6], 1, 12, 15, posB, 0.2)
+    @test (length(out.body_soil_pos) == 6)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(), body_pos,
+        [[1, 10, 15], [3, 10, 15], [3, 11, 15], [1, 12, 15], [3, 12, 15]])
+
+    # Test: IC-MIBS-221
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.3, 0.7, NaN, NaN, 0.0, 0.2, NaN, NaN)
+    set_height(out, 12, 15, NaN, 0.0, 0.2, 0.2, 0.3, 0.4, 0.8, 0.8, 0.9)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    posA = _calc_bucket_frame_pos(11, 15, 0.2, grid, bucket)
+    posB = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(12, 15, 0.8, grid, bucket)
+    push_body_soil_pos(out, 1, 12, 15, posB, 0.1)
+    push_body_soil_pos(out, 3, 12, 15, pos3, 0.1)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 11, 15, NaN, NaN, NaN, 0.2, 0.3)
+    check_height(out, 12, 15, NaN, 0.2, 0.4, 0.8, 0.9)
+    @test (out.terrain[13, 15] ≈ 0.1)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 3, 11, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[6], 1, 12, 15, posB, 0.1)
+    @test (length(out.body_soil_pos) == 6)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(
+        out, [[13, 15]], body_pos,
+        [[1, 10, 15], [3, 10, 15], [3, 11, 15], [1, 12, 15], [3, 12, 15]])
+
+    # Test: IC-MIBS-222
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.3, 0.7, NaN, NaN, 0.0, 0.2, NaN, NaN)
+    set_height(out, 12, 15, NaN, 0.0, 0.2, 0.2, 0.3, 0.3, 0.8, 0.8, 0.9)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    posA = _calc_bucket_frame_pos(11, 15, 0.2, grid, bucket)
+    pos1 = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(12, 15, 0.8, grid, bucket)
+    push_body_soil_pos(out, 1, 12, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 12, 15, pos3, 0.1)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 11, 15, NaN, NaN, NaN, 0.2, 0.3)
+    @test (out.terrain[13, 15] ≈ 0.2)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 3, 11, 15, posA, 0.1)
+    @test (length(out.body_soil_pos) == 5)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(
+        out, [[13, 15]], body_pos,
+        [[1, 10, 15], [3, 10, 15], [3, 11, 15], [1, 12, 15], [3, 12, 15]])
+
+    # Test: IC-MIBS-223
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.3, 0.7, NaN, NaN, 0.0, 0.2, NaN, NaN)
+    set_height(out, 12, 15, NaN, 0.7, 0.8, NaN, NaN, 0.0, 0.2, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    posA = _calc_bucket_frame_pos(11, 15, 0.2, grid, bucket)
+    posB = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 11, 15, NaN, NaN, NaN, 0.2, 0.3)
+    check_height(out, 12, 15, NaN, NaN, NaN, 0.2, 0.4)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[3], 3, 11, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[4], 3, 12, 15, posB, 0.2)
+    @test (length(out.body_soil_pos) == 4)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(), body_pos,
+        [[1, 10, 15], [3, 10, 15], [3, 11, 15], [3, 12, 15]])
+
+    # Test: IC-MIBS-224
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.3, 0.7, NaN, NaN, 0.0, 0.2, NaN, NaN)
+    set_height(out, 12, 15, NaN, 0.3, 0.8, NaN, NaN, 0.0, 0.2, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    posA = _calc_bucket_frame_pos(11, 15, 0.2, grid, bucket)
+    posB = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 11, 15, NaN, NaN, NaN, 0.2, 0.3)
+    check_height(out, 12, 15, NaN, NaN, NaN, 0.2, 0.3)
+    @test (out.terrain[13, 15] ≈ 0.1)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[3], 3, 11, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[4], 3, 12, 15, posB, 0.1)
+    @test (length(out.body_soil_pos) == 4)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(
+        out, [[13, 15]], body_pos,
+        [[1, 10, 15], [3, 10, 15], [3, 11, 15], [3, 12, 15]])
+
+    # Test: IC-MIBS-225
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.3, 0.7, NaN, NaN, 0.0, 0.2, NaN, NaN)
+    set_height(out, 12, 15, NaN, 0.7, 0.8, 0.8, 0.9, 0.0, 0.2, 0.2, 0.3)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    posA = _calc_bucket_frame_pos(11, 15, 0.2, grid, bucket)
+    pos1 = _calc_bucket_frame_pos(12, 15, 0.8, grid, bucket)
+    posB = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    push_body_soil_pos(out, 1, 12, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 12, 15, posB, 0.1)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 11, 15, NaN, NaN, NaN, 0.2, 0.3)
+    check_height(out, 12, 15, NaN, 0.8, 0.9, 0.2, 0.5)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 3, 11, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[6], 3, 12, 15, posB, 0.2)
+    @test (length(out.body_soil_pos) == 6)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(), body_pos,
+        [[1, 10, 15], [3, 10, 15], [3, 11, 15], [1, 12, 15], [3, 12, 15]])
+
+    # Test: IC-MIBS-226
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.3, 0.7, NaN, NaN, 0.0, 0.2, NaN, NaN)
+    set_height(out, 12, 15, NaN, 0.4, 0.8, 0.8, 0.9, 0.0, 0.2, 0.2, 0.3)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    posA = _calc_bucket_frame_pos(11, 15, 0.2, grid, bucket)
+    pos1 = _calc_bucket_frame_pos(12, 15, 0.8, grid, bucket)
+    posB = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    push_body_soil_pos(out, 1, 12, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 12, 15, posB, 0.1)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 11, 15, NaN, NaN, NaN, 0.2, 0.3)
+    check_height(out, 12, 15, NaN, 0.8, 0.9, 0.2, 0.4)
+    @test (out.terrain[13, 15] ≈ 0.1)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 3, 11, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[6], 3, 12, 15, posB, 0.1)
+    @test (length(out.body_soil_pos) == 6)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(
+        out, [[13, 15]], body_pos,
+        [[1, 10, 15], [3, 10, 15], [3, 11, 15], [1, 12, 15], [3, 12, 15]])
+
+    # Test: IC-MIBS-227
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.3, 0.7, NaN, NaN, 0.0, 0.2, NaN, NaN)
+    set_height(out, 12, 15, NaN, 0.3, 0.8, 0.8, 0.9, 0.0, 0.2, 0.2, 0.3)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    posA = _calc_bucket_frame_pos(11, 15, 0.2, grid, bucket)
+    pos1 = _calc_bucket_frame_pos(12, 15, 0.8, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    push_body_soil_pos(out, 1, 12, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 12, 15, pos3, 0.1)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 11, 15, NaN, NaN, NaN, 0.2, 0.3)
+    @test (out.terrain[13, 15] ≈ 0.2)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 3, 11, 15, posA, 0.1)
+    @test (length(out.body_soil_pos) == 5)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(
+        out, [[13, 15]], body_pos,
+        [[1, 10, 15], [3, 10, 15], [3, 11, 15], [1, 12, 15], [3, 12, 15]])
+
+    # Test: IC-MIBS-228
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.5, 0.7, 0.7, 0.9, 0.0, 0.1, 0.1, 0.2)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.7, grid, bucket)
+    posA = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.2)
+    push_body_soil_pos(out, 3, 11, 15, posA, 0.1)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 11, 15, NaN, 0.7, 0.9, 0.1, 0.5)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 3, 11, 15, posA, 0.3)
+    @test (length(out.body_soil_pos) == 5)
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(), [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15]])
+
+    # Test: IC-MIBS-229
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.4, 0.7, 0.7, 0.9, 0.0, 0.1, 0.1, 0.2)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.7, grid, bucket)
+    posA = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.2)
+    push_body_soil_pos(out, 3, 11, 15, posA, 0.1)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 11, 15, NaN, 0.7, 0.9, 0.1, 0.4)
+    @test (out.terrain[12, 15] ≈ 0.1)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 3, 11, 15, posA, 0.2)
+    @test (length(out.body_soil_pos) == 5)
+    reset_value_and_test(
+        out, [[12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15]])
+
+    # Test: IC-MIBS-230
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.7, 0.8, 0.8, 0.9, 0.0, 0.1, 0.1, 0.6)
+    set_height(out, 12, 15, 0.1, 0.2, 0.4, NaN, NaN, NaN, NaN, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    posA = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, posA, 0.5)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 11, 15, NaN, 0.8, 0.9, 0.1, 0.7)
+    @test (out.terrain[12, 15] ≈ 0.3)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 3, 11, 15, posA, 0.1)
+    @test (length(out.body_soil_pos) == 5)
+    reset_value_and_test(
+        out, [[12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15]])
+
+    # Test: IC-MIBS-231
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.5, 0.8, 0.8, 0.9, 0.0, 0.3, 0.3, 0.4)
+    set_height(out, 12, 15, NaN, 0.0, 0.3, NaN, NaN, NaN, NaN, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    posA = _calc_bucket_frame_pos(11, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, posA, 0.1)
+    posB = _calc_bucket_frame_pos(12, 15, 0.3, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 11, 15, NaN, 0.8, 0.9, 0.3, 0.5)
+    check_height(out, 12, 15, NaN, 0.3, 0.5, NaN, NaN)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 3, 11, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[6], 1, 12, 15, posB, 0.2)
+    @test (length(out.body_soil_pos) == 6)
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(),
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15]])
+
+    # Test: IC-MIBS-232
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.5, 0.8, 0.8, 0.9, 0.0, 0.3, 0.3, 0.4)
+    set_height(out, 12, 15, NaN, 0.0, 0.3, 0.3, 0.4, NaN, NaN, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    posA = _calc_bucket_frame_pos(11, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, posA, 0.1)
+    posB = _calc_bucket_frame_pos(12, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 12, 15, posB, 0.1)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 11, 15, NaN, 0.8, 0.9, 0.3, 0.5)
+    check_height(out, 12, 15, NaN, 0.3, 0.6, NaN, NaN)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[6], 3, 11, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[7], 1, 12, 15, posB, 0.2)
+    @test (length(out.body_soil_pos) == 7)
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(),
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15]])
+
+    # Test: IC-MIBS-233
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.5, 0.8, 0.8, 0.9, 0.0, 0.3, 0.3, 0.4)
+    set_height(out, 12, 15, NaN, 0.3, 0.5, NaN, NaN, NaN, NaN, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    posA = _calc_bucket_frame_pos(11, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, posA, 0.1)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 11, 15, NaN, 0.8, 0.9, 0.3, 0.5)
+    @test (out.terrain[10, 16] ≈ 0.2)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 3, 11, 15, posA, 0.1)
+    @test (length(out.body_soil_pos) == 5)
+    reset_value_and_test(
+        out, [[10, 16]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15]])
+
+    # Test: IC-MIBS-234
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.7, 0.8, 0.8, 0.9, 0.0, 0.1, 0.1, 0.6)
+    set_height(out, 12, 15, 0.1, NaN, NaN, NaN, NaN, 0.2, 0.4, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    posA = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, posA, 0.5)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 11, 15, NaN, 0.8, 0.9, 0.1, 0.7)
+    @test (out.terrain[12, 15] ≈ 0.3)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 3, 11, 15, posA, 0.1)
+    @test (length(out.body_soil_pos) == 5)
+    reset_value_and_test(
+        out, [[12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [3, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15]])
+
+    # Test: IC-MIBS-235
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.5, 0.8, 0.8, 0.9, 0.0, 0.3, 0.3, 0.4)
+    set_height(out, 12, 15, NaN, NaN, NaN, NaN, NaN, 0.0, 0.3, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    posA = _calc_bucket_frame_pos(11, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, posA, 0.1)
+    posB = _calc_bucket_frame_pos(12, 15, 0.3, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 11, 15, NaN, 0.8, 0.9, 0.3, 0.5)
+    check_height(out, 12, 15, NaN, NaN, NaN, 0.3, 0.5)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 3, 11, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[6], 3, 12, 15, posB, 0.2)
+    @test (length(out.body_soil_pos) == 6)
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(),
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [3, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [3, 12, 15]])
+
+    # Test: IC-MIBS-236
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.5, 0.8, 0.8, 0.9, 0.0, 0.3, 0.3, 0.4)
+    set_height(out, 12, 15, NaN, NaN, NaN, NaN, NaN, 0.0, 0.3, 0.3, 0.4)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    posA = _calc_bucket_frame_pos(11, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, posA, 0.1)
+    posB = _calc_bucket_frame_pos(12, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 3, 12, 15, posB, 0.1)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 11, 15, NaN, 0.8, 0.9, 0.3, 0.5)
+    check_height(out, 12, 15, NaN, NaN, NaN, 0.3, 0.6)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[6], 3, 11, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[7], 3, 12, 15, posB, 0.2)
+    @test (length(out.body_soil_pos) == 7)
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(),
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [3, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [3, 12, 15]])
+
+    # Test: IC-MIBS-237
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.5, 0.8, 0.8, 0.9, 0.0, 0.3, 0.3, 0.4)
+    set_height(out, 12, 15, NaN, NaN, NaN, NaN, NaN, 0.3, 0.5, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    posA = _calc_bucket_frame_pos(11, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, posA, 0.1)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 11, 15, NaN, 0.8, 0.9, 0.3, 0.5)
+    @test (out.terrain[10, 16] ≈ 0.2)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 3, 11, 15, posA, 0.1)
+    @test (length(out.body_soil_pos) == 5)
+    reset_value_and_test(
+        out, [[10, 16]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [3, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15]])
+
+    # Test: IC-MIBS-238
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.7, 0.8, 0.8, 0.9, 0.0, 0.1, 0.1, 0.6)
+    set_height(out, 12, 15, NaN, 0.1, 0.4, NaN, NaN, 0.7, 0.9, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    posA = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, posA, 0.5)
+    posB = _calc_bucket_frame_pos(12, 15, 0.4, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 11, 15, NaN, 0.8, 0.9, 0.1, 0.7)
+    check_height(out, 12, 15, NaN, 0.4, 0.6, NaN, NaN)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 3, 11, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[6], 1, 12, 15, posB, 0.2)
+    @test (length(out.body_soil_pos) == 6)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(), body_pos,
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15]])
+
+    # Test: IC-MIBS-239
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.7, 0.8, 0.8, 0.9, 0.0, 0.1, 0.1, 0.6)
+    set_height(out, 12, 15, NaN, 0.1, 0.4, NaN, NaN, 0.5, 0.9, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    posA = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, posA, 0.5)
+    posB = _calc_bucket_frame_pos(12, 15, 0.4, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 11, 15, NaN, 0.8, 0.9, 0.1, 0.7)
+    check_height(out, 12, 15, NaN, 0.4, 0.5, NaN, NaN)
+    @test (out.terrain[13, 15] ≈ 0.1)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 3, 11, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[6], 1, 12, 15, posB, 0.1)
+    @test (length(out.body_soil_pos) == 6)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(
+        out, [[13, 15]], body_pos,
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15]])
+
+    # Test: IC-MIBS-240
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.7, 0.8, 0.8, 0.9, 0.0, 0.1, 0.1, 0.6)
+    set_height(out, 12, 15, NaN, 0.1, 0.2, 0.2, 0.3, 0.7, 0.9, 0.9, 1.3)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    posA = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, posA, 0.5)
+    posB = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(12, 15, 0.9, grid, bucket)
+    push_body_soil_pos(out, 1, 12, 15, posB, 0.1)
+    push_body_soil_pos(out, 3, 12, 15, pos3, 0.4)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 11, 15, NaN, 0.8, 0.9, 0.1, 0.7)
+    check_height(out, 12, 15, NaN, 0.2, 0.5, 0.9, 1.3)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[7], 3, 11, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[8], 1, 12, 15, posB, 0.2)
+    @test (length(out.body_soil_pos) == 8)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    body_soil_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(out, Vector{Vector{Int64}}(), body_pos, body_soil_pos)
+
+    # Test: IC-MIBS-241
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.7, 0.8, 0.8, 0.9, 0.0, 0.1, 0.1, 0.6)
+    set_height(out, 12, 15, NaN, 0.1, 0.2, 0.2, 0.3, 0.4, 0.9, 0.9, 1.3)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    posA = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, posA, 0.5)
+    posB = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(12, 15, 0.9, grid, bucket)
+    push_body_soil_pos(out, 1, 12, 15, posB, 0.1)
+    push_body_soil_pos(out, 3, 12, 15, pos3, 0.4)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 11, 15, NaN, 0.8, 0.9, 0.1, 0.7)
+    check_height(out, 12, 15, NaN, 0.2, 0.4, 0.9, 1.3)
+    @test (out.terrain[13, 15] ≈ 0.1)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[7], 3, 11, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[8], 1, 12, 15, posB, 0.1)
+    @test (length(out.body_soil_pos) == 8)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    body_soil_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(out, [[13, 15]], body_pos, body_soil_pos)
+
+    # Test: IC-MIBS-242
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.7, 0.8, 0.8, 0.9, 0.0, 0.1, 0.1, 0.6)
+    set_height(out, 12, 15, NaN, 0.1, 0.2, 0.2, 0.4, 0.4, 0.9, 0.9, 1.3)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    posA = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, posA, 0.5)
+    pos1 = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(12, 15, 0.9, grid, bucket)
+    push_body_soil_pos(out, 1, 12, 15, pos1, 0.2)
+    push_body_soil_pos(out, 3, 12, 15, pos3, 0.4)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 11, 15, NaN, 0.8, 0.9, 0.1, 0.7)
+    @test (out.terrain[13, 15] ≈ 0.2)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[7], 3, 11, 15, posA, 0.1)
+    @test (length(out.body_soil_pos) == 7)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    body_soil_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(out, [[13, 15]], body_pos, body_soil_pos)
+
+    # Test: IC-MIBS-243
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.7, 0.8, 0.8, 0.9, 0.0, 0.1, 0.1, 0.6)
+    set_height(out, 12, 15, NaN, 0.7, 0.9, NaN, NaN, 0.1, 0.4, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    posA = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, posA, 0.5)
+    posB = _calc_bucket_frame_pos(12, 15, 0.4, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 11, 15, NaN, 0.8, 0.9, 0.1, 0.7)
+    check_height(out, 12, 15, NaN, NaN, NaN, 0.4, 0.6)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 3, 11, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[6], 3, 12, 15, posB, 0.2)
+    @test (length(out.body_soil_pos) == 6)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(), body_pos,
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [3, 12, 15]])
+
+    # Test: IC-MIBS-244
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.7, 0.8, 0.8, 0.9, 0.0, 0.1, 0.1, 0.6)
+    set_height(out, 12, 15, NaN, 0.5, 0.9, NaN, NaN, 0.1, 0.4, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    posA = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, posA, 0.5)
+    posB = _calc_bucket_frame_pos(12, 15, 0.4, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 11, 15, NaN, 0.8, 0.9, 0.1, 0.7)
+    check_height(out, 12, 15, NaN, NaN, NaN, 0.4, 0.5)
+    @test (out.terrain[13, 15] ≈ 0.1)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 3, 11, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[6], 3, 12, 15, posB, 0.1)
+    @test (length(out.body_soil_pos) == 6)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(
+        out, [[13, 15]], body_pos,
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [3, 12, 15]])
+
+    # Test: IC-MIBS-245
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.7, 0.8, 0.8, 0.9, 0.0, 0.1, 0.1, 0.6)
+    set_height(out, 12, 15, NaN, 0.7, 0.9, 0.9, 1.3, 0.1, 0.2, 0.2, 0.3)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    posA = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, posA, 0.5)
+    pos1 = _calc_bucket_frame_pos(12, 15, 0.9, grid, bucket)
+    posB = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    push_body_soil_pos(out, 1, 12, 15, pos1, 0.4)
+    push_body_soil_pos(out, 3, 12, 15, posB, 0.1)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 11, 15, NaN, 0.8, 0.9, 0.1, 0.7)
+    check_height(out, 12, 15, NaN, 0.9, 1.3, 0.2, 0.5)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[7], 3, 11, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[8], 3, 12, 15, posB, 0.2)
+    @test (length(out.body_soil_pos) == 8)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    body_soil_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(out, Vector{Vector{Int64}}(), body_pos, body_soil_pos)
+
+    # Test: IC-MIBS-246
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.7, 0.8, 0.8, 0.9, 0.0, 0.1, 0.1, 0.6)
+    set_height(out, 12, 15, NaN, 0.4, 0.9, 0.9, 1.3, 0.1, 0.2, 0.2, 0.3)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    posA = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, posA, 0.5)
+    pos1 = _calc_bucket_frame_pos(12, 15, 0.9, grid, bucket)
+    posB = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    push_body_soil_pos(out, 1, 12, 15, pos1, 0.4)
+    push_body_soil_pos(out, 3, 12, 15, posB, 0.1)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 11, 15, NaN, 0.8, 0.9, 0.1, 0.7)
+    check_height(out, 12, 15, NaN, 0.9, 1.3, 0.2, 0.4)
+    @test (out.terrain[13, 15] ≈ 0.1)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[7], 3, 11, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[8], 3, 12, 15, posB, 0.1)
+    @test (length(out.body_soil_pos) == 8)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    body_soil_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(out, [[13, 15]], body_pos, body_soil_pos)
+
+    # Test: IC-MIBS-247
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.7, 0.8, 0.8, 0.9, 0.0, 0.1, 0.1, 0.6)
+    set_height(out, 12, 15, NaN, 0.4, 0.9, 0.9, 1.3, 0.1, 0.2, 0.2, 0.4)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    posA = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, posA, 0.5)
+    pos1 = _calc_bucket_frame_pos(12, 15, 0.9, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    push_body_soil_pos(out, 1, 12, 15, pos1, 0.4)
+    push_body_soil_pos(out, 3, 12, 15, pos3, 0.2)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 11, 15, NaN, 0.8, 0.9, 0.1, 0.7)
+    @test (out.terrain[13, 15] ≈ 0.2)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[7], 3, 11, 15, posA, 0.1)
+    @test (length(out.body_soil_pos) == 7)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    body_soil_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(out, [[13, 15]], body_pos, body_soil_pos)
+
+    # Test: IC-MIBS-248
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.4, 0.7, 0.7, 0.9, 0.0, 0.1, 0.1, 0.4)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.7, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.2)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.3)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    @test (out.terrain[12, 15] ≈ 0.3)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    @test (length(out.body_soil_pos) == 4)
+    reset_value_and_test(
+        out, [[12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15]])
+
+    # Test: IC-MIBS-249
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.7, 0.8, 0.8, 0.9, 0.0, 0.1, 0.1, 0.7)
+    set_height(out, 12, 15, 0.1, 0.2, 0.4, NaN, NaN, NaN, NaN, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.6)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    @test (out.terrain[12, 15] ≈ 0.4)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    @test (length(out.body_soil_pos) == 4)
+    reset_value_and_test(
+        out, [[12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15]])
+
+    # Test: IC-MIBS-250
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.5, 0.8, 0.8, 0.9, 0.0, 0.3, 0.3, 0.5)
+    set_height(out, 12, 15, NaN, 0.0, 0.3, NaN, NaN, NaN, NaN, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.2)
+    posA = _calc_bucket_frame_pos(12, 15, 0.3, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 12, 15, NaN, 0.3, 0.6, NaN, NaN)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 1, 12, 15, posA, 0.3)
+    @test (length(out.body_soil_pos) == 5)
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(),
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15]])
+
+    # Test: IC-MIBS-251
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.5, 0.8, 0.8, 0.9, 0.0, 0.3, 0.3, 0.5)
+    set_height(out, 12, 15, NaN, 0.0, 0.3, 0.3, 0.4, NaN, NaN, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.2)
+    posA = _calc_bucket_frame_pos(12, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 12, 15, posA, 0.1)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 12, 15, NaN, 0.3, 0.7, NaN, NaN)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[6], 1, 12, 15, posA, 0.3)
+    @test (length(out.body_soil_pos) == 6)
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(),
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15]])
+
+    # Test: IC-MIBS-252
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.5, 0.8, 0.8, 0.9, 0.0, 0.3, 0.3, 0.5)
+    set_height(out, 12, 15, NaN, 0.3, 0.5, NaN, NaN, NaN, NaN, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.2)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    @test (out.terrain[10, 16] ≈ 0.3)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    @test (length(out.body_soil_pos) == 4)
+    reset_value_and_test(
+        out, [[10, 16]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15]])
+
+    # Test: IC-MIBS-253
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.7, 0.8, 0.8, 0.9, 0.0, 0.1, 0.1, 0.7)
+    set_height(out, 12, 15, 0.1, NaN, NaN, NaN, NaN, 0.2, 0.4, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.6)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    @test (out.terrain[12, 15] ≈ 0.4)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    @test (length(out.body_soil_pos) == 4)
+    reset_value_and_test(
+        out, [[12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [3, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15]])
+
+    # Test: IC-MIBS-254
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.5, 0.8, 0.8, 0.9, 0.0, 0.3, 0.3, 0.5)
+    set_height(out, 12, 15, NaN, NaN, NaN, NaN, NaN, 0.0, 0.3, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.2)
+    posA = _calc_bucket_frame_pos(12, 15, 0.3, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 12, 15, NaN, NaN, NaN, 0.3, 0.6)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 3, 12, 15, posA, 0.3)
+    @test (length(out.body_soil_pos) == 5)
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(),
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [3, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [3, 12, 15]])
+
+    # Test: IC-MIBS-255
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.5, 0.8, 0.8, 0.9, 0.0, 0.3, 0.3, 0.5)
+    set_height(out, 12, 15, NaN, NaN, NaN, NaN, NaN, 0.0, 0.3, 0.3, 0.4)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.2)
+    posA = _calc_bucket_frame_pos(12, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 3, 12, 15, posA, 0.1)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 12, 15, NaN, NaN, NaN, 0.3, 0.7)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[6], 3, 12, 15, posA, 0.3)
+    @test (length(out.body_soil_pos) == 6)
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(),
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [3, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [3, 12, 15]])
+
+    # Test: IC-MIBS-256
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.5, 0.8, 0.8, 0.9, 0.0, 0.3, 0.3, 0.5)
+    set_height(out, 12, 15, NaN, NaN, NaN, NaN, NaN, 0.3, 0.5, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.2)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    @test (out.terrain[10, 16] ≈ 0.3)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    @test (length(out.body_soil_pos) == 4)
+    reset_value_and_test(
+        out, [[10, 16]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [3, 12, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15]])
+
+    # Test: IC-MIBS-257
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.7, 0.8, 0.8, 0.9, 0.0, 0.1, 0.1, 0.7)
+    set_height(out, 12, 15, NaN, 0.1, 0.4, NaN, NaN, 0.7, 0.9, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.6)
+    posA = _calc_bucket_frame_pos(12, 15, 0.4, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 12, 15, NaN, 0.4, 0.7, NaN, NaN)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 1, 12, 15, posA, 0.3)
+    @test (length(out.body_soil_pos) == 5)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(), body_pos,
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15]])
+
+    # Test: IC-MIBS-258
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.7, 0.8, 0.8, 0.9, 0.0, 0.1, 0.1, 0.7)
+    set_height(out, 12, 15, NaN, 0.1, 0.4, NaN, NaN, 0.5, 0.9, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.6)
+    posA = _calc_bucket_frame_pos(12, 15, 0.4, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 12, 15, NaN, 0.4, 0.5, NaN, NaN)
+    @test (out.terrain[13, 15] ≈ 0.2)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 1, 12, 15, posA, 0.1)
+    @test (length(out.body_soil_pos) == 5)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(
+        out, [[13, 15]], body_pos,
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15]])
+
+    # Test: IC-MIBS-259
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.7, 0.8, 0.8, 0.9, 0.0, 0.1, 0.1, 0.7)
+    set_height(out, 12, 15, NaN, 0.1, 0.2, 0.2, 0.3, 0.7, 0.9, 0.9, 1.3)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.6)
+    posA = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(12, 15, 0.9, grid, bucket)
+    push_body_soil_pos(out, 1, 12, 15, posA, 0.1)
+    push_body_soil_pos(out, 3, 12, 15, pos3, 0.4)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 12, 15, NaN, 0.2, 0.6, 0.9, 1.3)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[7], 1, 12, 15, posA, 0.3)
+    @test (length(out.body_soil_pos) == 7)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    body_soil_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(out, Vector{Vector{Int64}}(), body_pos, body_soil_pos)
+
+    # Test: IC-MIBS-260
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.7, 0.8, 0.8, 0.9, 0.0, 0.1, 0.1, 0.7)
+    set_height(out, 12, 15, NaN, 0.1, 0.2, 0.2, 0.3, 0.4, 0.9, 0.9, 1.3)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.6)
+    posA = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(12, 15, 0.9, grid, bucket)
+    push_body_soil_pos(out, 1, 12, 15, posA, 0.1)
+    push_body_soil_pos(out, 3, 12, 15, pos3, 0.4)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 12, 15, NaN, 0.2, 0.4, 0.9, 1.3)
+    @test (out.terrain[13, 15] ≈ 0.2)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[7], 1, 12, 15, posA, 0.1)
+    @test (length(out.body_soil_pos) == 7)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    body_soil_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(out, [[13, 15]], body_pos, body_soil_pos)
+
+    # Test: IC-MIBS-261
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.7, 0.8, 0.8, 0.9, 0.0, 0.1, 0.1, 0.7)
+    set_height(out, 12, 15, NaN, 0.1, 0.2, 0.2, 0.4, 0.4, 0.9, 0.9, 1.3)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.6)
+    pos1 = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(12, 15, 0.9, grid, bucket)
+    push_body_soil_pos(out, 1, 12, 15, pos1, 0.2)
+    push_body_soil_pos(out, 3, 12, 15, pos3, 0.4)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    @test (out.terrain[13, 15] ≈ 0.3)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    @test (length(out.body_soil_pos) == 6)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    body_soil_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(out, [[13, 15]], body_pos, body_soil_pos)
+
+    # Test: IC-MIBS-262
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.7, 0.8, 0.8, 0.9, 0.0, 0.1, 0.1, 0.7)
+    set_height(out, 12, 15, NaN, 0.7, 0.9, NaN, NaN, 0.1, 0.4, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.6)
+    posA = _calc_bucket_frame_pos(12, 15, 0.4, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 12, 15, NaN, NaN, NaN, 0.4, 0.7)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 3, 12, 15, posA, 0.3)
+    @test (length(out.body_soil_pos) == 5)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(), body_pos,
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [3, 12, 15]])
+
+    # Test: IC-MIBS-263
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.7, 0.8, 0.8, 0.9, 0.0, 0.1, 0.1, 0.7)
+    set_height(out, 12, 15, NaN, 0.5, 0.9, NaN, NaN, 0.1, 0.4, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.6)
+    posA = _calc_bucket_frame_pos(12, 15, 0.4, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 12, 15, NaN, NaN, NaN, 0.4, 0.5)
+    @test (out.terrain[13, 15] ≈ 0.2)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 3, 12, 15, posA, 0.1)
+    @test (length(out.body_soil_pos) == 5)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(
+        out, [[13, 15]], body_pos,
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [3, 12, 15]])
+
+    # Test: IC-MIBS-264
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.7, 0.8, 0.8, 0.9, 0.0, 0.1, 0.1, 0.7)
+    set_height(out, 12, 15, NaN, 0.7, 0.9, 0.9, 1.3, 0.1, 0.2, 0.2, 0.3)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.6)
+    pos1 = _calc_bucket_frame_pos(12, 15, 0.9, grid, bucket)
+    posA = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    push_body_soil_pos(out, 1, 12, 15, pos1, 0.4)
+    push_body_soil_pos(out, 3, 12, 15, posA, 0.1)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 12, 15, NaN, 0.9, 1.3, 0.2, 0.6)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[7], 3, 12, 15, posA, 0.3)
+    @test (length(out.body_soil_pos) == 7)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    body_soil_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(out, Vector{Vector{Int64}}(), body_pos, body_soil_pos)
+
+    # Test: IC-MIBS-265
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.7, 0.8, 0.8, 0.9, 0.0, 0.1, 0.1, 0.7)
+    set_height(out, 12, 15, NaN, 0.4, 0.9, 0.9, 1.3, 0.1, 0.2, 0.2, 0.3)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.6)
+    pos1 = _calc_bucket_frame_pos(12, 15, 0.9, grid, bucket)
+    posA = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    push_body_soil_pos(out, 1, 12, 15, pos1, 0.4)
+    push_body_soil_pos(out, 3, 12, 15, posA, 0.1)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    check_height(out, 12, 15, NaN, 0.9, 1.3, 0.2, 0.4)
+    @test (out.terrain[13, 15] ≈ 0.2)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[7], 3, 12, 15, posA, 0.1)
+    @test (length(out.body_soil_pos) == 7)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    body_soil_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(out, [[13, 15]], body_pos, body_soil_pos)
+
+    # Test: IC-MIBS-266
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.7, 0.0, 0.3, 0.3, 0.8)
+    set_height(out, 11, 15, NaN, 0.7, 0.8, 0.8, 0.9, 0.0, 0.1, 0.1, 0.7)
+    set_height(out, 12, 15, NaN, 0.4, 0.9, 0.9, 1.3, 0.1, 0.2, 0.2, 0.4)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.5)
+    pos1 = _calc_bucket_frame_pos(11, 15, 0.8, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.6)
+    pos1 = _calc_bucket_frame_pos(12, 15, 0.9, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(12, 15, 0.2, grid, bucket)
+    push_body_soil_pos(out, 1, 12, 15, pos1, 0.4)
+    push_body_soil_pos(out, 3, 12, 15, pos3, 0.2)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.7, 0.3, 0.5)
+    @test (out.terrain[13, 15] ≈ 0.3)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
+    @test (length(out.body_soil_pos) == 6)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    body_soil_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [3, 12, 15]]
+    reset_value_and_test(out, [[13, 15]], body_pos, body_soil_pos)
+
+    # Test: IC-MIBS-267
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.0, 0.2, 0.2, 0.8, NaN, NaN, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    posA = _calc_bucket_frame_pos(11, 15, 0.2, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, posA, 0.6)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 11, 15, NaN, 0.2, 1.1, NaN, NaN)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[4], 1, 11, 15, posA, 0.3)
+    @test (length(out.body_soil_pos) == 4)
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(), [[1, 10, 15], [3, 10, 15], [1, 11, 15]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 15]])
+
+    # Test: IC-MIBS-268
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, NaN, NaN, NaN, NaN, 0.0, 0.2, 0.2, 0.5)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    posA = _calc_bucket_frame_pos(11, 15, 0.2, grid, bucket)
+    push_body_soil_pos(out, 3, 11, 15, posA, 0.3)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 11, 15, NaN, NaN, NaN, 0.2, 0.8)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[4], 3, 11, 15, posA, 0.3)
+    @test (length(out.body_soil_pos) == 4)
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(), [[1, 10, 15], [3, 10, 15], [3, 11, 15]],
+        [[1, 10, 15], [3, 10, 15], [3, 11, 15]])
+
+    # Test: IC-MIBS-269
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, -0.6, -0.5, -0.5, 0.0, -0.3, 0.0, 0.0, 0.1)
+    pos1 = _calc_bucket_frame_pos(10, 15, -0.5, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.0, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, -0.5, -0.3, 0.0, 0.1)
+    @test (out.terrain[11, 15] ≈ 0.3)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    @test (length(out.body_soil_pos) == 2)
+    reset_value_and_test(
+        out, [[11, 15]], [[1, 10, 15], [3, 10, 15]],
+        [[1, 10, 15], [3, 10, 15]])
+
+    # Test: IC-MIBS-270
+    set_RNG_seed!(926)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 1.2, 0.8, 0.9, 0.9, 1.7)
+    set_height(out, 11, 15, NaN, 0.1, 0.2, 0.2, 0.4, NaN, NaN, NaN, NaN)
+    set_height(out, 11, 16, NaN, 0.0, 0.1, NaN, NaN, NaN, NaN, NaN, NaN)
+    set_height(out, 11, 14, NaN, 0.0, 0.1, NaN, NaN, NaN, NaN, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.9, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.2)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.8)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.2)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.4)
+    posA = _calc_bucket_frame_pos(11, 15, 0.2, grid, bucket)
+    push_body_soil_pos(out, 1, 11, 15, posA, 0.2)
+    posB = _calc_bucket_frame_pos(11, 16, 0.1, grid, bucket)
+    posC = _calc_bucket_frame_pos(11, 14, 0.1, grid, bucket)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.8, 0.9, 1.7)
+    check_height(out, 11, 15, NaN, 0.2, 0.6, NaN, NaN)
+    check_height(out, 11, 16, NaN, 0.1, 0.2, NaN, NaN)
+    check_height(out, 11, 14, NaN, 0.1, 0.2, NaN, NaN)
+    @test (out.body_soil_pos[1].h_soil[1] == 0.0)
+    @test (out.body_soil_pos[2].h_soil[1] == 0.0)
+    @test (out.body_soil_pos[4].h_soil[1] ≈ 0.1)
+    check_body_soil_pos(out.body_soil_pos[7], 1, 11, 15, posA, 0.2)
+    check_body_soil_pos(out.body_soil_pos[8], 1, 11, 16, posB, 0.1)
+    check_body_soil_pos(out.body_soil_pos[9], 1, 11, 14, posC, 0.1)
+    @test (length(out.body_soil_pos) == 9)
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(),
+        [[1, 10, 15], [3, 10, 15], [1, 11, 14], [1, 11, 15], [1, 11, 16]],
+        [[1, 10, 15], [3, 10, 15], [1, 11, 14], [1, 11, 15], [1, 11, 16]])
+
+    # Test: IC-MIBS-271
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.5, 0.6, 0.6, 0.9, 0.0, 0.3, 0.3, 0.5)
+    set_height(out, 11, 15, NaN, NaN, NaN, NaN, NaN, 0.0, 0.1, 0.1, 0.9)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.3)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.2)
+    pos3 = _calc_bucket_frame_pos(11, 15, 0.1, grid, bucket)
+    push_body_soil_pos(out, 3, 11, 15, pos3, 0.8)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.6, 0.9, 0.3, 0.5)
+    check_height(out, 11, 15, NaN, NaN, NaN, 0.1, 0.9)
+    @test (length(out.body_soil_pos) == 3)
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(), [[1, 10, 15], [3, 10, 15], [3, 11, 15]],
+        [[1, 10, 15], [3, 10, 15], [3, 11, 15]])
+
+    # Test: IC-MIBS-272
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 1.3, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.0, 0.3, NaN, NaN, 0.4, 0.7, NaN, NaN)
+    set_height(out, 12, 15, NaN, 0.0, 0.7, NaN, NaN, NaN, NaN, NaN, NaN)
+    set_height(out, 11, 16, NaN, 0.0, 0.3, NaN, NaN, 0.4, 0.7, NaN, NaN)
+    set_height(out, 12, 17, NaN, 0.0, 0.7, NaN, NaN, NaN, NaN, NaN, NaN)
+    set_height(out, 10, 16, NaN, 0.0, 0.3, NaN, NaN, 0.4, 0.7, NaN, NaN)
+    set_height(out, 10, 17, NaN, 0.0, 0.7, NaN, NaN, NaN, NaN, NaN, NaN)
+    set_height(out, 9, 16, NaN, 0.0, 0.3, NaN, NaN, 0.4, 0.7, NaN, NaN)
+    set_height(out, 8, 17, NaN, 0.0, 0.7, NaN, NaN, NaN, NaN, NaN, NaN)
+    set_height(out, 9, 15, NaN, 0.0, 0.3, NaN, NaN, 0.4, 0.7, NaN, NaN)
+    set_height(out, 8, 15, NaN, 0.0, 0.7, NaN, NaN, NaN, NaN, NaN, NaN)
+    set_height(out, 9, 14, NaN, 0.0, 0.3, NaN, NaN, 0.4, 0.7, NaN, NaN)
+    set_height(out, 8, 13, NaN, 0.0, 0.7, NaN, NaN, NaN, NaN, NaN, NaN)
+    set_height(out, 10, 14, NaN, 0.0, 0.3, NaN, NaN, 0.4, 0.7, NaN, NaN)
+    set_height(out, 10, 13, NaN, 0.0, 0.7, NaN, NaN, NaN, NaN, NaN, NaN)
+    set_height(out, 11, 14, NaN, 0.0, 0.3, NaN, NaN, 0.4, 0.7, NaN, NaN)
+    set_height(out, 12, 13, NaN, 0.0, 0.7, NaN, NaN, NaN, NaN, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 1.0)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    check_height(out, 11, 15, NaN, 0.3, 0.4, NaN, NaN)
+    check_height(out, 11, 16, NaN, 0.3, 0.4, NaN, NaN)
+    check_height(out, 10, 16, NaN, 0.3, 0.4, NaN, NaN)
+    check_height(out, 9, 16, NaN, 0.3, 0.4, NaN, NaN)
+    check_height(out, 9, 15, NaN, 0.3, 0.4, NaN, NaN)
+    check_height(out, 9, 14, NaN, 0.3, 0.4, NaN, NaN)
+    check_height(out, 10, 14, NaN, 0.3, 0.4, NaN, NaN)
+    check_height(out, 11, 14, NaN, 0.3, 0.4, NaN, NaN)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    @test (length(out.body_soil_pos) == 10)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [3, 11, 15], [1, 12, 15],
+        [1, 11, 16], [3, 11, 16], [1, 12, 17], [1, 10, 16], [3, 10, 16],
+        [1, 10, 17], [1, 9, 16], [3, 9, 16], [1, 8, 17], [1, 9, 15],
+        [3, 9, 15], [1, 8, 15], [1, 9, 14], [3, 9, 14], [1, 8, 13], [1, 10, 14],
+        [3, 10, 14], [1, 10, 13], [1, 11, 14], [3, 11, 14], [1, 12, 13]]
+    body_soil_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [1, 11, 16], [1, 10, 16],
+        [1, 9, 16], [1, 9, 15], [1, 9, 14], [1, 10, 14], [1, 11, 14]]
+    reset_value_and_test(out, Vector{Vector{Int64}}(), body_pos, body_soil_pos)
+
+    # Test: IC-MIBS-273
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    @test (out.terrain[11, 15] ≈ 0.3)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    @test (length(out.body_soil_pos) == 2)
+    # Repeating the same movement with a different seed
+    set_RNG_seed!(8)
+    out.terrain[11, 15] = 0.0
+    out.body_soil[2][10, 15] = 0.8
+    out.body_soil_pos[1].h_soil[1] = 0.5
+    _move_intersecting_body_soil!(out, grid, bucket)
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    @test (out.terrain[9, 15] ≈ 0.3)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    @test (length(out.body_soil_pos) == 2)
+    reset_value_and_test(
+        out, [[9, 15]], [[1, 10, 15], [3, 10, 15]],
+        [[1, 10, 15], [3, 10, 15]])
+
+    # Test: IC-MIBS-274
+    set_RNG_seed!(7)
+    set_height(out, 10, 15, NaN, 0.0, 0.3, 0.3, 0.8, 0.5, 0.6, 0.6, 0.7)
+    set_height(out, 11, 15, NaN, 0.0, 0.7, NaN, NaN, NaN, NaN, NaN, NaN)
+    set_height(out, 11, 16, NaN, 0.0, 0.7, NaN, NaN, NaN, NaN, NaN, NaN)
+    set_height(out, 10, 16, NaN, 0.0, 0.7, NaN, NaN, NaN, NaN, NaN, NaN)
+    set_height(out, 9, 16, NaN, 0.0, 0.7, NaN, NaN, NaN, NaN, NaN, NaN)
+    set_height(out, 9, 15, NaN, 0.0, 0.7, NaN, NaN, NaN, NaN, NaN, NaN)
+    set_height(out, 9, 14, NaN, 0.0, 0.7, NaN, NaN, NaN, NaN, NaN, NaN)
+    set_height(out, 10, 14, NaN, 0.0, 0.7, NaN, NaN, NaN, NaN, NaN, NaN)
+    set_height(out, 11, 14, NaN, 0.0, 0.7, NaN, NaN, NaN, NaN, NaN, NaN)
+    pos1 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
+    pos3 = _calc_bucket_frame_pos(10, 15, 0.6, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
+    warning_message = "Not all soil intersecting with a bucket layer could be moved\n" *
+        "The extra soil has been arbitrarily removed"
+    @test_logs (:warn, warning_message) match_mode=:any _move_intersecting_body_soil!(
+        out, grid, bucket
+    )
+    check_height(out, 10, 15, NaN, 0.3, 0.5, 0.6, 0.7)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    @test (length(out.body_soil_pos) == 2)
+    body_pos = [
+        [1, 10, 15], [3, 10, 15], [1, 11, 15], [1, 11, 16], [1, 10, 16],
+        [1, 9, 16], [1, 9, 15], [1, 9, 14], [1, 10, 14], [1, 11, 14]]
+    reset_value_and_test(out, Vector{Vector{Int64}}(), body_pos, [[1, 10, 15], [3, 10, 15]])
 end
 
 @testset "_locate_intersecting_cells" begin
