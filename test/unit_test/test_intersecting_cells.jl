@@ -7607,85 +7607,89 @@ end
 end
 
 @testset "_locate_intersecting_cells" begin
-    # Setting dummy values in body and terrain
-    out.terrain[10, 11:16] .= 0.1
-    out.terrain[11, 11] = -0.1
-    out.body[1][5, 10] = 0.0
-    out.body[2][5, 10] = 0.1
-    out.body[3][6, 10] = 0.0
-    out.body[4][6, 10] = 0.1
-    out.body[1][7, 10] = 0.0
-    out.body[2][7, 10] = 0.1
-    out.body[3][7, 10] = 0.2
-    out.body[4][7, 10] = 0.3
-    out.body[1][11, 11] = -0.1
-    out.body[2][11, 11] = 0.0
-    out.body[1][10, 11] = 0.0
-    out.body[2][10, 11] = 0.1
-    out.body[3][10, 12] = -0.1
-    out.body[4][10, 12] = 0.0
-    out.body[1][10, 13] = -0.2
-    out.body[2][10, 13] = 0.0
-    out.body[3][10, 13] = 0.0
-    out.body[4][10, 13] = 0.3
-    out.body[1][10, 14] = 0.2
-    out.body[2][10, 14] = 0.3
-    out.body[3][10, 14] = -0.1
-    out.body[4][10, 14] = 0.0
-    out.body[1][10, 15] = -0.3
-    out.body[2][10, 15] = -0.2
-    out.body[3][10, 15] = 0.5
-    out.body[4][10, 15] = 0.6
-    out.body[1][10, 16] = -0.3
-    out.body[2][10, 16] = -0.2
-    out.body[3][10, 16] = -0.6
-    out.body[4][10, 16] = -0.4
+    # Setting up the environment
+    out.bucket_area[1, 1] = 4
+    out.bucket_area[1, 2] = 12
+    out.bucket_area[2, 1] = 8
+    out.bucket_area[2, 2] = 17
 
-    # Testing that intersecting cells are properly located
+    # Test: IC-LIC-1
+    set_height(out, 5, 10, NaN, 0.0, 0.1, NaN, NaN, NaN, NaN, NaN, NaN)
     intersecting_cells = _locate_intersecting_cells(out)
-    @test ([1, 10, 11] in intersecting_cells) && ([3, 10, 12] in intersecting_cells)
-    @test ([1, 10, 13] in intersecting_cells) && ([3, 10, 13] in intersecting_cells)
-    @test ([3, 10, 14] in intersecting_cells) && ([1, 10, 15] in intersecting_cells)
-    @test ([1, 10, 13] in intersecting_cells) && ([3, 10, 16] in intersecting_cells)
-    @test (length(intersecting_cells) == 8)
-    # Resetting body and terrain
-    out.body[1][5, 10] = 0.0
-    out.body[2][5, 10] = 0.0
-    out.body[3][6, 10] = 0.0
-    out.body[4][6, 10] = 0.0
-    out.body[1][7, 10] = 0.0
-    out.body[2][7, 10] = 0.0
-    out.body[3][7, 10] = 0.0
-    out.body[4][7, 10] = 0.0
-    out.body[1][10, 11:16] .= 0.0
-    out.body[2][10, 11:16] .= 0.0
-    out.body[3][10, 11:16] .= 0.0
-    out.body[4][10, 11:16] .= 0.0
-    out.body[1][11, 11] = 0.0
-    out.body[2][11, 11] = 0.0
-    out.terrain[10, 11:16] .= 0.0
-    out.terrain[11, 11] = 0.0
+    @test (length(intersecting_cells) == 0)
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(), [[1, 5, 10]], Vector{Vector{Int64}}()
+    )
 
-    # Removing zeros from Sparse matrices
-    dropzeros!(out.body[1])
-    dropzeros!(out.body[2])
-    dropzeros!(out.body[3])
-    dropzeros!(out.body[4])
-    dropzeros!(out.body_soil[1])
-    dropzeros!(out.body_soil[2])
-    dropzeros!(out.body_soil[3])
-    dropzeros!(out.body_soil[4])
+    # Test: IC-LIC-2
+    set_height(out, 11, 11, -0.1, -0.1, 0.0, NaN, NaN, NaN, NaN, NaN, NaN)
+    intersecting_cells = _locate_intersecting_cells(out)
+    @test (length(intersecting_cells) == 0)
+    reset_value_and_test(out, [[11, 11]], [[1, 11, 11]], Vector{Vector{Int64}}())
 
-    # Checking that nothing has been unexpectedly modified
-    @test all(out.terrain[:, :] .== 0.0)
-    @test isempty(nonzeros(out.body[1]))
-    @test isempty(nonzeros(out.body[2]))
-    @test isempty(nonzeros(out.body[3]))
-    @test isempty(nonzeros(out.body[4]))
-    @test isempty(nonzeros(out.body_soil[1]))
-    @test isempty(nonzeros(out.body_soil[2]))
-    @test isempty(nonzeros(out.body_soil[3]))
-    @test isempty(nonzeros(out.body_soil[4]))
+    # Test: IC-LIC-3
+    set_height(out, 6, 10, NaN, NaN, NaN, NaN, NaN, 0.0, 0.1, NaN, NaN)
+    intersecting_cells = _locate_intersecting_cells(out)
+    @test (length(intersecting_cells) == 0)
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(), [[3, 6, 10]], Vector{Vector{Int64}}()
+    )
+
+    # Test: IC-LIC-4
+    set_height(out, 7, 10, NaN, 0.0, 0.1, NaN, NaN, 0.2, 0.3, NaN, NaN)
+    intersecting_cells = _locate_intersecting_cells(out)
+    @test (length(intersecting_cells) == 0)
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(), [[1, 7, 10], [3, 7, 10]], Vector{Vector{Int64}}()
+    )
+
+    # Test: IC-LIC-5
+    set_height(out, 10, 11, 0.1, -0.1, 0.0, NaN, NaN, NaN, NaN, NaN, NaN)
+    intersecting_cells = _locate_intersecting_cells(out)
+    @test (intersecting_cells == [[1, 10, 11]])
+    reset_value_and_test(out, [[10, 11]], [[1, 10, 11]], Vector{Vector{Int64}}())
+
+    # Test: IC-LIC-6
+    set_height(out, 10, 12, 0.1, NaN, NaN, NaN, NaN, -0.1, 0.0, NaN, NaN)
+    intersecting_cells = _locate_intersecting_cells(out)
+    @test (intersecting_cells == [[3, 10, 12]])
+    reset_value_and_test(out, [[10, 12]], [[3, 10, 12]], Vector{Vector{Int64}}())
+
+    # Test: IC-LIC-7
+    set_height(out, 10, 13, 0.1, -0.2, 0.0, NaN, NaN, 0.0, 0.3, NaN, NaN)
+    intersecting_cells = _locate_intersecting_cells(out)
+    @test (intersecting_cells[1] == [1, 10, 13])
+    @test (intersecting_cells[2] == [3, 10, 13])
+    @test (length(intersecting_cells) == 2)
+    reset_value_and_test(
+        out, [[10, 13]], [[1, 10, 13], [3, 10, 13]], Vector{Vector{Int64}}()
+    )
+
+    # Test: IC-LIC-8
+    set_height(out, 10, 14, 0.1, 0.2, 0.3, NaN, NaN, -0.1, 0.0, NaN, NaN)
+    intersecting_cells = _locate_intersecting_cells(out)
+    @test (intersecting_cells == [[3, 10, 14]])
+    reset_value_and_test(
+        out, [[10, 14]], [[1, 10, 14], [3, 10, 14]], Vector{Vector{Int64}}()
+    )
+
+    # Test: IC-LIC-9
+    set_height(out, 10, 15, 0.1, -0.3, -0.2, NaN, NaN, 0.5, 0.6, NaN, NaN)
+    intersecting_cells = _locate_intersecting_cells(out)
+    @test (intersecting_cells == [[1, 10, 15]])
+    reset_value_and_test(
+        out, [[10, 15]], [[1, 10, 15], [3, 10, 15]], Vector{Vector{Int64}}()
+    )
+
+    # Test: IC-LIC-10
+    set_height(out, 10, 16, 0.1, -0.3, -0.2, NaN, NaN, -0.6, -0.4, NaN, NaN)
+    intersecting_cells = _locate_intersecting_cells(out)
+    @test (intersecting_cells[1] == [1, 10, 16])
+    @test (intersecting_cells[2] == [3, 10, 16])
+    @test (length(intersecting_cells) == 2)
+    reset_value_and_test(
+        out, [[10, 16]], [[1, 10, 16], [3, 10, 16]], Vector{Vector{Int64}}()
+    )
 end
 
 @testset "_move_intersecting_body!" begin
