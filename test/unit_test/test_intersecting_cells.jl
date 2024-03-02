@@ -7993,6 +7993,6 @@ end
     _move_intersecting_body!(out)
     @test (out.terrain[11, 17] ≈ -0.4) && (out.terrain[10, 17] ≈ 0.9)
     reset_value_and_test(
-        sim_out, [[11, 17], [10, 18]], [[0, 11, 17]], Vector{Vector{Int64}}()
+        out, [[11, 17], [10, 17]], [[1, 11, 17]], Vector{Vector{Int64}}()
     )
 end
