@@ -1076,9 +1076,9 @@ Unit test for the `_locate_unstable_terrain_cell` function.
 | RE-LUT-6  | Testing with two unstable neighbouring cells.                                                      |
 | RE-LUT-7  | Testing with an unstable cell close to the border of the grid.                                     |
 
-### `_check_unstable_terrain_cell!`
+### `_check_unstable_terrain_cell`
 
-Unit test for the `_check_unstable_terrain_cell!` function.
+Unit test for the `_check_unstable_terrain_cell` function.
 
 The tested function checks the configuration in a specified location and return a status code following the situation.
 The purpose of these tests is to check all possible configurations.
@@ -1271,9 +1271,9 @@ In addition to these basic unit tests, a few extra edge cases are checked.
 | RE-RT-40  | Testing edge case where multiple avalanches are required.                   |
 | RE-RT-41  | Testing the randomness of the investigated direction for the soil movement. |
 
-### `_check_unstable_body_cell!`
+### `_check_unstable_body_cell`
 
-Unit test for the `_check_unstable_body_cell!` function.
+Unit test for the `_check_unstable_body_cell` function.
 
 The tested function checks the configuration in a specified location and return a status code following the situation.
 The purpose of these tests is to check all possible configurations.
