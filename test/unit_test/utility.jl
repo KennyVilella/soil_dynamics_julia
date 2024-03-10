@@ -74,21 +74,21 @@ function check_height(
 
     # Checking terrain
     if (!isnan(terrain))
-        @test (out.terrain[ii, jj] ≈ terrain)
+        @test (abs(out.terrain[ii, jj] - terrain) < 1e-8)
     end
 
     # Checking body_soil
     if (!isnan(body_soil_1))
-        @test (out.body_soil[1][ii, jj] ≈ body_soil_1)
+        @test (abs(out.body_soil[1][ii, jj] - body_soil_1) < 1e-8)
     end
     if (!isnan(body_soil_2))
-        @test (out.body_soil[2][ii, jj] ≈ body_soil_2)
+        @test (abs(out.body_soil[2][ii, jj] - body_soil_2) < 1e-8)
     end
     if (!isnan(body_soil_3))
-        @test (out.body_soil[3][ii, jj] ≈ body_soil_3)
+        @test (abs(out.body_soil[3][ii, jj] - body_soil_3) < 1e-8)
     end
     if (!isnan(body_soil_4))
-        @test (out.body_soil[4][ii, jj] ≈ body_soil_4)
+        @test (abs(out.body_soil[4][ii, jj] - body_soil_4) < 1e-8)
     end
 end
 
@@ -176,7 +176,7 @@ function check_body_soil_pos(
     jj::I,
     pos::Vector{T},
     h_soil::T
-) where {B<:Bool,I<:Int64,T<:Float64}
+) where {I<:Int64,T<:Float64}
 
     # Checking the body soil position
     @test (body_soil_pos.ind[1] == ind)
