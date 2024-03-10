@@ -535,7 +535,7 @@ end
     # Test: RE-RUT-5
     set_height(out, 10, 15, -0.7, -0.2, -0.1, -0.1, 0.3, NaN, NaN, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 15, -0.1, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, pos0, 0.4)
+    push_body_soil_pos(out, 1, 10, 15, pos0, 0.4)
     _relax_unstable_terrain_cell!(
         out, 10, 0.1, 10, 14, 10, 15, grid, bucket, 1e-5)
     @test (out.terrain[10, 14] ≈ -0.3)
@@ -548,7 +548,7 @@ end
     set_height(
         out, 10, 15, -0.8, -0.7, -0.5, -0.5, -0.3, NaN, NaN, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 15, -0.5, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, pos0, 0.2)
+    push_body_soil_pos(out, 1, 10, 15, pos0, 0.2)
     _relax_unstable_terrain_cell!(
         out, 10, 0.1, 10, 14, 10, 15, grid, bucket, 1e-5)
     @test (out.terrain[10, 14] ≈ -0.1)
@@ -561,7 +561,7 @@ end
     set_height(
         out, 10, 15, -0.8, -0.8, -0.5, -0.5, -0.3, NaN, NaN, NaN, NaN)
     posA = _calc_bucket_frame_pos(10, 15, -0.5, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, posA, 0.2)
+    push_body_soil_pos(out, 1, 10, 15, posA, 0.2)
     _relax_unstable_terrain_cell!(
         out, 13, 0.1, 10, 14, 10, 15, grid, bucket, 1e-5)
     @test (out.terrain[10, 14] ≈ -0.1)
@@ -604,7 +604,7 @@ end
     # Test: RE-RUT-11
     set_height(out, 10, 15, -0.3, NaN, NaN, NaN, NaN, 0.0, 0.3, 0.3, 0.5)
     pos2 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, pos2, 0.2)
+    push_body_soil_pos(out, 3, 10, 15, pos2, 0.2)
     _relax_unstable_terrain_cell!(
         out, 20, 0.1, 10, 14, 10, 15, grid, bucket, 1e-5)
     @test (out.terrain[10, 14] ≈ -0.1)
@@ -617,7 +617,7 @@ end
     set_height(
         out, 10, 15, -0.8, NaN, NaN, NaN, NaN, -0.7, -0.5, -0.5, -0.3)
     pos2 = _calc_bucket_frame_pos(10, 15, -0.5, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, pos2, 0.2)
+    push_body_soil_pos(out, 3, 10, 15, pos2, 0.2)
     _relax_unstable_terrain_cell!(
         out, 20, 0.1, 10, 14, 10, 15, grid, bucket, 1e-5)
     @test (out.terrain[10, 14] ≈ -0.1)
@@ -630,7 +630,7 @@ end
     set_height(
         out, 10, 15, -0.8, NaN, NaN, NaN, NaN, -0.8, -0.5, -0.5, -0.3)
     posA = _calc_bucket_frame_pos(10, 15, -0.5, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, posA, 0.2)
+    push_body_soil_pos(out, 3, 10, 15, posA, 0.2)
     _relax_unstable_terrain_cell!(
         out, 21, 0.1, 10, 14, 10, 15, grid, bucket, 1e-5)
     @test (out.terrain[10, 14] ≈ -0.1)
@@ -691,7 +691,7 @@ end
     set_height(
         out, 10, 15, -0.8, -0.8, -0.6, -0.6, -0.4, -0.4, -0.3, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 15, -0.6, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, pos0, 0.2)
+    push_body_soil_pos(out, 1, 10, 15, pos0, 0.2)
     posA = _calc_bucket_frame_pos(10, 15, -0.3, grid, bucket)
     _relax_unstable_terrain_cell!(
         out, 32, 0.1, 10, 14, 10, 15, grid, bucket, 1e-5)
@@ -707,9 +707,9 @@ end
     set_height(
         out, 10, 15, -0.8, -0.8, -0.4, -0.4, -0.3, 0.4, 0.7, 0.7, 0.9)
     posA = _calc_bucket_frame_pos(10, 15, -0.4, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, posA, 0.1)
+    push_body_soil_pos(out, 1, 10, 15, posA, 0.1)
     pos2 = _calc_bucket_frame_pos(10, 15, 0.7, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, pos2, 0.2)
+    push_body_soil_pos(out, 3, 10, 15, pos2, 0.2)
     _relax_unstable_terrain_cell!(
         out, 33, 0.1, 10, 14, 10, 15, grid, bucket, 1e-5)
     @test (out.terrain[10, 14] ≈ -0.1)
@@ -724,9 +724,9 @@ end
     set_height(
         out, 10, 15, -0.8, -0.8, -0.6, -0.6, -0.5, -0.4, -0.3, -0.3, -0.2)
     posA = _calc_bucket_frame_pos(10, 15, -0.6, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, posA, 0.1)
+    push_body_soil_pos(out, 1, 10, 15, posA, 0.1)
     pos2 = _calc_bucket_frame_pos(10, 15, -0.3, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, pos2, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos2, 0.1)
     _relax_unstable_terrain_cell!(
         out, 33, 0.1, 10, 14, 10, 15, grid, bucket, 1e-5)
     @test (out.terrain[10, 14] ≈ -0.1)
@@ -741,9 +741,9 @@ end
     set_height(
         out, 10, 15, -0.8, -0.8, -0.6, -0.6, -0.4, -0.4, -0.3, -0.3, -0.2)
     pos0 = _calc_bucket_frame_pos(10, 15, -0.6, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, pos0, 0.2)
+    push_body_soil_pos(out, 1, 10, 15, pos0, 0.2)
     posA = _calc_bucket_frame_pos(10, 15, -0.3, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, posA, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, posA, 0.1)
     _relax_unstable_terrain_cell!(
         out, 31, 0.1, 10, 14, 10, 15, grid, bucket, 1e-5)
     @test (out.terrain[10, 14] ≈ -0.1)
@@ -805,7 +805,7 @@ end
     set_height(
         out, 10, 15, -0.8, -0.6, -0.4, NaN, NaN, -0.8, -0.7, -0.7, -0.6)
     pos2 = _calc_bucket_frame_pos(10, 15, -0.7, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, pos2, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos2, 0.1)
     posA = _calc_bucket_frame_pos(10, 15, -0.4, grid, bucket)
     _relax_unstable_terrain_cell!(
         out, 34, 0.1, 10, 14, 10, 15, grid, bucket, 1e-5)
@@ -821,9 +821,9 @@ end
     set_height(
         out, 10, 15, -0.8, -0.2, -0.1, -0.1, 0.5, -0.8, -0.7, -0.7, -0.6)
     pos0 = _calc_bucket_frame_pos(10, 15, -0.1, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, pos0, 0.6)
+    push_body_soil_pos(out, 1, 10, 15, pos0, 0.6)
     posA = _calc_bucket_frame_pos(10, 15, -0.7, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, posA, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, posA, 0.1)
     _relax_unstable_terrain_cell!(
         out, 31, 0.1, 10, 14, 10, 15, grid, bucket, 1e-5)
     @test (out.terrain[10, 14] ≈ -0.3)
@@ -838,9 +838,9 @@ end
     set_height(
         out, 10, 15, -0.8, -0.5, -0.4, -0.4, 0.5, -0.8, -0.7, -0.7, -0.6)
     pos0 = _calc_bucket_frame_pos(10, 15, -0.4, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, pos0, 0.9)
+    push_body_soil_pos(out, 1, 10, 15, pos0, 0.9)
     posA = _calc_bucket_frame_pos(10, 15, -0.7, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, posA, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, posA, 0.1)
     _relax_unstable_terrain_cell!(
         out, 31, 0.1, 10, 14, 10, 15, grid, bucket, 1e-5)
     @test (out.terrain[10, 14] ≈ -0.1)
@@ -855,9 +855,9 @@ end
     set_height(
         out, 10, 15, -0.8, -0.5, -0.4, -0.4, -0.3, -0.8, -0.7, -0.7, -0.5)
     posA = _calc_bucket_frame_pos(10, 15, -0.4, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, posA, 0.1)
+    push_body_soil_pos(out, 1, 10, 15, posA, 0.1)
     pos2 = _calc_bucket_frame_pos(10, 15, -0.7, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, pos2, 0.2)
+    push_body_soil_pos(out, 3, 10, 15, pos2, 0.2)
     _relax_unstable_terrain_cell!(
         out, 33, 0.1, 10, 14, 10, 15, grid, bucket, 1e-5)
     @test (out.terrain[10, 14] ≈ -0.1)
@@ -943,7 +943,7 @@ end
     out.relax_area[:, :] .= Int64[[10, 10] [15, 15]]
     set_height(out, 10, 15, -0.8, -0.7, -0.5, -0.5, 0.0, NaN, NaN, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 15, -0.5, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, pos0, 0.5)
+    push_body_soil_pos(out, 1, 10, 15, pos0, 0.5)
     _relax_terrain!(out, grid, bucket, sim, 1e-5)
     check_relax_area(5, 15, 10, 20)
     @test (out.terrain[10, 16] ≈ -0.1)
@@ -957,7 +957,7 @@ end
     out.relax_area[:, :] .= Int64[[10, 10] [15, 15]]
     set_height(out, 10, 15, -0.8, -0.8, -0.5, -0.5, 0.0, NaN, NaN, NaN, NaN)
     posA = _calc_bucket_frame_pos(10, 15, -0.5, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, posA, 0.5)
+    push_body_soil_pos(out, 1, 10, 15, posA, 0.5)
     _relax_terrain!(out, grid, bucket, sim, 1e-5)
     check_relax_area(5, 15, 10, 20)
     check_height(out, 10, 15, -0.8, -0.5, 0.0, NaN, NaN)
@@ -970,7 +970,7 @@ end
     set_height(
         out, 10, 15, -0.8, -0.8, -0.5, -0.5, -0.3, NaN, NaN, NaN, NaN)
     posA = _calc_bucket_frame_pos(10, 15, -0.5, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, posA, 0.2)
+    push_body_soil_pos(out, 1, 10, 15, posA, 0.2)
     _relax_terrain!(out, grid, bucket, sim, 1e-5)
     check_relax_area(5, 15, 10, 20)
     @test (out.terrain[10, 16] ≈ -0.1)
@@ -1023,7 +1023,7 @@ end
     set_height(
         out, 10, 15, -0.8, NaN, NaN, NaN, NaN, -0.7, -0.5, -0.5, -0.1)
     pos2 = _calc_bucket_frame_pos(10, 15, -0.5, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, pos2, 0.4)
+    push_body_soil_pos(out, 3, 10, 15, pos2, 0.4)
     _relax_terrain!(out, grid, bucket, sim, 1e-5)
     check_relax_area(5, 15, 10, 20)
     @test (out.terrain[10, 16] ≈ -0.1)
@@ -1037,7 +1037,7 @@ end
     out.relax_area[:, :] .= Int64[[10, 10] [15, 15]]
     set_height(out, 10, 15, -0.8, NaN, NaN, NaN, NaN, -0.8, -0.5, -0.5, 0.0)
     pos2 = _calc_bucket_frame_pos(10, 15, -0.5, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, pos2, 0.5)
+    push_body_soil_pos(out, 3, 10, 15, pos2, 0.5)
     _relax_terrain!(out, grid, bucket, sim, 1e-5)
     check_relax_area(5, 15, 10, 20)
     check_height(out, 10, 15, -0.8, NaN, NaN, -0.5, 0.0)
@@ -1050,7 +1050,7 @@ end
     set_height(
         out, 10, 15, -0.8, NaN, NaN, NaN, NaN, -0.8, -0.5, -0.5, -0.2)
     posA = _calc_bucket_frame_pos(10, 15, -0.5, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, posA, 0.3)
+    push_body_soil_pos(out, 3, 10, 15, posA, 0.3)
     _relax_terrain!(out, grid, bucket, sim)
     check_relax_area(5, 15, 10, 20)
     @test (out.terrain[10, 16] ≈ -0.1)
@@ -1111,7 +1111,7 @@ end
     out.relax_area[:, :] .= Int64[[10, 10] [15, 15]]
     set_height(out, 10, 15, -0.4, -0.2, -0.1, NaN, NaN, 0.4, 0.5, 0.5, 0.7)
     pos2 = _calc_bucket_frame_pos(10, 15, 0.5, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, pos2, 0.2)
+    push_body_soil_pos(out, 3, 10, 15, pos2, 0.2)
     _relax_terrain!(out, grid, bucket, sim, 1e-5)
     check_relax_area(5, 15, 10, 20)
     @test (out.terrain[10, 16] ≈ -0.2)
@@ -1127,7 +1127,7 @@ end
     set_height(
         out, 10, 15, -0.8, -0.8, -0.6, NaN, NaN, -0.4, -0.3, -0.3, 0.0)
     pos2 = _calc_bucket_frame_pos(10, 15, -0.3, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, pos2, 0.3)
+    push_body_soil_pos(out, 3, 10, 15, pos2, 0.3)
     posA = _calc_bucket_frame_pos(10, 15, -0.6, grid, bucket)
     _relax_terrain!(out, grid, bucket, sim, 1e-5)
     check_relax_area(5, 15, 10, 20)
@@ -1145,7 +1145,7 @@ end
     set_height(
         out, 10, 15, -0.8, -0.8, -0.6, NaN, NaN, -0.4, -0.3, -0.3, -0.2)
     posB = _calc_bucket_frame_pos(10, 15, -0.3, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, posB, 0.3)
+    push_body_soil_pos(out, 3, 10, 15, posB, 0.3)
     posA = _calc_bucket_frame_pos(10, 15, -0.6, grid, bucket)
     _relax_terrain!(out, grid, bucket, sim, 1e-5)
     check_relax_area(5, 15, 10, 20)
@@ -1164,7 +1164,7 @@ end
     out.relax_area[:, :] .= Int64[[10, 10] [15, 15]]
     set_height(out, 10, 15, -0.3, -0.1, 0.0, 0.0, 0.1, 0.2, 0.3, NaN, NaN)
     pos2 = _calc_bucket_frame_pos(10, 15, 0.0, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 15, pos0, 0.1)
     _relax_terrain!(out, grid, bucket, sim, 1e-5)
     check_relax_area(5, 15, 10, 20)
     @test (out.terrain[10, 16] ≈ -0.1)
@@ -1181,7 +1181,7 @@ end
     set_height(
         out, 10, 15, -0.8, -0.8, -0.6, -0.6, -0.5, -0.4, 0.0, NaN, NaN)
     posA = _calc_bucket_frame_pos(10, 15, -0.6, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, posA, 0.1)
+    push_body_soil_pos(out, 1, 10, 15, posA, 0.1)
     _relax_terrain!(out, grid, bucket, sim, 1e-5)
     check_relax_area(5, 15, 10, 20)
     @test (out.terrain[10, 16] ≈ -0.1)
@@ -1198,7 +1198,7 @@ end
     set_height(
         out, 10, 15, -0.8, -0.8, -0.6, -0.6, -0.5, -0.4, -0.2, NaN, NaN)
     posA = _calc_bucket_frame_pos(10, 15, -0.6, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, posA, 0.1)
+    push_body_soil_pos(out, 1, 10, 15, posA, 0.1)
     posB = _calc_bucket_frame_pos(10, 15, -0.2, grid, bucket)
     _relax_terrain!(out, grid, bucket, sim, 1e-5)
     check_relax_area(5, 15, 10, 20)
@@ -1217,9 +1217,9 @@ end
     out.relax_area[:, :] .= Int64[[10, 10] [15, 15]]
     set_height(out, 10, 15, -0.6, -0.5, -0.4, -0.4, 0.0, 0.0, 0.3, 0.3, 0.4)
     pos0 = _calc_bucket_frame_pos(10, 15, -0.4, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, pos0, 0.4)
+    push_body_soil_pos(out, 1, 10, 15, pos0, 0.4)
     pos2 = _calc_bucket_frame_pos(10, 15, -0.6, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, pos2, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos2, 0.1)
     _relax_terrain!(out, grid, bucket, sim, 1e-5)
     check_relax_area(5, 15, 10, 20)
     @test (out.terrain[10, 16] ≈ -0.1)
@@ -1235,9 +1235,9 @@ end
     set_height(
         out, 10, 15, -0.8, -0.8, -0.6, -0.6, -0.5, -0.4, -0.3, -0.3, 0.0)
     posA = _calc_bucket_frame_pos(10, 15, -0.6, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, posA, 0.1)
+    push_body_soil_pos(out, 1, 10, 15, posA, 0.1)
     pos2 = _calc_bucket_frame_pos(10, 15, -0.3, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, pos2, 0.3)
+    push_body_soil_pos(out, 3, 10, 15, pos2, 0.3)
     _relax_terrain!(out, grid, bucket, sim, 1e-5)
     check_relax_area(5, 15, 10, 20)
     @test (out.terrain[10, 16] ≈ -0.1)
@@ -1254,9 +1254,9 @@ end
     set_height(
         out, 10, 15, -0.8, -0.8, -0.6, -0.6, -0.5, -0.4, -0.3, -0.3, -0.2)
     posA = _calc_bucket_frame_pos(10, 15, -0.6, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, posA, 0.1)
+    push_body_soil_pos(out, 1, 10, 15, posA, 0.1)
     posB = _calc_bucket_frame_pos(10, 15, -0.3, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, posB, 0.3)
+    push_body_soil_pos(out, 3, 10, 15, posB, 0.3)
     _relax_terrain!(out, grid, bucket, sim, 1e-5)
     check_relax_area(5, 15, 10, 20)
     @test (out.terrain[10, 16] ≈ -0.1)
@@ -1320,7 +1320,7 @@ end
     out.relax_area[:, :] .= Int64[[10, 10] [15, 15]]
     set_height(out, 10, 15, -0.2, 0.4, 0.5, 0.5, 0.6, 0.0, 0.2, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 15, 0.5, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 15, pos0, 0.1)
     _relax_terrain!(out, grid, bucket, sim, 1e-5)
     check_relax_area(5, 15, 10, 20)
     @test (out.terrain[10, 16] ≈ -0.1)
@@ -1335,7 +1335,7 @@ end
     out.relax_area[:, :] .= Int64[[10, 10] [15, 15]]
     set_height(out, 10, 15, -0.8, 0.4, 0.5, 0.5, 0.6, -0.8, -0.2, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 15, 0.5, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 15, pos0, 0.1)
     posA = _calc_bucket_frame_pos(10, 15, -0.2, grid, bucket)
     _relax_terrain!(out, grid, bucket, sim, 1e-5)
     check_relax_area(5, 15, 10, 20)
@@ -1353,7 +1353,7 @@ end
     set_height(
         out, 10, 15, -0.8, -0.4, -0.3, -0.3, -0.2, -0.8, -0.6, NaN, NaN)
     posB = _calc_bucket_frame_pos(10, 15, -0.3, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, posB, 0.2)
+    push_body_soil_pos(out, 1, 10, 15, posB, 0.2)
     posA = _calc_bucket_frame_pos(10, 15, -0.6, grid, bucket)
     _relax_terrain!(out, grid, bucket, sim, 1e-5)
     check_relax_area(5, 15, 10, 20)
@@ -1373,7 +1373,7 @@ end
     set_height(
         out, 10, 15, -0.8, -0.4, -0.1, NaN, NaN, -0.7, -0.6, -0.6, -0.4)
     pos2 = _calc_bucket_frame_pos(10, 15, -0.6, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, pos2, 0.2)
+    push_body_soil_pos(out, 3, 10, 15, pos2, 0.2)
     _relax_terrain!(out, grid, bucket, sim, 1e-5)
     check_relax_area(5, 15, 10, 20)
     @test (out.terrain[10, 16] ≈ -0.1)
@@ -1389,7 +1389,7 @@ end
     set_height(
         out, 10, 15, -0.8, -0.1, 0.1, NaN, NaN, -0.8, -0.6, -0.6, -0.5)
     posA = _calc_bucket_frame_pos(10, 15, -0.6, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, posA, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, posA, 0.1)
     _relax_terrain!(out, grid, bucket, sim, 1e-5)
     check_relax_area(5, 15, 10, 20)
     @test (out.terrain[10, 16] ≈ -0.2)
@@ -1410,7 +1410,7 @@ end
     set_height(
         out, 10, 15, -0.8, -0.4, -0.2, NaN, NaN, -0.8, -0.6, -0.6, -0.5)
     posA = _calc_bucket_frame_pos(10, 15, -0.6, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, posA, 0.2)
+    push_body_soil_pos(out, 3, 10, 15, posA, 0.2)
     posB = _calc_bucket_frame_pos(10, 15, -0.2, grid, bucket)
     _relax_terrain!(out, grid, bucket, sim, 1e-5)
     check_relax_area(5, 15, 10, 20)
@@ -1430,9 +1430,9 @@ end
     set_height(
         out, 10, 15, -0.8, -0.4, -0.3, -0.3, -0.1, -0.7, -0.6, -0.6, -0.4)
     pos0 = _calc_bucket_frame_pos(10, 15, -0.3, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, pos0, 0.2)
+    push_body_soil_pos(out, 1, 10, 15, pos0, 0.2)
     pos2 = _calc_bucket_frame_pos(10, 15, -0.6, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, pos2, 0.2)
+    push_body_soil_pos(out, 3, 10, 15, pos2, 0.2)
     _relax_terrain!(out, grid, bucket, sim, 1e-5)
     check_relax_area(5, 15, 10, 20)
     @test (out.terrain[10, 16] ≈ -0.1)
@@ -1448,9 +1448,9 @@ end
     set_height(
         out, 10, 15, -0.8, -0.4, -0.3, -0.3, 0.0, -0.8, -0.6, -0.6, -0.5)
     pos0 = _calc_bucket_frame_pos(10, 15, -0.3, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, pos0, 0.3)
+    push_body_soil_pos(out, 1, 10, 15, pos0, 0.3)
     posA = _calc_bucket_frame_pos(10, 15, -0.6, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, posA, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, posA, 0.1)
     _relax_terrain!(out, grid, bucket, sim, 1e-5)
     check_relax_area(5, 15, 10, 20)
     @test (out.terrain[10, 16] ≈ -0.1)
@@ -1467,9 +1467,9 @@ end
     set_height(
         out, 10, 15, -0.8, -0.4, -0.3, -0.3, -0.2, -0.8, -0.6, -0.6, -0.5)
     posB = _calc_bucket_frame_pos(10, 15, -0.3, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, posB, 0.1)
+    push_body_soil_pos(out, 1, 10, 15, posB, 0.1)
     posA = _calc_bucket_frame_pos(10, 15, -0.6, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, posA, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, posA, 0.1)
     _relax_terrain!(out, grid, bucket, sim, 1e-5)
     check_relax_area(5, 15, 10, 20)
     @test (out.terrain[10, 16] ≈ -0.1)
@@ -2381,7 +2381,7 @@ end
     set_height(out, 10, 14, -0.2, -0.2, 0.0, 0.0, 0.2, NaN, NaN, NaN, NaN)
     out.terrain[10, 15] = 0.0
     pos0 = _calc_bucket_frame_pos(10, 14, 0.0, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.2)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.2)
     _relax_unstable_body_cell!(
         out, 40, body_soil_pos, 0.1, 1, 10, 14, 1, 10, 15, grid, bucket,
         1e-5)
@@ -2397,7 +2397,7 @@ end
     set_height(out, 10, 14, -0.2, -0.2, 0.0, 0.0, 0.2, NaN, NaN, NaN, NaN)
     out.terrain[10, 15] = -0.2
     pos0 = _calc_bucket_frame_pos(10, 14, 0.0, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.2)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.2)
     _relax_unstable_body_cell!(
         out, 40, body_soil_pos, 0.1, 1, 10, 14, 1, 10, 15, grid, bucket,
         1e-5)
@@ -2413,8 +2413,8 @@ end
     set_height(out, 10, 14, -0.2, -0.2, 0.0, 0.0, 0.4, NaN, NaN, NaN, NaN)
     out.terrain[10, 15] = 0.0
     pos0 = _calc_bucket_frame_pos(10, 14, 0.0, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.3)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.3)
     _relax_unstable_body_cell!(
         out, 40, body_soil_pos, 0.1, 1, 10, 14, 1, 10, 15, grid, bucket,
         1e-5)
@@ -2431,7 +2431,7 @@ end
     set_height(out, 10, 14, -0.2, -0.2, 0.0, 0.0, 0.2, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, 0.0, 0.3, 0.4, NaN, NaN, NaN, NaN, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.0, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.2)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.2)
     _relax_unstable_body_cell!(
         out, 10, body_soil_pos, 0.1, 1, 10, 14, 1, 10, 15, grid, bucket,
         1e-5)
@@ -2448,7 +2448,7 @@ end
     set_height(out, 10, 14, -0.2, -0.2, 0.0, 0.0, 0.2, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.4, 0.1, 0.4, NaN, NaN, NaN, NaN, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.0, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.2)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.2)
     _relax_unstable_body_cell!(
         out, 10, body_soil_pos, 0.1, 1, 10, 14, 1, 10, 15, grid, bucket,
         1e-5)
@@ -2465,7 +2465,7 @@ end
     set_height(out, 10, 14, -0.2, -0.2, 0.0, 0.0, 0.4, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, 0.0, 0.1, 0.2, NaN, NaN, NaN, NaN, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.0, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.4)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.4)
     _relax_unstable_body_cell!(
         out, 10, body_soil_pos, 0.1, 1, 10, 14, 1, 10, 15, grid, bucket,
         1e-5)
@@ -2482,8 +2482,8 @@ end
     set_height(out, 10, 14, -0.2, -0.2, 0.0, 0.0, 0.4, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, 0.0, 0.3, 0.4, NaN, NaN, NaN, NaN, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.0, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.3)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.3)
     _relax_unstable_body_cell!(
         out, 10, body_soil_pos, 0.1, 1, 10, 14, 1, 10, 15, grid, bucket,
         1e-5)
@@ -2501,8 +2501,8 @@ end
     set_height(out, 10, 14, -0.2, -0.2, 0.0, 0.0, 0.6, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, 0.0, 0.1, 0.4, NaN, NaN, NaN, NaN, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.0, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.3)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.3)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.3)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.3)
     _relax_unstable_body_cell!(
         out, 10, body_soil_pos, 0.1, 1, 10, 14, 1, 10, 15, grid, bucket,
         1e-5)
@@ -2520,7 +2520,7 @@ end
     set_height(out, 10, 14, -0.2, -0.2, 0.0, 0.0, 0.2, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.2, -0.2, 0.0, NaN, NaN, NaN, NaN, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.0, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.2)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.2)
     posA = _calc_bucket_frame_pos(10, 15, 0.0, grid, bucket)
     _relax_unstable_body_cell!(
         out, 14, body_soil_pos, 0.1, 1, 10, 14, 1, 10, 15, grid, bucket,
@@ -2539,7 +2539,7 @@ end
     set_height(out, 10, 14, -0.2, -0.2, 0.0, 0.0, 0.2, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.3, -0.3, -0.2, NaN, NaN, NaN, NaN, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.0, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.2)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.2)
     posA = _calc_bucket_frame_pos(10, 15, -0.2, grid, bucket)
     _relax_unstable_body_cell!(
         out, 14, body_soil_pos, 0.1, 1, 10, 14, 1, 10, 15, grid, bucket,
@@ -2558,8 +2558,8 @@ end
     set_height(out, 10, 14, -0.2, -0.2, 0.0, 0.0, 0.2, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.3, -0.3, -0.2, NaN, NaN, NaN, NaN, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.0, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
     posA = _calc_bucket_frame_pos(10, 15, -0.2, grid, bucket)
     _relax_unstable_body_cell!(
         out, 14, body_soil_pos, 0.1, 1, 10, 14, 1, 10, 15, grid, bucket,
@@ -2579,9 +2579,9 @@ end
     set_height(out, 10, 14, -0.2, -0.2, 0.0, 0.0, 0.2, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.3, -0.3, -0.2, -0.2, 0.0, NaN, NaN, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.0, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.2)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.2)
     posA = _calc_bucket_frame_pos(10, 15, -0.2, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, posA, 0.2)
+    push_body_soil_pos(out, 1, 10, 15, posA, 0.2)
     _relax_unstable_body_cell!(
         out, 13, body_soil_pos, 0.1, 1, 10, 14, 1, 10, 15, grid, bucket,
         1e-5)
@@ -2601,9 +2601,9 @@ end
     set_height(
         out, 10, 15, -0.3, -0.3, -0.2, -0.2, -0.1, NaN, NaN, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.1, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
     posA = _calc_bucket_frame_pos(10, 15, -0.2, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, posA, 0.1)
+    push_body_soil_pos(out, 1, 10, 15, posA, 0.1)
     _relax_unstable_body_cell!(
         out, 13, body_soil_pos, 0.1, 1, 10, 14, 1, 10, 15, grid, bucket,
         1e-5)
@@ -2623,10 +2623,10 @@ end
     set_height(
         out, 10, 15, -0.3, -0.3, -0.2, -0.2, -0.1, NaN, NaN, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.2, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
     posA = _calc_bucket_frame_pos(10, 15, -0.2, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, posA, 0.1)
+    push_body_soil_pos(out, 1, 10, 15, posA, 0.1)
     _relax_unstable_body_cell!(
         out, 13, body_soil_pos, 0.1, 1, 10, 14, 1, 10, 15, grid, bucket,
         1e-5)
@@ -2646,7 +2646,7 @@ end
     set_height(out, 10, 14, -0.2, -0.2, 0.0, 0.0, 0.2, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, 0.0, NaN, NaN, NaN, NaN, 0.5, 0.6, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.1, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.2)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.2)
     _relax_unstable_body_cell!(
         out, 20, body_soil_pos, 0.1, 1, 10, 14, 1, 10, 15, grid, bucket,
         1e-5)
@@ -2663,7 +2663,7 @@ end
     set_height(out, 10, 14, -0.2, -0.2, 0.0, 0.0, 0.2, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.4, NaN, NaN, NaN, NaN, 0.5, 0.6, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.0, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.2)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.2)
     _relax_unstable_body_cell!(
         out, 20, body_soil_pos, 0.1, 1, 10, 14, 1, 10, 15, grid, bucket,
         1e-5)
@@ -2680,7 +2680,7 @@ end
     set_height(out, 10, 14, -0.2, -0.2, 0.0, 0.0, 0.4, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, 0.0, NaN, NaN, NaN, NaN, 0.1, 0.6, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.0, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.4)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.4)
     _relax_unstable_body_cell!(
         out, 20, body_soil_pos, 0.1, 1, 10, 14, 1, 10, 15, grid, bucket,
         1e-5)
@@ -2697,8 +2697,8 @@ end
     set_height(out, 10, 14, -0.2, -0.2, 0.0, 0.0, 0.2, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.4, NaN, NaN, NaN, NaN, 0.5, 0.6, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.0, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
     _relax_unstable_body_cell!(
         out, 20, body_soil_pos, 0.1, 1, 10, 14, 1, 10, 15, grid, bucket,
         1e-5)
@@ -2716,8 +2716,8 @@ end
     set_height(out, 10, 14, -0.2, -0.2, 0.0, 0.0, 0.6, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, 0.0, NaN, NaN, NaN, NaN, 0.1, 0.6, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.0, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.2)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.4)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.2)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.4)
     _relax_unstable_body_cell!(
         out, 20, body_soil_pos, 0.1, 1, 10, 14, 1, 10, 15, grid, bucket,
         1e-5)
@@ -2735,7 +2735,7 @@ end
     set_height(out, 10, 14, -0.2, -0.2, 0.0, 0.0, 0.2, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.2, NaN, NaN, NaN, NaN, -0.2, 0.0, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.0, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.2)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.2)
     posA = _calc_bucket_frame_pos(10, 15, 0.0, grid, bucket)
     _relax_unstable_body_cell!(
         out, 22, body_soil_pos, 0.1, 1, 10, 14, 1, 10, 15, grid, bucket,
@@ -2754,7 +2754,7 @@ end
     set_height(out, 10, 14, -0.2, -0.2, 0.1, 0.1, 0.2, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.2, NaN, NaN, NaN, NaN, -0.2, -0.1, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.1, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
     posA = _calc_bucket_frame_pos(10, 15, -0.1, grid, bucket)
     _relax_unstable_body_cell!(
         out, 22, body_soil_pos, 0.1, 1, 10, 14, 1, 10, 15, grid, bucket,
@@ -2773,8 +2773,8 @@ end
     set_height(out, 10, 14, -0.2, -0.2, 0.1, 0.1, 0.3, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.3, NaN, NaN, NaN, NaN, -0.3, -0.2, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.1, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
     posA = _calc_bucket_frame_pos(10, 15, -0.2, grid, bucket)
     _relax_unstable_body_cell!(
         out, 22, body_soil_pos, 0.1, 1, 10, 14, 1, 10, 15, grid, bucket,
@@ -2794,9 +2794,9 @@ end
     set_height(out, 10, 14, -0.2, -0.2, 0.0, 0.0, 0.2, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.2, NaN, NaN, NaN, NaN, -0.2, -0.1, -0.1, 0.0)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.0, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.2)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.2)
     posA = _calc_bucket_frame_pos(10, 15, -0.1, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, posA, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, posA, 0.1)
     _relax_unstable_body_cell!(
         out, 21, body_soil_pos, 0.1, 1, 10, 14, 1, 10, 15, grid, bucket,
         1e-5)
@@ -2815,9 +2815,9 @@ end
     set_height(out, 10, 14, -0.2, -0.2, 0.1, 0.1, 0.2, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.2, NaN, NaN, NaN, NaN, -0.2, -0.1, -0.1, 0.0)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.1, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
     posA = _calc_bucket_frame_pos(10, 15, -0.1, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, posA, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, posA, 0.1)
     _relax_unstable_body_cell!(
         out, 21, body_soil_pos, 0.1, 1, 10, 14, 1, 10, 15, grid, bucket,
         1e-5)
@@ -2837,10 +2837,10 @@ end
     set_height(
         out, 10, 15, -0.3, NaN, NaN, NaN, NaN, -0.3, -0.2, -0.2, -0.1)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.1, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
     posA = _calc_bucket_frame_pos(10, 15, -0.2, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, posA, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, posA, 0.1)
     _relax_unstable_body_cell!(
         out, 21, body_soil_pos, 0.1, 1, 10, 14, 1, 10, 15, grid, bucket,
         1e-5)
@@ -2860,7 +2860,7 @@ end
     set_height(out, 10, 14, -0.2, -0.2, 0.0, 0.0, 0.3, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.2, -0.2, -0.1, NaN, NaN, 0.1, 0.3, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.0, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.3)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.3)
     posA = _calc_bucket_frame_pos(10, 15, -0.1, grid, bucket)
     _relax_unstable_body_cell!(
         out, 34, body_soil_pos, 0.1, 1, 10, 14, 1, 10, 15, grid, bucket,
@@ -2879,7 +2879,7 @@ end
     set_height(out, 10, 14, -0.2, -0.2, 0.0, 0.0, 0.1, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.2, -0.2, -0.1, NaN, NaN, 0.1, 0.3, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.0, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
     posA = _calc_bucket_frame_pos(10, 15, -0.1, grid, bucket)
     _relax_unstable_body_cell!(
         out, 34, body_soil_pos, 0.1, 1, 10, 14, 1, 10, 15, grid, bucket,
@@ -2898,8 +2898,8 @@ end
     set_height(out, 10, 14, -0.2, -0.2, 0.0, 0.0, 0.2, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.3, -0.3, -0.2, NaN, NaN, 0.1, 0.3, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.0, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
     posA = _calc_bucket_frame_pos(10, 15, -0.2, grid, bucket)
     _relax_unstable_body_cell!(
         out, 34, body_soil_pos, 0.1, 1, 10, 14, 1, 10, 15, grid, bucket,
@@ -2919,7 +2919,7 @@ end
     set_height(out, 10, 14, -0.2, -0.2, 0.0, 0.0, 0.5, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.2, -0.2, -0.1, NaN, NaN, 0.1, 0.3, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.0, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.5)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.5)
     posA = _calc_bucket_frame_pos(10, 15, -0.1, grid, bucket)
     _relax_unstable_body_cell!(
         out, 34, body_soil_pos, 0.1, 1, 10, 14, 1, 10, 15, grid, bucket,
@@ -2938,8 +2938,8 @@ end
     set_height(out, 10, 14, -0.2, -0.2, 0.0, 0.0, 0.9, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.2, -0.2, -0.1, NaN, NaN, 0.0, 0.3, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.0, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.2)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.7)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.2)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.7)
     posA = _calc_bucket_frame_pos(10, 15, -0.1, grid, bucket)
     _relax_unstable_body_cell!(
         out, 34, body_soil_pos, 0.1, 1, 10, 14, 1, 10, 15, grid, bucket,
@@ -2959,7 +2959,7 @@ end
     set_height(out, 10, 14, -0.2, -0.2, 0.0, 0.0, 0.5, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.2, -0.2, -0.1, NaN, NaN, 0.0, 0.3, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.0, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.5)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.5)
     posA = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
     _relax_unstable_body_cell!(
         out, 32, body_soil_pos, 0.1, 1, 10, 14, 1, 10, 15, grid, bucket,
@@ -2978,7 +2978,7 @@ end
     set_height(out, 10, 14, -0.2, -0.2, 0.5, 0.5, 0.8, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.2, -0.2, -0.1, NaN, NaN, 0.0, 0.2, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.5, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.3)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.3)
     posA = _calc_bucket_frame_pos(10, 15, 0.2, grid, bucket)
     _relax_unstable_body_cell!(
         out, 32, body_soil_pos, 0.1, 1, 10, 14, 1, 10, 15, grid, bucket,
@@ -2997,8 +2997,8 @@ end
     set_height(out, 10, 14, -0.2, -0.2, 0.5, 0.5, 0.8, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.2, -0.2, -0.1, NaN, NaN, 0.0, 0.2, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.5, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.2)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.2)
     posA = _calc_bucket_frame_pos(10, 15, 0.2, grid, bucket)
     _relax_unstable_body_cell!(
         out, 32, body_soil_pos, 0.1, 1, 10, 14, 1, 10, 15, grid, bucket,
@@ -3019,11 +3019,11 @@ end
     set_height(
         out, 10, 15, -0.3, -0.3, -0.2, -0.2, -0.1, 0.1, 0.3, 0.3, 0.5)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.5, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.3)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.3)
     posA = _calc_bucket_frame_pos(10, 15, -0.2, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, posA, 0.1)
+    push_body_soil_pos(out, 1, 10, 15, posA, 0.1)
     pos2 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, pos2, 0.2)
+    push_body_soil_pos(out, 3, 10, 15, pos2, 0.2)
     _relax_unstable_body_cell!(
         out, 33, body_soil_pos, 0.1, 1, 10, 14, 1, 10, 15, grid, bucket,
         1e-5)
@@ -3042,11 +3042,11 @@ end
     set_height(
         out, 10, 15, -0.3, -0.3, -0.2, -0.2, -0.1, 0.2, 0.3, 0.3, 0.5)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.1, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.2)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.2)
     posA = _calc_bucket_frame_pos(10, 15, -0.2, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, posA, 0.1)
+    push_body_soil_pos(out, 1, 10, 15, posA, 0.1)
     pos2 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, pos2, 0.2)
+    push_body_soil_pos(out, 3, 10, 15, pos2, 0.2)
     _relax_unstable_body_cell!(
         out, 33, body_soil_pos, 0.1, 1, 10, 14, 1, 10, 15, grid, bucket,
         1e-5)
@@ -3065,12 +3065,12 @@ end
     set_height(
         out, 10, 15, -0.3, -0.3, -0.2, -0.2, -0.1, 0.2, 0.3, 0.3, 0.5)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.1, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
     posA = _calc_bucket_frame_pos(10, 15, -0.2, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, posA, 0.1)
+    push_body_soil_pos(out, 1, 10, 15, posA, 0.1)
     pos2 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, pos2, 0.2)
+    push_body_soil_pos(out, 3, 10, 15, pos2, 0.2)
     _relax_unstable_body_cell!(
         out, 33, body_soil_pos, 0.1, 1, 10, 14, 1, 10, 15, grid, bucket,
         1e-5)
@@ -3090,11 +3090,11 @@ end
     set_height(
         out, 10, 15, -0.3, -0.3, -0.2, -0.2, -0.1, 0.2, 0.3, 0.3, 0.5)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.1, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.8)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.8)
     posA = _calc_bucket_frame_pos(10, 15, -0.2, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, posA, 0.1)
+    push_body_soil_pos(out, 1, 10, 15, posA, 0.1)
     pos2 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, pos2, 0.2)
+    push_body_soil_pos(out, 3, 10, 15, pos2, 0.2)
     _relax_unstable_body_cell!(
         out, 33, body_soil_pos, 0.1, 1, 10, 14, 1, 10, 15, grid, bucket,
         1e-5)
@@ -3113,12 +3113,12 @@ end
     set_height(
         out, 10, 15, -0.3, -0.3, -0.2, -0.2, -0.1, 0.0, 0.3, 0.3, 0.5)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.1, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.2)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.6)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.2)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.6)
     posA = _calc_bucket_frame_pos(10, 15, -0.2, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, posA, 0.1)
+    push_body_soil_pos(out, 1, 10, 15, posA, 0.1)
     pos2 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, pos2, 0.2)
+    push_body_soil_pos(out, 3, 10, 15, pos2, 0.2)
     _relax_unstable_body_cell!(
         out, 33, body_soil_pos, 0.1, 1, 10, 14, 1, 10, 15, grid, bucket,
         1e-5)
@@ -3138,11 +3138,11 @@ end
     set_height(
         out, 10, 15, -0.3, -0.3, -0.2, -0.2, -0.1, 0.1, 0.3, 0.3, 0.5)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.1, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.8)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.8)
     pos0 = _calc_bucket_frame_pos(10, 15, -0.2, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 15, pos0, 0.1)
     posA = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, posA, 0.2)
+    push_body_soil_pos(out, 3, 10, 15, posA, 0.2)
     _relax_unstable_body_cell!(
         out, 31, body_soil_pos, 0.1, 1, 10, 14, 1, 10, 15, grid, bucket,
         1e-5)
@@ -3161,11 +3161,11 @@ end
     set_height(
         out, 10, 15, -0.3, -0.3, -0.2, -0.2, -0.1, 0.1, 0.3, 0.3, 0.5)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.7, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.2)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.2)
     pos0 = _calc_bucket_frame_pos(10, 15, -0.2, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 15, pos0, 0.1)
     posA = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, posA, 0.2)
+    push_body_soil_pos(out, 3, 10, 15, posA, 0.2)
     _relax_unstable_body_cell!(
         out, 31, body_soil_pos, 0.1, 1, 10, 14, 1, 10, 15, grid, bucket,
         1e-5)
@@ -3184,12 +3184,12 @@ end
     set_height(
         out, 10, 15, -0.3, -0.3, -0.2, -0.2, -0.1, 0.1, 0.3, 0.3, 0.5)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.1, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.8)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.8)
     pos0 = _calc_bucket_frame_pos(10, 15, -0.2, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 15, pos0, 0.1)
     posA = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, posA, 0.2)
+    push_body_soil_pos(out, 3, 10, 15, posA, 0.2)
     _relax_unstable_body_cell!(
         out, 31, body_soil_pos, 0.1, 1, 10, 14, 1, 10, 15, grid, bucket,
         1e-5)
@@ -3208,9 +3208,9 @@ end
     set_height(out, 10, 14, -0.2, -0.2, 0.0, 0.0, 0.8, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.3, -0.3, -0.2, -0.2, 0.1, 0.1, 0.2, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.0, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.8)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.8)
     pos0 = _calc_bucket_frame_pos(10, 15, -0.2, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, pos0, 0.3)
+    push_body_soil_pos(out, 1, 10, 15, pos0, 0.3)
     posA = _calc_bucket_frame_pos(10, 15, 0.2, grid, bucket)
     _relax_unstable_body_cell!(
         out, 32, body_soil_pos, 0.1, 1, 10, 14, 1, 10, 15, grid, bucket,
@@ -3229,9 +3229,9 @@ end
     set_height(out, 10, 14, -0.2, -0.2, 0.6, 0.6, 0.8, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.3, -0.3, -0.2, -0.2, 0.1, 0.1, 0.2, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.6, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.2)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.2)
     pos0 = _calc_bucket_frame_pos(10, 15, -0.2, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, pos0, 0.3)
+    push_body_soil_pos(out, 1, 10, 15, pos0, 0.3)
     posA = _calc_bucket_frame_pos(10, 15, 0.2, grid, bucket)
     _relax_unstable_body_cell!(
         out, 32, body_soil_pos, 0.1, 1, 10, 14, 1, 10, 15, grid, bucket,
@@ -3250,10 +3250,10 @@ end
     set_height(out, 10, 14, -0.2, -0.2, 0.0, 0.0, 0.8, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.3, -0.3, -0.2, -0.2, 0.1, 0.1, 0.2, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.0, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.7)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.7)
     pos0 = _calc_bucket_frame_pos(10, 15, -0.2, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, pos0, 0.3)
+    push_body_soil_pos(out, 1, 10, 15, pos0, 0.3)
     posA = _calc_bucket_frame_pos(10, 15, 0.2, grid, bucket)
     _relax_unstable_body_cell!(
         out, 32, body_soil_pos, 0.1, 1, 10, 14, 1, 10, 15, grid, bucket,
@@ -3273,11 +3273,11 @@ end
     set_height(out, 10, 14, -0.2, -0.2, 0.0, 0.0, 0.8, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.3, -0.3, -0.2, -0.2, 0.1, 0.1, 0.2, 0.2, 0.4)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.0, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.8)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.8)
     pos0 = _calc_bucket_frame_pos(10, 15, -0.2, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, pos0, 0.3)
+    push_body_soil_pos(out, 1, 10, 15, pos0, 0.3)
     posA = _calc_bucket_frame_pos(10, 15, 0.2, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, posA, 0.2)
+    push_body_soil_pos(out, 3, 10, 15, posA, 0.2)
     _relax_unstable_body_cell!(
         out, 31, body_soil_pos, 0.1, 1, 10, 14, 1, 10, 15, grid, bucket,
         1e-5)
@@ -3295,11 +3295,11 @@ end
     set_height(out, 10, 14, -0.2, -0.2, 0.7, 0.7, 0.8, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.3, -0.3, -0.2, -0.2, 0.1, 0.1, 0.2, 0.2, 0.4)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.7, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
     pos0 = _calc_bucket_frame_pos(10, 15, -0.2, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, pos0, 0.3)
+    push_body_soil_pos(out, 1, 10, 15, pos0, 0.3)
     posA = _calc_bucket_frame_pos(10, 15, 0.2, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, posA, 0.2)
+    push_body_soil_pos(out, 3, 10, 15, posA, 0.2)
     _relax_unstable_body_cell!(
         out, 31, body_soil_pos, 0.1, 1, 10, 14, 1, 10, 15, grid, bucket,
         1e-5)
@@ -3317,12 +3317,12 @@ end
     set_height(out, 10, 14, -0.2, -0.2, 0.0, 0.0, 0.8, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.3, -0.3, -0.2, -0.2, 0.1, 0.1, 0.2, 0.2, 0.4)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.0, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.7)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.7)
     pos0 = _calc_bucket_frame_pos(10, 15, -0.2, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, pos0, 0.3)
+    push_body_soil_pos(out, 1, 10, 15, pos0, 0.3)
     posA = _calc_bucket_frame_pos(10, 15, 0.2, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, posA, 0.2)
+    push_body_soil_pos(out, 3, 10, 15, posA, 0.2)
     _relax_unstable_body_cell!(
         out, 31, body_soil_pos, 0.1, 1, 10, 14, 1, 10, 15, grid, bucket,
         1e-5)
@@ -3341,7 +3341,7 @@ end
     set_height(out, 10, 14, -0.2, -0.2, 0.0, 0.0, 0.3, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.2, 0.1, 0.3, NaN, NaN, -0.2, -0.1, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.0, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.3)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.3)
     posA = _calc_bucket_frame_pos(10, 15, -0.1, grid, bucket)
     _relax_unstable_body_cell!(
         out, 32, body_soil_pos, 0.1, 1, 10, 14, 1, 10, 15, grid, bucket,
@@ -3360,7 +3360,7 @@ end
     set_height(out, 10, 14, -0.2, -0.2, 0.1, 0.1, 0.3, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.2, 0.2, 0.4, NaN, NaN, -0.2, 0.0, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.1, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.2)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.2)
     posA = _calc_bucket_frame_pos(10, 15, 0.0, grid, bucket)
     _relax_unstable_body_cell!(
         out, 32, body_soil_pos, 0.0, 1, 10, 14, 1, 10, 15, grid, bucket,
@@ -3379,8 +3379,8 @@ end
     set_height(out, 10, 14, -0.2, -0.2, 0.1, 0.1, 0.3, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.2, 0.2, 0.4, NaN, NaN, -0.2, 0.0, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.1, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
     posA = _calc_bucket_frame_pos(10, 15, 0.0, grid, bucket)
     _relax_unstable_body_cell!(
         out, 32, body_soil_pos, 0.0, 2, 10, 14, 1, 10, 15, grid, bucket,
@@ -3400,7 +3400,7 @@ end
     set_height(out, 10, 14, -0.2, -0.2, 0.1, 0.1, 0.8, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.2, 0.2, 0.4, NaN, NaN, -0.2, 0.0, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.1, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.7)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.7)
     posA = _calc_bucket_frame_pos(10, 15, 0.0, grid, bucket)
     _relax_unstable_body_cell!(
         out, 32, body_soil_pos, 0.1, 1, 10, 14, 1, 10, 15, grid, bucket,
@@ -3419,8 +3419,8 @@ end
     set_height(out, 10, 14, -0.2, -0.2, 0.1, 0.1, 1.0, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.2, 0.1, 0.4, NaN, NaN, -0.2, 0.0, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.1, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.2)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.7)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.2)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.7)
     posA = _calc_bucket_frame_pos(10, 15, 0.0, grid, bucket)
     _relax_unstable_body_cell!(
         out, 32, body_soil_pos, 0.1, 1, 10, 14, 1, 10, 15, grid, bucket,
@@ -3440,7 +3440,7 @@ end
     set_height(out, 10, 14, -0.2, -0.2, 0.1, 0.1, 0.8, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.2, 0.1, 0.4, NaN, NaN, -0.2, 0.0, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.1, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.7)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.7)
     posA = _calc_bucket_frame_pos(10, 15, 0.4, grid, bucket)
     _relax_unstable_body_cell!(
         out, 34, body_soil_pos, 0.1, 1, 10, 14, 1, 10, 15, grid, bucket,
@@ -3459,7 +3459,7 @@ end
     set_height(out, 10, 14, -0.2, -0.2, 0.6, 0.6, 0.8, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.2, 0.1, 0.2, NaN, NaN, -0.2, 0.0, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.6, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.2)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.2)
     posA = _calc_bucket_frame_pos(10, 15, 0.2, grid, bucket)
     _relax_unstable_body_cell!(
         out, 34, body_soil_pos, 0.1, 1, 10, 14, 1, 10, 15, grid, bucket,
@@ -3478,8 +3478,8 @@ end
     set_height(out, 10, 14, -0.2, -0.2, 0.1, 0.1, 0.8, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.2, 0.1, 0.4, NaN, NaN, -0.2, 0.0, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.1, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.6)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.6)
     posA = _calc_bucket_frame_pos(10, 15, 0.4, grid, bucket)
     _relax_unstable_body_cell!(
         out, 34, body_soil_pos, 0.1, 1, 10, 14, 1, 10, 15, grid, bucket,
@@ -3500,11 +3500,11 @@ end
     set_height(
         out, 10, 15, -0.3, 0.1, 0.3, 0.3, 0.8, -0.3, -0.2, -0.2, -0.1)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.0, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.3)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.3)
     pos0 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, pos0, 0.5)
+    push_body_soil_pos(out, 1, 10, 15, pos0, 0.5)
     posA = _calc_bucket_frame_pos(10, 15, -0.2, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, posA, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, posA, 0.1)
     _relax_unstable_body_cell!(
         out, 31, body_soil_pos, 0.1, 1, 10, 14, 1, 10, 15, grid, bucket,
         1e-5)
@@ -3523,11 +3523,11 @@ end
     set_height(
         out, 10, 15, -0.3, 0.1, 0.3, 0.3, 0.8, -0.3, -0.2, -0.2, -0.1)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.0, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
     pos0 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, pos0, 0.5)
+    push_body_soil_pos(out, 1, 10, 15, pos0, 0.5)
     posA = _calc_bucket_frame_pos(10, 15, -0.2, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, posA, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, posA, 0.1)
     _relax_unstable_body_cell!(
         out, 31, body_soil_pos, 0.1, 1, 10, 14, 1, 10, 15, grid, bucket,
         1e-5)
@@ -3546,12 +3546,12 @@ end
     set_height(
         out, 10, 15, -0.4, 0.1, 0.3, 0.3, 0.8, -0.4, -0.3, -0.3, -0.2)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.0, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
     pos0 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, pos0, 0.5)
+    push_body_soil_pos(out, 1, 10, 15, pos0, 0.5)
     posA = _calc_bucket_frame_pos(10, 15, -0.3, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, posA, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, posA, 0.1)
     _relax_unstable_body_cell!(
         out, 31, body_soil_pos, 0.1, 1, 10, 14, 1, 10, 15, grid, bucket,
         1e-5)
@@ -3571,11 +3571,11 @@ end
     set_height(
         out, 10, 15, -0.3, 0.1, 0.3, 0.3, 0.8, -0.3, -0.2, -0.2, -0.1)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.0, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.8)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.8)
     pos0 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, pos0, 0.5)
+    push_body_soil_pos(out, 1, 10, 15, pos0, 0.5)
     posA = _calc_bucket_frame_pos(10, 15, -0.2, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, posA, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, posA, 0.1)
     _relax_unstable_body_cell!(
         out, 31, body_soil_pos, 0.1, 1, 10, 14, 1, 10, 15, grid, bucket,
         1e-5)
@@ -3594,12 +3594,12 @@ end
     set_height(
         out, 10, 15, -0.3, 0.0, 0.3, 0.3, 0.8, -0.3, -0.2, -0.2, -0.1)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.0, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.2)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.8)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.2)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.8)
     pos0 = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, pos0, 0.5)
+    push_body_soil_pos(out, 1, 10, 15, pos0, 0.5)
     posA = _calc_bucket_frame_pos(10, 15, -0.2, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, posA, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, posA, 0.1)
     _relax_unstable_body_cell!(
         out, 31, body_soil_pos, 0.1, 1, 10, 14, 1, 10, 15, grid, bucket,
         1e-5)
@@ -3619,11 +3619,11 @@ end
     set_height(
         out, 10, 15, -0.3, 0.1, 0.3, 0.3, 0.5, -0.3, -0.2, -0.2, -0.1)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.1, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.7)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.7)
     posA = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, posA, 0.2)
+    push_body_soil_pos(out, 1, 10, 15, posA, 0.2)
     pos2 = _calc_bucket_frame_pos(10, 15, -0.2, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, pos2, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos2, 0.1)
     _relax_unstable_body_cell!(
         out, 33, body_soil_pos, 0.1, 1, 10, 14, 1, 10, 15, grid, bucket,
         1e-5)
@@ -3642,11 +3642,11 @@ end
     set_height(
         out, 10, 15, -0.3, 0.1, 0.3, 0.3, 0.4, -0.3, -0.2, -0.2, -0.1)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.6, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.2)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.2)
     posA = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, posA, 0.1)
+    push_body_soil_pos(out, 1, 10, 15, posA, 0.1)
     pos2 = _calc_bucket_frame_pos(10, 15, -0.2, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, pos2, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos2, 0.1)
     _relax_unstable_body_cell!(
         out, 33, body_soil_pos, 0.1, 1, 10, 14, 1, 10, 15, grid, bucket,
         1e-5)
@@ -3665,12 +3665,12 @@ end
     set_height(
         out, 10, 15, -0.3, 0.1, 0.3, 0.3, 0.4, -0.3, -0.2, -0.2, -0.1)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.1, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.6)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.6)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
     posA = _calc_bucket_frame_pos(10, 15, 0.3, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, posA, 0.1)
+    push_body_soil_pos(out, 1, 10, 15, posA, 0.1)
     pos2 = _calc_bucket_frame_pos(10, 15, -0.2, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, pos2, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos2, 0.1)
     _relax_unstable_body_cell!(
         out, 33, body_soil_pos, 0.1, 2, 10, 14, 1, 10, 15, grid, bucket,
         1e-5)
@@ -3689,9 +3689,9 @@ end
     set_height(out, 10, 14, -0.2, -0.2, 0.0, 0.0, 0.8, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.3, 0.4, 0.5, NaN, NaN, -0.3, -0.2, -0.2, 0.4)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.0, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.8)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.8)
     pos2 = _calc_bucket_frame_pos(10, 15, -0.2, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, pos2, 0.6)
+    push_body_soil_pos(out, 3, 10, 15, pos2, 0.6)
     posA = _calc_bucket_frame_pos(10, 15, 0.5, grid, bucket)
     _relax_unstable_body_cell!(
         out, 34, body_soil_pos, 0.1, 1, 10, 14, 1, 10, 15, grid, bucket,
@@ -3710,9 +3710,9 @@ end
     set_height(out, 10, 14, -0.2, -0.2, 0.7, 0.7, 0.8, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.3, 0.4, 0.5, NaN, NaN, -0.3, -0.2, -0.2, 0.4)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.7, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
     pos2 = _calc_bucket_frame_pos(10, 15, -0.2, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, pos2, 0.6)
+    push_body_soil_pos(out, 3, 10, 15, pos2, 0.6)
     posA = _calc_bucket_frame_pos(10, 15, 0.5, grid, bucket)
     _relax_unstable_body_cell!(
         out, 34, body_soil_pos, 0.1, 1, 10, 14, 1, 10, 15, grid, bucket,
@@ -3731,10 +3731,10 @@ end
     set_height(out, 10, 14, -0.2, -0.2, 0.0, 0.0, 0.9, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.3, 0.4, 0.5, NaN, NaN, -0.3, -0.2, -0.2, 0.4)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.0, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.8)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.8)
     pos2 = _calc_bucket_frame_pos(10, 15, -0.2, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, pos2, 0.6)
+    push_body_soil_pos(out, 3, 10, 15, pos2, 0.6)
     posA = _calc_bucket_frame_pos(10, 15, 0.5, grid, bucket)
     _relax_unstable_body_cell!(
         out, 34, body_soil_pos, 0.1, 1, 10, 14, 1, 10, 15, grid, bucket,
@@ -3754,11 +3754,11 @@ end
     set_height(out, 10, 14, -0.2, -0.2, 0.0, 0.0, 0.8, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.3, 0.4, 0.5, 0.5, 0.6, -0.3, -0.2, -0.2, 0.4)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.0, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.8)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.8)
     posA = _calc_bucket_frame_pos(10, 15, 0.5, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, posA, 0.1)
+    push_body_soil_pos(out, 1, 10, 15, posA, 0.1)
     pos2 = _calc_bucket_frame_pos(10, 15, -0.2, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, pos2, 0.6)
+    push_body_soil_pos(out, 3, 10, 15, pos2, 0.6)
     _relax_unstable_body_cell!(
         out, 33, body_soil_pos, 0.1, 1, 10, 14, 1, 10, 15, grid, bucket,
         1e-5)
@@ -3776,11 +3776,11 @@ end
     set_height(out, 10, 14, -0.2, -0.2, 0.7, 0.7, 0.8, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.3, 0.4, 0.5, 0.5, 0.6, -0.3, -0.2, -0.2, 0.4)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.0, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
     posA = _calc_bucket_frame_pos(10, 15, 0.5, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, posA, 0.1)
+    push_body_soil_pos(out, 1, 10, 15, posA, 0.1)
     pos2 = _calc_bucket_frame_pos(10, 15, -0.2, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, pos2, 0.6)
+    push_body_soil_pos(out, 3, 10, 15, pos2, 0.6)
     _relax_unstable_body_cell!(
         out, 33, body_soil_pos, 0.1, 1, 10, 14, 1, 10, 15, grid, bucket,
         1e-5)
@@ -3798,12 +3798,12 @@ end
     set_height(out, 10, 14, -0.2, -0.2, 0.0, 0.0, 1.0, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.3, 0.4, 0.5, 0.5, 0.6, -0.3, -0.2, -0.2, 0.4)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.0, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.9)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.9)
     posA = _calc_bucket_frame_pos(10, 15, 0.5, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, posA, 0.1)
+    push_body_soil_pos(out, 1, 10, 15, posA, 0.1)
     pos2 = _calc_bucket_frame_pos(10, 15, -0.2, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, pos2, 0.6)
+    push_body_soil_pos(out, 3, 10, 15, pos2, 0.6)
     _relax_unstable_body_cell!(
         out, 33, body_soil_pos, 0.1, 1, 10, 14, 1, 10, 15, grid, bucket,
         1e-5)
@@ -3819,1013 +3819,1078 @@ end
 end
 
 @testset "_relax_body_soil!" begin
-"""
     # Setting up the environment
     out.impact_area[:, :] .= Int64[[2, 20] [2, 20]]
 
     # Test: RE-RBS-1
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(18)
     set_height(out, 10, 14, -0.8, -0.8, -0.7, -0.7, 0.0, NaN, NaN, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.7, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.7)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.7)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.8, -0.7, 0.0, NaN, NaN)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.7)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.7)
     @test (length(out.body_soil_pos) == 1)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14]], [[1, 10, 14]])
 
     # Test: RE-RBS-2
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(18)
     set_height(out, 10, 14, -0.3, -0.3, -0.2, -0.2, 0.0, NaN, NaN, NaN, NaN)
     out.terrain[10, 15] = -0.2
     pos0 = _calc_bucket_frame_pos(10, 14, -0.2, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.2)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.2)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.3, -0.2, -0.1, NaN, NaN)
     @test (out.terrain[10, 15] ≈ -0.1)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.1)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.1)
     @test (length(out.body_soil_pos) == 1)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14]], [[1, 10, 14]])
 
     # Test: RE-RBS-3
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(18)
     set_height(out, 10, 14, -0.3, -0.3, -0.2, -0.2, 0.0, NaN, NaN, NaN, NaN)
     out.terrain[10, 15] = -0.4
     pos0 = _calc_bucket_frame_pos(10, 14, -0.2, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.2)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.2)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.3, 0.0, 0.0, NaN, NaN)
     @test (out.terrain[10, 15] ≈ -0.2)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.0)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.0)
     @test (length(out.body_soil_pos) == 1)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14]], [[1, 10, 14]])
 
     # Test: RE-RBS-4
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(18)
     set_height(out, 10, 14, -0.3, -0.3, -0.2, -0.2, 0.0, NaN, NaN, NaN, NaN)
     out.terrain[10, 15] = -0.4
     pos0 = _calc_bucket_frame_pos(10, 14, -0.2, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.3, 0.0, 0.0, NaN, NaN)
     @test (out.terrain[10, 15] ≈ -0.2)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.0)
     @test (out.body_soil_pos[1].h_soil[1] ≈ 0.0)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.0)
     @test (length(out.body_soil_pos) == 2)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14]], [[1, 10, 14]])
 
     # Test: RE-RBS-5
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(18)
     set_height(out, 10, 14, -0.8, -0.8, -0.7, -0.7, 0.0, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.4, -0.4, 0.0, NaN, NaN, NaN, NaN, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.7, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.7)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.7)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.8, -0.7, 0.0, NaN, NaN)
     @test (out.terrain[10, 15] ≈ -0.4)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.7)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.7)
     @test (length(out.body_soil_pos) == 1)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15]],
         [[1, 10, 14]])
 
     # Test: RE-RBS-6
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(18)
     set_height(
         out, 10, 14, -0.4, -0.4, -0.3, -0.3, -0.1, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.3, -0.1, 0.0, NaN, NaN, NaN, NaN, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.3, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.2)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.2)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.4, -0.3, -0.2, NaN, NaN)
     @test (out.terrain[10, 15] ≈ -0.2)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.1)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.1)
     @test (length(out.body_soil_pos) == 1)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15]],
         [[1, 10, 14]])
 
     # Test: RE-RBS-7
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(18)
     set_height(
         out, 10, 14, -0.4, -0.4, -0.3, -0.3, -0.1, 0.0, 0.2, NaN, NaN)
     set_height(out, 10, 15, -0.6, -0.1, 0.0, NaN, NaN, NaN, NaN, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.3, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.2)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.2)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.4, 0.0, 0.0, NaN, NaN)
     @test (out.terrain[10, 15] ≈ -0.4)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.0)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.0)
     @test (length(out.body_soil_pos) == 1)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [3, 10, 14], [1, 10, 15]],
         [[1, 10, 14], [1, 10, 15]])
 
     # Test: RE-RBS-8
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(18)
     set_height(out, 10, 14, -0.4, -0.4, -0.3, -0.3, 0.1, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.3, -0.2, 0.0, NaN, NaN, NaN, NaN, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.3, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.4)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.4)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.4, -0.3, 0.0, NaN, NaN)
     @test (out.terrain[10, 15] ≈ -0.2)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.3)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.3)
     @test (length(out.body_soil_pos) == 1)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15]],
         [[1, 10, 14]])
 
     # Test: RE-RBS-9
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(18)
     set_height(
         out, 10, 14, -0.4, -0.4, -0.3, -0.3, -0.1, 0.0, 0.2, NaN, NaN)
     set_height(out, 10, 15, -0.6, -0.1, 0.0, NaN, NaN, NaN, NaN, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.3, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.4, 0.0, 0.0, NaN, NaN)
     @test (out.terrain[10, 15] ≈ -0.4)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.0)
     @test (out.body_soil_pos[1].h_soil[1] ≈ 0.0)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.0)
     @test (length(out.body_soil_pos) == 2)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [3, 10, 14], [1, 10, 15]],
         [[1, 10, 14], [1, 10, 15]])
 
     # Test: RE-RBS-10
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(18)
     set_height(
         out, 10, 14, -0.4, -0.4, -0.3, -0.3, -0.1, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.4, -0.4, -0.3, NaN, NaN, NaN, NaN, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.3, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.2)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.2)
     posA = _calc_bucket_frame_pos(10, 15, -0.3, grid, bucket)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.4, -0.3, -0.2, NaN, NaN)
     check_height(out, 10, 15, -0.4, -0.3, -0.2, NaN, NaN)
-    check_body_soil_pos(out.body_soil_pos[1], 0, 10, 15, posA, 0.1)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.1)
+    check_body_soil_pos(out.body_soil_pos[2], 1, 10, 15, posA, 0.1)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.1)
     @test (length(out.body_soil_pos) == 2)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15]],
         [[1, 10, 14], [1, 10, 15]])
 
     # Test: RE-RBS-11
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(18)
     set_height(
         out, 10, 14, -0.4, -0.4, -0.3, -0.3, -0.1, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.6, -0.6, -0.5, NaN, NaN, NaN, NaN, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.3, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.2)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.2)
     posA = _calc_bucket_frame_pos(10, 15, -0.5, grid, bucket)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.4, 0.0, 0.0, NaN, NaN)
     check_height(out, 10, 15, -0.6, -0.5, -0.3, NaN, NaN)
-    check_body_soil_pos(out.body_soil_pos[1], 0, 10, 15, posA, 0.2)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.0)
+    check_body_soil_pos(out.body_soil_pos[2], 1, 10, 15, posA, 0.2)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.0)
     @test (length(out.body_soil_pos) == 2)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15]],
         [[1, 10, 14], [1, 10, 15]])
 
     # Test: RE-RBS-12
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(18)
     set_height(
         out, 10, 14, -0.4, -0.4, -0.3, -0.3, -0.1, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.6, -0.6, -0.5, NaN, NaN, NaN, NaN, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.3, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
     posA = _calc_bucket_frame_pos(10, 15, -0.5, grid, bucket)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.4, 0.0, 0.0, NaN, NaN)
     check_height(out, 10, 15, -0.6, -0.5, -0.3, NaN, NaN)
-    check_body_soil_pos(out.body_soil_pos[2], 0, 10, 15, posA, 0.1)
-    check_body_soil_pos(out.body_soil_pos[3], 0, 10, 15, posA, 0.1)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.0)
+    check_body_soil_pos(out.body_soil_pos[3], 1, 10, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[4], 1, 10, 15, posA, 0.1)
     @test (out.body_soil_pos[1].h_soil[1] ≈ 0.0)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.0)
     @test (length(out.body_soil_pos) == 4)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15]],
         [[1, 10, 14], [1, 10, 15]])
 
     # Test: RE-RBS-13
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(18)
     set_height(out, 10, 14, -0.8, -0.8, -0.7, -0.7, 0.0, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.4, -0.4, -0.2, -0.2, 0.0, NaN, NaN, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.7, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.7)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.7)
     pos0 = _calc_bucket_frame_pos(10, 15, -0.2, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, pos0, 0.2)
+    push_body_soil_pos(out, 1, 10, 15, pos0, 0.2)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.8, -0.7, 0.0, NaN, NaN)
     check_height(out, 10, 15, -0.4, -0.2, 0.0, NaN, NaN)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.7)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.7)
     @test (length(out.body_soil_pos) == 2)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15]],
         [[1, 10, 14], [1, 10, 15]])
 
     # Test: RE-RBS-14
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(18)
     set_height(out, 10, 14, -0.4, -0.4, -0.3, -0.3, 0.0, NaN, NaN, NaN, NaN)
     set_height(
         out, 10, 15, -0.4, -0.4, -0.3, -0.3, -0.2, NaN, NaN, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.3, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.3)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.3)
     posA = _calc_bucket_frame_pos(10, 15, -0.3, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, posA, 0.1)
+    push_body_soil_pos(out, 1, 10, 15, posA, 0.1)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.4, -0.3, -0.1, NaN, NaN)
     check_height(out, 10, 15, -0.4, -0.3, -0.1, NaN, NaN)
-    check_body_soil_pos(out.body_soil_pos[2], 0, 10, 15, posA, 0.1)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[3], 1, 10, 15, posA, 0.1)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
     @test (length(out.body_soil_pos) == 3)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15]],
         [[1, 10, 14], [1, 10, 15]])
 
     # Test: RE-RBS-15
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(18)
     set_height(
         out, 10, 14, -0.4, -0.4, -0.3, -0.3, -0.1, NaN, NaN, NaN, NaN)
     set_height(
         out, 10, 15, -0.7, -0.7, -0.6, -0.6, -0.5, NaN, NaN, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.3, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.2)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.2)
     posA = _calc_bucket_frame_pos(10, 15, -0.6, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, posA, 0.1)
+    push_body_soil_pos(out, 1, 10, 15, posA, 0.1)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.4, 0.0, 0.0, NaN, NaN)
     check_height(out, 10, 15, -0.7, -0.6, -0.3, NaN, NaN)
-    check_body_soil_pos(out.body_soil_pos[2], 0, 10, 15, posA, 0.2)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.0)
+    check_body_soil_pos(out.body_soil_pos[3], 1, 10, 15, posA, 0.2)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.0)
     @test (length(out.body_soil_pos) == 3)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15]],
         [[1, 10, 14], [1, 10, 15]])
 
     # Test: RE-RBS-16
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(2)
     set_height(
         out, 10, 14, -0.4, -0.4, -0.3, -0.3, -0.1, NaN, NaN, NaN, NaN)
     set_height(
         out, 10, 15, -0.7, -0.7, -0.6, -0.6, -0.5, NaN, NaN, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.3, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
     posA = _calc_bucket_frame_pos(10, 15, -0.6, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, posA, 0.1)
+    push_body_soil_pos(out, 1, 10, 15, posA, 0.1)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.4, 0.0, 0.0, NaN, NaN)
     check_height(out, 10, 15, -0.7, -0.6, -0.3, NaN, NaN)
-    check_body_soil_pos(out.body_soil_pos[3], 0, 10, 15, posA, 0.1)
-    check_body_soil_pos(out.body_soil_pos[4], 0, 10, 15, posA, 0.1)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.0)
+    check_body_soil_pos(out.body_soil_pos[4], 1, 10, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[5], 1, 10, 15, posA, 0.1)
     @test (out.body_soil_pos[1].h_soil[1] ≈ 0.0)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.0)
     @test (length(out.body_soil_pos) == 5)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15]],
         [[1, 10, 14], [1, 10, 15]])
 
     # Test: RE-RBS-17
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(18)
     set_height(out, 10, 14, -0.8, -0.8, -0.7, -0.7, 0.0, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.4, NaN, NaN, NaN, NaN, -0.4, 0.1, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.7, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.7)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.7)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.8, -0.7, 0.0, NaN, NaN)
     @test (out.terrain[10, 15] ≈ -0.4)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.7)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.7)
     @test (length(out.body_soil_pos) == 1)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [3, 10, 15]],
         [[1, 10, 14]])
 
     # Test: RE-RBS-18
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(18)
     set_height(
         out, 10, 14, -0.4, -0.4, -0.3, -0.3, -0.1, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.3, NaN, NaN, NaN, NaN, 0.0, 0.1, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.3, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.2)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.2)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.4, -0.3, -0.2, NaN, NaN)
     @test (out.terrain[10, 15] ≈ -0.2)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.1)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.1)
     @test (length(out.body_soil_pos) == 1)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [3, 10, 15]],
         [[1, 10, 14]])
 
     # Test: RE-RBS-19
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(18)
     set_height(
         out, 10, 14, -0.4, -0.4, -0.3, -0.3, -0.1, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.6, NaN, NaN, NaN, NaN, 0.0, 0.1, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.3, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.2)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.2)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.4, 0.0, 0.0, NaN, NaN)
     @test (out.terrain[10, 15] ≈ -0.4)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.0)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.0)
     @test (length(out.body_soil_pos) == 1)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [3, 10, 15]],
         [[1, 10, 14]])
 
     # Test: RE-RBS-20
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(18)
     set_height(
         out, 10, 14, -0.4, -0.4, -0.3, -0.3, 0.1, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.3, NaN, NaN, NaN, NaN, -0.2, 0.1, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.3, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.4)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.4)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.4, -0.3, 0.0, NaN, NaN)
     @test (out.terrain[10, 15] ≈ -0.2)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.3)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.3)
     @test (length(out.body_soil_pos) == 1)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [3, 10, 15]],
         [[1, 10, 14]])
 
     # Test: RE-RBS-21
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(18)
     set_height(
         out, 10, 14, -0.4, -0.4, -0.3, -0.3, -0.1, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.6, NaN, NaN, NaN, NaN, 0.0, 0.1, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.3, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.4, 0.0, 0.0, NaN, NaN)
     @test (out.terrain[10, 15] ≈ -0.4)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.0)
     @test (out.body_soil_pos[1].h_soil[1] ≈ 0.0)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.0)
     @test (length(out.body_soil_pos) == 2)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [3, 10, 15]],
         [[1, 10, 14]])
 
     # Test: RE-RBS-22
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(18)
     set_height(
         out, 10, 14, -0.4, -0.4, -0.3, -0.3, -0.1, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.4, NaN, NaN, NaN, NaN, -0.4, -0.3, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.3, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.2)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.2)
     posA = _calc_bucket_frame_pos(10, 15, -0.3, grid, bucket)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.4, -0.3, -0.2, NaN, NaN)
     check_height(out, 10, 15, -0.4, NaN, NaN, -0.3, -0.2)
-    check_body_soil_pos(out.body_soil_pos[1], 2, 10, 15, posA, 0.1)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.1)
+    check_body_soil_pos(out.body_soil_pos[2], 3, 10, 15, posA, 0.1)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.1)
     @test (length(out.body_soil_pos) == 2)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [3, 10, 15]],
         [[1, 10, 14], [3, 10, 15]])
 
     # Test: RE-RBS-23
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(18)
     set_height(
         out, 10, 14, -0.4, -0.4, -0.3, -0.3, -0.1, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.6, NaN, NaN, NaN, NaN, -0.6, -0.5, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.3, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.4)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.4)
     posA = _calc_bucket_frame_pos(10, 15, -0.5, grid, bucket)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.4, 0.0, 0.0, NaN, NaN)
     check_height(out, 10, 15, -0.6, NaN, NaN, -0.5, -0.3)
-    check_body_soil_pos(out.body_soil_pos[1], 2, 10, 15, posA, 0.2)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.0)
+    check_body_soil_pos(out.body_soil_pos[2], 3, 10, 15, posA, 0.2)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.0)
     @test (length(out.body_soil_pos) == 2)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [3, 10, 15]],
         [[1, 10, 14], [3, 10, 15]])
 
     # Test: RE-RBS-24
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(18)
     set_height(
         out, 10, 14, -0.4, -0.4, -0.3, -0.3, -0.1, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.6, NaN, NaN, NaN, NaN, -0.6, -0.5, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.3, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
     posA = _calc_bucket_frame_pos(10, 15, -0.5, grid, bucket)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.4, 0.0, 0.0, NaN, NaN)
     check_height(out, 10, 15, -0.6, NaN, NaN, -0.5, -0.3)
-    check_body_soil_pos(out.body_soil_pos[2], 2, 10, 15, posA, 0.1)
-    check_body_soil_pos(out.body_soil_pos[3], 2, 10, 15, posA, 0.1)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.0)
+    check_body_soil_pos(out.body_soil_pos[3], 3, 10, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[4], 3, 10, 15, posA, 0.1)
     @test (out.body_soil_pos[1].h_soil[1] ≈ 0.0)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.0)
     @test (length(out.body_soil_pos) == 4)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [3, 10, 15]],
         [[1, 10, 14], [3, 10, 15]])
 
     # Test: RE-RBS-25
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(18)
     set_height(out, 10, 14, -0.8, -0.8, -0.7, -0.7, 0.0, NaN, NaN, NaN, NaN)
     set_height(
         out, 10, 15, -0.4, NaN, NaN, NaN, NaN, -0.4, -0.3, -0.3, -0.1)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.7, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.7)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.7)
     pos2 = _calc_bucket_frame_pos(10, 15, -0.3, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, pos2, 0.2)
+    push_body_soil_pos(out, 3, 10, 15, pos2, 0.2)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.8, -0.7, 0.0, NaN, NaN)
     check_height(out, 10, 15, -0.4, NaN, NaN, -0.3, -0.1)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.7)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.7)
     @test (length(out.body_soil_pos) == 2)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [3, 10, 15]],
         [[1, 10, 14], [3, 10, 15]])
 
     # Test: RE-RBS-26
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(18)
     set_height(out, 10, 14, -0.4, -0.4, -0.3, -0.3, 0.0, NaN, NaN, NaN, NaN)
     set_height(
         out, 10, 15, -0.4, NaN, NaN, NaN, NaN, -0.4, -0.3, -0.3, -0.2)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.3, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.3)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.3)
     posA = _calc_bucket_frame_pos(10, 15, -0.3, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, posA, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, posA, 0.1)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.4, -0.3, -0.1, NaN, NaN)
     check_height(out, 10, 15, -0.4, NaN, NaN, -0.3, -0.1)
-    check_body_soil_pos(out.body_soil_pos[2], 2, 10, 15, posA, 0.1)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[3], 3, 10, 15, posA, 0.1)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
     @test (length(out.body_soil_pos) == 3)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [3, 10, 15]],
         [[1, 10, 14], [3, 10, 15]])
 
     # Test: RE-RBS-27
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(18)
     set_height(
         out, 10, 14, -0.4, -0.4, -0.3, -0.3, -0.1, NaN, NaN, NaN, NaN)
     set_height(
         out, 10, 15, -0.7, NaN, NaN, NaN, NaN, -0.7, -0.6, -0.6, -0.5)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.3, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.2)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.2)
     posA = _calc_bucket_frame_pos(10, 15, -0.6, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, posA, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, posA, 0.1)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.4, 0.0, 0.0, NaN, NaN)
     check_height(out, 10, 15, -0.7, NaN, NaN, -0.6, -0.3)
-    check_body_soil_pos(out.body_soil_pos[2], 2, 10, 15, posA, 0.2)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.0)
+    check_body_soil_pos(out.body_soil_pos[3], 3, 10, 15, posA, 0.2)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.0)
     @test (length(out.body_soil_pos) == 3)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [3, 10, 15]],
         [[1, 10, 14], [3, 10, 15]])
 
     # Test: RE-RBS-28
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(2)
     set_height(
         out, 10, 14, -0.4, -0.4, -0.3, -0.3, -0.1, NaN, NaN, NaN, NaN)
     set_height(
         out, 10, 15, -0.7, NaN, NaN, NaN, NaN, -0.7, -0.6, -0.6, -0.5)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.3, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
     posA = _calc_bucket_frame_pos(10, 15, -0.6, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, posA, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, posA, 0.1)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.4, 0.0, 0.0, NaN, NaN)
     check_height(out, 10, 15, -0.7, NaN, NaN, -0.6, -0.3)
-    check_body_soil_pos(out.body_soil_pos[3], 2, 10, 15, posA, 0.1)
-    check_body_soil_pos(out.body_soil_pos[4], 2, 10, 15, posA, 0.1)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.0)
+    check_body_soil_pos(out.body_soil_pos[4], 3, 10, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[5], 3, 10, 15, posA, 0.1)
     @test (out.body_soil_pos[1].h_soil[1] ≈ 0.0)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.0)
     @test (length(out.body_soil_pos) == 5)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [3, 10, 15]],
         [[1, 10, 14], [3, 10, 15]])
 
     # Test: RE-RBS-29
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(18)
     set_height(out, 10, 14, -0.8, -0.8, -0.7, -0.7, 0.0, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.4, -0.4, -0.1, NaN, NaN, 0.1, 0.3, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.7, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.7)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.7)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.8, -0.7, 0.0, NaN, NaN)
     @test (out.terrain[10, 15] ≈ -0.4)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.7)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.7)
     @test (length(out.body_soil_pos) == 1)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15], [3, 10, 15]],
         [[1, 10, 14]])
 
     # Test: RE-RBS-30
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(18)
     set_height(
         out, 10, 14, -0.4, -0.4, -0.3, -0.3, -0.1, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.4, -0.4, -0.3, NaN, NaN, 0.1, 0.3, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.3, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.2)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.2)
     posA = _calc_bucket_frame_pos(10, 15, -0.3, grid, bucket)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.4, -0.3, -0.2, NaN, NaN)
     check_height(out, 10, 15, -0.4, -0.3, -0.2, NaN, NaN)
-    check_body_soil_pos(out.body_soil_pos[1], 0, 10, 15, posA, 0.1)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.1)
+    check_body_soil_pos(out.body_soil_pos[2], 1, 10, 15, posA, 0.1)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.1)
     @test (length(out.body_soil_pos) == 2)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15], [3, 10, 15]],
         [[1, 10, 14], [1, 10, 15]])
 
     # Test: RE-RBS-31
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(18)
     set_height(
         out, 10, 14, -0.4, -0.4, -0.3, -0.3, -0.1, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.6, -0.6, -0.5, NaN, NaN, 0.1, 0.3, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.3, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.2)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.2)
     posA = _calc_bucket_frame_pos(10, 15, -0.5, grid, bucket)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.4, 0.0, 0.0, NaN, NaN)
     check_height(out, 10, 15, -0.6, -0.5, -0.3, NaN, NaN)
-    check_body_soil_pos(out.body_soil_pos[1], 0, 10, 15, posA, 0.2)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.0)
+    check_body_soil_pos(out.body_soil_pos[2], 1, 10, 15, posA, 0.2)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.0)
     @test (length(out.body_soil_pos) == 2)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15], [3, 10, 15]],
         [[1, 10, 14], [1, 10, 15]])
 
     # Test: RE-RBS-32
-    soil_simulator::rng.seed(1236)
+    set_RNG_seed!(18)
     set_height(out, 10, 14, -0.4, -0.4, -0.3, -0.3, 0.3, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.6, -0.6, -0.4, NaN, NaN, -0.2, 0.0, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.3, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.6)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.6)
     posA = _calc_bucket_frame_pos(10, 15, -0.4, grid, bucket)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.4, -0.3, 0.1, NaN, NaN)
     check_height(out, 10, 15, -0.6, -0.4, -0.2, NaN, NaN)
-    check_body_soil_pos(out.body_soil_pos[1], 0, 10, 15, posA, 0.2)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.4)
+    check_body_soil_pos(out.body_soil_pos[2], 1, 10, 15, posA, 0.2)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.4)
     @test (length(out.body_soil_pos) == 2)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15], [3, 10, 15]],
         [[1, 10, 14], [1, 10, 15]])
 
     # Test: RE-RBS-33
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(18)
     set_height(
         out, 10, 14, -0.4, -0.4, -0.3, -0.3, -0.1, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.6, -0.6, -0.5, NaN, NaN, 0.1, 0.3, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.3, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
     posA = _calc_bucket_frame_pos(10, 15, -0.5, grid, bucket)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.4, 0.0, 0.0, NaN, NaN)
     check_height(out, 10, 15, -0.6, -0.5, -0.3, NaN, NaN)
-    check_body_soil_pos(out.body_soil_pos[2], 0, 10, 15, posA, 0.1)
-    check_body_soil_pos(out.body_soil_pos[3], 0, 10, 15, posA, 0.1)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.0)
+    check_body_soil_pos(out.body_soil_pos[3], 1, 10, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[4], 1, 10, 15, posA, 0.1)
     @test (out.body_soil_pos[1].h_soil[1] ≈ 0.0)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.0)
     @test (length(out.body_soil_pos) == 4)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15], [3, 10, 15]],
         [[1, 10, 14], [1, 10, 15]])
 
     # Test: RE-RBS-34
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(18)
     set_height(out, 10, 14, -0.4, -0.4, -0.2, -0.2, 0.0, NaN, NaN, NaN, NaN)
     set_height(
         out, 10, 15, -0.6, -0.6, -0.5, NaN, NaN, -0.4, -0.2, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.2, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.2)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.2)
     posA = _calc_bucket_frame_pos(10, 15, -0.2, grid, bucket)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.4, -0.2, -0.1, NaN, NaN)
     check_height(out, 10, 15, -0.6, NaN, NaN, -0.2, -0.1)
-    check_body_soil_pos(out.body_soil_pos[1], 2, 10, 15, posA, 0.1)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.1)
+    check_body_soil_pos(out.body_soil_pos[2], 3, 10, 15, posA, 0.1)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.1)
     @test (length(out.body_soil_pos) == 2)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15], [3, 10, 15]],
         [[1, 10, 14], [3, 10, 15]])
 
     # Test: RE-RBS-35
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(18)
     set_height(out, 10, 14, -0.4, -0.4, -0.2, -0.2, 0.0, NaN, NaN, NaN, NaN)
     set_height(
         out, 10, 15, -0.8, -0.8, -0.7, NaN, NaN, -0.6, -0.5, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.2, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.2)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.2)
     posA = _calc_bucket_frame_pos(10, 15, -0.5, grid, bucket)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.4, 0.0, 0.0, NaN, NaN)
     check_height(out, 10, 15, -0.8, NaN, NaN, -0.5, -0.3)
-    check_body_soil_pos(out.body_soil_pos[1], 2, 10, 15, posA, 0.2)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.0)
+    check_body_soil_pos(out.body_soil_pos[2], 3, 10, 15, posA, 0.2)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.0)
     @test (length(out.body_soil_pos) == 2)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15], [3, 10, 15]],
         [[1, 10, 14], [3, 10, 15]])
 
     # Test: RE-RBS-36
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(18)
     set_height(out, 10, 14, -0.4, -0.4, -0.2, -0.2, 0.0, NaN, NaN, NaN, NaN)
     set_height(
         out, 10, 15, -0.8, -0.8, -0.7, NaN, NaN, -0.6, -0.5, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.2, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
     posA = _calc_bucket_frame_pos(10, 15, -0.5, grid, bucket)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.4, 0.0, 0.0, NaN, NaN)
     check_height(out, 10, 15, -0.8, NaN, NaN, -0.5, -0.3)
-    check_body_soil_pos(out.body_soil_pos[2], 2, 10, 15, posA, 0.1)
-    check_body_soil_pos(out.body_soil_pos[3], 2, 10, 15, posA, 0.1)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.0)
+    check_body_soil_pos(out.body_soil_pos[3], 3, 10, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[4], 3, 10, 15, posA, 0.1)
     @test (out.body_soil_pos[1].h_soil[1] ≈ 0.0)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.0)
     @test (length(out.body_soil_pos) == 4)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15], [3, 10, 15]],
         [[1, 10, 14], [3, 10, 15]])
 
     # Test: RE-RBS-37
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(18)
     set_height(out, 10, 14, -0.4, -0.4, -0.3, -0.3, 0.0, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.4, -0.4, -0.2, NaN, NaN, -0.1, 0.0, 0.0, 0.1)
     pos2 = _calc_bucket_frame_pos(10, 15, 0.0, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, pos2, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos2, 0.1)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.3, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.3)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.3)
     posA = _calc_bucket_frame_pos(10, 15, -0.2, grid, bucket)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.4, -0.3, -0.1, NaN, NaN)
     check_height(out, 10, 15, -0.4, -0.2, -0.1, 0.0, 0.1)
-    check_body_soil_pos(out.body_soil_pos[2], 0, 10, 15, posA, 0.1)
-    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[3], 1, 10, 15, posA, 0.1)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
     @test (length(out.body_soil_pos) == 3)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15], [3, 10, 15]],
         [[1, 10, 14], [1, 10, 15], [3, 10, 15]])
 
     # Test: RE-RBS-38
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(18)
     set_height(out, 10, 14, -0.4, -0.4, -0.2, -0.2, 0.0, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.5, -0.5, -0.4, NaN, NaN, -0.1, 0.0, 0.0, 0.1)
     pos2 = _calc_bucket_frame_pos(10, 15, 0.0, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, pos2, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos2, 0.1)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.2, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.2)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.2)
     posA = _calc_bucket_frame_pos(10, 15, -0.4, grid, bucket)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.4, 0.0, 0.0, NaN, NaN)
     check_height(out, 10, 15, -0.5, -0.4, -0.2, 0.0, 0.1)
-    check_body_soil_pos(out.body_soil_pos[2], 0, 10, 15, posA, 0.2)
-    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.0)
+    check_body_soil_pos(out.body_soil_pos[3], 1, 10, 15, posA, 0.2)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.0)
     @test (length(out.body_soil_pos) == 3)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15], [3, 10, 15]],
         [[1, 10, 14], [1, 10, 15], [3, 10, 15]])
 
     # Test: RE-RBS-39
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(18)
     set_height(out, 10, 14, -0.4, -0.4, -0.3, -0.3, 0.1, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.5, -0.5, -0.3, NaN, NaN, -0.2, 0.0, 0.0, 0.1)
     pos2 = _calc_bucket_frame_pos(10, 15, 0.0, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, pos2, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos2, 0.1)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.3, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.4)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.4)
     posA = _calc_bucket_frame_pos(10, 15, -0.3, grid, bucket)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.4, -0.3, 0.0, NaN, NaN)
     check_height(out, 10, 15, -0.5, -0.3, -0.2, 0.0, 0.1)
-    check_body_soil_pos(out.body_soil_pos[2], 0, 10, 15, posA, 0.1)
-    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.3)
+    check_body_soil_pos(out.body_soil_pos[3], 1, 10, 15, posA, 0.1)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.3)
     @test (length(out.body_soil_pos) == 3)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15], [3, 10, 15]],
         [[1, 10, 14], [1, 10, 15], [3, 10, 15]])
 
     # Test: RE-RBS-40
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(2)
     set_height(out, 10, 14, -0.4, -0.4, -0.2, -0.2, 0.0, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.5, -0.5, -0.4, NaN, NaN, -0.1, 0.0, 0.0, 0.1)
     pos2 = _calc_bucket_frame_pos(10, 15, 0.0, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, pos2, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos2, 0.1)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.2, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
     posA = _calc_bucket_frame_pos(10, 15, -0.4, grid, bucket)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.4, 0.0, 0.0, NaN, NaN)
     check_height(out, 10, 15, -0.5, -0.4, -0.2, 0.0, 0.1)
-    check_body_soil_pos(out.body_soil_pos[3], 0, 10, 15, posA, 0.1)
-    check_body_soil_pos(out.body_soil_pos[4], 0, 10, 15, posA, 0.1)
-    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.0)
+    check_body_soil_pos(out.body_soil_pos[4], 1, 10, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[5], 1, 10, 15, posA, 0.1)
     @test (out.body_soil_pos[2].h_soil[1] ≈ 0.0)
+    @test (out.body_soil_pos[3].h_soil[1] ≈ 0.0)
     @test (length(out.body_soil_pos) == 5)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15], [3, 10, 15]],
         [[1, 10, 14], [1, 10, 15], [3, 10, 15]])
 
     # Test: RE-RBS-41
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(18)
     set_height(out, 10, 14, -0.3, -0.3, -0.2, -0.2, 0.0, NaN, NaN, NaN, NaN)
     set_height(
         out, 10, 15, -0.6, -0.6, -0.5, NaN, NaN, -0.4, -0.3, -0.3, -0.2)
     posA = _calc_bucket_frame_pos(10, 15, -0.3, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, posA, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, posA, 0.1)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.1, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.2)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.2)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.3, -0.2, -0.1, NaN, NaN)
     check_height(out, 10, 15, -0.6, NaN, NaN, -0.3, -0.1)
-    check_body_soil_pos(out.body_soil_pos[2], 2, 10, 15, posA, 0.1)
-    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.1)
+    check_body_soil_pos(out.body_soil_pos[3], 3, 10, 15, posA, 0.1)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.1)
     @test (length(out.body_soil_pos) == 3)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15], [3, 10, 15]],
         [[1, 10, 14], [3, 10, 15]])
 
     # Test: RE-RBS-42
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(18)
     set_height(out, 10, 14, -0.3, -0.3, -0.1, -0.1, 0.0, NaN, NaN, NaN, NaN)
     set_height(
         out, 10, 15, -0.6, -0.6, -0.5, NaN, NaN, -0.4, -0.3, -0.3, -0.2)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.1, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
     posA = _calc_bucket_frame_pos(10, 15, -0.3, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, posA, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, posA, 0.1)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.3, 0.0, 0.0, NaN, NaN)
     check_height(out, 10, 15, -0.6, NaN, NaN, -0.3, -0.1)
-    check_body_soil_pos(out.body_soil_pos[2], 2, 10, 15, posA, 0.1)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.0)
+    check_body_soil_pos(out.body_soil_pos[3], 3, 10, 15, posA, 0.1)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.0)
     @test (length(out.body_soil_pos) == 3)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15], [3, 10, 15]],
         [[1, 10, 14], [3, 10, 15]])
 
     # Test: RE-RBS-43
-    set_RNG_seed!(7)
+    set_RNG_seed!(2)
     set_height(out, 10, 14, -0.3, -0.3, 0.0, 0.0, 0.2, NaN, NaN, NaN, NaN)
     set_height(
         out, 10, 15, -0.7, -0.7, -0.6, NaN, NaN, -0.5, -0.4, -0.4, -0.3)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.0, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
     posA = _calc_bucket_frame_pos(10, 15, -0.4, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, posA, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, posA, 0.1)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.3, 0.0, 0.0, NaN, NaN)
     check_height(out, 10, 15, -0.7, NaN, NaN, -0.4, -0.1)
-    check_body_soil_pos(out.body_soil_pos[2], 2, 10, 15, posA, 0.1)
-    check_body_soil_pos(out.body_soil_pos[3], 2, 10, 15, posA, 0.1)
-    check_body_soil_pos(out.body_soil_pos[4], 2, 10, 15, posA, 0.1)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.0)
+    check_body_soil_pos(out.body_soil_pos[3], 3, 10, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[4], 3, 10, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[5], 3, 10, 15, posA, 0.1)
     @test (out.body_soil_pos[1].h_soil[1] ≈ 0.0)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.0)
     @test (length(out.body_soil_pos) == 5)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15], [3, 10, 15]],
         [[1, 10, 14], [3, 10, 15]])
 
     # Test: RE-RBS-44
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(18)
     set_height(
         out, 10, 14, -0.4, -0.4, -0.3, -0.3, -0.1, NaN, NaN, NaN, NaN)
     set_height(
         out, 10, 15, -0.6, -0.6, -0.5, -0.5, -0.3, 0.1, 0.3, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.3, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.2)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.2)
     posA = _calc_bucket_frame_pos(10, 15, -0.5, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, posA, 0.2)
+    push_body_soil_pos(out, 1, 10, 15, posA, 0.2)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.4, -0.3, -0.2, NaN, NaN)
     check_height(out, 10, 15, -0.6, -0.5, -0.2, NaN, NaN)
-    check_body_soil_pos(out.body_soil_pos[2], 0, 10, 15, posA, 0.1)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.1)
+    check_body_soil_pos(out.body_soil_pos[3], 1, 10, 15, posA, 0.1)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.1)
     @test (length(out.body_soil_pos) == 3)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15], [3, 10, 15]],
         [[1, 10, 14], [1, 10, 15]])
 
     # Test: RE-RBS-45
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(18)
     set_height(
         out, 10, 14, -0.4, -0.4, -0.3, -0.3, -0.2, NaN, NaN, NaN, NaN)
     set_height(
         out, 10, 15, -0.6, -0.6, -0.5, -0.5, -0.4, 0.1, 0.3, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.3, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
     posA = _calc_bucket_frame_pos(10, 15, -0.5, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, posA, 0.1)
+    push_body_soil_pos(out, 1, 10, 15, posA, 0.1)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.4, 0.0, 0.0, NaN, NaN)
     check_height(out, 10, 15, -0.6, -0.5, -0.3, NaN, NaN)
-    check_body_soil_pos(out.body_soil_pos[2], 0, 10, 15, posA, 0.1)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.0)
+    check_body_soil_pos(out.body_soil_pos[3], 1, 10, 15, posA, 0.1)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.0)
     @test (length(out.body_soil_pos) == 3)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15], [3, 10, 15]],
         [[1, 10, 14], [1, 10, 15]])
 
     # Test: RE-RBS-46
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(18)
     set_height(
         out, 10, 14, -0.4, -0.4, -0.3, -0.3, 0.1, NaN, NaN, NaN, NaN)
     set_height(
         out, 10, 15, -0.6, -0.6, -0.4, -0.4, -0.3, -0.2, 0.3, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.3, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.4)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.4)
     posA = _calc_bucket_frame_pos(10, 15, -0.4, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, posA, 0.1)
+    push_body_soil_pos(out, 1, 10, 15, posA, 0.1)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.4, -0.3, 0.0, NaN, NaN)
     check_height(out, 10, 15, -0.6, -0.4, -0.2, NaN, NaN)
-    check_body_soil_pos(out.body_soil_pos[2], 0, 10, 15, posA, 0.1)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.3)
+    check_body_soil_pos(out.body_soil_pos[3], 1, 10, 15, posA, 0.1)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.3)
     @test (length(out.body_soil_pos) == 3)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15], [3, 10, 15]],
         [[1, 10, 14], [1, 10, 15]])
 
     # Test: RE-RBS-47
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(2)
     set_height(out, 10, 14, -0.4, -0.4, -0.1, -0.1, 0.1, NaN, NaN, NaN, NaN)
     set_height(
         out, 10, 15, -0.6, -0.6, -0.5, -0.5, -0.4, 0.1, 0.3, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.1, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
     posA = _calc_bucket_frame_pos(10, 15, -0.5, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, posA, 0.1)
+    push_body_soil_pos(out, 1, 10, 15, posA, 0.1)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.4, 0.0, 0.0, NaN, NaN)
     check_height(out, 10, 15, -0.6, -0.5, -0.2, NaN, NaN)
-    check_body_soil_pos(out.body_soil_pos[3], 0, 10, 15, posA, 0.1)
-    check_body_soil_pos(out.body_soil_pos[4], 0, 10, 15, posA, 0.1)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.0)
+    check_body_soil_pos(out.body_soil_pos[4], 1, 10, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[5], 1, 10, 15, posA, 0.1)
     @test (out.body_soil_pos[1].h_soil[1] ≈ 0.0)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.0)
     @test (length(out.body_soil_pos) == 5)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15], [3, 10, 15]],
         [[1, 10, 14], [1, 10, 15]])
 
     # Test: RE-RBS-48
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(18)
     set_height(out, 10, 14, -0.4, -0.4, -0.2, -0.2, 0.0, NaN, NaN, NaN, NaN)
     set_height(
         out, 10, 15, -0.8, -0.8, -0.7, -0.7, -0.6, -0.4, -0.2, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.2, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.2)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.2)
     pos2 = _calc_bucket_frame_pos(10, 15, -0.7, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, pos2, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos2, 0.1)
     posA = _calc_bucket_frame_pos(10, 15, -0.2, grid, bucket)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.4, -0.2, -0.1, NaN, NaN)
     check_height(out, 10, 15, -0.8, -0.7, -0.6, -0.2, -0.1)
-    check_body_soil_pos(out.body_soil_pos[2], 2, 10, 15, posA, 0.1)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.1)
+    check_body_soil_pos(out.body_soil_pos[3], 3, 10, 15, posA, 0.1)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.1)
     @test (length(out.body_soil_pos) == 3)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15], [3, 10, 15]],
         [[1, 10, 14], [1, 10, 15], [3, 10, 15]])
 
     # Test: RE-RBS-49
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(18)
     set_height(out, 10, 14, -0.4, -0.4, -0.2, -0.2, 0.0, NaN, NaN, NaN, NaN)
     set_height(
         out, 10, 15, -0.8, -0.8, -0.7, -0.7, -0.6, -0.5, -0.4, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.2, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.2)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.2)
     pos0 = _calc_bucket_frame_pos(10, 15, -0.7, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 15, pos0, 0.1)
     posA = _calc_bucket_frame_pos(10, 15, -0.4, grid, bucket)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.4, 0.0, 0.0, NaN, NaN)
     check_height(out, 10, 15, -0.8, -0.7, -0.6, -0.4, -0.2)
-    check_body_soil_pos(out.body_soil_pos[2], 2, 10, 15, posA, 0.2)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.0)
+    check_body_soil_pos(out.body_soil_pos[3], 3, 10, 15, posA, 0.2)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.0)
     @test (length(out.body_soil_pos) == 3)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15], [3, 10, 15]],
         [[1, 10, 14], [1, 10, 15], [3, 10, 15]])
 
     # Test: RE-RBS-50
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(2)
     set_height(out, 10, 14, -0.4, -0.4, -0.2, -0.2, 0.0, NaN, NaN, NaN, NaN)
     set_height(
         out, 10, 15, -0.8, -0.8, -0.7, -0.7, -0.6, -0.5, -0.4, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.2, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
     pos0 = _calc_bucket_frame_pos(10, 15, -0.7, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 15, pos0, 0.1)
     posA = _calc_bucket_frame_pos(10, 15, -0.4, grid, bucket)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.4, 0.0, 0.0, NaN, NaN)
     check_height(out, 10, 15, -0.8, -0.7, -0.6, -0.4, -0.2)
-    check_body_soil_pos(out.body_soil_pos[3], 2, 10, 15, posA, 0.1)
-    check_body_soil_pos(out.body_soil_pos[4], 2, 10, 15, posA, 0.1)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.0)
+    check_body_soil_pos(out.body_soil_pos[4], 3, 10, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[5], 3, 10, 15, posA, 0.1)
     @test (out.body_soil_pos[1].h_soil[1] ≈ 0.0)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.0)
     @test (length(out.body_soil_pos) == 5)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15], [3, 10, 15]],
         [[1, 10, 14], [1, 10, 15], [3, 10, 15]])
 
     # Test: RE-RBS-51
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(2)
     set_height(out, 10, 14, -0.4, -0.4, -0.3, -0.3, 0.0, NaN, NaN, NaN, NaN)
     set_height(
         out, 10, 15, -0.6, -0.6, -0.5, -0.5, -0.4, -0.2, -0.1, -0.1, 0.0)
     posA = _calc_bucket_frame_pos(10, 15, -0.5, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, posA, 0.1)
+    push_body_soil_pos(out, 1, 10, 15, posA, 0.1)
     pos2 = _calc_bucket_frame_pos(10, 15, -0.1, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, pos2, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos2, 0.1)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.3, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.3)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.3)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.4, -0.3, -0.2, NaN, NaN)
     check_height(out, 10, 15, -0.6, -0.5, -0.2, -0.1, 0.0)
-    check_body_soil_pos(out.body_soil_pos[3], 0, 10, 15, posA, 0.2)
-    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.1)
+    check_body_soil_pos(out.body_soil_pos[4], 1, 10, 15, posA, 0.2)
+    @test (out.body_soil_pos[3].h_soil[1] ≈ 0.1)
     @test (length(out.body_soil_pos) == 4)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15], [3, 10, 15]],
         [[1, 10, 14], [1, 10, 15], [3, 10, 15]])
 
     # Test: RE-RBS-52
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(2)
     set_height(
         out, 10, 14, -0.4, -0.4, -0.3, -0.3, -0.1, NaN, NaN, NaN, NaN)
     set_height(
         out, 10, 15, -0.7, -0.7, -0.6, -0.6, -0.5, -0.2, -0.1, -0.1, 0.0)
     pos2 = _calc_bucket_frame_pos(10, 15, -0.1, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, pos2, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos2, 0.1)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.3, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.2)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.2)
     posA = _calc_bucket_frame_pos(10, 15, -0.6, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, posA, 0.1)
+    push_body_soil_pos(out, 1, 10, 15, posA, 0.1)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.4, 0.0, 0.0, NaN, NaN)
     check_height(out, 10, 15, -0.7, -0.6, -0.3, -0.1, 0.0)
-    check_body_soil_pos(out.body_soil_pos[3], 0, 10, 15, posA, 0.2)
-    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.0)
+    check_body_soil_pos(out.body_soil_pos[4], 1, 10, 15, posA, 0.2)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.0)
     @test (length(out.body_soil_pos) == 4)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15], [3, 10, 15]],
         [[1, 10, 14], [1, 10, 15], [3, 10, 15]])
 
     # Test: RE-RBS-53
-    soil_simulator::rng.seed(1236)
+    set_RNG_seed!(2)
     set_height(out, 10, 14, -0.4, -0.4, -0.3, -0.3, 0.2, NaN, NaN, NaN, NaN)
     set_height(
         out, 10, 15, -0.6, -0.6, -0.5, -0.5, -0.3, -0.2, 0.0, 0.0, 0.1)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.3, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.5)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.5)
     posA = _calc_bucket_frame_pos(10, 15, -0.5, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, posA, 0.2)
+    push_body_soil_pos(out, 1, 10, 15, posA, 0.2)
     pos2 = _calc_bucket_frame_pos(10, 15, 0.0, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, pos2, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos2, 0.1)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.4, -0.3, 0.1, NaN, NaN)
     check_height(out, 10, 15, -0.6, -0.5, -0.2, 0.0, 0.1)
-    check_body_soil_pos(out.body_soil_pos[3], 0, 10, 15, posA, 0.1)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.4)
+    check_body_soil_pos(out.body_soil_pos[4], 1, 10, 15, posA, 0.1)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.4)
     @test (length(out.body_soil_pos) == 4)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15], [3, 10, 15]],
         [[1, 10, 14], [1, 10, 15], [3, 10, 15]])
 
     # Test: RE-RBS-54
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(2)
     set_height(
         out, 10, 14, -0.4, -0.4, -0.3, -0.3, -0.1, NaN, NaN, NaN, NaN)
     set_height(
         out, 10, 15, -0.7, -0.7, -0.6, -0.6, -0.5, -0.2, -0.1, -0.1, 0.0)
     pos2 = _calc_bucket_frame_pos(10, 15, -0.1, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, pos2, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos2, 0.1)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.3, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
     posA = _calc_bucket_frame_pos(10, 15, -0.6, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, posA, 0.1)
+    push_body_soil_pos(out, 1, 10, 15, posA, 0.1)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.4, 0.0, 0.0, NaN, NaN)
     check_height(out, 10, 15, -0.7, -0.6, -0.3, -0.1, 0.0)
-    check_body_soil_pos(out.body_soil_pos[4], 0, 10, 15, posA, 0.1)
-    check_body_soil_pos(out.body_soil_pos[5], 0, 10, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[5], 1, 10, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[6], 1, 10, 15, posA, 0.1)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.0)
+    @test (out.body_soil_pos[3].h_soil[1] ≈ 0.0)
+    @test (length(out.body_soil_pos) == 6)
+    reset_value_and_test(
+        out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15], [3, 10, 15]],
+        [[1, 10, 14], [1, 10, 15], [3, 10, 15]])
+
+    # Test: RE-RBS-55
+    set_RNG_seed!(2)
+    set_height(out, 10, 14, -0.4, -0.4, -0.2, -0.2, 0.1, NaN, NaN, NaN, NaN)
+    set_height(
+        out, 10, 15, -0.6, -0.6, -0.5, -0.5, -0.4, -0.3, -0.2, -0.2, -0.1)
+    pos0 = _calc_bucket_frame_pos(10, 14, -0.2, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.3)
+    pos0 = _calc_bucket_frame_pos(10, 15, -0.5, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos0, 0.1)
+    posA = _calc_bucket_frame_pos(10, 15, -0.2, grid, bucket)
+    push_body_soil_pos(out, 3, 10, 15, posA, 0.1)
+    _relax_body_soil!(out, grid, bucket, sim, 1e-5)
+    check_height(out, 10, 14, -0.4, -0.2, 0.0, NaN, NaN)
+    check_height(out, 10, 15, -0.6, -0.5, -0.4, -0.2, 0.0)
+    check_body_soil_pos(out.body_soil_pos[4], 3, 10, 15, posA, 0.1)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    @test (length(out.body_soil_pos) == 4)
+    reset_value_and_test(
+        out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15], [3, 10, 15]],
+        [[1, 10, 14], [1, 10, 15], [3, 10, 15]])
+
+    # Test: RE-RBS-56
+    set_RNG_seed!(2)
+    set_height(out, 10, 14, -0.4, -0.4, -0.1, -0.1, 0.0, NaN, NaN, NaN, NaN)
+    set_height(
+        out, 10, 15, -0.8, -0.8, -0.7, -0.7, -0.6, -0.5, -0.4, -0.4, -0.3)
+    pos0 = _calc_bucket_frame_pos(10, 14, -0.1, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
+    pos0 = _calc_bucket_frame_pos(10, 15, -0.7, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos0, 0.1)
+    posA = _calc_bucket_frame_pos(10, 15, -0.4, grid, bucket)
+    push_body_soil_pos(out, 3, 10, 15, posA, 0.1)
+    _relax_body_soil!(out, grid, bucket, sim, 1e-5)
+    check_height(out, 10, 14, -0.4, 0.0, 0.0, NaN, NaN)
+    check_height(out, 10, 15, -0.8, -0.7, -0.6, -0.4, -0.2)
+    check_body_soil_pos(out.body_soil_pos[4], 3, 10, 15, posA, 0.1)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.0)
+    @test (length(out.body_soil_pos) == 4)
+    reset_value_and_test(
+        out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15], [3, 10, 15]],
+        [[1, 10, 14], [1, 10, 15], [3, 10, 15]])
+
+    # Test: RE-RBS-57
+    set_RNG_seed!(2)
+    set_height(out, 10, 14, -0.4, -0.4, -0.2, -0.2, 0.0, NaN, NaN, NaN, NaN)
+    set_height(
+        out, 10, 15, -0.9, -0.9, -0.8, -0.8, -0.7, -0.6, -0.5, -0.5, -0.4)
+    pos0 = _calc_bucket_frame_pos(10, 14, -0.2, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
+    pos0 = _calc_bucket_frame_pos(10, 15, -0.8, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, pos0, 0.1)
+    posA = _calc_bucket_frame_pos(10, 15, -0.5, grid, bucket)
+    push_body_soil_pos(out, 3, 10, 15, posA, 0.1)
+    _relax_body_soil!(out, grid, bucket, sim, 1e-5)
+    check_height(out, 10, 14, -0.4, 0.0, 0.0, NaN, NaN)
+    check_height(out, 10, 15, -0.9, -0.8, -0.7, -0.5, -0.2)
+    check_body_soil_pos(out.body_soil_pos[5], 3, 10, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[6], 3, 10, 15, posA, 0.1)
     @test (out.body_soil_pos[1].h_soil[1] ≈ 0.0)
     @test (out.body_soil_pos[2].h_soil[1] ≈ 0.0)
     @test (length(out.body_soil_pos) == 6)
@@ -4833,108 +4898,44 @@ end
         out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15], [3, 10, 15]],
         [[1, 10, 14], [1, 10, 15], [3, 10, 15]])
 
-    # Test: RE-RBS-55
-    soil_simulator::rng.seed(1234)
-    set_height(out, 10, 14, -0.4, -0.4, -0.2, -0.2, 0.1, NaN, NaN, NaN, NaN)
-    set_height(
-        out, 10, 15, -0.6, -0.6, -0.5, -0.5, -0.4, -0.3, -0.2, -0.2, -0.1)
-    pos0 = _calc_bucket_frame_pos(10, 14, -0.2, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.3)
-    pos0 = _calc_bucket_frame_pos(10, 15, -0.5, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, pos0, 0.1)
-    posA = _calc_bucket_frame_pos(10, 15, -0.2, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, posA, 0.1)
-    _relax_body_soil!(out, grid, bucket, sim, 1e-5)
-    check_height(out, 10, 14, -0.4, -0.2, 0.0, NaN, NaN)
-    check_height(out, 10, 15, -0.6, -0.5, -0.4, -0.2, 0.0)
-    check_body_soil_pos(out.body_soil_pos[3], 2, 10, 15, posA, 0.1)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.2)
-    @test (length(out.body_soil_pos) == 4)
-    reset_value_and_test(
-        out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15], [3, 10, 15]],
-        [[1, 10, 14], [1, 10, 15], [3, 10, 15]])
-
-    # Test: RE-RBS-56
-    soil_simulator::rng.seed(1234)
-    set_height(out, 10, 14, -0.4, -0.4, -0.1, -0.1, 0.0, NaN, NaN, NaN, NaN)
-    set_height(
-        out, 10, 15, -0.8, -0.8, -0.7, -0.7, -0.6, -0.5, -0.4, -0.4, -0.3)
-    pos0 = _calc_bucket_frame_pos(10, 14, -0.1, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
-    pos0 = _calc_bucket_frame_pos(10, 15, -0.7, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, pos0, 0.1)
-    posA = _calc_bucket_frame_pos(10, 15, -0.4, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, posA, 0.1)
-    _relax_body_soil!(out, grid, bucket, sim, 1e-5)
-    check_height(out, 10, 14, -0.4, 0.0, 0.0, NaN, NaN)
-    check_height(out, 10, 15, -0.8, -0.7, -0.6, -0.4, -0.2)
-    check_body_soil_pos(out.body_soil_pos[3], 2, 10, 15, posA, 0.1)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.0)
-    @test (length(out.body_soil_pos) == 4)
-    reset_value_and_test(
-        out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15], [3, 10, 15]],
-        [[1, 10, 14], [1, 10, 15], [3, 10, 15]])
-
-    # Test: RE-RBS-57
-    soil_simulator::rng.seed(1234)
-    set_height(out, 10, 14, -0.4, -0.4, -0.2, -0.2, 0.0, NaN, NaN, NaN, NaN)
-    set_height(
-        out, 10, 15, -0.9, -0.9, -0.8, -0.8, -0.7, -0.6, -0.5, -0.5, -0.4)
-    pos0 = _calc_bucket_frame_pos(10, 14, -0.2, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
-    pos0 = _calc_bucket_frame_pos(10, 15, -0.8, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, pos0, 0.1)
-    posA = _calc_bucket_frame_pos(10, 15, -0.5, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, posA, 0.1)
-    _relax_body_soil!(out, grid, bucket, sim, 1e-5)
-    check_height(out, 10, 14, -0.4, 0.0, 0.0, NaN, NaN)
-    check_height(out, 10, 15, -0.9, -0.8, -0.7, -0.5, -0.2)
-    check_body_soil_pos(out.body_soil_pos[4], 2, 10, 15, posA, 0.1)
-    check_body_soil_pos(out.body_soil_pos[5], 2, 10, 15, posA, 0.1)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.0)
-    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.0)
-    @test (length(out.body_soil_pos) == 6)
-    reset_value_and_test(
-        out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15], [3, 10, 15]],
-        [[1, 10, 14], [1, 10, 15], [3, 10, 15]])
-
     # Test: RE-RBS-58
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(18)
     set_height(out, 10, 14, -0.8, -0.8, -0.7, -0.7, 0.0, NaN, NaN, NaN, NaN)
     set_height(
         out, 10, 15, -0.6, -0.6, -0.5, -0.5, -0.4, -0.4, -0.1, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.7, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.7)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.7)
     pos0 = _calc_bucket_frame_pos(10, 15, -0.5, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 15, pos0, 0.1)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.8, -0.7, 0.0, NaN, NaN)
     check_height(out, 10, 15, -0.6, -0.5, -0.4, NaN, NaN)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.7)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.7)
     @test (length(out.body_soil_pos) == 2)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15], [3, 10, 15]],
         [[1, 10, 14], [1, 10, 15]])
 
     # Test: RE-RBS-59
-    soil_simulator::rng.seed(1234)
-    for (auto ii = 9 ii < 12  ii++)
-        for (auto jj = 13 jj < 16  jj++)
-            out.terrain[ii][jj] = 0.2
+    set_RNG_seed!(2)
+    for ii in 9:11
+        for jj in 13:15
+            out.terrain[ii, jj] = 0.2
+        end
+    end
     set_height(out, 10, 14, -0.8, -0.8, -0.7, -0.7, 0.0, NaN, NaN, NaN, NaN)
     set_height(
         out, 10, 15, -0.4, -0.4, -0.3, -0.3, -0.1, -0.1, 0.0, 0.0, 0.1)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.7, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.7)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.7)
     pos0 = _calc_bucket_frame_pos(10, 15, -0.3, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, pos0, 0.2)
+    push_body_soil_pos(out, 1, 10, 15, pos0, 0.2)
     pos2 = _calc_bucket_frame_pos(10, 15, 0.0, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, pos2, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos2, 0.1)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.8, -0.7, 0.0, NaN, NaN)
     check_height(out, 10, 15, -0.4, -0.3, -0.1, 0.0, 0.1)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.7)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.7)
     @test (length(out.body_soil_pos) == 3)
     terrain_pos = [
         [9, 13], [9, 14], [9, 15], [10, 13], [10, 14], [10, 15], [11, 13],
@@ -4944,604 +4945,670 @@ end
         [[1, 10, 14], [1, 10, 15], [3, 10, 15]])
 
     # Test: RE-RBS-60
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(18)
     set_height(out, 10, 14, -0.8, -0.8, -0.7, -0.7, 0.0, NaN, NaN, NaN, NaN)
     set_height(
         out, 10, 15, -0.8, -0.8, -0.7, -0.7, -0.5, -0.5, -0.4, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.7, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.7)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.7)
     pos0 = _calc_bucket_frame_pos(10, 15, -0.7, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, pos0, 0.2)
+    push_body_soil_pos(out, 1, 10, 15, pos0, 0.2)
     posA = _calc_bucket_frame_pos(10, 15, -0.4, grid, bucket)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.8, -0.7, -0.2, NaN, NaN)
     check_height(out, 10, 15, -0.8, -0.7, -0.5, -0.4, -0.2)
-    check_body_soil_pos(out.body_soil_pos[2], 2, 10, 15, posA, 0.2)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.5)
+    check_body_soil_pos(out.body_soil_pos[3], 3, 10, 15, posA, 0.2)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.5)
     @test (length(out.body_soil_pos) == 3)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15], [3, 10, 15]],
         [[1, 10, 14], [1, 10, 15], [3, 10, 15]])
 
     # Test: RE-RBS-61
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(2)
     set_height(out, 10, 14, -0.8, -0.8, -0.7, -0.7, 0.0, NaN, NaN, NaN, NaN)
     set_height(
         out, 10, 15, -0.8, -0.8, -0.7, -0.7, -0.5, -0.5, -0.4, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.7, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.6)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.6)
     pos0 = _calc_bucket_frame_pos(10, 15, -0.7, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, pos0, 0.2)
+    push_body_soil_pos(out, 1, 10, 15, pos0, 0.2)
     posA = _calc_bucket_frame_pos(10, 15, -0.4, grid, bucket)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.8, -0.7, -0.2, NaN, NaN)
     check_height(out, 10, 15, -0.8, -0.7, -0.5, -0.4, -0.2)
-    check_body_soil_pos(out.body_soil_pos[3], 2, 10, 15, posA, 0.1)
-    check_body_soil_pos(out.body_soil_pos[4], 2, 10, 15, posA, 0.1)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.0)
-    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.5)
+    check_body_soil_pos(out.body_soil_pos[4], 3, 10, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[5], 3, 10, 15, posA, 0.1)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.0)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.5)
     @test (length(out.body_soil_pos) == 5)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15], [3, 10, 15]],
         [[1, 10, 14], [1, 10, 15], [3, 10, 15]])
 
     # Test: RE-RBS-62
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(2)
     set_height(out, 10, 14, -0.8, -0.8, -0.7, -0.7, 0.0, NaN, NaN, NaN, NaN)
     set_height(
         out, 10, 15, -0.8, -0.8, -0.7, -0.7, -0.5, -0.5, -0.4, -0.4, -0.2)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.7, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.7)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.7)
     pos0 = _calc_bucket_frame_pos(10, 15, -0.7, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, pos0, 0.2)
+    push_body_soil_pos(out, 1, 10, 15, pos0, 0.2)
     posA = _calc_bucket_frame_pos(10, 15, -0.4, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, posA, 0.2)
+    push_body_soil_pos(out, 3, 10, 15, posA, 0.2)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.8, -0.7, -0.1, NaN, NaN)
     check_height(out, 10, 15, -0.8, -0.7, -0.5, -0.4, -0.1)
-    check_body_soil_pos(out.body_soil_pos[3], 2, 10, 15, posA, 0.1)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.6)
+    check_body_soil_pos(out.body_soil_pos[4], 3, 10, 15, posA, 0.1)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.6)
     @test (length(out.body_soil_pos) == 4)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15], [3, 10, 15]],
         [[1, 10, 14], [1, 10, 15], [3, 10, 15]])
 
     # Test: RE-RBS-63
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(2)
     set_height(out, 10, 14, -0.8, -0.8, -0.7, -0.7, 0.1, NaN, NaN, NaN, NaN)
     set_height(
         out, 10, 15, -0.8, -0.8, -0.7, -0.7, -0.5, -0.5, -0.4, -0.4, -0.3)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.7, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.7)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.7)
     pos0 = _calc_bucket_frame_pos(10, 15, -0.7, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, pos0, 0.2)
+    push_body_soil_pos(out, 1, 10, 15, pos0, 0.2)
     posA = _calc_bucket_frame_pos(10, 15, -0.4, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, posA, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, posA, 0.1)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.8, -0.7, -0.1, NaN, NaN)
     check_height(out, 10, 15, -0.8, -0.7, -0.5, -0.4, -0.1)
-    check_body_soil_pos(out.body_soil_pos[4], 2, 10, 15, posA, 0.1)
-    check_body_soil_pos(out.body_soil_pos[5], 2, 10, 15, posA, 0.1)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.0)
-    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.6)
+    check_body_soil_pos(out.body_soil_pos[5], 3, 10, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[6], 3, 10, 15, posA, 0.1)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.0)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.6)
     @test (length(out.body_soil_pos) == 6)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15], [3, 10, 15]],
         [[1, 10, 14], [1, 10, 15], [3, 10, 15]])
 
     # Test: RE-RBS-64
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(18)
     set_height(out, 10, 14, -0.8, -0.8, -0.7, -0.7, 0.0, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.4, 0.0, 0.1, NaN, NaN, -0.4, -0.1, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.7, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.7)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.7)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.8, -0.7, 0.0, NaN, NaN)
     @test (out.terrain[10, 15] ≈ -0.4)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.7)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.7)
     @test (length(out.body_soil_pos) == 1)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15], [3, 10, 15]],
         [[1, 10, 14]])
 
     # Test: RE-RBS-65
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(18)
     set_height(out, 10, 14, -0.4, -0.4, -0.3, -0.3, 0.0, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.4, -0.1, 0.0, NaN, NaN, -0.4, -0.3, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.3, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.3)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.3)
     posA = _calc_bucket_frame_pos(10, 15, -0.3, grid, bucket)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.4, -0.3, -0.1, NaN, NaN)
     check_height(out, 10, 15, -0.4, NaN, NaN, -0.3, -0.2)
-    check_body_soil_pos(out.body_soil_pos[1], 2, 10, 15, posA, 0.1)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[2], 3, 10, 15, posA, 0.1)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
     @test (length(out.body_soil_pos) == 2)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15], [3, 10, 15]],
         [[1, 10, 14], [3, 10, 15]])
 
     # Test: RE-RBS-66
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(18)
     set_height(
         out, 10, 14, -0.4, -0.4, -0.3, -0.3, -0.1, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.6, -0.1, 0.0, NaN, NaN, -0.6, -0.5, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.3, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.2)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.2)
     posA = _calc_bucket_frame_pos(10, 15, -0.5, grid, bucket)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.4, 0.0, 0.0, NaN, NaN)
     check_height(out, 10, 15, -0.6, NaN, NaN, -0.5, -0.3)
-    check_body_soil_pos(out.body_soil_pos[1], 2, 10, 15, posA, 0.2)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.0)
+    check_body_soil_pos(out.body_soil_pos[2], 3, 10, 15, posA, 0.2)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.0)
     @test (length(out.body_soil_pos) == 2)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15], [3, 10, 15]],
         [[1, 10, 14], [3, 10, 15]])
 
     # Test: RE-RBS-67
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(18)
     set_height(out, 10, 14, -0.8, -0.8, -0.7, -0.7, 0.0, NaN, NaN, NaN, NaN)
     set_height(
         out, 10, 15, -0.8, -0.5, -0.3, NaN, NaN, -0.8, -0.7, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.7, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.7)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.7)
     posA = _calc_bucket_frame_pos(10, 15, -0.7, grid, bucket)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.8, -0.7, -0.2, NaN, NaN)
     check_height(out, 10, 15, -0.8, NaN, NaN, -0.7, -0.5)
-    check_body_soil_pos(out.body_soil_pos[1], 2, 10, 15, posA, 0.2)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.5)
+    check_body_soil_pos(out.body_soil_pos[2], 3, 10, 15, posA, 0.2)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.5)
     @test (length(out.body_soil_pos) == 2)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15], [3, 10, 15]],
         [[1, 10, 14], [3, 10, 15]])
 
     # Test: RE-RBS-68
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(18)
     set_height(
         out, 10, 14, -0.4, -0.4, -0.3, -0.3, -0.1, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.6, -0.1, 0.0, NaN, NaN, -0.6, -0.5, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.3, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
     posA = _calc_bucket_frame_pos(10, 15, -0.5, grid, bucket)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.4, 0.0, 0.0, NaN, NaN)
     check_height(out, 10, 15, -0.6, NaN, NaN, -0.5, -0.3)
-    check_body_soil_pos(out.body_soil_pos[2], 2, 10, 15, posA, 0.1)
-    check_body_soil_pos(out.body_soil_pos[3], 2, 10, 15, posA, 0.1)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.0)
+    check_body_soil_pos(out.body_soil_pos[3], 3, 10, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[4], 3, 10, 15, posA, 0.1)
     @test (out.body_soil_pos[1].h_soil[1] ≈ 0.0)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.0)
     @test (length(out.body_soil_pos) == 4)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15], [3, 10, 15]],
         [[1, 10, 14], [3, 10, 15]])
 
     # Test: RE-RBS-69
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(18)
     set_height(out, 10, 14, -0.4, -0.4, -0.3, -0.3, 0.0, NaN, NaN, NaN, NaN)
     set_height(
         out, 10, 15, -0.6, -0.3, -0.2, NaN, NaN, -0.6, -0.5, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.3, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.3)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.3)
     posA = _calc_bucket_frame_pos(10, 15, -0.2, grid, bucket)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.4, -0.3, -0.1, NaN, NaN)
     check_height(out, 10, 15, -0.6, -0.2, -0.1, NaN, NaN)
-    check_body_soil_pos(out.body_soil_pos[1], 0, 10, 15, posA, 0.1)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[2], 1, 10, 15, posA, 0.1)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
     @test (length(out.body_soil_pos) == 2)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15], [3, 10, 15]],
         [[1, 10, 14], [1, 10, 15]])
 
     # Test: RE-RBS-70
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(18)
     set_height(
         out, 10, 14, -0.4, -0.4, -0.3, -0.3, -0.2, NaN, NaN, NaN, NaN)
     set_height(
         out, 10, 15, -0.8, -0.5, -0.4, NaN, NaN, -0.8, -0.7, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.3, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
     posA = _calc_bucket_frame_pos(10, 15, -0.4, grid, bucket)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.4, 0.0, 0.0, NaN, NaN)
     check_height(out, 10, 15, -0.8, -0.4, -0.3, NaN, NaN)
-    check_body_soil_pos(out.body_soil_pos[1], 0, 10, 15, posA, 0.1)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.0)
+    check_body_soil_pos(out.body_soil_pos[2], 1, 10, 15, posA, 0.1)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.0)
     @test (length(out.body_soil_pos) == 2)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15], [3, 10, 15]],
         [[1, 10, 14], [1, 10, 15]])
 
     # Test: RE-RBS-71
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(18)
     set_height(out, 10, 14, -0.4, -0.4, -0.3, -0.3, 0.1, NaN, NaN, NaN, NaN)
     set_height(
         out, 10, 15, -0.6, -0.4, -0.3, NaN, NaN, -0.6, -0.5, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.3, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.3)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.3)
     posA = _calc_bucket_frame_pos(10, 15, -0.3, grid, bucket)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.4, -0.3, -0.1, NaN, NaN)
     check_height(out, 10, 15, -0.6, -0.3, -0.1, NaN, NaN)
-    check_body_soil_pos(out.body_soil_pos[2], 0, 10, 15, posA, 0.1)
-    check_body_soil_pos(out.body_soil_pos[3], 0, 10, 15, posA, 0.1)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.0)
-    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[3], 1, 10, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[4], 1, 10, 15, posA, 0.1)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.0)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
     @test (length(out.body_soil_pos) == 4)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15], [3, 10, 15]],
         [[1, 10, 14], [1, 10, 15]])
 
     # Test: RE-RBS-72
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(18)
     set_height(out, 10, 14, -0.4, -0.4, -0.3, -0.3, 0.0, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.4, -0.1, 0.0, 0.0, 0.1, -0.4, -0.3, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 15, 0.0, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 15, pos0, 0.1)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.3, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.3)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.3)
     posA = _calc_bucket_frame_pos(10, 15, -0.3, grid, bucket)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.4, -0.3, -0.1, NaN, NaN)
     check_height(out, 10, 15, -0.4, 0.0, 0.1, -0.3, -0.2)
-    check_body_soil_pos(out.body_soil_pos[2], 2, 10, 15, posA, 0.1)
-    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[3], 3, 10, 15, posA, 0.1)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.2)
     @test (length(out.body_soil_pos) == 3)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15], [3, 10, 15]],
         [[1, 10, 14], [1, 10, 15], [3, 10, 15]])
 
     # Test: RE-RBS-73
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(18)
     set_height(out, 10, 14, -0.4, -0.4, -0.2, -0.2, 0.0, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.6, -0.1, 0.0, 0.0, 0.1, -0.6, -0.5, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 15, 0.0, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 15, pos0, 0.1)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.2, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.2)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.2)
     posA = _calc_bucket_frame_pos(10, 15, -0.5, grid, bucket)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.4, 0.0, 0.0, NaN, NaN)
     check_height(out, 10, 15, -0.6, 0.0, 0.1, -0.5, -0.3)
-    check_body_soil_pos(out.body_soil_pos[2], 2, 10, 15, posA, 0.2)
-    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.0)
+    check_body_soil_pos(out.body_soil_pos[3], 3, 10, 15, posA, 0.2)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.0)
     @test (length(out.body_soil_pos) == 3)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15], [3, 10, 15]],
         [[1, 10, 14], [1, 10, 15], [3, 10, 15]])
 
     # Test: RE-RBS-74
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(18)
     set_height(out, 10, 14, -0.5, -0.5, -0.4, -0.4, 0.1, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.6, -0.2, 0.0, 0.0, 0.1, -0.6, -0.3, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 15, 0.0, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 15, pos0, 0.1)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.4, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.5)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.5)
     posA = _calc_bucket_frame_pos(10, 15, -0.3, grid, bucket)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.5, -0.4, 0.0, NaN, NaN)
     check_height(out, 10, 15, -0.6, 0.0, 0.1, -0.3, -0.2)
-    check_body_soil_pos(out.body_soil_pos[2], 2, 10, 15, posA, 0.1)
-    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.4)
+    check_body_soil_pos(out.body_soil_pos[3], 3, 10, 15, posA, 0.1)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.4)
     @test (length(out.body_soil_pos) == 3)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15], [3, 10, 15]],
         [[1, 10, 14], [1, 10, 15], [3, 10, 15]])
 
     # Test: RE-RBS-75
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(2)
     set_height(out, 10, 14, -0.4, -0.4, -0.2, -0.2, 0.0, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.6, -0.1, 0.0, 0.0, 0.1, -0.6, -0.5, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 15, 0.0, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 15, pos0, 0.1)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.2, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
     posA = _calc_bucket_frame_pos(10, 15, -0.5, grid, bucket)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.4, 0.0, 0.0, NaN, NaN)
     check_height(out, 10, 15, -0.6, 0.0, 0.1, -0.5, -0.3)
-    check_body_soil_pos(out.body_soil_pos[3], 2, 10, 15, posA, 0.1)
-    check_body_soil_pos(out.body_soil_pos[4], 2, 10, 15, posA, 0.1)
-    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.0)
+    check_body_soil_pos(out.body_soil_pos[4], 3, 10, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[5], 3, 10, 15, posA, 0.1)
     @test (out.body_soil_pos[2].h_soil[1] ≈ 0.0)
+    @test (out.body_soil_pos[3].h_soil[1] ≈ 0.0)
     @test (length(out.body_soil_pos) == 5)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15], [3, 10, 15]],
         [[1, 10, 14], [1, 10, 15], [3, 10, 15]])
 
     # Test: RE-RBS-76
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(18)
     set_height(out, 10, 14, -0.4, -0.4, -0.2, -0.2, 0.0, NaN, NaN, NaN, NaN)
     set_height(
         out, 10, 15, -0.6, -0.4, -0.3, -0.3, -0.2, -0.6, -0.5, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.2, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.2)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.2)
     posA = _calc_bucket_frame_pos(10, 15, -0.3, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, posA, 0.1)
+    push_body_soil_pos(out, 1, 10, 15, posA, 0.1)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.4, -0.2, -0.1, NaN, NaN)
     check_height(out, 10, 15, -0.6, -0.3, -0.1, NaN, NaN)
-    check_body_soil_pos(out.body_soil_pos[2], 0, 10, 15, posA, 0.1)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.1)
+    check_body_soil_pos(out.body_soil_pos[3], 1, 10, 15, posA, 0.1)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.1)
     @test (length(out.body_soil_pos) == 3)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15], [3, 10, 15]],
         [[1, 10, 14], [1, 10, 15]])
 
     # Test: RE-RBS-77
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(18)
     set_height(out, 10, 14, -0.4, -0.4, -0.2, -0.2, 0.0, NaN, NaN, NaN, NaN)
     set_height(
         out, 10, 15, -0.8, -0.6, -0.5, -0.5, -0.4, -0.8, -0.7, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.2, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.2)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.2)
     posA = _calc_bucket_frame_pos(10, 15, -0.5, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, posA, 0.1)
+    push_body_soil_pos(out, 1, 10, 15, posA, 0.1)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.4, 0.0, 0.0, NaN, NaN)
     check_height(out, 10, 15, -0.8, -0.5, -0.2, NaN, NaN)
-    check_body_soil_pos(out.body_soil_pos[2], 0, 10, 15, posA, 0.2)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.0)
+    check_body_soil_pos(out.body_soil_pos[3], 1, 10, 15, posA, 0.2)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.0)
     @test (length(out.body_soil_pos) == 3)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15], [3, 10, 15]],
         [[1, 10, 14], [1, 10, 15]])
 
     # Test: RE-RBS-78
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(2)
     set_height(out, 10, 14, -0.4, -0.4, -0.2, -0.2, 0.0, NaN, NaN, NaN, NaN)
     set_height(
         out, 10, 15, -0.8, -0.6, -0.5, -0.5, -0.4, -0.8, -0.7, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.2, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
     posA = _calc_bucket_frame_pos(10, 15, -0.5, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, posA, 0.1)
+    push_body_soil_pos(out, 1, 10, 15, posA, 0.1)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.4, 0.0, 0.0, NaN, NaN)
     check_height(out, 10, 15, -0.8, -0.5, -0.2, NaN, NaN)
-    check_body_soil_pos(out.body_soil_pos[3], 0, 10, 15, posA, 0.1)
-    check_body_soil_pos(out.body_soil_pos[4], 0, 10, 15, posA, 0.1)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.0)
+    check_body_soil_pos(out.body_soil_pos[4], 1, 10, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[5], 1, 10, 15, posA, 0.1)
     @test (out.body_soil_pos[1].h_soil[1] ≈ 0.0)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.0)
     @test (length(out.body_soil_pos) == 5)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15], [3, 10, 15]],
         [[1, 10, 14], [1, 10, 15]])
 
     # Test: RE-RBS-79
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(18)
     set_height(out, 10, 14, -0.4, -0.4, -0.3, -0.3, 0.0, NaN, NaN, NaN, NaN)
     set_height(
         out, 10, 15, -0.6, -0.1, 0.0, NaN, NaN, -0.6, -0.5, -0.5, -0.4)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.3, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.3)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.3)
     posA = _calc_bucket_frame_pos(10, 15, -0.5, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, posA, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, posA, 0.1)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.4, -0.3, -0.2, NaN, NaN)
     check_height(out, 10, 15, -0.6, NaN, NaN, -0.5, -0.2)
-    check_body_soil_pos(out.body_soil_pos[2], 2, 10, 15, posA, 0.2)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.1)
+    check_body_soil_pos(out.body_soil_pos[3], 3, 10, 15, posA, 0.2)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.1)
     @test (length(out.body_soil_pos) == 3)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15], [3, 10, 15]],
         [[1, 10, 14], [3, 10, 15]])
 
     # Test: RE-RBS-80
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(18)
     set_height(
         out, 10, 14, -0.4, -0.4, -0.3, -0.3, -0.1, NaN, NaN, NaN, NaN)
     set_height(
         out, 10, 15, -0.7, -0.1, 0.0, NaN, NaN, -0.7, -0.6, -0.6, -0.5)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.3, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.2)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.2)
     posA = _calc_bucket_frame_pos(10, 15, -0.6, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, posA, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, posA, 0.1)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.4, 0.0, 0.0, NaN, NaN)
     check_height(out, 10, 15, -0.7, NaN, NaN, -0.6, -0.3)
-    check_body_soil_pos(out.body_soil_pos[2], 2, 10, 15, posA, 0.2)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.0)
+    check_body_soil_pos(out.body_soil_pos[3], 3, 10, 15, posA, 0.2)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.0)
     @test (length(out.body_soil_pos) == 3)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15], [3, 10, 15]],
         [[1, 10, 14], [3, 10, 15]])
 
     # Test: RE-RBS-81
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(18)
     set_height(
         out, 10, 14, -0.8, -0.8, -0.7, -0.7, 0.0, NaN, NaN, NaN, NaN)
     set_height(
         out, 10, 15, -0.7, -0.4, 0.0, NaN, NaN, -0.7, -0.6, -0.6, -0.5)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.7, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.7)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.7)
     posA = _calc_bucket_frame_pos(10, 15, -0.6, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, posA, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, posA, 0.1)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.8, -0.7, -0.1, NaN, NaN)
     check_height(out, 10, 15, -0.7, NaN, NaN, -0.6, -0.4)
-    check_body_soil_pos(out.body_soil_pos[2], 2, 10, 15, posA, 0.1)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.6)
+    check_body_soil_pos(out.body_soil_pos[3], 3, 10, 15, posA, 0.1)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.6)
     @test (length(out.body_soil_pos) == 3)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15], [3, 10, 15]],
         [[1, 10, 14], [3, 10, 15]])
 
     # Test: RE-RBS-82
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(2)
     set_height(
         out, 10, 14, -0.4, -0.4, -0.3, -0.3, -0.1, NaN, NaN, NaN, NaN)
     set_height(
         out, 10, 15, -0.7, -0.1, 0.0, NaN, NaN, -0.7, -0.6, -0.6, -0.5)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.3, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
     posA = _calc_bucket_frame_pos(10, 15, -0.6, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, posA, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, posA, 0.1)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.4, 0.0, 0.0, NaN, NaN)
     check_height(out, 10, 15, -0.7, NaN, NaN, -0.6, -0.3)
-    check_body_soil_pos(out.body_soil_pos[3], 2, 10, 15, posA, 0.1)
-    check_body_soil_pos(out.body_soil_pos[4], 2, 10, 15, posA, 0.1)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.0)
+    check_body_soil_pos(out.body_soil_pos[4], 3, 10, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[5], 3, 10, 15, posA, 0.1)
     @test (out.body_soil_pos[1].h_soil[1] ≈ 0.0)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.0)
     @test (length(out.body_soil_pos) == 5)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15], [3, 10, 15]],
         [[1, 10, 14], [3, 10, 15]])
 
     # Test: RE-RBS-83
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(18)
     set_height(out, 10, 14, -0.4, -0.4, -0.3, -0.3, 0.0, NaN, NaN, NaN, NaN)
     set_height(
         out, 10, 15, -0.6, -0.4, -0.3, NaN, NaN, -0.6, -0.5, -0.5, -0.4)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.3, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.3)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.3)
     pos2 = _calc_bucket_frame_pos(10, 15, -0.5, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, pos2, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos2, 0.1)
     posA = _calc_bucket_frame_pos(10, 15, -0.3, grid, bucket)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.4, -0.3, -0.1, NaN, NaN)
     check_height(out, 10, 15, -0.6, -0.3, -0.2, -0.5, -0.4)
-    check_body_soil_pos(out.body_soil_pos[2], 0, 10, 15, posA, 0.1)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.2)
+    check_body_soil_pos(out.body_soil_pos[3], 1, 10, 15, posA, 0.1)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
     @test (length(out.body_soil_pos) == 3)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15], [3, 10, 15]],
         [[1, 10, 14], [1, 10, 15], [3, 10, 15]])
 
     # Test: RE-RBS-84
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(18)
     set_height(out, 10, 14, -0.4, -0.4, -0.2, -0.2, 0.0, NaN, NaN, NaN, NaN)
     set_height(
         out, 10, 15, -0.7, -0.5, -0.4, NaN, NaN, -0.7, -0.6, -0.6, -0.5)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.2, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.2)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.2)
     pos2 = _calc_bucket_frame_pos(10, 15, -0.6, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, pos2, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos2, 0.1)
     posA = _calc_bucket_frame_pos(10, 15, -0.4, grid, bucket)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.4, 0.0, 0.0, NaN, NaN)
     check_height(out, 10, 15, -0.7, -0.4, -0.2, -0.6, -0.5)
-    check_body_soil_pos(out.body_soil_pos[2], 0, 10, 15, posA, 0.2)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.0)
+    check_body_soil_pos(out.body_soil_pos[3], 1, 10, 15, posA, 0.2)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.0)
     @test (length(out.body_soil_pos) == 3)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15], [3, 10, 15]],
         [[1, 10, 14], [1, 10, 15], [3, 10, 15]])
 
     # Test: RE-RBS-85
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(2)
     set_height(out, 10, 14, -0.4, -0.4, -0.2, -0.2, 0.0, NaN, NaN, NaN, NaN)
     set_height(
         out, 10, 15, -0.7, -0.5, -0.4, NaN, NaN, -0.7, -0.6, -0.6, -0.5)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.2, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
     pos2 = _calc_bucket_frame_pos(10, 15, -0.6, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, pos2, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos2, 0.1)
     posA = _calc_bucket_frame_pos(10, 15, -0.4, grid, bucket)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.4, 0.0, 0.0, NaN, NaN)
     check_height(out, 10, 15, -0.7, -0.4, -0.2, -0.6, -0.5)
-    check_body_soil_pos(out.body_soil_pos[3], 0, 10, 15, posA, 0.1)
-    check_body_soil_pos(out.body_soil_pos[4], 0, 10, 15, posA, 0.1)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.0)
+    check_body_soil_pos(out.body_soil_pos[4], 1, 10, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[5], 1, 10, 15, posA, 0.1)
     @test (out.body_soil_pos[1].h_soil[1] ≈ 0.0)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.0)
     @test (length(out.body_soil_pos) == 5)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15], [3, 10, 15]],
         [[1, 10, 14], [1, 10, 15], [3, 10, 15]])
 
     # Test: RE-RBS-86
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(18)
     set_height(out, 10, 14, -0.4, -0.4, -0.3, -0.3, 0.0, NaN, NaN, NaN, NaN)
     set_height(
         out, 10, 15, -0.8, -0.1, 0.0, 0.0, 0.1, -0.8, -0.7, -0.7, -0.4)
     pos0 = _calc_bucket_frame_pos(10, 15, 0.0, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 15, pos0, 0.1)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.3, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.3)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.3)
     posA = _calc_bucket_frame_pos(10, 15, -0.7, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, posA, 0.3)
+    push_body_soil_pos(out, 3, 10, 15, posA, 0.3)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.4, -0.3, -0.2, NaN, NaN)
     check_height(out, 10, 15, -0.8, 0.0, 0.1, -0.7, -0.2)
-    check_body_soil_pos(out.body_soil_pos[3], 2, 10, 15, posA, 0.2)
-    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.1)
+    check_body_soil_pos(out.body_soil_pos[4], 3, 10, 15, posA, 0.2)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.1)
     @test (length(out.body_soil_pos) == 4)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15], [3, 10, 15]],
         [[1, 10, 14], [1, 10, 15], [3, 10, 15]])
 
     # Test: RE-RBS-87
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(2)
     set_height(out, 10, 14, -0.4, -0.4, -0.2, -0.2, 0.0, NaN, NaN, NaN, NaN)
     set_height(
         out, 10, 15, -0.8, -0.1, 0.0, 0.0, 0.1, -0.8, -0.7, -0.7, -0.6)
     pos0 = _calc_bucket_frame_pos(10, 15, 0.0, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 15, pos0, 0.1)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.2, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.2)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.2)
     posA = _calc_bucket_frame_pos(10, 15, -0.7, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, posA, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, posA, 0.1)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.4, 0.0, 0.0, NaN, NaN)
     check_height(out, 10, 15, -0.8, 0.0, 0.1, -0.7, -0.4)
-    check_body_soil_pos(out.body_soil_pos[3], 2, 10, 15, posA, 0.2)
-    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.0)
+    check_body_soil_pos(out.body_soil_pos[4], 3, 10, 15, posA, 0.2)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.0)
     @test (length(out.body_soil_pos) == 4)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15], [3, 10, 15]],
         [[1, 10, 14], [1, 10, 15], [3, 10, 15]])
 
     # Test: RE-RBS-88
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(2)
     set_height(out, 10, 14, -0.8, -0.8, -0.7, -0.7, 0.0, NaN, NaN, NaN, NaN)
     set_height(
         out, 10, 15, -0.8, -0.4, -0.3, -0.3, -0.2, -0.8, -0.7, -0.7, -0.6)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.7, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.7)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.7)
     pos0 = _calc_bucket_frame_pos(10, 15, -0.3, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 15, pos0, 0.1)
     posA = _calc_bucket_frame_pos(10, 15, -0.7, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, posA, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, posA, 0.1)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.8, -0.7, -0.2, NaN, NaN)
     check_height(out, 10, 15, -0.8, -0.3, -0.2, -0.7, -0.4)
-    check_body_soil_pos(out.body_soil_pos[3], 2, 10, 15, posA, 0.2)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.5)
+    check_body_soil_pos(out.body_soil_pos[4], 3, 10, 15, posA, 0.2)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.5)
     @test (length(out.body_soil_pos) == 4)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15], [3, 10, 15]],
         [[1, 10, 14], [1, 10, 15], [3, 10, 15]])
 
     # Test: RE-RBS-89
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(2)
     set_height(out, 10, 14, -0.4, -0.4, -0.2, -0.2, 0.0, NaN, NaN, NaN, NaN)
     set_height(
         out, 10, 15, -0.8, -0.1, 0.0, 0.0, 0.1, -0.8, -0.7, -0.7, -0.6)
     pos0 = _calc_bucket_frame_pos(10, 15, 0.0, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 15, pos0, 0.1)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.2, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
     posA = _calc_bucket_frame_pos(10, 15, -0.7, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, posA, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, posA, 0.1)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.4, 0.0, 0.0, NaN, NaN)
     check_height(out, 10, 15, -0.8, 0.0, 0.1, -0.7, -0.4)
-    check_body_soil_pos(out.body_soil_pos[4], 2, 10, 15, posA, 0.1)
-    check_body_soil_pos(out.body_soil_pos[5], 2, 10, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[5], 3, 10, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[6], 3, 10, 15, posA, 0.1)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.0)
+    @test (out.body_soil_pos[3].h_soil[1] ≈ 0.0)
+    @test (length(out.body_soil_pos) == 6)
+    reset_value_and_test(
+        out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15], [3, 10, 15]],
+        [[1, 10, 14], [1, 10, 15], [3, 10, 15]])
+
+    # Test: RE-RBS-90
+    set_RNG_seed!(18)
+    set_height(out, 10, 14, -0.4, -0.4, -0.3, -0.3, 0.1, NaN, NaN, NaN, NaN)
+    set_height(
+        out, 10, 15, -0.8, -0.3, -0.2, -0.2, -0.1, -0.8, -0.7, -0.7, -0.4)
+    pos0 = _calc_bucket_frame_pos(10, 14, -0.3, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.4)
+    posA = _calc_bucket_frame_pos(10, 15, -0.2, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, posA, 0.1)
+    pos2 = _calc_bucket_frame_pos(10, 15, -0.7, grid, bucket)
+    push_body_soil_pos(out, 3, 10, 15, pos2, 0.3)
+    _relax_body_soil!(out, grid, bucket, sim, 1e-5)
+    check_height(out, 10, 14, -0.4, -0.3, 0.0, NaN, NaN)
+    check_height(out, 10, 15, -0.8, -0.2, 0.0, -0.7, -0.4)
+    check_body_soil_pos(out.body_soil_pos[4], 1, 10, 15, posA, 0.1)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.3)
+    @test (length(out.body_soil_pos) == 4)
+    reset_value_and_test(
+        out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15], [3, 10, 15]],
+        [[1, 10, 14], [1, 10, 15], [3, 10, 15]])
+
+    # Test: RE-RBS-91
+    set_RNG_seed!(2)
+    set_height(out, 10, 14, -0.4, -0.4, -0.1, -0.1, 0.1, NaN, NaN, NaN, NaN)
+    set_height(
+        out, 10, 15, -0.8, -0.5, -0.4, -0.4, -0.3, -0.8, -0.7, -0.7, -0.6)
+    pos0 = _calc_bucket_frame_pos(10, 14, -0.1, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.2)
+    posA = _calc_bucket_frame_pos(10, 15, -0.4, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, posA, 0.1)
+    pos2 = _calc_bucket_frame_pos(10, 15, -0.7, grid, bucket)
+    push_body_soil_pos(out, 3, 10, 15, pos2, 0.1)
+    _relax_body_soil!(out, grid, bucket, sim, 1e-5)
+    check_height(out, 10, 14, -0.4, 0.0, 0.0, NaN, NaN)
+    check_height(out, 10, 15, -0.8, -0.4, -0.1, -0.7, -0.6)
+    check_body_soil_pos(out.body_soil_pos[4], 1, 10, 15, posA, 0.2)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.0)
+    @test (length(out.body_soil_pos) == 4)
+    reset_value_and_test(
+        out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15], [3, 10, 15]],
+        [[1, 10, 14], [1, 10, 15], [3, 10, 15]])
+
+    # Test: RE-RBS-92
+    set_RNG_seed!(2)
+    set_height(out, 10, 14, -0.4, -0.4, -0.1, -0.1, 0.1, NaN, NaN, NaN, NaN)
+    set_height(
+        out, 10, 15, -0.8, -0.5, -0.4, -0.4, -0.3, -0.8, -0.7, -0.7, -0.6)
+    pos0 = _calc_bucket_frame_pos(10, 14, -0.1, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
+    posA = _calc_bucket_frame_pos(10, 15, -0.4, grid, bucket)
+    push_body_soil_pos(out, 1, 10, 15, posA, 0.1)
+    pos2 = _calc_bucket_frame_pos(10, 15, -0.7, grid, bucket)
+    push_body_soil_pos(out, 3, 10, 15, pos2, 0.1)
+    _relax_body_soil!(out, grid, bucket, sim, 1e-5)
+    check_height(out, 10, 14, -0.4, 0.0, 0.0, NaN, NaN)
+    check_height(out, 10, 15, -0.8, -0.4, -0.1, -0.7, -0.6)
+    check_body_soil_pos(out.body_soil_pos[5], 1, 10, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[6], 1, 10, 15, posA, 0.1)
     @test (out.body_soil_pos[1].h_soil[1] ≈ 0.0)
     @test (out.body_soil_pos[2].h_soil[1] ≈ 0.0)
     @test (length(out.body_soil_pos) == 6)
@@ -5549,107 +5616,43 @@ end
         out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15], [3, 10, 15]],
         [[1, 10, 14], [1, 10, 15], [3, 10, 15]])
 
-    # Test: RE-RBS-90
-    soil_simulator::rng.seed(1234)
-    set_height(out, 10, 14, -0.4, -0.4, -0.3, -0.3, 0.1, NaN, NaN, NaN, NaN)
-    set_height(
-        out, 10, 15, -0.8, -0.3, -0.2, -0.2, -0.1, -0.8, -0.7, -0.7, -0.4)
-    pos0 = _calc_bucket_frame_pos(10, 14, -0.3, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.4)
-    posA = _calc_bucket_frame_pos(10, 15, -0.2, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, posA, 0.1)
-    pos2 = _calc_bucket_frame_pos(10, 15, -0.7, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, pos2, 0.3)
-    _relax_body_soil!(out, grid, bucket, sim, 1e-5)
-    check_height(out, 10, 14, -0.4, -0.3, 0.0, NaN, NaN)
-    check_height(out, 10, 15, -0.8, -0.2, 0.0, -0.7, -0.4)
-    check_body_soil_pos(out.body_soil_pos[3], 0, 10, 15, posA, 0.1)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.3)
-    @test (length(out.body_soil_pos) == 4)
-    reset_value_and_test(
-        out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15], [3, 10, 15]],
-        [[1, 10, 14], [1, 10, 15], [3, 10, 15]])
-
-    # Test: RE-RBS-91
-    soil_simulator::rng.seed(1234)
-    set_height(out, 10, 14, -0.4, -0.4, -0.1, -0.1, 0.1, NaN, NaN, NaN, NaN)
-    set_height(
-        out, 10, 15, -0.8, -0.5, -0.4, -0.4, -0.3, -0.8, -0.7, -0.7, -0.6)
-    pos0 = _calc_bucket_frame_pos(10, 14, -0.1, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.2)
-    posA = _calc_bucket_frame_pos(10, 15, -0.4, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, posA, 0.1)
-    pos2 = _calc_bucket_frame_pos(10, 15, -0.7, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, pos2, 0.1)
-    _relax_body_soil!(out, grid, bucket, sim, 1e-5)
-    check_height(out, 10, 14, -0.4, 0.0, 0.0, NaN, NaN)
-    check_height(out, 10, 15, -0.8, -0.4, -0.1, -0.7, -0.6)
-    check_body_soil_pos(out.body_soil_pos[3], 0, 10, 15, posA, 0.2)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.0)
-    @test (length(out.body_soil_pos) == 4)
-    reset_value_and_test(
-        out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15], [3, 10, 15]],
-        [[1, 10, 14], [1, 10, 15], [3, 10, 15]])
-
-    # Test: RE-RBS-92
-    soil_simulator::rng.seed(1234)
-    set_height(out, 10, 14, -0.4, -0.4, -0.1, -0.1, 0.1, NaN, NaN, NaN, NaN)
-    set_height(
-        out, 10, 15, -0.8, -0.5, -0.4, -0.4, -0.3, -0.8, -0.7, -0.7, -0.6)
-    pos0 = _calc_bucket_frame_pos(10, 14, -0.1, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
-    posA = _calc_bucket_frame_pos(10, 15, -0.4, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, posA, 0.1)
-    pos2 = _calc_bucket_frame_pos(10, 15, -0.7, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, pos2, 0.1)
-    _relax_body_soil!(out, grid, bucket, sim, 1e-5)
-    check_height(out, 10, 14, -0.4, 0.0, 0.0, NaN, NaN)
-    check_height(out, 10, 15, -0.8, -0.4, -0.1, -0.7, -0.6)
-    check_body_soil_pos(out.body_soil_pos[4], 0, 10, 15, posA, 0.1)
-    check_body_soil_pos(out.body_soil_pos[5], 0, 10, 15, posA, 0.1)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.0)
-    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.0)
-    @test (length(out.body_soil_pos) == 6)
-    reset_value_and_test(
-        out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15], [3, 10, 15]],
-        [[1, 10, 14], [1, 10, 15], [3, 10, 15]])
-
     # Test: RE-RBS-93
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(18)
     set_height(out, 10, 14, -0.8, -0.8, -0.7, -0.7, 0.0, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.4, 0.0, 0.1, NaN, NaN, -0.4, -0.2, -0.2, 0.0)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.7, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.7)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.7)
     pos2 = _calc_bucket_frame_pos(10, 15, -0.3, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, pos2, 0.2)
+    push_body_soil_pos(out, 3, 10, 15, pos2, 0.2)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.8, -0.7, 0.0, NaN, NaN)
     check_height(out, 10, 15, -0.4, NaN, NaN, -0.2, 0.0)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.7)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.7)
     @test (length(out.body_soil_pos) == 2)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15], [3, 10, 15]],
         [[1, 10, 14], [3, 10, 15]])
 
     # Test: RE-RBS-94
-    soil_simulator::rng.seed(1234)
-    for (auto ii = 9 ii < 12  ii++)
-        for (auto jj = 13 jj < 16  jj++)
-            out.terrain[ii][jj] = 0.2
+    set_RNG_seed!(2)
+    for ii in 9:11  
+        for jj in 13:15  
+            out.terrain[ii, jj] = 0.2
+        end
+    end
     set_height(out, 10, 14, -0.8, -0.8, -0.7, -0.7, 0.0, NaN, NaN, NaN, NaN)
     set_height(
         out, 10, 15, -0.4, -0.1, 0.0, 0.0, 0.1, -0.4, -0.3, -0.3, -0.1)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.7, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.7)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.7)
     pos0 = _calc_bucket_frame_pos(10, 15, 0.0, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 15, pos0, 0.1)
     pos2 = _calc_bucket_frame_pos(10, 15, -0.3, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, pos2, 0.2)
+    push_body_soil_pos(out, 3, 10, 15, pos2, 0.2)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.8, -0.7, 0.0, NaN, NaN)
     check_height(out, 10, 15, -0.4, 0.0, 0.1, -0.3, -0.1)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.7)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.7)
     @test (length(out.body_soil_pos) == 3)
     terrain_pos = [
         [9, 13], [9, 14], [9, 15], [10, 13], [10, 14], [10, 15], [11, 13],
@@ -5659,118 +5662,117 @@ end
         [[1, 10, 14], [1, 10, 15], [3, 10, 15]])
 
     # Test: RE-RBS-95
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(18)
     set_height(out, 10, 14, -0.8, -0.8, -0.7, -0.7, 0.0, NaN, NaN, NaN, NaN)
     set_height(
         out, 10, 15, -0.8, -0.4, -0.3, NaN, NaN, -0.8, -0.7, -0.7, -0.4)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.7, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.7)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.7)
     pos2 = _calc_bucket_frame_pos(10, 15, -0.7, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, pos2, 0.3)
+    push_body_soil_pos(out, 3, 10, 15, pos2, 0.3)
     posA = _calc_bucket_frame_pos(10, 15, -0.3, grid, bucket)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.8, -0.7, -0.1, NaN, NaN)
     check_height(out, 10, 15, -0.8, -0.3, -0.2, -0.7, -0.4)
-    check_body_soil_pos(out.body_soil_pos[2], 0, 10, 15, posA, 0.1)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.6)
+    check_body_soil_pos(out.body_soil_pos[3], 1, 10, 15, posA, 0.1)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.6)
     @test (length(out.body_soil_pos) == 3)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15], [3, 10, 15]],
         [[1, 10, 14], [1, 10, 15], [3, 10, 15]])
 
     # Test: RE-RBS-96
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(2)
     set_height(out, 10, 14, -0.8, -0.8, -0.7, -0.7, 0.0, NaN, NaN, NaN, NaN)
     set_height(
         out, 10, 15, -0.8, -0.6, -0.5, NaN, NaN, -0.8, -0.7, -0.7, -0.6)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.7, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.6)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.6)
     pos2 = _calc_bucket_frame_pos(10, 15, -0.7, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, pos2, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos2, 0.1)
     posA = _calc_bucket_frame_pos(10, 15, -0.5, grid, bucket)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.8, -0.7, -0.2, NaN, NaN)
     check_height(out, 10, 15, -0.8, -0.5, -0.3, -0.7, -0.6)
-    check_body_soil_pos(out.body_soil_pos[3], 0, 10, 15, posA, 0.1)
-    check_body_soil_pos(out.body_soil_pos[4], 0, 10, 15, posA, 0.1)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.0)
-    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.5)
+    check_body_soil_pos(out.body_soil_pos[4], 1, 10, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[5], 1, 10, 15, posA, 0.1)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.0)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.5)
     @test (length(out.body_soil_pos) == 5)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15], [3, 10, 15]],
         [[1, 10, 14], [1, 10, 15], [3, 10, 15]])
 
     # Test: RE-RBS-97
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(2)
     set_height(out, 10, 14, -0.8, -0.8, -0.7, -0.7, 0.0, NaN, NaN, NaN, NaN)
     set_height(
         out, 10, 15, -0.8, -0.4, -0.3, -0.3, -0.2, -0.8, -0.7, -0.7, -0.4)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.7, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.7)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.7)
     posA = _calc_bucket_frame_pos(10, 15, -0.3, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, posA, 0.1)
+    push_body_soil_pos(out, 1, 10, 15, posA, 0.1)
     pos2 = _calc_bucket_frame_pos(10, 15, -0.7, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, pos2, 0.3)
+    push_body_soil_pos(out, 3, 10, 15, pos2, 0.3)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.8, -0.7, -0.1, NaN, NaN)
     check_height(out, 10, 15, -0.8, -0.3, -0.1, -0.7, -0.4)
-    check_body_soil_pos(out.body_soil_pos[3], 0, 10, 15, posA, 0.1)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.6)
+    check_body_soil_pos(out.body_soil_pos[4], 1, 10, 15, posA, 0.1)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.6)
     @test (length(out.body_soil_pos) == 4)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15], [3, 10, 15]],
         [[1, 10, 14], [1, 10, 15], [3, 10, 15]])
 
     # Test: RE-RBS-98
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(2)
     set_height(out, 10, 14, -0.8, -0.8, -0.7, -0.7, 0.0, NaN, NaN, NaN, NaN)
     set_height(
         out, 10, 15, -0.8, -0.6, -0.5, -0.5, -0.4, -0.8, -0.7, -0.7, -0.6)
     pos0 = _calc_bucket_frame_pos(10, 14, -0.7, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.1)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.6)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.1)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.6)
     posA = _calc_bucket_frame_pos(10, 15, -0.5, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 15, posA, 0.1)
+    push_body_soil_pos(out, 1, 10, 15, posA, 0.1)
     pos2 = _calc_bucket_frame_pos(10, 15, -0.7, grid, bucket)
-    push_body_soil_pos(out, 2, 10, 15, pos2, 0.1)
+    push_body_soil_pos(out, 3, 10, 15, pos2, 0.1)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.8, -0.7, -0.2, NaN, NaN)
     check_height(out, 10, 15, -0.8, -0.5, -0.2, -0.7, -0.6)
-    check_body_soil_pos(out.body_soil_pos[4], 0, 10, 15, posA, 0.1)
-    check_body_soil_pos(out.body_soil_pos[5], 0, 10, 15, posA, 0.1)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.0)
-    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.5)
+    check_body_soil_pos(out.body_soil_pos[5], 1, 10, 15, posA, 0.1)
+    check_body_soil_pos(out.body_soil_pos[6], 1, 10, 15, posA, 0.1)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.0)
+    @test (out.body_soil_pos[2].h_soil[1] ≈ 0.5)
     @test (length(out.body_soil_pos) == 6)
     reset_value_and_test(
         out, [[10, 14], [10, 15]], [[1, 10, 14], [1, 10, 15], [3, 10, 15]],
         [[1, 10, 14], [1, 10, 15], [3, 10, 15]])
 
     # Test: RE-RBS-99
-    soil_simulator::rng.seed(1234)
+    set_RNG_seed!(3)
     set_height(out, 10, 14, -0.6, -0.6, -0.5, -0.5, 0.0, NaN, NaN, NaN, NaN)
-    out.terrain[10][13] = -0.4
+    out.terrain[10, 13] = -0.4
     out.terrain[10, 15] = -0.4
     pos0 = _calc_bucket_frame_pos(10, 14, -0.5, grid, bucket)
-    push_body_soil_pos(out, 0, 10, 14, pos0, 0.5)
+    push_body_soil_pos(out, 1, 10, 14, pos0, 0.5)
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.6, -0.5, -0.3, NaN, NaN)
-    EXPECT_NEAR(out.terrain[10][13], -0.2)
+    @test (out.terrain[10, 13] ≈ -0.2)
     @test (out.terrain[10, 15] ≈ -0.3)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.2)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
     @test (length(out.body_soil_pos) == 1)
-    soil_simulator::rng.seed(1235)
-    out.body_soil_[1][10][14] = 0.0
-    out.terrain[10][13] = -0.4
+    set_RNG_seed!(1)
+    out.body_soil[2][10, 14] = 0.0
+    out.terrain[10, 13] = -0.4
     out.terrain[10, 15] = -0.4
-    out.body_soil_pos[0].h_soil = 0.5
+    out.body_soil_pos[1].h_soil[1] = 0.5
     _relax_body_soil!(out, grid, bucket, sim, 1e-5)
     check_height(out, 10, 14, -0.6, -0.5, -0.3, NaN, NaN)
-    EXPECT_NEAR(out.terrain[10][13], -0.3)
+    @test (out.terrain[10, 13] ≈ -0.3)
     @test (out.terrain[10, 15] ≈ -0.2)
-    @test (out.body_soil_pos[0].h_soil[1] ≈ 0.2)
+    @test (out.body_soil_pos[1].h_soil[1] ≈ 0.2)
     @test (length(out.body_soil_pos) == 1)
     reset_value_and_test(
         out, [[10, 13], [10, 14], [10, 15]], [[1, 10, 14]], [[1, 10, 14]])
-"""
 end
