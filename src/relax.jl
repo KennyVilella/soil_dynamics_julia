@@ -1133,7 +1133,7 @@ function _relax_unstable_body_cell!(
                 h_new = out.body_soil[ind+1][ii, jj] - h_soil
             end
 
-            if (h_new_c - tol > out.body_soil[ind][ii, jj])
+            if (h_new - tol > out.body_soil[ind][ii, jj])
                 ### Soil on the bucket should partially avalanche ###
                 out.body_soil[ind+1][ii, jj] = h_new
                 out.body_soil_pos[nn].h_soil[1] -= h_soil
