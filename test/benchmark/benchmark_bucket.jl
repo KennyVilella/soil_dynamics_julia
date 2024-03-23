@@ -58,10 +58,9 @@ a = [0.0, 0.0, 0.0]
 b = [1.0, 0.0, 0.0]
 c = [1.0, 0.5, 0.0]
 d = [0.0, 0.5, 0.0]
-delta = 0.01
 println("_calc_rectangle_pos")
 display(
-    @benchmark rect_pos = _calc_rectangle_pos(a, b, c, d, delta, grid)
+    @benchmark rect_pos = _calc_rectangle_pos(a, b, c, d, grid)
 )
 println("")
 
@@ -85,10 +84,9 @@ println("")
 a = [0.0, 0.0, 0.0]
 b = [1.0, 0.0, 0.0]
 c = [1.0, 0.5, 0.0]
-delta = 0.01
 println("_calc_triangle_pos")
 display(
-    @benchmark tri_pos = _calc_triangle_pos(a, b, c, delta, grid)
+    @benchmark tri_pos = _calc_triangle_pos(a, b, c, grid)
 )
 println("")
 
@@ -111,10 +109,9 @@ println("")
 # Benchmarking for _calc_line_pos function
 a = [0.34, 0.56, 0.0]
 b = [0.74, 0.97, 0.0]
-delta = 0.01
 println("_calc_line_pos")
 display(
-    @benchmark line_pos = _calc_line_pos(a, b, delta, grid)
+    @benchmark line_pos = _calc_line_pos(a, b, grid)
 )
 println("")
 
@@ -122,7 +119,7 @@ println("")
 a = [0.0, 0.0, 0.0]
 b = [1.0, 0.0, 0.0]
 c = [1.0, 0.5, 0.0]
-tri_pos = _calc_triangle_pos(a, b, c, 0.01, grid)
+tri_pos = _calc_triangle_pos(a, b, c, grid)
 println("_update_body!")
 display(
     @benchmark _update_body!(tri_pos, out, grid)

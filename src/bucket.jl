@@ -9,7 +9,7 @@ Copyright, 2023,  Vilella Kenny.
 """
     _calc_bucket_pos!(
         out::SimOut{B,I,T}, pos::Vector{T}, ori::Quaternion{T}, grid::GridParam{I,T},
-        bucket::BucketParam{I,T}, sim::SimParam{I,T}, step_bucket_grid::T=0.5, tol::T=1e-8
+        bucket::BucketParam{I,T}, sim::SimParam{I,T}, tol::T=1e-8
     ) where {B<:Bool,I<:Int64,T<:Float64}
 
 This function determines all the cells where the bucket is located.
@@ -32,7 +32,6 @@ origin. The orientation is provided using the quaternion definition.
                                   bucket object.
 - `sim::SimParam{Int64,Float64}`: Struct that stores information related to the
                                   simulation.
-- `step_bucket_grid::Float64`: Spatial increment used to decompose the edges of the bucket.
 - `tol::Float64`: Small number used to handle numerical approximation errors.
 
 # Outputs
@@ -61,30 +60,16 @@ function _calc_bucket_pos!(
     grid::GridParam{I,T},
     bucket::BucketParam{T},
     sim::SimParam{I,T},
-    step_bucket_grid::T=0.5,
     tol::T=1e-8
 ) where {B<:Bool,I<:Int64,T<:Float64}
 
-    # Calculating position of the bucker vertices
-    j_pos = Vector{T}(vect(ori \ bucket.j_pos_init * ori))
-    b_pos = Vector{T}(vect(ori \ bucket.b_pos_init * ori))
-    t_pos = Vector{T}(vect(ori \ bucket.t_pos_init * ori))
+    # Reinitializing bucket position
+    _init_sparse_array!(out.body, grid)
 
-    # Adding position of the bucket origin
-    j_pos += pos
-    b_pos += pos
-    t_pos += pos
-
-    # Unit vector normal to the side of the bucket
-    normal_side = calc_normal(j_pos, b_pos, t_pos)
-
-    # Position of each vertex of the bucket
-    j_r_pos = j_pos + 0.5 * bucket.width * normal_side
-    j_l_pos = j_pos - 0.5 * bucket.width * normal_side
-    b_r_pos = b_pos + 0.5 * bucket.width * normal_side
-    b_l_pos = b_pos - 0.5 * bucket.width * normal_side
-    t_r_pos = t_pos + 0.5 * bucket.width * normal_side
-    t_l_pos = t_pos - 0.5 * bucket.width * normal_side
+    # Calculating position of the bucket corners
+    j_r_pos, j_l_pos, b_r_pos, b_l_pos, t_r_pos, t_l_pos = _calc_bucket_corner_pos(
+        pos, ori, bucket
+    )
 
     # Adding a small increment to all vertices
     # This is to account for the edge case where one of the vertex is at cell border
@@ -133,27 +118,16 @@ function _calc_bucket_pos!(
     )
 
     # Determining where each surface of the bucket is located
-    base_pos = _calc_rectangle_pos(
-        b_r_pos, b_l_pos, t_l_pos, t_r_pos, step_bucket_grid * grid.cell_size_z, grid, tol
-    )
-    back_pos = _calc_rectangle_pos(
-        b_r_pos, b_l_pos, j_l_pos, j_r_pos, step_bucket_grid * grid.cell_size_z, grid, tol
-    )
-    right_side_pos = _calc_triangle_pos(
-        j_r_pos, b_r_pos, t_r_pos, step_bucket_grid * grid.cell_size_z, grid, tol
-    )
-    left_side_pos = _calc_triangle_pos(
-        j_l_pos, b_l_pos, t_l_pos, step_bucket_grid * grid.cell_size_z, grid, tol
-    )
+    base_pos = _calc_rectangle_pos(b_r_pos, b_l_pos, t_l_pos, t_r_pos, grid, tol)
+    back_pos = _calc_rectangle_pos(b_r_pos, b_l_pos, j_l_pos, j_r_pos, grid, tol)
+    right_side_pos = _calc_triangle_pos(j_r_pos, b_r_pos, t_r_pos, grid, tol)
+    left_side_pos = _calc_triangle_pos(j_l_pos, b_l_pos, t_l_pos, grid, tol)
 
     # Sorting all list of cells indices where the bucket is located
     sort!(base_pos)
     sort!(back_pos)
     sort!(right_side_pos)
     sort!(left_side_pos)
-
-    # Reinitializing bucket position
-    _init_sparse_array!(out.body, grid)
 
     # Updating the bucket position
     _update_body!(base_pos, out, grid, tol)
@@ -165,7 +139,7 @@ end
 """
     _calc_rectangle_pos(
         a::Vector{T}, b::Vector{T}, c::Vector{T}, d::Vector{T},
-        delta::T, grid::GridParam{I,T}, tol::T=1e-8
+        grid::GridParam{I,T}, tol::T=1e-8
     ) where {I<:Int64,T<:Float64}
 
 This function determines the cells where a rectangle surface is located. The rectangle is
@@ -200,7 +174,6 @@ that lie on the four edges of the rectangle.
 - `b::Vector{Float64}`: Cartesian coordinates of one vertex of the rectangle. [m]
 - `c::Vector{Float64}`: Cartesian coordinates of one vertex of the rectangle. [m]
 - `d::Vector{Float64}`: Cartesian coordinates of one vertex of the rectangle. [m]
-- `delta::Float64`: Spatial increment used to decompose the edges of the rectangle. [m]
 - `grid::GridParam{Int64,Float64}`: Struct that stores information related to the
                                     simulation grid.
 - `tol::Float64`: Small number used to handle numerical approximation errors.
@@ -217,21 +190,20 @@ that lie on the four edges of the rectangle.
     c = [0.0, 1.0, 0.9]
     d = [1.0, 0.0, 0.9]
 
-    rect_pos = _calc_rectangle_pos(a, b, c, d, 0.01, grid)
+    rect_pos = _calc_rectangle_pos(a, b, c, d, grid)
 """
 function _calc_rectangle_pos(
     a::Vector{T},
     b::Vector{T},
     c::Vector{T},
     d::Vector{T},
-    delta::T,
     grid::GridParam{I,T},
     tol::T=1e-8
 ) where {I<:Int64,T<:Float64}
 
     # Converting the four rectangle vertices from position to indices
     cell_size = [grid.cell_size_xy; grid.cell_size_xy; grid.cell_size_z]
-    grid_size = [grid.half_length_x + 1; grid.half_length_y + 1; grid.half_length_z + 1]
+    grid_size = [grid.half_length_x + 1; grid.half_length_y + 1; grid.half_length_z]
     a_ind = a ./ cell_size .+ grid_size
     b_ind = b ./ cell_size .+ grid_size
     c_ind = c ./ cell_size .+ grid_size
@@ -299,10 +271,10 @@ function _calc_rectangle_pos(
     end
 
     # Determining the cells where the four edges of the rectangle are located
-    ab_pos = _calc_line_pos(a, b, delta, grid)
-    bc_pos = _calc_line_pos(b, c, delta, grid)
-    cd_pos = _calc_line_pos(c, d, delta, grid)
-    da_pos = _calc_line_pos(d, a, delta, grid)
+    ab_pos = _calc_line_pos(a, b, grid)
+    bc_pos = _calc_line_pos(b, c, grid)
+    cd_pos = _calc_line_pos(c, d, grid)
+    da_pos = _calc_line_pos(d, a, grid)
 
     return [rect_pos; ab_pos; bc_pos; cd_pos; da_pos]
 end
@@ -428,7 +400,7 @@ end
 """
     _calc_triangle_pos(
         a::Vector{T}, b::Vector{T}, c::Vector{T},
-        delta::T, grid::GridParam{I,T}, tol::T=1e-8
+        grid::GridParam{I,T}, tol::T=1e-8
     ) where {I<:Int64,T<:Float64}
 
 This function determines the cells where a triangle surface is located. The triangle is
@@ -462,7 +434,6 @@ that lie on the three edges of the triangle.
 - `a::Vector{Float64}`: Cartesian coordinates of one vertex of the triangle. [m]
 - `b::Vector{Float64}`: Cartesian coordinates of one vertex of the triangle. [m]
 - `c::Vector{Float64}`: Cartesian coordinates of one vertex of the triangle. [m]
-- `delta::Float64`: Spatial increment used to decompose the edges of the triangle. [m]
 - `grid::GridParam{Int64,Float64}`: Struct that stores information related to the
                                     simulation grid.
 - `tol::Float64`: Small number used to handle numerical approximation errors.
@@ -478,20 +449,19 @@ that lie on the three edges of the triangle.
     b = [0.0, 1.0, 0.7]
     c = [0.0, 1.0, 0.9]
 
-    tri_pos = _calc_triangle_pos(a, b, c, 0.01, grid)
+    tri_pos = _calc_triangle_pos(a, b, c, grid)
 """
 function _calc_triangle_pos(
     a::Vector{T},
     b::Vector{T},
     c::Vector{T},
-    delta::T,
     grid::GridParam{I,T},
     tol::T=1e-8
 ) where {I<:Int64,T<:Float64}
 
     # Converting the three triangle vertices from position to indices
     cell_size = [grid.cell_size_xy; grid.cell_size_xy; grid.cell_size_z]
-    grid_size = [grid.half_length_x + 1; grid.half_length_y + 1; grid.half_length_z + 1]
+    grid_size = [grid.half_length_x + 1; grid.half_length_y + 1; grid.half_length_z]
     a_ind = a ./ cell_size .+ grid_size
     b_ind = b ./ cell_size .+ grid_size
     c_ind = c ./ cell_size .+ grid_size
@@ -558,9 +528,9 @@ function _calc_triangle_pos(
     end
 
     # Determining the cells where the three edges of the triangle are located
-    ab_pos = _calc_line_pos(a, b, delta, grid)
-    bc_pos = _calc_line_pos(b, c, delta, grid)
-    ca_pos = _calc_line_pos(c, a, delta, grid)
+    ab_pos = _calc_line_pos(a, b, grid)
+    bc_pos = _calc_line_pos(b, c, grid)
+    ca_pos = _calc_line_pos(c, a, grid)
 
     return [tri_pos; ab_pos; bc_pos; ca_pos]
 end
@@ -686,14 +656,11 @@ end
 
 """
     _calc_line_pos(
-        a::Vector{T}, b::Vector{T}, delta::T, grid::GridParam{I,T}
+        a::Vector{T}, b::Vector{T}, grid::GridParam{I,T}
     ) where {I<:Int64,T<:Float64}
 
 This function determines all the cells that lie on a straight line between two Cartesian
 coordinates.
-
-For the sake of accuracy, the line is divided into smaller segments using a spatial
-increment `delta`.
 
 The coordinates of each sub-point (ab_i) along the line can then be calculated as
 
@@ -718,13 +685,12 @@ while `ceil` should be used for the Z direction.
 # Inputs
 - `a::Vector{Float64}`: Cartesian coordinates of the first extremity of the line. [m]
 - `b::Vector{Float64}`: Cartesian coordinates of the second extremity of the line. [m]
-- `delta::Float64`: Spatial increment used to decompose the line. [m]
 - `grid::GridParam{Int64,Float64}`: Struct that stores information related to the
                                     simulation grid.
 
 # Outputs
-- `line_pos::Vector{Vector{Int64}}`: Collection of cells indices where the line is located.
-                                     Result is not sorted and duplicates should be expected.
+- `Vector{Vector{Int64}}`: Collection of cells indices where the line is located.
+                           Result is not sorted and duplicates should be expected.
 
 # Example
 
@@ -732,38 +698,97 @@ while `ceil` should be used for the Z direction.
     a = [1.0, 0.5, 0.7]
     b = [0.7, 0.8, -0.3]
 
-    line_pos = _calc_line_pos(a, b, 0.01, grid)
+    line_pos = _calc_line_pos(a, b, grid)
 """
 function _calc_line_pos(
     a::Vector{T},
     b::Vector{T},
-    delta::T,
     grid::GridParam{I,T}
 ) where {I<:Int64,T<:Float64}
 
-    # Line vector
-    ab = b - a
+    # Converting to indices
+    x1 = a[1] / grid.cell_size_xy + grid.half_length_x + 1.0
+    y1 = a[2] / grid.cell_size_xy + grid.half_length_y + 1.0
+    z1 = a[3] / grid.cell_size_z + grid.half_length_z
+    x2 = b[1] / grid.cell_size_xy + grid.half_length_x + 1.0
+    y2 = b[2] / grid.cell_size_xy + grid.half_length_y + 1.0
+    z2 = b[3] / grid.cell_size_z + grid.half_length_z
 
-    # Creating the unit vector
-    nn = max(2, round(Int64, norm(ab) / delta) + 1)
-    unit_vec = LinRange(0.0, 1.0, nn)
+    # Determining direction of line
+    step_x = (x1 < x2) ? 1 : -1
+    step_y = (y1 < y2) ? 1 : -1
+    step_z = (z1 < z2) ? 1 : -1
 
-    # Allocating memory
-    line_pos = [Vector{Int64}(undef,3) for _ in 1:nn]
+    # Spatial difference between a and b
+    dx = x2 - x1
+    dy = y2 - y1
+    dz = z2 - z1
 
-    # Setting constants used for the vectorial decomposition
-    c_x = a[1] / grid.cell_size_xy + grid.half_length_x + 1
-    c_y = a[2] / grid.cell_size_xy + grid.half_length_y + 1
-    c_z = a[3] / grid.cell_size_z + grid.half_length_z + 1
-    d_x = ab[1] / grid.cell_size_xy
-    d_y = ab[2] / grid.cell_size_xy
-    d_z = ab[3] / grid.cell_size_z
+    # Avoiding issue when line is 2D
+    if (dx == 0.0)
+        dx = 1e-10
+    end
+    if (dy == 0.0)
+        dy = 1e-10
+    end
+    if (dz == 0.0)
+        dz = 1e-10
+    end
 
-    # Determining the cells where the line is located
-    for ii in 1:nn
-        line_pos[ii][1] = round(Int64, c_x + d_x * unit_vec[ii])
-        line_pos[ii][2] = round(Int64, c_y + d_y * unit_vec[ii])
-        line_pos[ii][3] = ceil(Int64, c_z + d_z * unit_vec[ii])
+    # Determining the offset to first cell boundary
+    if (step_x == 1)
+        t_max_x = round(x1) + 0.5 - x1
+    else
+        t_max_x = x1 - round(x1) + 0.5
+    end
+    if (step_y == 1)
+        t_max_y = round(y1) + 0.5 - y1
+    else
+        t_max_y = y1 - round(y1) + 0.5
+    end
+    if (step_z == 1)
+        t_max_z = ceil(z1) - z1
+    else
+        t_max_z = z1 - floor(z1)
+    end
+
+    # Determining how long on the line to cross the cell
+    t_delta_x = sqrt(1.0 + (dy * dy + dz * dz) / (dx * dx))
+    t_delta_y = sqrt(1.0 + (dx * dx + dz * dz) / (dy * dy))
+    t_delta_z = sqrt(1.0 + (dx * dx + dy * dy) / (dz * dz))
+
+    # Determining the distance along the line until the first cell boundary
+    t_max_x *= t_delta_x
+    t_max_y *= t_delta_y
+    t_max_z *= t_delta_z
+
+    # Calculating norm of the vector AB
+    ab_norm = sqrt(dx * dx + dy * dy + dz * dz)
+
+    # Creating line_pos and adding the starting point
+    line_pos = Vector{Vector{I}}()
+    push!(line_pos, [round(Int64, x1), round(Int64, y1), ceil(Int64, z1)])
+
+    # Iterating along the line until reaching the end
+    while ((t_max_x < ab_norm) || (t_max_y < ab_norm) || (t_max_z < ab_norm))
+        if (t_max_x < t_max_y)
+            if (t_max_x < t_max_z)
+                x1 = x1 + step_x
+                t_max_x += t_delta_x
+            else
+                z1 = z1 + step_z
+                t_max_z += t_delta_z
+            end
+        else
+            if (t_max_y < t_max_z)
+                y1 = y1 + step_y
+                t_max_y += t_delta_y
+            else
+                z1 = z1 + step_z
+                t_max_z += t_delta_z
+            end
+        end
+        push!(line_pos, [round(Int64, x1), round(Int64, y1), ceil(Int64, z1)])
     end
 
     return line_pos
@@ -816,8 +841,8 @@ function _update_body!(
     # Initializing cell position and height
     ii = area_pos[1][1]
     jj = area_pos[1][2]
-    min_h = grid.vect_z[area_pos[1][3]] - grid.cell_size_z
-    max_h = grid.vect_z[area_pos[1][3]]
+    min_h = grid.vect_z[area_pos[1][3]+1] - grid.cell_size_z
+    max_h = grid.vect_z[area_pos[1][3]+1]
 
     # Iterating over all cells in area_pos
     for cell in area_pos
@@ -827,14 +852,14 @@ function _update_body!(
             _include_new_body_pos!(out, ii, jj, min_h, max_h, tol)
 
             # Initializing new cell position and height
-            min_h = grid.vect_z[cell[3]] - grid.cell_size_z
-            max_h = grid.vect_z[cell[3]]
+            min_h = grid.vect_z[cell[3]+1] - grid.cell_size_z
+            max_h = grid.vect_z[cell[3]+1]
             ii = cell[1]
             jj = cell[2]
         else
             ### New height for the XY position ###
             # Updating maximum height
-            max_h = grid.vect_z[cell[3]]
+            max_h = grid.vect_z[cell[3]+1]
         end
     end
 
@@ -941,9 +966,32 @@ function _include_new_body_pos!(
         out.body[4][ii, jj] = max_h
     else
         ### New position is not overlapping with the two existing positions ###
-        # This should not happen and indicates a problem in the workflow
-        throw(ErrorException(
-            "Try to update body, but given position does not overlap with two existing ones"
-        ))
+        # This may be due to an edge case, in that case we try to fix the issue
+        # Calculating distance to the two bucket layers
+        dist_1b = abs(out.body[1][ii, jj] - max_h)
+        dist_1t = abs(min_h - out.body[2][ii, jj])
+        dist_3b = abs(out.body[3][ii, jj] - max_h)
+        dist_3t = abs(min_h - out.body[4][ii, jj])
+
+        # Checking what bucket layer is closer
+        if (min(dist_1b, dist_1t) < min(dist_3b, dist_3t))
+            # Merging with first bucket layer
+            if (dist_1b < dist_1t)
+                # Merging down
+                out.body[1][ii, jj] = min_h
+            else
+                # Merging up
+                out.body[2][ii, jj] = max_h
+            end
+        else
+            # Merging with second bucket layer
+            if (dist_3b < dist_3t)
+                # Merging down
+                out.body[3][ii, jj] = min_h
+            else
+                # Merging up
+                out.body[4][ii, jj] = max_h
+            end
+        end
     end
 end

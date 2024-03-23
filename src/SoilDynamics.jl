@@ -10,7 +10,7 @@ import SparseArrays: SparseMatrixCSC, spzeros, droptol!, nzrange, rowvals
 export soil_dynamics!
 
 # types.jl
-export GridParam, BucketParam, SimParam, SimOut
+export GridParam, BucketParam, SimParam, SimOut, BodySoil
 
 # bucket.jl
 export _calc_bucket_pos!
@@ -33,6 +33,7 @@ export _check_unstable_terrain_cell, _relax_unstable_terrain_cell!
 export _check_unstable_body_cell, _relax_unstable_body_cell!
 
 # utils.jl
+export _calc_bucket_corner_pos, check_bucket_movement, _calc_bucket_frame_pos
 export _locate_all_non_zeros, _locate_non_zeros, _init_sparse_array!
 export calc_normal, set_RNG_seed!
 export check_volume, check_soil

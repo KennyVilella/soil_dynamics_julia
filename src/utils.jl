@@ -7,6 +7,229 @@ Copyright, 2023,  Vilella Kenny.
 #                                                                                          #
 #==========================================================================================#
 """
+    _calc_bucket_corner_pos(
+        pos::Vector{T}, ori::Quaternion{T}, bucket::BucketParam{T}
+    ) where {T<:Float64}
+
+This function calculates the global position of the six corners of the bucket.
+
+# Note
+- This function is intended for internal use only.
+
+# Inputs
+- `pos::Vector{Float64}`: Cartesian coordinates of the bucket origin. [m]
+- `ori::Quaternion{Float64}`: Orientation of the bucket. [Quaternion]
+- `bucket::BucketParam{Float64}`: Struct that stores information related to the
+                                  bucket object.
+
+# Outputs
+- `Vector{Float64}`: Cartesian coordinates of the right side of the bucket joint. [m]
+- `Vector{Float64}`: Cartesian coordinates of the left side of the bucket joint. [m]
+- `Vector{Float64}`: Cartesian coordinates of the right side of the bucket base. [m]
+- `Vector{Float64}`: Cartesian coordinates of the left side of the bucket base. [m]
+- `Vector{Float64}`: Cartesian coordinates of the right side of the bucket teeth. [m]
+- `Vector{Float64}`: Cartesian coordinates of the left side of the bucket teeth. [m]
+
+# Example
+
+    pos = [0.1, 0.0, 0.2]
+    ori = angle_to_quat(0.0, -pi / 2, 0.0, :ZYX)
+    o = [0.0, 0.0, 0.0]
+    j = [0.0, 0.0, 0.0]
+    b = [0.0, 0.0, -0.5]
+    t = [1.0, 0.0, -0.5]
+    bucket = BucketParam(o, j, b, t, 0.5)
+
+    j_r_pos, j_l_pos, b_r_pos, b_l_pos, t_r_pos, t_l_pos = _calc_bucket_corner_pos(
+        pos, ori, bucket
+    )
+"""
+function _calc_bucket_corner_pos(
+    pos::Vector{T},
+    ori::Quaternion{T},
+    bucket::BucketParam{T}
+) where {T<:Float64}
+    # Calculating position of the bucket vertices
+    j_pos = Vector{T}(vect(ori \ bucket.j_pos_init * ori))
+    b_pos = Vector{T}(vect(ori \ bucket.b_pos_init * ori))
+    t_pos = Vector{T}(vect(ori \ bucket.t_pos_init * ori))
+
+    # Unit vector normal to the side of the bucket
+    normal_side = calc_normal(j_pos, b_pos, t_pos)
+
+    # Adding position of the bucket origin
+    j_pos += pos
+    b_pos += pos
+    t_pos += pos
+
+    # Position of each vertex of the bucket
+    j_r_pos = j_pos + 0.5 * bucket.width * normal_side
+    j_l_pos = j_pos - 0.5 * bucket.width * normal_side
+    b_r_pos = b_pos + 0.5 * bucket.width * normal_side
+    b_l_pos = b_pos - 0.5 * bucket.width * normal_side
+    t_r_pos = t_pos + 0.5 * bucket.width * normal_side
+    t_l_pos = t_pos - 0.5 * bucket.width * normal_side
+
+    return j_r_pos, j_l_pos, b_r_pos, b_l_pos, t_r_pos, t_l_pos
+end
+
+"""
+    check_bucket_movement(
+        pos::Vector{T}, ori::Quaternion{T}, grid::GridParam{I,T}, bucket::BucketParam{T}
+    ) where {I<:Int64,T<:Float64}
+
+This function calculates the maximum distance travelled by any part of the bucket since the
+last soil update. The position of the bucket during the last soil update is stored in the
+`BucketParam` struct.
+
+# Note
+- If the maximum distance travelled is lower than 50% of the cell size, the function
+  returns `false` otherwise it returns `true`.
+- If the distance travelled exceeds twice the cell size, a warning is issued to indicate
+  a potential problem with the soil update.
+
+# Inputs
+- `pos::Vector{Float64}`: Cartesian coordinates of the bucket origin. [m]
+- `ori::Quaternion{Float64}`: Orientation of the bucket. [Quaternion]
+- `grid::GridParam{Int64,Float64}`: Struct that stores information related to the
+                                    simulation grid.
+- `bucket::BucketParam{Float64}`: Struct that stores information related to the
+                                  bucket object.
+
+# Outputs
+- `Bool`: Flag indicating whether the bucket has moved enough for conducting a soil update.
+
+# Example
+
+    pos = [0.1, 0.0, 0.2]
+    ori = angle_to_quat(0.0, -pi / 2, 0.0, :ZYX)
+    o = [0.0, 0.0, 0.0]
+    j = [0.0, 0.0, 0.0]
+    b = [0.0, 0.0, -0.5]
+    t = [1.0, 0.0, -0.5]
+    bucket = BucketParam(o, j, b, t, 0.5)
+    grid = GridParam(4.0, 4.0, 3.0, 0.05, 0.01)
+
+    soil_update = check_bucket_movement(pos, ori, grid, bucket)
+"""
+function check_bucket_movement(
+    pos::Vector{T},
+    ori::Quaternion{T},
+    grid::GridParam{I,T},
+    bucket::BucketParam{T}
+) where {I<:Int64,T<:Float64}
+    # Calculating new position of bucket corners
+    j_r_pos_n, j_l_pos_n, b_r_pos_n, b_l_pos_n, t_r_pos_n, t_l_pos_n = (
+        _calc_bucket_corner_pos(pos, ori, bucket)
+    )
+
+    # Calculating former position of bucket corners
+    j_r_pos_f, j_l_pos_f, b_r_pos_f, b_l_pos_f, t_r_pos_f, t_l_pos_f = (
+        _calc_bucket_corner_pos(bucket.pos, Quaternion(bucket.ori), bucket)
+    )
+
+    # Calculating distance travelled
+    j_r_dist = sqrt(
+        (j_r_pos_f[1] - j_r_pos_n[1])^2 + (j_r_pos_f[2] - j_r_pos_n[2])^2 +
+        (j_r_pos_f[3] - j_r_pos_n[3])^2
+    )
+    j_l_dist = sqrt(
+        (j_l_pos_f[1] - j_l_pos_n[1])^2 + (j_l_pos_f[2] - j_l_pos_n[2])^2 +
+        (j_l_pos_f[3] - j_l_pos_n[3])^2
+    )
+    b_r_dist = sqrt(
+        (b_r_pos_f[1] - b_r_pos_n[1])^2 + (b_r_pos_f[2] - b_r_pos_n[2])^2 +
+        (b_r_pos_f[3] - b_r_pos_n[3])^2
+    )
+    b_l_dist = sqrt(
+        (b_l_pos_f[1] - b_l_pos_n[1])^2 + (b_l_pos_f[2] - b_l_pos_n[2])^2 +
+        (b_l_pos_f[3] - b_l_pos_n[3])^2
+    )
+    t_r_dist = sqrt(
+        (t_r_pos_f[1] - t_r_pos_n[1])^2 + (t_r_pos_f[2] - t_r_pos_n[2])^2 +
+        (t_r_pos_f[3] - t_r_pos_n[3])^2
+    )
+    t_l_dist = sqrt(
+        (t_l_pos_f[1] - t_l_pos_n[1])^2 + (t_l_pos_f[2] - t_l_pos_n[2])^2 +
+        (t_l_pos_f[3] - t_l_pos_n[3])^2
+    )
+
+    # Calculating max distance travelled
+    max_dist = maximum(
+        [j_r_dist, j_l_dist, b_r_dist, b_l_dist, t_r_dist, t_l_dist]
+    )
+
+    # Calculating min cell size
+    min_cell_size = min(grid.cell_size_xy, grid.cell_size_z)
+
+    if (max_dist < 0.5 * min_cell_size)
+        # Bucket has only slightly moved since last update
+        return false
+    elseif (max_dist > 2 * min_cell_size)
+        @warn  "Movement made by the bucket is larger than two cell size.\n"
+               "The validity of the soil update is not ensured."
+    end
+
+    return true
+end
+
+"""
+    _calc_bucket_frame_pos(
+        ii::I, jj::I, z::T, grid::GridParam{I,T}, bucket::BucketParam{T}
+    ) where {I<:Int64,T<:Float64}
+
+This function calculates the position of a considered cell in the bucket frame assuming
+that the bucket is in its reference position.
+
+# Note
+- This function is intended for internal use only.
+
+# Inputs
+- `ii::Int64`: Index of the considered cell in the X direction.
+- `jj::Int64`: Index of the considered cell in the Y direction.
+- `z::Float64`: Height of the considered position. [m]
+- `grid::GridParam{Int64,Float64}`: Struct that stores information related to the
+                                    simulation grid.
+- `bucket::BucketParam{Float64}`: Struct that stores information related to the
+                                  bucket object.
+
+# Outputs
+- `Vector{Float64}`: Cartesian coordinates of the considered position in the reference
+                     bucket frame. [m]
+
+# Example
+
+    o = [0.0, 0.0, 0.0]
+    j = [0.0, 0.0, 0.0]
+    b = [0.0, 0.0, -0.5]
+    t = [1.0, 0.0, -0.5]
+    bucket = BucketParam(o, j, b, t, 0.5)
+    grid = GridParam(4.0, 4.0, 3.0, 0.05, 0.01)
+
+    cell_local_pos = _calc_bucket_frame_pos(10, 15, 0.5, grid, bucket)
+"""
+function _calc_bucket_frame_pos(
+    ii::I,
+    jj::I,
+    z::T,
+    grid::GridParam{I,T},
+    bucket::BucketParam{T}
+) where {I<:Int64,T<:Float64}
+    # Calculating cell's position in bucket frame
+    cell_pos = [
+        grid.vect_x[ii] - bucket.pos[1], grid.vect_y[jj] - bucket.pos[2], z - bucket.pos[3]
+    ]
+
+    # Inversing rotation
+    inv_ori = Quaternion(bucket.ori[1], -bucket.ori[2], -bucket.ori[3], -bucket.ori[4])
+
+    # Calculating reference position of cell in bucket frame
+    cell_local_pos = Vector{T}(vect(inv_ori \ cell_pos * inv_ori))
+
+    return cell_local_pos
+end
+
+"""
     _init_sparse_array!(
         sparse_array::Vector{SparseMatrixCSC{T,I}}, grid::GridParam{I,T}
     ) where {I<:Int64,T<:Float64}
@@ -217,7 +440,7 @@ end
 
 """
     check_volume(
-        out::SimOut{B,I,T}, init_volume::T, grid::GridParam{I,T}
+        out::SimOut{B,I,T}, init_volume::T, grid::GridParam{I,T}, tol::T=1e-8
     ) where {B<:Bool,I<:Int64,T<:Float64}
 
 This function checks that the volume of soil is conserved.
@@ -228,6 +451,7 @@ The initial volume of soil (`init_volume`) has to be provided.
 - `init_volume::Float64`: Initial volume of soil in the terrain. [m^3]
 - `grid::GridParam{Int64,Float64}`: Struct that stores information related to the
                                     simulation grid.
+- `tol::Float64`: Small number used to handle numerical approximation errors.
 
 # Outputs
 - None
@@ -244,34 +468,62 @@ The initial volume of soil (`init_volume`) has to be provided.
 function check_volume(
     out::SimOut{B,I,T},
     init_volume::T,
-    grid::GridParam{I,T}
+    grid::GridParam{I,T},
+    tol::T=1e-8
 ) where {B<:Bool,I<:Int64,T<:Float64}
 
     # Calculating volume of soil in the terrain
     terrain_volume = grid.cell_area * sum(out.terrain)
 
-    # Collecting all bucket soil
+    # Collecting all body soil
     body_soil_pos = _locate_all_non_zeros(out.body_soil)
 
-    # Calculating volume of bucket soil
+    # Copying body_soil location
+    old_body_soil = deepcopy(out.body_soil)
+
+    # Calculating volume of soil in body_soil
     body_soil_volume = 0.0
     for cell in body_soil_pos
         ii = cell[2]
         jj = cell[3]
         ind = cell[1]
-
         body_soil_volume += out.body_soil[ind+1][ii, jj] - out.body_soil[ind][ii, jj]
     end
     body_soil_volume *= grid.cell_area
 
+    # Removing soil from old_body_soil followung body_soil_pos
+    for cell in out.body_soil_pos
+        ii = cell.ii[1]
+        jj = cell.jj[1]
+        ind = cell.ind[1]
+        h_soil = cell.h_soil[1]
+        old_body_soil[ind+1][ii, jj] -= h_soil
+    end
+
     # Calculating total volume of soil
     total_volume = terrain_volume + body_soil_volume
+
+    # Checking that volume of soil in body_soil_pos corresponds to soil in body_soil
+    for ii in 1:size(old_body_soil[1], 1)
+        for jj in 1:size(old_body_soil[1], 2)
+            dh_1 = abs(old_body_soil[1][ii, jj] - old_body_soil[2][ii, jj])
+            dh_2 = abs(old_body_soil[3][ii, jj] - old_body_soil[4][ii, jj])
+            if ((dh_1 > tol) || (dh_2 > tol))
+                # Soil in body_soil_pos does not correspond to amount of soil in body_soil
+                @warn "Volume of soil in body_soil_pos_ is not consistent with " *
+                    "the amount of soil in body_soil."
+                return false
+            end
+        end
+    end
 
     if (abs(total_volume - init_volume) > 0.5 * grid.cell_volume)
         @warn "Volume is not conserved! \n" *
             "Initial volume: " * string(init_volume) *
             "   Current volume: " * string(total_volume)
+        return false
     end
+    return true
 end
 
 """
@@ -327,6 +579,7 @@ function check_soil(
                 "Location: (" * string(ii) * ", " * string(jj) * ")\n" *
                 "Terrain height: " * string(out.terrain[ii, jj]) * "\n" *
                 "Bucket minimum height: " * string(out.body[ind][ii, jj])
+            return false
         end
 
         if (out.body[ind][ii, jj] > out.body[ind+1][ii, jj] + tol)
@@ -334,6 +587,7 @@ function check_soil(
                 "Location: (" * string(ii) * ", " * string(jj) * ")\n" *
                 "Bucket minimum height: " * string(out.body[ind][ii, jj]) * "\n" *
                 "Bucket maximum height: " * string(out.body[ind+1][ii, jj])
+            return false
         end
 
         if (
@@ -348,6 +602,7 @@ function check_soil(
                 "Bucket 1 maximum height: " * string(out.body[2][ii, jj]) * "\n" *
                 "Bucket 2 minimum height: " * string(out.body[3][ii, jj]) * "\n" *
                 "Bucket 2 maximum height: " * string(out.body[4][ii, jj])
+            return false
         end
 
         if (
@@ -362,6 +617,7 @@ function check_soil(
                 "Bucket 1 maximum height: " * string(out.body[2][ii, jj]) * "\n" *
                 "Bucket soil 2 minimum height: " * string(out.body_soil[3][ii, jj]) * "\n" *
                 "Bucket soil 2 maximum height: " * string(out.body_soil[4][ii, jj])
+            return false
         end
 
         if (
@@ -376,6 +632,7 @@ function check_soil(
                 "Bucket soil 1 maximum height: " * string(out.body_soil[2][ii, jj]) * "\n" *
                 "Bucket 2 minimum height: " * string(out.body[3][ii, jj]) * "\n" *
                 "Bucket 2 maximum height: " * string(out.body[4][ii, jj])
+            return false
         end
 
         if ((out.body_soil[ind][ii, jj] == 0.0) && (out.body_soil[ind+1][ii, jj] == 0.0))
@@ -389,6 +646,7 @@ function check_soil(
                 "Location: (" * string(ii) * ", " * string(jj) * ")\n" *
                 "Bucket soil minimum height: " * string(out.body_soil[ind][ii, jj]) * "\n" *
                 "Bucket soil maximum height: " * string(out.body_soil[ind+1][ii, jj])
+            return false
         end
 
         if (out.body[ind+1][ii, jj] > out.body_soil[ind][ii, jj] + tol)
@@ -396,6 +654,7 @@ function check_soil(
                 "Location: (" * string(ii) * ", " * string(jj) * ")\n" *
                 "Bucket maximum height: " * string(out.body[ind+1][ii, jj]) * "\n" *
                 "Bucket soil minimum height: " * string(out.body_soil[ind][ii, jj])
+            return false
         end
 
         if (out.body_soil[ind][ii, jj] != out.body[ind+1][ii, jj])
@@ -403,6 +662,7 @@ function check_soil(
                 "Location: (" * string(ii) * ", " * string(jj) * ")\n" *
                 "Bucket maximum height: " * string(out.body[ind+1][ii, jj]) * "\n" *
                 "Bucket soil minimum height: " * string(out.body_soil[ind][ii, jj])
+            return false
         end
     end
 
@@ -421,8 +681,10 @@ function check_soil(
                 "Location: (" * string(ii) * ", " * string(jj) * ")\n" *
                 "Bucket soil minimum height: " * string(out.body_soil[ind][ii, jj]) * "\n" *
                 "Bucket soil maximum height: " * string(out.body_soil[ind+1][ii, jj])
+            return false
         end
     end
+    return true
 end
 
 """

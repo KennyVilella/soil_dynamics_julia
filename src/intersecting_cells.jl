@@ -8,7 +8,7 @@ Copyright, 2023,  Vilella Kenny.
 #==========================================================================================#
 """
     _move_intersecting_cells!(
-        out::SimOut{B,I,T}, tol::T=1e-8
+        out::SimOut{B,I,T}, grid::GridParam{I,T}, bucket::BucketParam{I,T}, tol::T=1e-8
     ) where {B<:Bool,I<:Int64,T<:Float64}
 
 This function moves all soil cells in `terrain` and in `body_soil` that intersect with the
@@ -21,6 +21,10 @@ bucket or with another soil cell.
 
 # Inputs
 - `out::SimOut{Bool,Int64,Float64}`: Struct that stores simulation outputs.
+- `grid::GridParam{Int64,Float64}`: Struct that stores information related to the
+                                    simulation grid.
+- `bucket::BucketParam{Float64}`: Struct that stores information related to the
+                                  bucket object.
 - `tol::Float64`: Small number used to handle numerical approximation errors.
 
 # Outputs
@@ -29,18 +33,25 @@ bucket or with another soil cell.
 # Example
 
     grid = GridParam(4.0, 4.0, 3.0, 0.05, 0.01)
+    o = [0.0, 0.0, 0.0]
+    j = [0.0, 0.0, 0.0]
+    b = [0.0, 0.0, -0.5]
+    t = [1.0, 0.0, -0.5]
+    bucket = BucketParam(o, j, b, t, 0.5)
     terrain = zeros(2 * grid.half_length_x + 1, 2 * grid.half_length_y + 1)
     out = SimOut(terrain, grid)
 
-    _move_intersecting_cells!(out)
+    _move_intersecting_cells!(out, grid, bucket)
 """
 function _move_intersecting_cells!(
     out::SimOut{B,I,T},
+    grid::GridParam{I,T},
+    bucket::BucketParam{T},
     tol::T=1e-8
 ) where {B<:Bool,I<:Int64,T<:Float64}
 
     # Moving bucket soil intersecting with the bucket
-    _move_intersecting_body_soil!(out, tol)
+    _move_intersecting_body_soil!(out, grid, bucket, tol)
 
     # Moving terrain intersecting with the bucket
     _move_intersecting_body!(out, tol)
@@ -48,7 +59,7 @@ end
 
 """
     _move_intersecting_body_soil!(
-        out::SimOut{B,I,T}, tol::T=1e-8
+        out::SimOut{B,I,T}, grid::GridParam{I,T}, bucket::BucketParam{I,T}, tol::T=1e-8
     ) where {B<:Bool,I<:Int64,T<:Float64}
 
 This function moves the soil cells resting on the bucket that intersect with another bucket
@@ -76,6 +87,10 @@ negligible.
 
 # Inputs
 - `out::SimOut{Bool,Int64,Float64}`: Struct that stores simulation outputs.
+- `grid::GridParam{Int64,Float64}`: Struct that stores information related to the
+                                    simulation grid.
+- `bucket::BucketParam{Float64}`: Struct that stores information related to the
+                                  bucket object.
 - `tol::Float64`: Small number used to handle numerical approximation errors.
 
 # Outputs
@@ -84,13 +99,20 @@ negligible.
 # Example
 
     grid = GridParam(4.0, 4.0, 3.0, 0.05, 0.01)
+    o = [0.0, 0.0, 0.0]
+    j = [0.0, 0.0, 0.0]
+    b = [0.0, 0.0, -0.5]
+    t = [1.0, 0.0, -0.5]
+    bucket = BucketParam(o, j, b, t, 0.5)
     terrain = zeros(2 * grid.half_length_x + 1, 2 * grid.half_length_y + 1)
     out = SimOut(terrain, grid)
 
-    _move_intersecting_body_soil!(out)
+    _move_intersecting_body_soil!(out, grid, bucket)
 """
 function _move_intersecting_body_soil!(
     out::SimOut{B,I,T},
+    grid::GridParam{I,T},
+    bucket::BucketParam{T},
     tol::T=1e-8
 ) where {B<:Bool,I<:Int64,T<:Float64}
 
@@ -101,10 +123,10 @@ function _move_intersecting_body_soil!(
     ]
 
     # Iterating over bucket soil cells
-    for cell in out.body_soil_pos
-        ind = cell[1]
-        ii = cell[2]
-        jj = cell[3]
+    for nn in 1:length(out.body_soil_pos)
+        ind = out.body_soil_pos[nn].ind[1]
+        ii = out.body_soil_pos[nn].ii[1]
+        jj = out.body_soil_pos[nn].jj[1]
 
         if (ind == 1)
             ### First bucket soil layer ###
@@ -120,15 +142,28 @@ function _move_intersecting_body_soil!(
         end
 
         if (
-            (out.body_soil[ind+1][ii, jj] - tol > out.body[ind_t][ii, jj]) &&
-            (out.body[ind_t+1][ii, jj] - tol > out.body_soil[ind][ii, jj])
+            (out.body[ind_t][ii, jj] > out.body[ind][ii, jj]) &&
+            (out.body_soil[ind+1][ii, jj] - tol > out.body[ind_t][ii, jj])
         )
             ### Bucket soil intersects with bucket ###
             h_soil = out.body_soil[ind+1][ii, jj] - out.body[ind_t][ii, jj]
+
+            # Only the intersecting soil within this body_soil_pos is moved
+            if (h_soil > out.body_soil_pos[nn].h_soil[1])
+                ### All the soil would be moved ###
+                h_soil = out.body_soil_pos[nn].h_soil[1]
+                out.body_soil_pos[nn].h_soil[1] = 0.0
+            else
+                ### Soil would be partially moved ###
+                out.body_soil_pos[nn].h_soil[1] -= h_soil
+            end
         else
             ### No intersection between bucket soil and bucket ###
             continue
         end
+
+        # Updating bucket soil
+        out.body_soil[ind+1][ii, jj] -= h_soil
 
         # Randomizing direction to avoid asymmetry
         shuffle!(directions)
@@ -151,8 +186,15 @@ function _move_intersecting_body_soil!(
                 jj_n = jj + nn * xy[2]
 
                 ind_p, ii_p, jj_p, h_soil, wall_presence = _move_body_soil!(
-                    out, ind_p, ii_p, jj_p, max_h, ii_n, jj_n, h_soil, wall_presence, tol
+                    out, ind_p, ii_p, jj_p, max_h, ii_n, jj_n, h_soil, wall_presence,
+                    grid, bucket, tol
                 )
+
+                # Updating the value used for the detection of bucket wall
+                # This is working because this value will be used only in cases
+                # where two bucket layers are present. Note however that the
+                # value is incorrect when it will not be used.
+                max_h = max(out.body[1][ii_p, jj_p], out.body[3][ii_p, jj_p])
             end
             if (h_soil < tol)
                 ### No more soil to move ###
@@ -161,12 +203,13 @@ function _move_intersecting_body_soil!(
         end
 
         if (h_soil > tol)
+            # For cases where the soil cannot be moved
+            # For instance, this happens when the bucket is going straight
+            # underground with soil trapped inside.
+            # This should not happen when soil reaction force is considered.
             @warn "Not all soil intersecting with a bucket layer could be moved\n" *
                 "The extra soil has been arbitrarily removed"
         end
-
-        # Updating bucket soil
-        out.body_soil[ind+1][ii, jj] = out.body[ind_t][ii, jj]
     end
 end
 
@@ -305,7 +348,8 @@ end
 """
     _move_body_soil!(
         out::SimOut{B,I,T}, ind_p::I, ii_p::I, jj_p::I, max_h::T, ii_n::I, jj_n::I,
-        h_soil::T, wall_presence::B, tol::T=1e-8
+        h_soil::T, wall_presence::B, grid::GridParam{I,T}, bucket::BucketParam{I,T},
+        tol::T=1e-8
     ) where {B<:Bool,I<:Int64,T<:Float64}
 
 This function tries to move the soil cells resting on the bucket layer `ind_p` at the
@@ -340,6 +384,10 @@ all intersecting soil cells are moved.
 - `jj_n::Int64`: Index of the new considered position in the Y direction.
 - `h_soil::Float64`: Height of the soil column left to be moved. [m]
 - `wall_presence::Bool`: Indicates whether a bucket wall is blocking the movement.
+- `grid::GridParam{Int64,Float64}`: Struct that stores information related to the
+                                    simulation grid.
+- `bucket::BucketParam{Float64}`: Struct that stores information related to the
+                                  bucket object.
 - `tol::Float64`: Small number used to handle numerical approximation errors.
 
 # Outputs
@@ -352,11 +400,16 @@ all intersecting soil cells are moved.
 # Example
 
     grid = GridParam(4.0, 4.0, 3.0, 0.05, 0.01)
+    o = [0.0, 0.0, 0.0]
+    j = [0.0, 0.0, 0.0]
+    b = [0.0, 0.0, -0.5]
+    t = [1.0, 0.0, -0.5]
+    bucket = BucketParam(o, j, b, t, 0.5)
     terrain = zeros(2 * grid.half_length_x + 1, 2 * grid.half_length_y + 1)
     out = SimOut(terrain, grid)
 
      ind_p, ii_p, jj_p, h_soil, wall_presence = _move_body_soil!(
-         out, 1, 10, 15, 0.2, 10, 16, 0.2, true
+         out, 1, 10, 15, 0.2, 10, 16, 0.2, grid, bucket, true
      )
 """
 function _move_body_soil!(
@@ -369,6 +422,8 @@ function _move_body_soil!(
     jj_n::I,
     h_soil::T,
     wall_presence::B,
+    grid::GridParam{I,T},
+    bucket::BucketParam{T},
     tol::T=1e-8
 ) where {B<:Bool,I<:Int64,T<:Float64}
 
@@ -383,8 +438,7 @@ function _move_body_soil!(
     if (bucket_absence_1 && bucket_absence_3)
         ### No bucket ###
         out.terrain[ii_n, jj_n] += h_soil
-        h_soil = 0.0
-        return ind_p, ii_p, jj_p, h_soil, wall_presence
+        return ind_p, ii_p, jj_p, 0.0, wall_presence
     elseif (bucket_absence_1)
         ### Only the second bucket layer ###
         if (out.body[3][ii_n, jj_n] - tol > out.body[ind_p+1][ii_p, jj_p])
@@ -393,12 +447,10 @@ function _move_body_soil!(
             # available. If there is not enough space available, the soil would intersect
             # with the bucket and later be moved by the _move_intersecting_body! function
             out.terrain[ii_n, jj_n] += h_soil
-            h_soil = 0.0
-            return ind_p, ii_p, jj_p, h_soil, wall_presence
+            return ind_p, ii_p, jj_p, 0.0, wall_presence
         elseif (out.body[4][ii_n, jj_n] + tol > max_h)
             ### Bucket is blocking the movement ###
-            wall_presence = true
-            return ind_p, ii_p, jj_p, h_soil, wall_presence
+            return ind_p, ii_p, jj_p, h_soil, true
         end
 
         bucket_soil_presence_3 = (
@@ -415,11 +467,14 @@ function _move_body_soil!(
             ### Soil should create a new bucket soil layer ###
             out.body_soil[3][ii_n, jj_n] = out.body[4][ii_n, jj_n]
             out.body_soil[4][ii_n, jj_n] = out.body[4][ii_n, jj_n] + h_soil
-
-            # Adding new bucket soil position to body_soil_pos
-            push!(out.body_soil_pos, [3; ii_n; jj_n])
         end
 
+        # Calculating pos of cell in bucket frame
+        pos = _calc_bucket_frame_pos(
+            ii_n, jj_n, out.body[4][ii_n, jj_n], grid, bucket)
+
+        # Adding new bucket soil position to body_soil_pos
+        push!(out.body_soil_pos, BodySoil(3, ii_n, jj_n, pos[1], pos[2], pos[3], h_soil))
         h_soil = 0.0
     elseif (bucket_absence_3)
         ### Only the first bucket layer ###
@@ -429,12 +484,10 @@ function _move_body_soil!(
             # available. If there is not enough space available, the soil would intersect
             # with the bucket and later be moved by the _move_intersecting_body! function
             out.terrain[ii_n, jj_n] += h_soil
-            h_soil = 0.0
-            return ind_p, ii_p, jj_p, h_soil, wall_presence
+            return ind_p, ii_p, jj_p, 0.0, wall_presence
         elseif (out.body[2][ii_n, jj_n] + tol > max_h)
             ### Bucket is blocking the movement ###
-            wall_presence = true
-            return ind_p, ii_p, jj_p, h_soil, wall_presence
+            return ind_p, ii_p, jj_p, h_soil, true
         end
 
         bucket_soil_presence_1 = (
@@ -451,11 +504,14 @@ function _move_body_soil!(
             ### Soil should create a new bucket soil layer ###
             out.body_soil[1][ii_n, jj_n] = out.body[2][ii_n, jj_n]
             out.body_soil[2][ii_n, jj_n] = out.body[2][ii_n, jj_n] + h_soil
-
-            # Adding new bucket soil position to body_soil_pos
-            push!(out.body_soil_pos, [1; ii_n; jj_n])
         end
 
+        # Calculating pos of cell in bucket frame
+        pos = _calc_bucket_frame_pos(
+            ii_n, jj_n, out.body[2][ii_n, jj_n], grid, bucket)
+
+        # Adding new bucket soil position to body_soil_pos
+        push!(out.body_soil_pos, BodySoil(1, ii_n, jj_n, pos[1], pos[2], pos[3], h_soil))
         h_soil = 0.0
     else
         ### Both bucket layers are present ###
@@ -478,13 +534,13 @@ function _move_body_soil!(
             ### Bucket soil is present between the two bucket layers ###
             if (out.body_soil[ind_b_n+1][ii_n, jj_n] + tol > out.body[ind_t_n][ii_n, jj_n])
                 ### Bucket and soil blocking the movement ###
-                # Updating previous position
-                ii_p = ii_n
-                jj_p = jj_n
-                ind_p = ind_b_n
-                return ind_p, ii_p, jj_p, h_soil, wall_presence
+                return ind_b_n, ii_n, jj_n, h_soil, wall_presence
             end
         end
+
+        # Calculating pos of cell in bucket frame
+        pos = _calc_bucket_frame_pos(
+            ii_n, jj_n, out.body[ind_b_n+1][ii_n, jj_n], grid, bucket)
 
         # Only option left is that there is some space for the intersecting soil
         if (bucket_soil_presence)
@@ -499,6 +555,11 @@ function _move_body_soil!(
                 # Adding soil to the bucket soil layer
                 out.body_soil[ind_b_n+1][ii_n, jj_n] += delta_h
 
+                # Adding new bucket soil position to body_soil_pos
+                push!(out.body_soil_pos,
+                    BodySoil(ind_b_n, ii_n, jj_n, pos[1], pos[2], pos[3], delta_h)
+                )
+
                 # Updating previous position
                 ii_p = ii_n
                 jj_p = jj_n
@@ -508,6 +569,10 @@ function _move_body_soil!(
                 # Adding soil to the bucket soil layer
                 out.body_soil[ind_b_n+1][ii_n, jj_n] += h_soil
 
+                # Adding new bucket soil position to body_soil_pos
+                push!(out.body_soil_pos,
+                    BodySoil(ind_b_n, ii_n, jj_n, pos[1], pos[2], pos[3], h_soil)
+                )
                 h_soil = 0.0
             end
         else
@@ -526,7 +591,9 @@ function _move_body_soil!(
                 )
 
                 # Adding new bucket soil position to body_soil_pos
-                push!(out.body_soil_pos, [ind_b_n; ii_n; jj_n])
+                push!(out.body_soil_pos,
+                    BodySoil(ind_b_n, ii_n, jj_n, pos[1], pos[2], pos[3], delta_h)
+                )
 
                 # Updating previous position
                 ii_p = ii_n
@@ -541,8 +608,9 @@ function _move_body_soil!(
                 )
 
                 # Adding new bucket soil position to body_soil_pos
-                push!(out.body_soil_pos, [ind_b_n; ii_n; jj_n])
-
+                push!(out.body_soil_pos,
+                    BodySoil(ind_b_n, ii_n, jj_n, pos[1], pos[2], pos[3], h_soil)
+                )
                 h_soil = 0.0
             end
         end
