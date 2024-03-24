@@ -395,7 +395,7 @@ the right-hand rule.
 - `c::Vector{Float64}`: Cartesian coordinates of the third point of the plane. [m]
 
 # Outputs
-- `Vector{T}`: Unit normal vector of the provided plane. [m]
+- `Vector{Float64}`: Unit normal vector of the provided plane. [m]
 
 # Example
 
@@ -455,7 +455,7 @@ The initial volume of soil (`init_volume`) has to be provided.
 - `tol::Float64`: Small number used to handle numerical approximation errors.
 
 # Outputs
-- None
+- `Bool`: Whether the checks were successfull or not.
 
 # Example
 
@@ -551,7 +551,7 @@ The conventions that are checked include:
 - `tol::Float64`: Small number used to handle numerical approximation errors.
 
 # Outputs
-- None
+- `Bool`: Whether the checks were successfull or not.
 
 # Example
 
