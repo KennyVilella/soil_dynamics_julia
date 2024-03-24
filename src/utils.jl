@@ -443,7 +443,8 @@ end
         out::SimOut{B,I,T}, init_volume::T, grid::GridParam{I,T}, tol::T=1e-8
     ) where {B<:Bool,I<:Int64,T<:Float64}
 
-This function checks that the volume of soil is conserved.
+This function checks that the volume of soil is conserved and that the amount of soil
+in `body_soil_pos` is consistent with the amount of soil in `body_soil`.
 The initial volume of soil (`init_volume`) has to be provided.
 
 # Inputs
