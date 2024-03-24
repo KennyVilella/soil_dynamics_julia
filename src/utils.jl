@@ -511,7 +511,7 @@ function check_volume(
             dh_2 = abs(old_body_soil[3][ii, jj] - old_body_soil[4][ii, jj])
             if ((dh_1 > tol) || (dh_2 > tol))
                 # Soil in body_soil_pos does not correspond to amount of soil in body_soil
-                @warn "Volume of soil in body_soil_pos_ is not consistent with " *
+                @warn "Volume of soil in body_soil_pos is not consistent with " *
                     "the amount of soil in body_soil."
                 return false
             end
