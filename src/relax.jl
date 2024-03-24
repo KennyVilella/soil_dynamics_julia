@@ -938,7 +938,7 @@ end
 """
     _relax_unstable_body_cell!(
         out::SimOut{B,I,T}, status::I, new_body_soil_pos::Vector{BodySoil{I,T}}, dh_max::T,
-        ii::I, jj::I, ind::I, ii_c::I, jj_c::I, grid::GridParam{I,T},
+        nn::I, ii::I, jj::I, ind::I, ii_c::I, jj_c::I, grid::GridParam{I,T},
         bucket::BucketParam{I,T}, tol::T=1e-8
     ) where {B<:Bool,I<:Int64,T<:Float64}
 
@@ -958,6 +958,7 @@ the `repose_angle`, provided that the bucket is not preventing this configuratio
 - `status::Int64`: Two-digit number indicating how the soil should avalanche.
 - `new_body_soil_pos::Vector{BodySoil{Int64, Float64}}`: Queue to append new body_soil_pos.
 - `dh_max::Float64`: Maximum height difference allowed between two neighboring cells. [m]
+- `nn::Int64`: Index of the considered soil in `body_soil_pos`.
 - `ii::Int64`: Index of the considered cell in the X direction.
 - `jj::Int64`: Index of the considered cell in the Y direction.
 - `ind::Int64`: Index of the considered soil layer.
@@ -984,7 +985,9 @@ the `repose_angle`, provided that the bucket is not preventing this configuratio
     terrain = zeros(2 * grid.half_length_x + 1, 2 * grid.half_length_y + 1)
     out = SimOut(terrain, grid)
 
-    _relax_unstable_body_cell!(out, 40, new_body_soil_pos, 0.1, 5, 7, 1, 5, 6, grid, bucket)
+    _relax_unstable_body_cell!(
+        out, 40, new_body_soil_pos, 0.1, 28, 5, 7, 1, 5, 6, grid, bucket
+    )
 """
 function _relax_unstable_body_cell!(
     out::SimOut{B,I,T},

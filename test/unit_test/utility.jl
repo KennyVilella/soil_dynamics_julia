@@ -15,7 +15,7 @@ using SoilDynamics
     ) where {B<:Bool,I<:Int64,T<:Float64}
 
 This function set the height of the different layers at a given (`ii`, `jj`) position.
-`NaN` should be provided if no layer is present.
+`NaN` should be provided if setting is not needed.
 
 # Note
 - This function is intended for unit testing only.

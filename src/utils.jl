@@ -395,7 +395,7 @@ the right-hand rule.
 - `c::Vector{Float64}`: Cartesian coordinates of the third point of the plane. [m]
 
 # Outputs
-- `Vector{T}`: Unit normal vector of the provided plane. [m]
+- `Vector{Float64}`: Unit normal vector of the provided plane. [m]
 
 # Example
 
@@ -443,7 +443,8 @@ end
         out::SimOut{B,I,T}, init_volume::T, grid::GridParam{I,T}, tol::T=1e-8
     ) where {B<:Bool,I<:Int64,T<:Float64}
 
-This function checks that the volume of soil is conserved.
+This function checks that the volume of soil is conserved and that the amount of soil
+in `body_soil_pos` is consistent with the amount of soil in `body_soil`.
 The initial volume of soil (`init_volume`) has to be provided.
 
 # Inputs
@@ -454,7 +455,7 @@ The initial volume of soil (`init_volume`) has to be provided.
 - `tol::Float64`: Small number used to handle numerical approximation errors.
 
 # Outputs
-- None
+- `Bool`: Whether the checks were successfull or not.
 
 # Example
 
@@ -510,7 +511,7 @@ function check_volume(
             dh_2 = abs(old_body_soil[3][ii, jj] - old_body_soil[4][ii, jj])
             if ((dh_1 > tol) || (dh_2 > tol))
                 # Soil in body_soil_pos does not correspond to amount of soil in body_soil
-                @warn "Volume of soil in body_soil_pos_ is not consistent with " *
+                @warn "Volume of soil in body_soil_pos is not consistent with " *
                     "the amount of soil in body_soil."
                 return false
             end
@@ -550,7 +551,7 @@ The conventions that are checked include:
 - `tol::Float64`: Small number used to handle numerical approximation errors.
 
 # Outputs
-- None
+- `Bool`: Whether the checks were successfull or not.
 
 # Example
 
