@@ -148,10 +148,9 @@ end
     out.body[3][4:10, 13:17] .= 0.0
     out.body[4][4:10, 13:17] .= 2*grid.half_length_z
     _init_sparse_array!(out.body, grid)
-    @test isempty(nonzeros(out.body[1]))
-    @test isempty(nonzeros(out.body[2]))
-    @test isempty(nonzeros(out.body[3]))
-    @test isempty(nonzeros(out.body[4]))
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(), Vector{Vector{Int64}}(), Vector{Vector{Int64}}()
+    )
 
     # Test: UT-IS-2
     out.body_soil[1][5:17, 1:16] .= 1.0
@@ -159,10 +158,9 @@ end
     out.body_soil[3][4:10, 13:17] .= 0.0
     out.body_soil[4][4:10, 13:17] .= 2*grid.half_length_z
     _init_sparse_array!(out.body_soil, grid)
-    @test isempty(nonzeros(out.body_soil[1]))
-    @test isempty(nonzeros(out.body_soil[2]))
-    @test isempty(nonzeros(out.body_soil[3]))
-    @test isempty(nonzeros(out.body_soil[4]))
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(), Vector{Vector{Int64}}(), Vector{Vector{Int64}}()
+    )
 end
 
 @testset "_locate_non_zeros" begin
@@ -173,16 +171,18 @@ end
     non_zeros = _locate_non_zeros(out.body[2])
     @test ([15, 11] in non_zeros) && ([7, 1] in non_zeros) && ([1, 2] in non_zeros)
     @test (length(non_zeros) == 3)
-    out.body[2][15, 11] = 0.0
-    out.body[2][7, 1] = 0.0
-    out.body[2][1, 2] = 0.0
-    dropzeros!(out.body[2])
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(), [[1, 1, 2], [1, 7, 1], [1, 15, 11]],
+        Vector{Vector{Int64}}()
+    )
 
     # Test: UT-LN-2
     out.body[2][10, 10] = 0.0
     non_zeros = _locate_non_zeros(out.body[2])
     @test isempty(non_zeros)
-    dropzeros!(out.body[2])
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(), Vector{Vector{Int64}}(), Vector{Vector{Int64}}()
+    )
 
     # Test: UT-LN-3
     out.body_soil[1][5, 5] = 0.1
@@ -191,16 +191,18 @@ end
     non_zeros = _locate_non_zeros(out.body_soil[1])
     @test ([5, 5] in non_zeros) && ([11, 7] in non_zeros) && ([15, 1] in non_zeros)
     @test (length(non_zeros) == 3)
-    out.body_soil[1][5, 5] = 0.0
-    out.body_soil[1][11, 7] = 0.0
-    out.body_soil[1][15, 1] = 0.0
-    dropzeros!(out.body_soil[1])
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(), Vector{Vector{Int64}}(),
+        [[1, 5, 5], [1, 11, 7], [1, 15, 1]]
+    )
 
     # Test: UT-LN-4
     out.body_soil[1][4, 9] = 0.0
     non_zeros = _locate_non_zeros(out.body_soil[1])
     @test isempty(non_zeros)
-    dropzeros!(out.body_soil[1])
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(), Vector{Vector{Int64}}(), Vector{Vector{Int64}}()
+    )
 end
 
 @testset "_locate_all_non_zeros" begin
@@ -222,19 +224,11 @@ end
     @test ([1, 11, 17] in body_pos) && ([3, 3, 3] in body_pos)
     @test ([1, 13, 17] in body_pos) && ([3, 13, 17] in body_pos)
     @test (length(body_pos) == 6)
-    out.body[1][15, 5] = 0.0
-    out.body[2][15, 5] = 0.0
-    out.body[2][4, 19] = 0.0
-    out.body[1][11, 17] = 0.0
-    out.body[2][11, 17] = 0.0
-    out.body[3][3, 3] = 0.0
-    out.body[4][3, 3] = 0.0
-    out.body[1][13, 17] = 0.0
-    out.body[4][13, 17] = 0.0
-    dropzeros!(out.body[1])
-    dropzeros!(out.body[2])
-    dropzeros!(out.body[3])
-    dropzeros!(out.body[4])
+    body_pos = [
+        [3, 3, 3], [1, 4, 19], [1, 11, 17], [1, 13, 17], [3, 13, 17], [1, 15, 5]]
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(), body_pos, Vector{Vector{Int64}}()
+    )
 
     # Test: UT-LA-2
     out.body[1][16, 7] = 0.0
@@ -243,10 +237,9 @@ end
     out.body[4][19, 5] = 0.0
     body_pos = _locate_all_non_zeros(out.body)
     @test isempty(body_pos)
-    dropzeros!(out.body[1])
-    dropzeros!(out.body[2])
-    dropzeros!(out.body[3])
-    dropzeros!(out.body[4])
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(), Vector{Vector{Int64}}(), Vector{Vector{Int64}}()
+    )
 
     # Test: UT-LA-3
     out.body_soil[1][5, 5] = 0.1
@@ -266,19 +259,11 @@ end
     @test ([1, 11, 7] in body_soil_pos) && ([3, 1, 1] in body_soil_pos)
     @test ([1, 3, 7] in body_soil_pos) && ([3, 3, 7] in body_soil_pos)
     @test (length(body_soil_pos) == 6)
-    out.body_soil[1][5, 5] = 0.0
-    out.body_soil[2][5, 5] = 0.0
-    out.body_soil[2][4, 9] = 0.0
-    out.body_soil[1][11, 7] = 0.0
-    out.body_soil[2][11, 7] = 0.0
-    out.body_soil[3][1, 1] = 0.0
-    out.body_soil[4][1, 1] = 0.0
-    out.body_soil[1][3, 7] = 0.0
-    out.body_soil[4][3, 7] = 0.0
-    dropzeros!(out.body_soil[1])
-    dropzeros!(out.body_soil[2])
-    dropzeros!(out.body_soil[3])
-    dropzeros!(out.body_soil[4])
+    body_soil_pos = [
+        [3, 1, 1], [1, 3, 7], [3, 3, 7], [1, 4, 9], [1, 5, 5], [1, 11, 7]]
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(), Vector{Vector{Int64}}(), body_soil_pos
+    )
 
     # Test: UT-LA-4
     out.body_soil[1][6, 7] = 0.0
@@ -287,10 +272,9 @@ end
     out.body_soil[4][9, 5] = 0.0
     body_soil_pos = _locate_all_non_zeros(out.body_soil)
     @test isempty(body_soil_pos)
-    dropzeros!(out.body_soil[1])
-    dropzeros!(out.body_soil[2])
-    dropzeros!(out.body_soil[3])
-    dropzeros!(out.body_soil[4])
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(), Vector{Vector{Int64}}(), Vector{Vector{Int64}}()
+    )
 end
 
 @testset "calc_normal" begin
@@ -430,17 +414,10 @@ end
     @test_logs (:warn,) match_mode=:any check_volume(out, init_volume, grid)
 
     # Resetting everything
-    set_height(out, 1, 1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
-    set_height(out, 2, 1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
-    set_height(out, 2, 2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
-    dropzeros!(out.body_soil[1])
-    dropzeros!(out.body_soil[2])
-    dropzeros!(out.body_soil[3])
-    dropzeros!(out.body_soil[4])
-    dropzeros!(out.body[1])
-    dropzeros!(out.body[2])
-    dropzeros!(out.body[3])
-    dropzeros!(out.body[4])
+    reset_value_and_test(
+        out, Vector{Vector{Int64}}(), Vector{Vector{Int64}}(),
+        [[1, 1, 1], [3, 2, 1], [1, 2, 2], [3, 2, 2]]
+    )
 end
 
 @testset "check_soil" begin
@@ -630,12 +607,8 @@ end
     @test_logs check_soil(out)
 
     # Resetting value
-    dropzeros!(out.body[1])
-    dropzeros!(out.body[2])
-    dropzeros!(out.body[3])
-    dropzeros!(out.body[4])
-    dropzeros!(out.body_soil[1])
-    dropzeros!(out.body_soil[2])
-    dropzeros!(out.body_soil[3])
-    dropzeros!(out.body_soil[4])
+    reset_value_and_test(
+        out, [[1, 1], [1, 2]], [[1, 1, 1], [1, 1, 2], [3, 1, 2], [3, 2, 1], [1, 2, 2]],
+        [[1, 1, 1], [1, 1, 2], [3, 1, 2], [3, 2, 1], [1, 2, 2]]
+    )
 end

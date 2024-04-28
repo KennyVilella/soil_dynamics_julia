@@ -39,7 +39,6 @@ Store all parameters related to the simulation grid.
   with the Z direction pointing upward.
 
 # Fields
-
 - `half_length_x::Int64`: Number of grid elements in the positive (or negative) X direction.
 - `half_length_y::Int64`: Number of grid elements in the positive (or negative) Y direction.
 - `half_length_z::Float64`: Number of grid elements in the positive (or negative) Z
@@ -196,7 +195,6 @@ Store all parameters related to a bucket object.
   the bucket pose is calculated throughout the code.
 
 # Fields
-
 - `j_pos_init::Vector{Float64}`: Cartesian coordinates of the bucket joint in its
                                  reference pose. [m]
 - `b_pos_init::Vector{Float64}`: Cartesian coordinates of the bucket base in its
@@ -357,19 +355,20 @@ end
 Store information related to the position of the body soil.
 
 # Note
-This struct is used in the `body_soil_pos` field of the `SimOut` struct.
+- This struct is used in the `body_soil_pos` field of the `SimOut` struct.
+- All the fields are Vector to make their value mutable.
 
 # Fields
-- `ind::Int64`: Index of the bucket soil layer.
-- `ii::Int64`: Index of the bucket soil position in the X direction.
-- `jj::Int64`: Index of the bucket soil position in the Y direction.
-- `x_b::Float64`: Cartesian coordinate in the X direction of the bucket soil in the
-                  reference bucket frame. [m]
-- `y_b::Float64`: Cartesian coordinate in the Y direction of the bucket soil in the
-                  reference bucket frame. [m]
-- `z_b::Float64`: Cartesian coordinate in the Z direction of the bucket soil in the
-                  reference bucket frame. [m]
-- `h_soil::Float64`: Vertical extent of the soil column. [m]
+- `ind::Vector{Int64}`: Index of the bucket soil layer.
+- `ii::Vector{Int64}`: Index of the bucket soil position in the X direction.
+- `jj::Vector{Int64}`: Index of the bucket soil position in the Y direction.
+- `x_b::Vector{Float64}`: Cartesian coordinate in the X direction of the bucket soil in
+                          the reference bucket frame. [m]
+- `y_b::Vector{Float64}`: Cartesian coordinate in the Y direction of the bucket soil in
+                          the reference bucket frame. [m]
+- `z_b::Vector{Float64}`: Cartesian coordinate in the Z direction of the bucket soil in
+                          the reference bucket frame. [m]
+- `h_soil::Vector{Float64}`: Vertical extent of the soil column. [m]
 
 # Example
 
@@ -421,9 +420,7 @@ Store all outputs of the simulation.
   minimum height of the soil resting on the bucket must correspond to the maximum height of
   a bucket wall.
 - The locations where there is soil resting on the bucket are stored in `body_soil_pos` as 
-  3-elements vectors. The first element corresponds to the index of the sparse Matrix where
-  the minimum height of the soil is stored, while the second and third element correspond to
-  the index of the X and Y position, respectively.
+  `BosySoil` struct, see the `BosySoil` struct for more information on its content.
 - The active areas (`bucket_area`, `relax_area` and `impact_area`) are assumed to be
   rectangular and to follow the grid geometry. They are thus stored as 2x2 Matrices where:
   [1, 1] corresponds to the minimum X index. [1, 2] corresponds to the maximum X index.
@@ -445,8 +442,8 @@ Store all outputs of the simulation.
 - `body_soil::Vector{SparseMatrixCSC{Float64,Int64}}`: Store the vertical extension of all
                                                        soil resting on a bucket wall for
                                                        each XY position. [m]
-- `body_soil_pos::Vector{Vector{Int64}}`: Store the indices of locations where there is
-                                          soil resting on the bucket.
+- `body_soil_pos::Vector{BodySoil{Int64,Float64}}`: Store the indices of locations where
+                                                    there is soil resting on the bucket.
 - `bucket_area::Matrix{Int64}`: Store the 2D bounding box of the bucket with a buffer
                                 determined by the parameter `cell_buffer` of `SimParam`.
 - `relax_area::Matrix{Int64}`: Store the 2D bounding box of the area where soil has been
