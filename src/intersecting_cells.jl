@@ -8,7 +8,7 @@ Copyright, 2023,  Vilella Kenny.
 #==========================================================================================#
 """
     _move_intersecting_cells!(
-        out::SimOut{B,I,T}, grid::GridParam{I,T}, bucket::BucketParam{I,T}, tol::T=1e-8
+        out::SimOut{B,I,T}, grid::GridParam{I,T}, bucket::BucketParam{T}, tol::T=1e-8
     ) where {B<:Bool,I<:Int64,T<:Float64}
 
 This function moves all soil cells in `terrain` and in `body_soil` that intersect with the
@@ -59,7 +59,7 @@ end
 
 """
     _move_intersecting_body_soil!(
-        out::SimOut{B,I,T}, grid::GridParam{I,T}, bucket::BucketParam{I,T}, tol::T=1e-8
+        out::SimOut{B,I,T}, grid::GridParam{I,T}, bucket::BucketParam{T}, tol::T=1e-8
     ) where {B<:Bool,I<:Int64,T<:Float64}
 
 This function moves the soil cells resting on the bucket that intersect with another bucket
@@ -348,7 +348,7 @@ end
 """
     _move_body_soil!(
         out::SimOut{B,I,T}, ind_p::I, ii_p::I, jj_p::I, max_h::T, ii_n::I, jj_n::I,
-        h_soil::T, wall_presence::B, grid::GridParam{I,T}, bucket::BucketParam{I,T},
+        h_soil::T, wall_presence::B, grid::GridParam{I,T}, bucket::BucketParam{T},
         tol::T=1e-8
     ) where {B<:Bool,I<:Int64,T<:Float64}
 
@@ -391,11 +391,11 @@ all intersecting soil cells are moved.
 - `tol::Float64`: Small number used to handle numerical approximation errors.
 
 # Outputs
-- `ind_p::Int64`: Index of the new considered bucket layer.
-- `ii_p::Int64`: Index of the new considered position in the X direction.
-- `jj_p::Int64`: Index of the new considered position in the Y direction.
-- `h_soil::Float64`: Height of the soil column left to be moved. [m]
-- `wall_presence::Bool`: Indicates whether a bucket wall is blocking the movement.
+- `Int64`: Index of the new considered bucket layer.
+- `Int64`: Index of the new considered position in the X direction.
+- `Int64`: Index of the new considered position in the Y direction.
+- `Float64`: Height of the soil column left to be moved. [m]
+- `Bool`: Indicates whether a bucket wall is blocking the movement.
 
 # Example
 
