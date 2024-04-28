@@ -8,7 +8,7 @@ Copyright, 2023,  Vilella Kenny.
 #==========================================================================================#
 """
     _relax_terrain!(
-        out::SimOut{B,I,T}, grid::GridParam{I,T}, bucket::BucketParam{I,T},
+        out::SimOut{B,I,T}, grid::GridParam{I,T}, bucket::BucketParam{T},
         sim::SimParam{I,T}, tol::T=1e-8
     ) where {B<:Bool,I<:Int64,T<:Float64}
 
@@ -153,7 +153,7 @@ end
 
 """
     _relax_body_soil!(
-        out::SimOut{B,I,T}, grid::GridParam{I,T}, bucket::BucketParam{I,T},
+        out::SimOut{B,I,T}, grid::GridParam{I,T}, bucket::BucketParam{T},
         sim::SimParam{I,T}, tol::T=1e-8
     ) where {B<:Bool,I<:Int64,T<:Float64}
 
@@ -713,7 +713,7 @@ end
 """
     _relax_unstable_terrain_cell!(
         out::SimOut{B,I,T}, status::I, dh_max::T, ii::I, jj::I, ii_c::I, jj_c::I,
-        grid::GridParam{I,T}, bucket::BucketParam{I,T}, tol::T=1e-8
+        grid::GridParam{I,T}, bucket::BucketParam{T}, tol::T=1e-8
     ) where {B<:Bool,I<:Int64,T<:Float64}
 
 This function moves the soil from the `terrain` at (`ii`, `jj`) to the soil column in
@@ -939,7 +939,7 @@ end
     _relax_unstable_body_cell!(
         out::SimOut{B,I,T}, status::I, new_body_soil_pos::Vector{BodySoil{I,T}}, dh_max::T,
         nn::I, ii::I, jj::I, ind::I, ii_c::I, jj_c::I, grid::GridParam{I,T},
-        bucket::BucketParam{I,T}, tol::T=1e-8
+        bucket::BucketParam{T}, tol::T=1e-8
     ) where {B<:Bool,I<:Int64,T<:Float64}
 
 This function moves the soil from the soil layer `ind` of `body_soil` at (`ii`, `jj`) to
@@ -956,7 +956,7 @@ the `repose_angle`, provided that the bucket is not preventing this configuratio
 # Inputs
 - `out::SimOut{Bool,Int64,Float64}`: Struct that stores simulation outputs.
 - `status::Int64`: Two-digit number indicating how the soil should avalanche.
-- `new_body_soil_pos::Vector{BodySoil{Int64, Float64}}`: Queue to append new body_soil_pos.
+- `new_body_soil_pos::Vector{BodySoil{Int64,Float64}}`: Queue to append new `body_soil_pos`.
 - `dh_max::Float64`: Maximum height difference allowed between two neighboring cells. [m]
 - `nn::Int64`: Index of the considered soil in `body_soil_pos`.
 - `ii::Int64`: Index of the considered cell in the X direction.
