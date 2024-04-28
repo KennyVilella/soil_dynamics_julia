@@ -9,19 +9,15 @@ Copyright, 2023,  Vilella Kenny.
 """
     soil_dynamics!(
         out::SimOut{B,I,T}, pos::Vector{T}, ori::Quaternion{T}, grid::GridParam{I,T},
-        bucket::BucketParam{I,T}, sim::SimParam{I,T}, tol::T=1e-8
+        bucket::BucketParam{T}, sim::SimParam{I,T}, tol::T=1e-8
     ) where {B<:Bool,I<:Int64,T<:Float64}
 
 This function is the main entry point for the simulator.
 Currently, the function takes the position and orientation of the bucket, calculates all
 the cells where the bucket is located and moves the soil resting on the bucket. When a soil
-cell in the `terrain` or in `body_soil` intersect with the bucket or with another soil cell,
+cell in the `terrain` or in `body_soil` intersects with the bucket or with another soil cell,
 the soil cell is moved following a set of rules. Lastly, the `terrain` is relaxed in order
 to reach a state closer to equilibrium.
-
-# Note
-- This function is a work in progress and its current state does not reflect its
-  intended use.
 
 # Inputs
 - `out::SimOut{Bool,Int64,Float64}`: Struct that stores simulation outputs.
