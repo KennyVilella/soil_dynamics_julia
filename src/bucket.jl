@@ -9,7 +9,7 @@ Copyright, 2023,  Vilella Kenny.
 """
     _calc_bucket_pos!(
         out::SimOut{B,I,T}, pos::Vector{T}, ori::Quaternion{T}, grid::GridParam{I,T},
-        bucket::BucketParam{I,T}, sim::SimParam{I,T}, tol::T=1e-8
+        bucket::BucketParam{T}, sim::SimParam{I,T}, tol::T=1e-8
     ) where {B<:Bool,I<:Int64,T<:Float64}
 
 This function determines all the cells where the bucket is located.
@@ -330,10 +330,10 @@ since this requires c_ab and c_ad to be between 0 and 1.
 - `tol::Float64`: Small number used to handle numerical approximation errors.
 
 # Outputs
-- `c_ab::Matrix{Float64}`: Results of the vector decomposition in terms of the AB component.
-- `c_ad::Matrix{Float64}`: Results of the vector decomposition in terms of the AD component.
-- `in_rectangle::Matrix{Bool}`: Indicates whether the cell is inside the rectangle area.
-- `n_cell::Int64`: Number of cells inside the rectangle area.
+- `Matrix{Float64}`: Results of the vector decomposition in terms of the AB component.
+- `Matrix{Float64}`: Results of the vector decomposition in terms of the AD component.
+- `Matrix{Bool}`: Indicates whether the cell is inside the rectangle area.
+- `Int64`: Number of cells inside the rectangle area.
 
 # Example
 
@@ -399,8 +399,7 @@ end
 
 """
     _calc_triangle_pos(
-        a::Vector{T}, b::Vector{T}, c::Vector{T},
-        grid::GridParam{I,T}, tol::T=1e-8
+        a::Vector{T}, b::Vector{T}, c::Vector{T}, grid::GridParam{I,T}, tol::T=1e-8
     ) where {I<:Int64,T<:Float64}
 
 This function determines the cells where a triangle surface is located. The triangle is
@@ -587,10 +586,10 @@ lower than 1.
 - `tol::Float64`: Small number used to handle numerical approximation errors.
 
 # Outputs
-- `c_ab::Matrix{Float64}`: Results of the vector decomposition in terms of the AB component.
-- `c_ac::Matrix{Float64}`: Results of the vector decomposition in terms of the AC component.
-- `in_triangle::Matrix{Bool}`: Indicates whether the cell is inside the triangle area.
-- `n_cell::Int64`: Number of cells inside the triangle area.
+- `Matrix{Float64}`: Results of the vector decomposition in terms of the AB component.
+- `Matrix{Float64}`: Results of the vector decomposition in terms of the AC component.
+- `Matrix{Bool}`: Indicates whether the cell is inside the triangle area.
+- `Int64`: Number of cells inside the triangle area.
 
 # Example
 
@@ -870,6 +869,9 @@ The minimum and maximum heights of the bucket at that position are given by `min
 `max_h`, respectively.
 If the given position overlaps with an existing position, then the existing position is
 updated as the union of the two positions. Otherwise, a new position is added to `body`.
+In the case where the given position does not overlap with two existing positions, the
+given position is merged with the closest existing position. This case should however not
+occur.
 
 # Note
 - This function is intended for internal use only.
