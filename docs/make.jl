@@ -2,9 +2,9 @@ using Documenter
 using SoilDynamics
 
 makedocs(
-    sitename = "Soil dynamics simulator",
-    authors = "Kenny Vilella",
-    pages = [
+    sitename="Soil dynamics simulator",
+    authors="Kenny Vilella",
+    pages=[
         "Home" => "index.md",
         "types.jl" => "types.md",
         "Grid" => "grid.md",
@@ -16,4 +16,4 @@ makedocs(
     ]
 )
 
-deploydocs(repo = "github.com/KennyVilella/soil_dynamics_julia.git")
+deploydocs(repo="github.com/KennyVilella/soil_dynamics_julia.git")

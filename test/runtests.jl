@@ -6,26 +6,26 @@ import SparseArrays: SparseMatrixCSC, nonzeros, dropzeros!
 include("./unit_test/utility.jl")
 
 println("Unit testing")
-@time @testset "types.jl" verbose = true begin
+@time @testset "types.jl" verbose=true begin
     include("./unit_test/test_types.jl")
 end
 println("")
-@time @testset "utils.jl" verbose = true begin
+@time @testset "utils.jl" verbose=true begin
     include("./unit_test/test_utils.jl")
 end
 println("")
-@time @testset "bucket.jl" verbose = true begin
+@time @testset "bucket.jl" verbose=true begin
     include("./unit_test/test_bucket.jl")
 end
 println("")
-@time @testset "body_soil.jl" verbose = true begin
+@time @testset "body_soil.jl" verbose=true begin
     include("./unit_test/test_body_soil.jl")
 end
 println("")
-@time @testset "intersecting_cells.jl" verbose = true begin
+@time @testset "intersecting_cells.jl" verbose=true begin
     include("./unit_test/test_intersecting_cells.jl")
 end
 println("")
-@time @testset "relax.jl" verbose = true begin
+@time @testset "relax.jl" verbose=true begin
     include("./unit_test/test_relax.jl")
 end

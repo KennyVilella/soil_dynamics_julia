@@ -26,7 +26,6 @@ bucket = BucketParam(o_pos_init, j_pos_init, b_pos_init, t_pos_init, bucket_widt
 terrain = zeros(2 * grid.half_length_x + 1, 2 * grid.half_length_y + 1)
 out = SimOut(terrain, grid)
 
-
 #==========================================================================================#
 #                                                                                          #
 #                                         Testing                                          #
@@ -34,7 +33,7 @@ out = SimOut(terrain, grid)
 #==========================================================================================#
 @testset "_move_body_soil!" begin
     # Creating a lambda function to set the initial state
-    function set_init_state!(out, grid ,bucket)
+    function set_init_state!(out, grid, bucket)
         # Calculating soil position on the bucket
         pos1 = _calc_bucket_frame_pos(10, 15, 0.7, grid, bucket)
         pos3 = _calc_bucket_frame_pos(10, 15, 0.0, grid, bucket)
@@ -2903,7 +2902,7 @@ end
     reset_value_and_test(
         out, [[13, 15]], body_pos,
         [[1, 10, 15], [3, 10, 15], [3, 11, 15], [1, 12, 15], [3, 12, 15]]
-   )
+    )
 
     # Test: IC-MIBS-105
     set_RNG_seed!(7)
@@ -7592,7 +7591,7 @@ end
     push_body_soil_pos(out, 1, 10, 15, pos1, 0.5)
     push_body_soil_pos(out, 3, 10, 15, pos3, 0.1)
     warning_message = "Not all soil intersecting with a bucket layer could be moved\n" *
-        "The extra soil has been arbitrarily removed"
+                      "The extra soil has been arbitrarily removed"
     @test_logs (:warn, warning_message) match_mode=:any _move_intersecting_body_soil!(
         out, grid, bucket
     )
@@ -7960,7 +7959,6 @@ end
         out, [[11, 17], [10, 17], [8, 17], [12, 17], [13, 17], [13, 19], [14, 20]],
         body_pos, Vector{Vector{Int64}}()
     )
-
 
     # Test: IC-MIB-16
     out.body[1][8:14, 14:20] .= 0.0

@@ -1,0 +1,4 @@
+margin = 100
+trailing_comma = false
+style = "sciml"
+whitespace_in_kwargs = false

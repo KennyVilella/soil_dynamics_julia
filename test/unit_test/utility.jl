@@ -46,19 +46,19 @@ This function set the height of the different layers at a given (`ii`, `jj`) pos
     set_height(out, 10, 15, 0.5, NaN, NaN, 0.2, 0.3, 0.5, 0.6, NaN, NaN)
 """
 function set_height(
-    out::SimOut{B,I,T},
-    ii::I,
-    jj::I,
-    terrain::T,
-    body_1::T,
-    body_2::T,
-    body_soil_1::T,
-    body_soil_2::T,
-    body_3::T,
-    body_4::T,
-    body_soil_3::T,
-    body_soil_4::T
-) where {B<:Bool,I<:Int64,T<:Float64}
+        out::SimOut{B, I, T},
+        ii::I,
+        jj::I,
+        terrain::T,
+        body_1::T,
+        body_2::T,
+        body_soil_1::T,
+        body_soil_2::T,
+        body_3::T,
+        body_4::T,
+        body_soil_3::T,
+        body_soil_4::T
+) where {B <: Bool, I <: Int64, T <: Float64}
 
     # Setting terrain
     if (!isnan(terrain))
@@ -128,15 +128,15 @@ against the provided values. `NaN` should be provided if checking is not needed.
     check_height(out, 10, 15, 0.5, NaN, NaN, 0.2, 0.3)
 """
 function check_height(
-    out::SimOut{B,I,T},
-    ii::I,
-    jj::I,
-    terrain::T,
-    body_soil_1::T,
-    body_soil_2::T,
-    body_soil_3::T,
-    body_soil_4::T
-) where {B<:Bool,I<:Int64,T<:Float64}
+        out::SimOut{B, I, T},
+        ii::I,
+        jj::I,
+        terrain::T,
+        body_soil_1::T,
+        body_soil_2::T,
+        body_soil_3::T,
+        body_soil_4::T
+) where {B <: Bool, I <: Int64, T <: Float64}
 
     # Checking terrain
     if (!isnan(terrain))
@@ -189,11 +189,11 @@ of the outputs.
     reset_value_and_test((out, [[10, 15], [5, 7]], [[]], [[1, 15, 10], [3, 15, 10]])
 """
 function reset_value_and_test(
-    out::SimOut{B,I,T},
-    terrain_pos::Vector{Vector{I}},
-    body_pos::Vector{Vector{I}},
-    body_soil_pos::Vector{Vector{I}}
-) where {B<:Bool,I<:Int64,T<:Float64}
+        out::SimOut{B, I, T},
+        terrain_pos::Vector{Vector{I}},
+        body_pos::Vector{Vector{I}},
+        body_soil_pos::Vector{Vector{I}}
+) where {B <: Bool, I <: Int64, T <: Float64}
 
     # Resetting requested terrain
     for cell in terrain_pos
@@ -208,7 +208,7 @@ function reset_value_and_test(
         ii = cell[2]
         jj = cell[3]
         out.body[ind][ii, jj] = 0.0
-        out.body[ind+1][ii, jj] = 0.0
+        out.body[ind + 1][ii, jj] = 0.0
     end
     dropzeros!(out.body[1])
     dropzeros!(out.body[2])
@@ -221,7 +221,7 @@ function reset_value_and_test(
         ii = cell[2]
         jj = cell[3]
         out.body_soil[ind][ii, jj] = 0.0
-        out.body_soil[ind+1][ii, jj] = 0.0
+        out.body_soil[ind + 1][ii, jj] = 0.0
     end
     dropzeros!(out.body_soil[1])
     dropzeros!(out.body_soil[2])
@@ -278,14 +278,13 @@ This function pushes a new `BodySoil` struct into `body_soil_pos`.
      push_body_soil_pos(out, 1, 10, 15, [0.1, 0.15, 0.0], 0.3)
 """
 function push_body_soil_pos(
-    out::SimOut{B,I,T},
-    ind::I,
-    ii::I,
-    jj::I,
-    pos::Vector{T},
-    h_soil::T
-) where {B<:Bool,I<:Int64,T<:Float64}
-
+        out::SimOut{B, I, T},
+        ind::I,
+        ii::I,
+        jj::I,
+        pos::Vector{T},
+        h_soil::T
+) where {B <: Bool, I <: Int64, T <: Float64}
     push!(out.body_soil_pos, BodySoil(ind, ii, jj, pos[1], pos[2], pos[3], h_soil))
 end
 
@@ -321,13 +320,13 @@ This function checks the values of an inputted `BodySoil` struct against provide
     check_body_soil_pos(out.body_soil_pos[1], 1, 10, 11, [0.1, 0.0, 0.2], 0.5)
 """
 function check_body_soil_pos(
-    body_soil_pos::BodySoil{I,T},
-    ind::I,
-    ii::I,
-    jj::I,
-    pos::Vector{T},
-    h_soil::T
-) where {I<:Int64,T<:Float64}
+        body_soil_pos::BodySoil{I, T},
+        ind::I,
+        ii::I,
+        jj::I,
+        pos::Vector{T},
+        h_soil::T
+) where {I <: Int64, T <: Float64}
 
     # Checking the body soil position
     @test (body_soil_pos.ind[1] == ind)

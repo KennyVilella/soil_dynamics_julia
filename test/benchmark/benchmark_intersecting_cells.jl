@@ -32,7 +32,6 @@ sim = SimParam(repose_angle, max_iterations, cell_buffer)
 terrain = zeros(2 * grid.half_length_x + 1, 2 * grid.half_length_y + 1)
 out = SimOut(terrain, grid)
 
-
 #==========================================================================================#
 #                                                                                          #
 #                                       Benchmarking                                       #
@@ -119,7 +118,7 @@ out.body_soil[2][5, 11] = 0.3
 println("_move_body_soil!")
 display(
     @benchmark ind_p, ii_p, jj_p, h_soil, wall_presence = _move_body_soil!(
-                    out, 1, 5, 7, 0.4, 5, 11, 0.5, true, grid, bucket
-               )
+    out, 1, 5, 7, 0.4, 5, 11, 0.5, true, grid, bucket
+)
 )
 println("")

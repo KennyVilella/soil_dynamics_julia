@@ -54,14 +54,14 @@ origin. The orientation is provided using the quaternion definition.
     _calc_bucket_pos!(out, pos, ori, grid, bucket, sim)
 """
 function _calc_bucket_pos!(
-    out::SimOut{B,I,T},
-    pos::Vector{T},
-    ori::Quaternion{T},
-    grid::GridParam{I,T},
-    bucket::BucketParam{T},
-    sim::SimParam{I,T},
-    tol::T=1e-8
-) where {B<:Bool,I<:Int64,T<:Float64}
+        out::SimOut{B, I, T},
+        pos::Vector{T},
+        ori::Quaternion{T},
+        grid::GridParam{I, T},
+        bucket::BucketParam{T},
+        sim::SimParam{I, T},
+        tol::T=1e-8
+) where {B <: Bool, I <: Int64, T <: Float64}
 
     # Reinitializing bucket position
     _init_sparse_array!(out.body, grid)
@@ -193,13 +193,13 @@ that lie on the four edges of the rectangle.
     rect_pos = _calc_rectangle_pos(a, b, c, d, grid)
 """
 function _calc_rectangle_pos(
-    a::Vector{T},
-    b::Vector{T},
-    c::Vector{T},
-    d::Vector{T},
-    grid::GridParam{I,T},
-    tol::T=1e-8
-) where {I<:Int64,T<:Float64}
+        a::Vector{T},
+        b::Vector{T},
+        c::Vector{T},
+        d::Vector{T},
+        grid::GridParam{I, T},
+        tol::T=1e-8
+) where {I <: Int64, T <: Float64}
 
     # Converting the four rectangle vertices from position to indices
     cell_size = [grid.cell_size_xy; grid.cell_size_xy; grid.cell_size_z]
@@ -233,12 +233,12 @@ function _calc_rectangle_pos(
     )
 
     # Allocating memory
-    rect_pos = [Vector{Int64}(undef,3) for _ in 1:n_cell]
+    rect_pos = [Vector{Int64}(undef, 3) for _ in 1:n_cell]
 
     nn_cell = 1
     # Determining all cells where the inner portion of the rectangle area is located
-    for ii in area_min_x:area_max_x-1
-        for jj in area_min_y:area_max_y-1
+    for ii in area_min_x:(area_max_x - 1)
+        for jj in area_min_y:(area_max_y - 1)
             # Calculating the indices corresponding to the previously calculated matrix
             ii_s = ii - area_min_x + 1
             jj_s = jj - area_min_y + 1
@@ -346,15 +346,15 @@ since this requires c_ab and c_ad to be between 0 and 1.
     )
 """
 function _decompose_vector_rectangle(
-    ab_ind::Vector{T},
-    ad_ind::Vector{T},
-    a_ind::Vector{T},
-    area_min_x::I,
-    area_min_y::I,
-    area_length_x::I,
-    area_length_y::I,
-    tol::T=1e-8
-) where {I<:Int64,T<:Float64}
+        ab_ind::Vector{T},
+        ad_ind::Vector{T},
+        a_ind::Vector{T},
+        area_min_x::I,
+        area_min_y::I,
+        area_length_x::I,
+        area_length_y::I,
+        tol::T=1e-8
+) where {I <: Int64, T <: Float64}
 
     # Allocating memory
     c_ab = Matrix{Float64}(undef, area_length_x, area_length_y)
@@ -451,12 +451,12 @@ that lie on the three edges of the triangle.
     tri_pos = _calc_triangle_pos(a, b, c, grid)
 """
 function _calc_triangle_pos(
-    a::Vector{T},
-    b::Vector{T},
-    c::Vector{T},
-    grid::GridParam{I,T},
-    tol::T=1e-8
-) where {I<:Int64,T<:Float64}
+        a::Vector{T},
+        b::Vector{T},
+        c::Vector{T},
+        grid::GridParam{I, T},
+        tol::T=1e-8
+) where {I <: Int64, T <: Float64}
 
     # Converting the three triangle vertices from position to indices
     cell_size = [grid.cell_size_xy; grid.cell_size_xy; grid.cell_size_z]
@@ -489,12 +489,12 @@ function _calc_triangle_pos(
     )
 
     # Allocating memory
-    tri_pos = [Vector{Int64}(undef,3) for _ in 1:n_cell]
+    tri_pos = [Vector{Int64}(undef, 3) for _ in 1:n_cell]
 
     nn_cell = 1
     # Determining all cells where the inner portion of the triangle area is located
-    for ii in area_min_x:area_max_x-1
-        for jj in area_min_y:area_max_y-1
+    for ii in area_min_x:(area_max_x - 1)
+        for jj in area_min_y:(area_max_y - 1)
             # Calculating the indices corresponding to the previously calculated matrix
             ii_s = ii - area_min_x + 1
             jj_s = jj - area_min_y + 1
@@ -602,15 +602,15 @@ lower than 1.
     )
 """
 function _decompose_vector_triangle(
-    ab_ind::Vector{T},
-    ac_ind::Vector{T},
-    a_ind::Vector{T},
-    area_min_x::I,
-    area_min_y::I,
-    area_length_x::I,
-    area_length_y::I,
-    tol::T=1e-8
-) where {I<:Int64,T<:Float64}
+        ab_ind::Vector{T},
+        ac_ind::Vector{T},
+        a_ind::Vector{T},
+        area_min_x::I,
+        area_min_y::I,
+        area_length_x::I,
+        area_length_y::I,
+        tol::T=1e-8
+) where {I <: Int64, T <: Float64}
 
     # Allocating memory
     c_ab = Matrix{Float64}(undef, area_length_x, area_length_y)
@@ -693,10 +693,10 @@ should be used for the Z direction.
     line_pos = _calc_line_pos(a, b, grid)
 """
 function _calc_line_pos(
-    a::Vector{T},
-    b::Vector{T},
-    grid::GridParam{I,T}
-) where {I<:Int64,T<:Float64}
+        a::Vector{T},
+        b::Vector{T},
+        grid::GridParam{I, T}
+) where {I <: Int64, T <: Float64}
 
     # Converting to indices
     x1 = a[1] / grid.cell_size_xy + grid.half_length_x + 1.0
@@ -824,17 +824,17 @@ As a result, this function must be called separately for each bucket wall.
     _update_body!(tri_pos, out, grid)
 """
 function _update_body!(
-    area_pos::Vector{Vector{I}},
-    out::SimOut{B,I,T},
-    grid::GridParam{I,T},
-    tol::T=1e-8
-) where {B<:Bool,I<:Int64,T<:Float64}
+        area_pos::Vector{Vector{I}},
+        out::SimOut{B, I, T},
+        grid::GridParam{I, T},
+        tol::T=1e-8
+) where {B <: Bool, I <: Int64, T <: Float64}
 
     # Initializing cell position and height
     ii = area_pos[1][1]
     jj = area_pos[1][2]
-    min_h = grid.vect_z[area_pos[1][3]+1] - grid.cell_size_z
-    max_h = grid.vect_z[area_pos[1][3]+1]
+    min_h = grid.vect_z[area_pos[1][3] + 1] - grid.cell_size_z
+    max_h = grid.vect_z[area_pos[1][3] + 1]
 
     # Iterating over all cells in area_pos
     for cell in area_pos
@@ -844,14 +844,14 @@ function _update_body!(
             _include_new_body_pos!(out, ii, jj, min_h, max_h, tol)
 
             # Initializing new cell position and height
-            min_h = grid.vect_z[cell[3]+1] - grid.cell_size_z
-            max_h = grid.vect_z[cell[3]+1]
+            min_h = grid.vect_z[cell[3] + 1] - grid.cell_size_z
+            max_h = grid.vect_z[cell[3] + 1]
             ii = cell[1]
             jj = cell[2]
         else
             ### New height for the XY position ###
             # Updating maximum height
-            max_h = grid.vect_z[cell[3]+1]
+            max_h = grid.vect_z[cell[3] + 1]
         end
     end
 
@@ -896,18 +896,17 @@ occur.
     _include_new_body_pos!(out, 10, 15, 0.5, 0.6)
 """
 function _include_new_body_pos!(
-    out::SimOut{B,I,T},
-    ii::I,
-    jj::I,
-    min_h::T,
-    max_h::T,
-    tol::T=1e-8
-) where {B<:Bool,I<:Int64,T<:Float64}
-
+        out::SimOut{B, I, T},
+        ii::I,
+        jj::I,
+        min_h::T,
+        max_h::T,
+        tol::T=1e-8
+) where {B <: Bool, I <: Int64, T <: Float64}
     status = Vector{Int64}()
     # Iterating over the two bucket layers and storing their status
     for ind in [1, 3]
-        if (iszero(out.body[ind][ii, jj]) && iszero(out.body[ind+1][ii, jj]))
+        if (iszero(out.body[ind][ii, jj]) && iszero(out.body[ind + 1][ii, jj]))
             ### No existing position ###
             push!(status, 0)
         elseif (
@@ -917,14 +916,14 @@ function _include_new_body_pos!(
             ### New position is overlapping with an existing position ###
             push!(status, 1)
         elseif (
-            (min_h - tol < out.body[ind+1][ii, jj]) &&
-            (max_h + tol > out.body[ind+1][ii, jj])
+            (min_h - tol < out.body[ind + 1][ii, jj]) &&
+            (max_h + tol > out.body[ind + 1][ii, jj])
         )
             ### New position is overlapping with an existing position ###
             push!(status, 1)
         elseif (
             (min_h + tol > out.body[ind][ii, jj]) &&
-            (max_h - tol < out.body[ind+1][ii, jj])
+            (max_h - tol < out.body[ind + 1][ii, jj])
         )
             ### New position is within an existing position ###
             return

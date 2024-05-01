@@ -32,7 +32,6 @@ sim = SimParam(repose_angle, max_iterations, cell_buffer)
 terrain = zeros(2 * grid.half_length_x + 1, 2 * grid.half_length_y + 1)
 out = SimOut(terrain, grid)
 
-
 #==========================================================================================#
 #                                                                                          #
 #                                         Testing                                          #
@@ -50,7 +49,7 @@ out = SimOut(terrain, grid)
 
     # Test: BP-CL-1
     a = [0.0 + 1e-8, 0.0 - 1e-8, -0.06 + 1e-8]
-    b = [1.0 - 1e-8, 0.0 - 1e-8,  0.0  - 1e-8]
+    b = [1.0 - 1e-8, 0.0 - 1e-8, 0.0 - 1e-8]
     line_pos_exp = [
         [11, 11, 10], [12, 11, 10], [13, 11, 10], [14, 11, 10], [15, 11, 10],
         [16, 11, 10], [17, 11, 10], [18, 11, 10], [19, 11, 10], [20, 11, 10],
@@ -58,8 +57,8 @@ out = SimOut(terrain, grid)
     _check_results(a, b, line_pos_exp, grid)
 
     # Test: BP-CL-2
-    a = [0.04 + 1e-8,  0.04 - 1e-8, -0.09 + 1e-8]
-    b = [1.04 - 1e-8, -0.04 + 1e-8,  0.0  - 1e-8]
+    a = [0.04 + 1e-8, 0.04 - 1e-8, -0.09 + 1e-8]
+    b = [1.04 - 1e-8, -0.04 + 1e-8, 0.0 - 1e-8]
     line_pos_exp = [
         [11, 11, 10], [12, 11, 10], [13, 11, 10], [14, 11, 10], [15, 11, 10],
         [16, 11, 10], [17, 11, 10], [18, 11, 10], [19, 11, 10], [20, 11, 10],
@@ -114,24 +113,22 @@ end
     c_ab, c_ad, in_rectangle, n_cell = _decompose_vector_rectangle(
         ab_ind, ad_ind, a_ind, area_min_x, area_min_y, area_length_x, area_length_y
     )
-    c_ab_exp = [
-        -0.3 -0.3 -0.3 -0.3 -0.3 -0.3 -0.3 -0.3
-        -0.1 -0.1 -0.1 -0.1 -0.1 -0.1 -0.1 -0.1
-         0.1  0.1  0.1  0.1  0.1  0.1  0.1  0.1
-         0.3  0.3  0.3  0.3  0.3  0.3  0.3  0.3
-         0.5  0.5  0.5  0.5  0.5  0.5  0.5  0.5
-         0.7  0.7  0.7  0.7  0.7  0.7  0.7  0.7
-         0.9  0.9  0.9  0.9  0.9  0.9  0.9  0.9
-         1.1  1.1  1.1  1.1  1.1  1.1  1.1  1.1]
-    c_ad_exp = [
-        -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
-        -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
-        -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
-        -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
-        -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
-        -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
-        -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
-        -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1]
+    c_ab_exp = [-0.3 -0.3 -0.3 -0.3 -0.3 -0.3 -0.3 -0.3
+                -0.1 -0.1 -0.1 -0.1 -0.1 -0.1 -0.1 -0.1
+                0.1 0.1 0.1 0.1 0.1 0.1 0.1 0.1
+                0.3 0.3 0.3 0.3 0.3 0.3 0.3 0.3
+                0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5
+                0.7 0.7 0.7 0.7 0.7 0.7 0.7 0.7
+                0.9 0.9 0.9 0.9 0.9 0.9 0.9 0.9
+                1.1 1.1 1.1 1.1 1.1 1.1 1.1 1.1]
+    c_ad_exp = [-0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
+                -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
+                -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
+                -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
+                -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
+                -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
+                -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
+                -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1]
     @test (c_ab ≈ c_ab_exp)
     @test (c_ad ≈ c_ad_exp)
     @test all(in_rectangle[3:7, 3:7] .== true)
@@ -150,24 +147,22 @@ end
     c_ab, c_ad, in_rectangle, n_cell = _decompose_vector_rectangle(
         ab_ind, ad_ind, a_ind, area_min_x, area_min_y, area_length_x, area_length_y
     )
-    c_ab_exp = [
-        -1.2 -1.2 -1.2 -1.2 -1.2 -1.2 -1.2 -1.2
-        -0.2 -0.2 -0.2 -0.2 -0.2 -0.2 -0.2 -0.2
-         0.8  0.8  0.8  0.8  0.8  0.8  0.8  0.8
-         1.8  1.8  1.8  1.8  1.8  1.8  1.8  1.8
-         2.8  2.8  2.8  2.8  2.8  2.8  2.8  2.8
-         3.8  3.8  3.8  3.8  3.8  3.8  3.8  3.8
-         4.8  4.8  4.8  4.8  4.8  4.8  4.8  4.8
-         5.8  5.8  5.8  5.8  5.8  5.8  5.8  5.8]
-    c_ad_exp = [
-        -1.8 -0.8 0.2 1.2 2.2 3.2 4.2 5.2
-        -1.8 -0.8 0.2 1.2 2.2 3.2 4.2 5.2
-        -1.8 -0.8 0.2 1.2 2.2 3.2 4.2 5.2
-        -1.8 -0.8 0.2 1.2 2.2 3.2 4.2 5.2
-        -1.8 -0.8 0.2 1.2 2.2 3.2 4.2 5.2
-        -1.8 -0.8 0.2 1.2 2.2 3.2 4.2 5.2
-        -1.8 -0.8 0.2 1.2 2.2 3.2 4.2 5.2
-        -1.8 -0.8 0.2 1.2 2.2 3.2 4.2 5.2]
+    c_ab_exp = [-1.2 -1.2 -1.2 -1.2 -1.2 -1.2 -1.2 -1.2
+                -0.2 -0.2 -0.2 -0.2 -0.2 -0.2 -0.2 -0.2
+                0.8 0.8 0.8 0.8 0.8 0.8 0.8 0.8
+                1.8 1.8 1.8 1.8 1.8 1.8 1.8 1.8
+                2.8 2.8 2.8 2.8 2.8 2.8 2.8 2.8
+                3.8 3.8 3.8 3.8 3.8 3.8 3.8 3.8
+                4.8 4.8 4.8 4.8 4.8 4.8 4.8 4.8
+                5.8 5.8 5.8 5.8 5.8 5.8 5.8 5.8]
+    c_ad_exp = [-1.8 -0.8 0.2 1.2 2.2 3.2 4.2 5.2
+                -1.8 -0.8 0.2 1.2 2.2 3.2 4.2 5.2
+                -1.8 -0.8 0.2 1.2 2.2 3.2 4.2 5.2
+                -1.8 -0.8 0.2 1.2 2.2 3.2 4.2 5.2
+                -1.8 -0.8 0.2 1.2 2.2 3.2 4.2 5.2
+                -1.8 -0.8 0.2 1.2 2.2 3.2 4.2 5.2
+                -1.8 -0.8 0.2 1.2 2.2 3.2 4.2 5.2
+                -1.8 -0.8 0.2 1.2 2.2 3.2 4.2 5.2]
     @test (c_ab ≈ c_ab_exp ./ 5.7)
     @test (c_ad ≈ c_ad_exp ./ 4.7)
     @test all(in_rectangle[3:7, 3:7] .== true)
@@ -186,24 +181,22 @@ end
     c_ab, c_ad, in_rectangle, n_cell = _decompose_vector_rectangle(
         ab_ind, ad_ind, a_ind, area_min_x, area_min_y, area_length_x, area_length_y
     )
-    c_ab_exp = [
-        -1.5 -1.5 -1.5 -1.5 -1.5 -1.5 -1.5 -1.5
-        -0.5 -0.5 -0.5 -0.5 -0.5 -0.5 -0.5 -0.5
-         0.5  0.5  0.5  0.5  0.5  0.5  0.5  0.5
-         1.5  1.5  1.5  1.5  1.5  1.5  1.5  1.5
-         2.5  2.5  2.5  2.5  2.5  2.5  2.5  2.5
-         3.5  3.5  3.5  3.5  3.5  3.5  3.5  3.5
-         4.5  4.5  4.5  4.5  4.5  4.5  4.5  4.5
-         5.5  5.5  5.5  5.5  5.5  5.5  5.5  5.5]
-    c_ad_exp = [
-        -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
-        -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
-        -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
-        -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
-        -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
-        -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
-        -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
-        -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1]
+    c_ab_exp = [-1.5 -1.5 -1.5 -1.5 -1.5 -1.5 -1.5 -1.5
+                -0.5 -0.5 -0.5 -0.5 -0.5 -0.5 -0.5 -0.5
+                0.5 0.5 0.5 0.5 0.5 0.5 0.5 0.5
+                1.5 1.5 1.5 1.5 1.5 1.5 1.5 1.5
+                2.5 2.5 2.5 2.5 2.5 2.5 2.5 2.5
+                3.5 3.5 3.5 3.5 3.5 3.5 3.5 3.5
+                4.5 4.5 4.5 4.5 4.5 4.5 4.5 4.5
+                5.5 5.5 5.5 5.5 5.5 5.5 5.5 5.5]
+    c_ad_exp = [-0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
+                -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
+                -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
+                -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
+                -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
+                -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
+                -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
+                -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1]
     @test (c_ab ≈ c_ab_exp)
     @test (c_ad ≈ c_ad_exp)
     @test all(in_rectangle[3, 3:7] .== true)
@@ -252,42 +245,39 @@ end
     c_ab, c_ac, in_triangle, n_cell = _decompose_vector_triangle(
         ab_ind, ac_ind, a_ind, area_min_x, area_min_y, area_length_x, area_length_y
     )
-    in_tri_exp = [
-        false false false false false false false false false false
-        false true  true  true  true  true  true  true  true  true
-        false true  true  true  true  true  true  true  true  false
-        false true  true  true  true  true  true  true  false false
-        false true  true  true  true  true  true  false false false
-        false true  true  true  true  true  false false false false
-        false true  true  true  true  false false false false false
-        false true  true  true  false false false false false false
-        false true  true  false false false false false false false
-        false true  false false false false false false false false
-        false false false false false false false false false false]
-    c_ab_exp = [
-        -0.05 -0.05 -0.05 -0.05 -0.05 -0.05 -0.05 -0.05 -0.05 -0.05
-         0.05  0.05  0.05  0.05  0.05  0.05  0.05  0.05  0.05  0.05
-         0.15  0.15  0.15  0.15  0.15  0.15  0.15  0.15  0.15  0.15
-         0.25  0.25  0.25  0.25  0.25  0.25  0.25  0.25  0.25  0.25
-         0.35  0.35  0.35  0.35  0.35  0.35  0.35  0.35  0.35  0.35
-         0.45  0.45  0.45  0.45  0.45  0.45  0.45  0.45  0.45  0.45
-         0.55  0.55  0.55  0.55  0.55  0.55  0.55  0.55  0.55  0.55
-         0.65  0.65  0.65  0.65  0.65  0.65  0.65  0.65  0.65  0.65
-         0.75  0.75  0.75  0.75  0.75  0.75  0.75  0.75  0.75  0.75
-         0.85  0.85  0.85  0.85  0.85  0.85  0.85  0.85  0.85  0.85
-         0.95  0.95  0.95  0.95  0.95  0.95  0.95  0.95  0.95  0.95]
-    c_ac_exp = [
-        -0.05 0.05 0.15 0.25 0.35 0.45 0.55 0.65 0.75 0.85
-        -0.05 0.05 0.15 0.25 0.35 0.45 0.55 0.65 0.75 0.85
-        -0.05 0.05 0.15 0.25 0.35 0.45 0.55 0.65 0.75 0.85
-        -0.05 0.05 0.15 0.25 0.35 0.45 0.55 0.65 0.75 0.85
-        -0.05 0.05 0.15 0.25 0.35 0.45 0.55 0.65 0.75 0.85
-        -0.05 0.05 0.15 0.25 0.35 0.45 0.55 0.65 0.75 0.85
-        -0.05 0.05 0.15 0.25 0.35 0.45 0.55 0.65 0.75 0.85
-        -0.05 0.05 0.15 0.25 0.35 0.45 0.55 0.65 0.75 0.85
-        -0.05 0.05 0.15 0.25 0.35 0.45 0.55 0.65 0.75 0.85
-        -0.05 0.05 0.15 0.25 0.35 0.45 0.55 0.65 0.75 0.85
-        -0.05 0.05 0.15 0.25 0.35 0.45 0.55 0.65 0.75 0.85]
+    in_tri_exp = [false false false false false false false false false false
+                  false true true true true true true true true true
+                  false true true true true true true true true false
+                  false true true true true true true true false false
+                  false true true true true true true false false false
+                  false true true true true true false false false false
+                  false true true true true false false false false false
+                  false true true true false false false false false false
+                  false true true false false false false false false false
+                  false true false false false false false false false false
+                  false false false false false false false false false false]
+    c_ab_exp = [-0.05 -0.05 -0.05 -0.05 -0.05 -0.05 -0.05 -0.05 -0.05 -0.05
+                0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05 0.05
+                0.15 0.15 0.15 0.15 0.15 0.15 0.15 0.15 0.15 0.15
+                0.25 0.25 0.25 0.25 0.25 0.25 0.25 0.25 0.25 0.25
+                0.35 0.35 0.35 0.35 0.35 0.35 0.35 0.35 0.35 0.35
+                0.45 0.45 0.45 0.45 0.45 0.45 0.45 0.45 0.45 0.45
+                0.55 0.55 0.55 0.55 0.55 0.55 0.55 0.55 0.55 0.55
+                0.65 0.65 0.65 0.65 0.65 0.65 0.65 0.65 0.65 0.65
+                0.75 0.75 0.75 0.75 0.75 0.75 0.75 0.75 0.75 0.75
+                0.85 0.85 0.85 0.85 0.85 0.85 0.85 0.85 0.85 0.85
+                0.95 0.95 0.95 0.95 0.95 0.95 0.95 0.95 0.95 0.95]
+    c_ac_exp = [-0.05 0.05 0.15 0.25 0.35 0.45 0.55 0.65 0.75 0.85
+                -0.05 0.05 0.15 0.25 0.35 0.45 0.55 0.65 0.75 0.85
+                -0.05 0.05 0.15 0.25 0.35 0.45 0.55 0.65 0.75 0.85
+                -0.05 0.05 0.15 0.25 0.35 0.45 0.55 0.65 0.75 0.85
+                -0.05 0.05 0.15 0.25 0.35 0.45 0.55 0.65 0.75 0.85
+                -0.05 0.05 0.15 0.25 0.35 0.45 0.55 0.65 0.75 0.85
+                -0.05 0.05 0.15 0.25 0.35 0.45 0.55 0.65 0.75 0.85
+                -0.05 0.05 0.15 0.25 0.35 0.45 0.55 0.65 0.75 0.85
+                -0.05 0.05 0.15 0.25 0.35 0.45 0.55 0.65 0.75 0.85
+                -0.05 0.05 0.15 0.25 0.35 0.45 0.55 0.65 0.75 0.85
+                -0.05 0.05 0.15 0.25 0.35 0.45 0.55 0.65 0.75 0.85]
     @test (c_ab ≈ c_ab_exp)
     @test (c_ac ≈ c_ac_exp)
     @test (in_triangle == in_tri_exp)
@@ -304,42 +294,39 @@ end
     c_ab, c_ac, in_triangle, n_cell = _decompose_vector_triangle(
         ab_ind, ac_ind, a_ind, area_min_x, area_min_y, area_length_x, area_length_y
     )
-    in_tri_exp = [
-        false false false false false false false false false false
-        false true  true  true  true  true  true  true  true  true
-        false true  true  true  true  true  true  true  true  false
-        false true  true  true  true  true  true  true  false false
-        false true  true  true  true  true  true  false false false
-        false true  true  true  true  true  false false false false
-        false true  true  true  true  false false false false false
-        false true  true  true  false false false false false false
-        false true  true  false false false false false false false
-        false true  false false false false false false false false
-        false false false false false false false false false false]
-    c_ab_exp = [
-        -0.4 -0.4 -0.4 -0.4 -0.4 -0.4 -0.4 -0.4 -0.4 -0.4
-        0.6  0.6  0.6  0.6  0.6  0.6  0.6  0.6  0.6  0.6
-        1.6  1.6  1.6  1.6  1.6  1.6  1.6  1.6  1.6  1.6
-        2.6  2.6  2.6  2.6  2.6  2.6  2.6  2.6  2.6  2.6
-        3.6  3.6  3.6  3.6  3.6  3.6  3.6  3.6  3.6  3.6
-        4.6  4.6  4.6  4.6  4.6  4.6  4.6  4.6  4.6  4.6
-        5.6  5.6  5.6  5.6  5.6  5.6  5.6  5.6  5.6  5.6
-        6.6  6.6  6.6  6.6  6.6  6.6  6.6  6.6  6.6  6.6
-        7.6  7.6  7.6  7.6  7.6  7.6  7.6  7.6  7.6  7.6
-        8.6  8.6  8.6  8.6  8.6  8.6  8.6  8.6  8.6  8.6
-        9.6  9.6  9.6  9.6  9.6  9.6  9.6  9.6  9.6  9.6]
-    c_ac_exp = [
-        -0.2 0.8 1.8 2.8 3.8 4.8 5.8 6.8 7.8 8.8
-        -0.2 0.8 1.8 2.8 3.8 4.8 5.8 6.8 7.8 8.8
-        -0.2 0.8 1.8 2.8 3.8 4.8 5.8 6.8 7.8 8.8
-        -0.2 0.8 1.8 2.8 3.8 4.8 5.8 6.8 7.8 8.8
-        -0.2 0.8 1.8 2.8 3.8 4.8 5.8 6.8 7.8 8.8
-        -0.2 0.8 1.8 2.8 3.8 4.8 5.8 6.8 7.8 8.8
-        -0.2 0.8 1.8 2.8 3.8 4.8 5.8 6.8 7.8 8.8
-        -0.2 0.8 1.8 2.8 3.8 4.8 5.8 6.8 7.8 8.8
-        -0.2 0.8 1.8 2.8 3.8 4.8 5.8 6.8 7.8 8.8
-        -0.2 0.8 1.8 2.8 3.8 4.8 5.8 6.8 7.8 8.8
-        -0.2 0.8 1.8 2.8 3.8 4.8 5.8 6.8 7.8 8.8]
+    in_tri_exp = [false false false false false false false false false false
+                  false true true true true true true true true true
+                  false true true true true true true true true false
+                  false true true true true true true true false false
+                  false true true true true true true false false false
+                  false true true true true true false false false false
+                  false true true true true false false false false false
+                  false true true true false false false false false false
+                  false true true false false false false false false false
+                  false true false false false false false false false false
+                  false false false false false false false false false false]
+    c_ab_exp = [-0.4 -0.4 -0.4 -0.4 -0.4 -0.4 -0.4 -0.4 -0.4 -0.4
+                0.6 0.6 0.6 0.6 0.6 0.6 0.6 0.6 0.6 0.6
+                1.6 1.6 1.6 1.6 1.6 1.6 1.6 1.6 1.6 1.6
+                2.6 2.6 2.6 2.6 2.6 2.6 2.6 2.6 2.6 2.6
+                3.6 3.6 3.6 3.6 3.6 3.6 3.6 3.6 3.6 3.6
+                4.6 4.6 4.6 4.6 4.6 4.6 4.6 4.6 4.6 4.6
+                5.6 5.6 5.6 5.6 5.6 5.6 5.6 5.6 5.6 5.6
+                6.6 6.6 6.6 6.6 6.6 6.6 6.6 6.6 6.6 6.6
+                7.6 7.6 7.6 7.6 7.6 7.6 7.6 7.6 7.6 7.6
+                8.6 8.6 8.6 8.6 8.6 8.6 8.6 8.6 8.6 8.6
+                9.6 9.6 9.6 9.6 9.6 9.6 9.6 9.6 9.6 9.6]
+    c_ac_exp = [-0.2 0.8 1.8 2.8 3.8 4.8 5.8 6.8 7.8 8.8
+                -0.2 0.8 1.8 2.8 3.8 4.8 5.8 6.8 7.8 8.8
+                -0.2 0.8 1.8 2.8 3.8 4.8 5.8 6.8 7.8 8.8
+                -0.2 0.8 1.8 2.8 3.8 4.8 5.8 6.8 7.8 8.8
+                -0.2 0.8 1.8 2.8 3.8 4.8 5.8 6.8 7.8 8.8
+                -0.2 0.8 1.8 2.8 3.8 4.8 5.8 6.8 7.8 8.8
+                -0.2 0.8 1.8 2.8 3.8 4.8 5.8 6.8 7.8 8.8
+                -0.2 0.8 1.8 2.8 3.8 4.8 5.8 6.8 7.8 8.8
+                -0.2 0.8 1.8 2.8 3.8 4.8 5.8 6.8 7.8 8.8
+                -0.2 0.8 1.8 2.8 3.8 4.8 5.8 6.8 7.8 8.8
+                -0.2 0.8 1.8 2.8 3.8 4.8 5.8 6.8 7.8 8.8]
     @test (c_ab ≈ c_ab_exp ./ 9.7)
     @test (c_ac ≈ c_ac_exp ./ 10.4)
     @test (in_triangle == in_tri_exp)
@@ -356,33 +343,30 @@ end
     c_ab, c_ac, in_triangle, n_cell = _decompose_vector_triangle(
         ab_ind, ac_ind, a_ind, area_min_x, area_min_y, area_length_x, area_length_y
     )
-    in_tri_exp = [
-        false false false false false false false false
-        false false false false false false false false
-        false false true  true  false false false false
-        false false false false false false false false
-        false false false false false false false false
-        false false false false false false false false
-        false false false false false false false false
-        false false false false false false false false]
-    c_ab_exp = [
-        -1.2 -1.4 -1.6 -1.8 -2.0 -2.2 -2.4 -2.6
-        -0.2 -0.4 -0.6 -0.8 -1.0 -1.2 -1.4 -1.6
-         0.8  0.6  0.4  0.2  0.0 -0.2 -0.4 -0.6
-         1.8  1.6  1.4  1.2  1.0  0.8  0.6  0.4
-         2.8  2.6  2.4  2.2  2.0  1.8  1.6  1.4
-         3.8  3.6  3.4  3.2  3.0  2.8  2.6  2.4
-         4.8  4.6  4.4  4.2  4.0  3.8  3.6  3.4
-         5.8  5.6  5.4  5.2  5.0  4.8  4.6  4.4]
-    c_ac_exp = [
-        -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
-        -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
-        -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
-        -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
-        -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
-        -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
-        -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
-        -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1]
+    in_tri_exp = [false false false false false false false false
+                  false false false false false false false false
+                  false false true true false false false false
+                  false false false false false false false false
+                  false false false false false false false false
+                  false false false false false false false false
+                  false false false false false false false false
+                  false false false false false false false false]
+    c_ab_exp = [-1.2 -1.4 -1.6 -1.8 -2.0 -2.2 -2.4 -2.6
+                -0.2 -0.4 -0.6 -0.8 -1.0 -1.2 -1.4 -1.6
+                0.8 0.6 0.4 0.2 0.0 -0.2 -0.4 -0.6
+                1.8 1.6 1.4 1.2 1.0 0.8 0.6 0.4
+                2.8 2.6 2.4 2.2 2.0 1.8 1.6 1.4
+                3.8 3.6 3.4 3.2 3.0 2.8 2.6 2.4
+                4.8 4.6 4.4 4.2 4.0 3.8 3.6 3.4
+                5.8 5.6 5.4 5.2 5.0 4.8 4.6 4.4]
+    c_ac_exp = [-0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
+                -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
+                -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
+                -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
+                -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
+                -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
+                -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1
+                -0.3 -0.1 0.1 0.3 0.5 0.7 0.9 1.1]
     @test (c_ab ≈ c_ab_exp)
     @test (c_ac ≈ c_ac_exp)
     @test (in_triangle == in_tri_exp)
@@ -659,7 +643,7 @@ end
     # Resetting bucket position
     body_pos = [[1, 6, 6], [1, 7, 10], [3, 7, 10], [1, 9, 12], [1, 10, 9], [3, 10, 9]]
     reset_value_and_test(
-        out, Vector{Vector{Int64}}(),  body_pos, Vector{Vector{Int64}}()
+        out, Vector{Vector{Int64}}(), body_pos, Vector{Vector{Int64}}()
     )
 end
 
@@ -709,9 +693,9 @@ end
     # Resetting bucket position
     body_pos = [
         [1, 4, 4], [1, 5, 5], [1, 6, 6], [1, 7, 11], [1, 7, 12], [1, 7, 13],
-        [1, 10, 10], [3, 10, 10], ]
+        [1, 10, 10], [3, 10, 10]]
     reset_value_and_test(
-        out, Vector{Vector{Int64}}(),  body_pos, Vector{Vector{Int64}}()
+        out, Vector{Vector{Int64}}(), body_pos, Vector{Vector{Int64}}()
     )
 end
 
@@ -735,7 +719,7 @@ end
     body_pos = [
         [1, 11, 11], [1, 12, 11], [1, 13, 11], [1, 14, 11], [1, 15, 11], [1, 16, 11]]
     reset_value_and_test(
-        out, Vector{Vector{Int64}}(),  body_pos, Vector{Vector{Int64}}()
+        out, Vector{Vector{Int64}}(), body_pos, Vector{Vector{Int64}}()
     )
 
     # Test: BP-CB-2
@@ -757,7 +741,7 @@ end
         [1, 11, 12], [1, 12, 12], [1, 13, 12], [1, 14, 12], [1, 15, 12], [1, 16, 12],
         [1, 11, 13], [1, 12, 13], [1, 13, 13], [1, 14, 13], [1, 15, 13], [1, 16, 13]]
     reset_value_and_test(
-        out, Vector{Vector{Int64}}(),  body_pos, Vector{Vector{Int64}}()
+        out, Vector{Vector{Int64}}(), body_pos, Vector{Vector{Int64}}()
     )
 
     # Test: BP-CB-3
@@ -793,6 +777,6 @@ end
         [1, 6, 12], [1, 7, 12], [1, 8, 12], [1, 9, 12], [1, 10, 12], [1, 11, 12],
         [1, 6, 13], [1, 7, 13], [1, 8, 13], [1, 9, 13], [1, 10, 13], [1, 11, 13]]
     reset_value_and_test(
-        out, Vector{Vector{Int64}}(),  body_pos, Vector{Vector{Int64}}()
+        out, Vector{Vector{Int64}}(), body_pos, Vector{Vector{Int64}}()
     )
 end

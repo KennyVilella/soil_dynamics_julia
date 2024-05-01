@@ -51,15 +51,14 @@ to reach a state closer to equilibrium.
     soil_dynamics!(out, pos, ori, grid, bucket, sim)
 """
 function soil_dynamics!(
-    out::SimOut{B,I,T},
-    pos::Vector{T},
-    ori::Quaternion{T},
-    grid::GridParam{I,T},
-    bucket::BucketParam{T},
-    sim::SimParam{I,T},
-    tol::T=1e-8
-) where {B<:Bool,I<:Int64,T<:Float64}
-
+        out::SimOut{B, I, T},
+        pos::Vector{T},
+        ori::Quaternion{T},
+        grid::GridParam{I, T},
+        bucket::BucketParam{T},
+        sim::SimParam{I, T},
+        tol::T=1e-8
+) where {B <: Bool, I <: Int64, T <: Float64}
     if (length(pos) != 3)
         throw(DimensionMismatch("position should be a vector of size 3"))
     end

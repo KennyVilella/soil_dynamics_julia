@@ -49,14 +49,13 @@ the initial position (`x_i`, `z_i`) of the bucket and the deepest point of the s
     soil_evolution(true, false, false, true, false)
 """
 function soil_evolution(
-    debug::B=false,
-    writing_bucket_files::B=false,
-    writing_soil_files::B=false,
-    random_trajectory::B=false,
-    set_RNG::B=false,
-    tol::T=1e-8
-) where {B<:Bool,T<:Float64}
-
+        debug::B=false,
+        writing_bucket_files::B=false,
+        writing_soil_files::B=false,
+        random_trajectory::B=false,
+        set_RNG::B=false,
+        tol::T=1e-8
+) where {B <: Bool, T <: Float64}
     if (set_RNG)
         ### RNG seed is set ###
         set_RNG_seed!()
@@ -71,7 +70,7 @@ function soil_evolution(
 
     # BucketParam struct
     bucket = BucketParam(
-        o_pos_init, j_pos_init, b_pos_init, t_pos_init, bucket_width, 
+        o_pos_init, j_pos_init, b_pos_init, t_pos_init, bucket_width
     )
 
     # Initializing the grid geometry
@@ -170,54 +169,54 @@ function soil_evolution(
 
     # Creating time evolution
     while (time + dt_i < total_time)
-       # Adding time to time vector
-       push!(time_vec, time)
+        # Adding time to time vector
+        push!(time_vec, time)
 
-       # Adding position and orientation
-       append!(pos_vec, [pos_interp(time)])
-       ori_i = ori_interp(time)
-       append!(ori_vec, [angle_to_quat(ori_i[1], ori_i[2], ori_i[3], :ZYX)])
+        # Adding position and orientation
+        append!(pos_vec, [pos_interp(time)])
+        ori_i = ori_interp(time)
+        append!(ori_vec, [angle_to_quat(ori_i[1], ori_i[2], ori_i[3], :ZYX)])
 
-       # Calculating velocity at bucket corners
-       j_l_vel = norm(_calc_vel(
-          j_l_pos_interp(time + 0.5 * dt_i), j_l_pos_interp(time - 0.5 * dt_i), dt_i
-       ))
-       j_r_vel = norm(_calc_vel(
-          j_r_pos_interp(time + 0.5 * dt_i), j_r_pos_interp(time - 0.5 * dt_i), dt_i
-       ))
-       b_l_vel = norm(_calc_vel(
-          b_l_pos_interp(time + 0.5 * dt_i), b_l_pos_interp(time - 0.5 * dt_i), dt_i
-       ))
-       b_r_vel = norm(_calc_vel(
-          b_r_pos_interp(time + 0.5 * dt_i), b_r_pos_interp(time - 0.5 * dt_i), dt_i
-       ))
-       t_l_vel = norm(_calc_vel(
-          t_l_pos_interp(time + 0.5 * dt_i), t_l_pos_interp(time - 0.5 * dt_i), dt_i
-       ))
-       t_r_vel = norm(_calc_vel(
-          t_r_pos_interp(time + 0.5 * dt_i), t_r_pos_interp(time - 0.5 * dt_i), dt_i
-       ))
+        # Calculating velocity at bucket corners
+        j_l_vel = norm(_calc_vel(
+            j_l_pos_interp(time + 0.5 * dt_i), j_l_pos_interp(time - 0.5 * dt_i), dt_i
+        ))
+        j_r_vel = norm(_calc_vel(
+            j_r_pos_interp(time + 0.5 * dt_i), j_r_pos_interp(time - 0.5 * dt_i), dt_i
+        ))
+        b_l_vel = norm(_calc_vel(
+            b_l_pos_interp(time + 0.5 * dt_i), b_l_pos_interp(time - 0.5 * dt_i), dt_i
+        ))
+        b_r_vel = norm(_calc_vel(
+            b_r_pos_interp(time + 0.5 * dt_i), b_r_pos_interp(time - 0.5 * dt_i), dt_i
+        ))
+        t_l_vel = norm(_calc_vel(
+            t_l_pos_interp(time + 0.5 * dt_i), t_l_pos_interp(time - 0.5 * dt_i), dt_i
+        ))
+        t_r_vel = norm(_calc_vel(
+            t_r_pos_interp(time + 0.5 * dt_i), t_r_pos_interp(time - 0.5 * dt_i), dt_i
+        ))
 
-       # Calculating the maximum velocity of the bucket
-       max_bucket_vel = 1.25 * maximum([
-           j_l_vel, j_r_vel, b_l_vel, b_r_vel, t_l_vel, t_r_vel
-       ])
+        # Calculating the maximum velocity of the bucket
+        max_bucket_vel = 1.25 * maximum([
+            j_l_vel, j_r_vel, b_l_vel, b_r_vel, t_l_vel, t_r_vel
+        ])
 
-       if (max_bucket_vel != 0.0)
-           ### Bucket is moving ###
-           dt_i = min(grid.cell_size_xy, grid.cell_size_z) / max_bucket_vel
-       else
-           ### No bucket movement ###
-           dt_i = dt
-       end
+        if (max_bucket_vel != 0.0)
+            ### Bucket is moving ###
+            dt_i = min(grid.cell_size_xy, grid.cell_size_z) / max_bucket_vel
+        else
+            ### No bucket movement ###
+            dt_i = dt
+        end
 
-       if (dt_i > dt)
-           ### Bucket is moving very slowly ###
-           time += dt
-       else
-           ### Bucket is mobing ###
-           time += dt_i
-       end
+        if (dt_i > dt)
+            ### Bucket is moving very slowly ###
+            time += dt
+        else
+            ### Bucket is mobing ###
+            time += dt_i
+        end
     end
 
     # Adding final step
@@ -277,11 +276,10 @@ This function calculates the velocity of an object given its position (`pos_1`) 
     _calc_vel([0.1, 0.0, 0.2], [0.15, 0.0, 0.25], 0.05)
 """
 function _calc_vel(
-    pos_1::Vector{T},
-    pos_2::Vector{T},
-    dt::T
-) where {T<:Float64}
-
+        pos_1::Vector{T},
+        pos_2::Vector{T},
+        dt::T
+) where {T <: Float64}
     return (pos_2 - pos_1) / dt
 end
 
@@ -332,13 +330,13 @@ actual digging scoop.
     _calc_trajectory(-1.5, 0.5, 0.0, -0.7, 100)
 """
 function _calc_trajectory(
-    x_i::T,
-    z_i::T,
-    x_min::T,
-    z_min::T,
-    origin_angle::T,
-    nn::I
-) where {I<:Int64,T<:Float64}
+        x_i::T,
+        z_i::T,
+        x_min::T,
+        z_min::T,
+        origin_angle::T,
+        nn::I
+) where {I <: Int64, T <: Float64}
 
     # Calculating X vector of the trajectory
     x_vec = range(x_i, x_i + 2 * (x_min - x_i), nn)
