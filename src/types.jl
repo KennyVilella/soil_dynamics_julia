@@ -79,7 +79,7 @@ Requirements:
 This would create a grid of size [-4, 4] in the X direction, [-4, 4] in the Y direction,
 [-3, 3] in the Z direction, and with cells of size 0.05 x 0.05 x 0.01 in the XYZ direction.
 """
-struct GridParam{I <: Int64, T <: Float64}
+struct GridParam{I<:Int64,T<:Float64}
     half_length_x::I
     half_length_y::I
     half_length_z::T
@@ -96,7 +96,7 @@ struct GridParam{I <: Int64, T <: Float64}
             grid_size_z::T,
             cell_size_xy::T,
             cell_size_z::T=cell_size_xy
-    ) where {T <: Float64}
+    ) where {T<:Float64}
         if ((cell_size_z < 0.0) || (cell_size_z ≈ 0.0))
             throw(DomainError(cell_size_z, "cell_size_z should be greater than zero"))
         end
@@ -144,7 +144,7 @@ struct GridParam{I <: Int64, T <: Float64}
         vect_y = cell_size_xy .* range(-half_length_y, half_length_y, step=1)
         vect_z = cell_size_z .* range(-half_length_z, half_length_z, step=1)
 
-        new{Int64, T}(
+        new{Int64,T}(
             half_length_x, half_length_y, half_length_z, cell_size_xy, cell_size_z,
             cell_area, cell_volume, vect_x, vect_y, vect_z
         )
@@ -235,7 +235,7 @@ This would create a bucket ABCDEF with its center of rotation at the bucket join
 A = [0.0, -0.25, 0.0], B = [1.0, -0.25, -0.5], C = [0.0, -0.25, -0.5]
 D = [0.0, 0.25, 0.0], E = [1.0, 0.25, -0.5], F = [0.0, 0.25, -0.5].
 """
-struct BucketParam{T <: Float64}
+struct BucketParam{T<:Float64}
     j_pos_init::Vector{T}
     b_pos_init::Vector{T}
     t_pos_init::Vector{T}
@@ -248,7 +248,7 @@ struct BucketParam{T <: Float64}
             b_pos_init::Vector{T},
             t_pos_init::Vector{T},
             width::T
-    ) where {T <: Float64}
+    ) where {T<:Float64}
         if (length(o_pos_init) != 3)
             throw(DimensionMismatch("o_pos_init should be a vector of size 3"))
         end
@@ -318,7 +318,7 @@ Requirements:
 
     sim = SimParam(0.85, 3, 4)
 """
-struct SimParam{I <: Int64, T <: Float64}
+struct SimParam{I<:Int64,T<:Float64}
     repose_angle::T
     max_iterations::I
     cell_buffer::I
@@ -326,7 +326,7 @@ struct SimParam{I <: Int64, T <: Float64}
             repose_angle::T,
             max_iterations::I,
             cell_buffer::I
-    ) where {I <: Int64, T <: Float64}
+    ) where {I<:Int64,T<:Float64}
         if (
             ((repose_angle > pi / 2) && (repose_angle != pi / 2)) ||
             ((repose_angle < 0.0) && (repose_angle != 0.0))
@@ -343,7 +343,7 @@ struct SimParam{I <: Int64, T <: Float64}
             cell_buffer = 2
         end
 
-        new{I, T}(repose_angle, max_iterations, cell_buffer)
+        new{I,T}(repose_angle, max_iterations, cell_buffer)
     end
 end
 
@@ -375,7 +375,7 @@ Store information related to the position of the body soil.
 This would indicate that 0.5m of soil is present on the first body layer at (10, 15),
 which corresponds to the coordinates (0.1, 0.0, 0.2) in the reference bucket frame.
 """
-struct BodySoil{I <: Int64, T <: Float64}
+struct BodySoil{I<:Int64,T<:Float64}
     ind::Vector{I}
     ii::Vector{I}
     jj::Vector{I}
@@ -391,8 +391,8 @@ struct BodySoil{I <: Int64, T <: Float64}
             y_b::T,
             z_b::T,
             h_soil::T
-    ) where {I <: Int64, T <: Float64}
-        new{I, T}([ind], [ii], [jj], [x_b], [y_b], [z_b], [h_soil])
+    ) where {I<:Int64,T<:Float64}
+        new{I,T}([ind], [ii], [jj], [x_b], [y_b], [z_b], [h_soil])
     end
 end
 
@@ -471,19 +471,19 @@ Requirements:
 
 This would create a flat terrain located at 0 height.
 """
-struct SimOut{B <: Bool, I <: Int64, T <: Float64}
+struct SimOut{B<:Bool,I<:Int64,T<:Float64}
     equilibrium::Vector{B}
     terrain::Matrix{T}
-    body::Vector{SparseMatrixCSC{T, I}}
-    body_soil::Vector{SparseMatrixCSC{T, I}}
-    body_soil_pos::Vector{BodySoil{I, T}}
+    body::Vector{SparseMatrixCSC{T,I}}
+    body_soil::Vector{SparseMatrixCSC{T,I}}
+    body_soil_pos::Vector{BodySoil{I,T}}
     bucket_area::Matrix{Int64}
     relax_area::Matrix{Int64}
     impact_area::Matrix{Int64}
     function SimOut(
             terrain::Matrix{T},
-            grid::GridParam{I, T}
-    ) where {I <: Int64, T <: Float64}
+            grid::GridParam{I,T}
+    ) where {I<:Int64,T<:Float64}
         if (size(terrain, 1) != 2 * grid.half_length_x + 1)
             throw(DimensionMismatch("Dimension of terrain in x (" * string(size(terrain, 1))
                                     * ") does not match with the grid size ("
@@ -510,14 +510,14 @@ struct SimOut{B <: Bool, I <: Int64, T <: Float64}
         end
 
         # Initalizing body_soil_pos
-        body_soil_pos = Vector{BodySoil{I, T}}()
+        body_soil_pos = Vector{BodySoil{I,T}}()
 
         # Initalizing active areas
         bucket_area = Int64[[2, 2] [2 * grid.half_length_x, 2 * grid.half_length_y]]
         relax_area = Int64[[2, 2] [2 * grid.half_length_x, 2 * grid.half_length_y]]
         impact_area = Int64[[2, 2] [2 * grid.half_length_x, 2 * grid.half_length_y]]
 
-        new{Bool, I, T}(
+        new{Bool,I,T}(
             [false], terrain, body, body_soil, body_soil_pos, bucket_area, relax_area,
             impact_area
         )

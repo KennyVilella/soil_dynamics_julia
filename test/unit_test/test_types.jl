@@ -213,9 +213,9 @@ end
     @test out isa SimOut
     @test out.equilibrium == [false]
     @test out.terrain == terrain
-    @test out.body isa Vector{SparseMatrixCSC{Float64, Int64}}
-    @test out.body_soil isa Vector{SparseMatrixCSC{Float64, Int64}}
-    @test out.body_soil_pos isa Vector{BodySoil{Int64, Float64}}
+    @test out.body isa Vector{SparseMatrixCSC{Float64,Int64}}
+    @test out.body_soil isa Vector{SparseMatrixCSC{Float64,Int64}}
+    @test out.body_soil_pos isa Vector{BodySoil{Int64,Float64}}
     @test out.bucket_area == area
     @test out.relax_area == area
     @test out.impact_area == area

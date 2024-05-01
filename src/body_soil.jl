@@ -56,13 +56,13 @@ and duplicates are removed.
     _update_body_soil!(out, pos, ori, grid, bucket)
 """
 function _update_body_soil!(
-        out::SimOut{B, I, T},
+        out::SimOut{B,I,T},
         pos::Vector{T},
         ori::Quaternion{T},
-        grid::GridParam{I, T},
+        grid::GridParam{I,T},
         bucket::BucketParam{T},
         tol::T=1e-8
-) where {B <: Bool, I <: Int64, T <: Float64}
+) where {B<:Bool,I<:Int64,T<:Float64}
 
     # Copying previous body_soil locations
     old_body_soil_pos = deepcopy(out.body_soil_pos)
@@ -195,9 +195,9 @@ function _update_body_soil!(
                 # Moving body_soil to closest location, this implementation
                 # works regardless of the presence of body_soil
                 out.body_soil[ind_s][ii_s, jj_s] += (
-                    out.body[ind_s][ii_s, jj_s] - out.body_soil[ind_s - 1][ii_s, jj_s] + h_soil
+                    out.body[ind_s][ii_s, jj_s] - out.body_soil[ind_s-1][ii_s, jj_s] + h_soil
                 )
-                out.body_soil[ind_s - 1][ii_s, jj_s] = out.body[ind_s][ii_s, jj_s]
+                out.body_soil[ind_s-1][ii_s, jj_s] = out.body[ind_s][ii_s, jj_s]
 
                 # Adding position to body_soil_pos
                 push!(out.body_soil_pos, BodySoil(ind_s - 1, ii_s, jj_s, x_b, y_b, z_b, h_soil))

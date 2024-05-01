@@ -48,7 +48,7 @@ function _calc_bucket_corner_pos(
         pos::Vector{T},
         ori::Quaternion{T},
         bucket::BucketParam{T}
-) where {T <: Float64}
+) where {T<:Float64}
     # Calculating position of the bucket vertices
     j_pos = Vector{T}(vect(ori \ bucket.j_pos_init * ori))
     b_pos = Vector{T}(vect(ori \ bucket.b_pos_init * ori))
@@ -115,9 +115,9 @@ last soil update. The position of the bucket during the last soil update is stor
 function check_bucket_movement(
         pos::Vector{T},
         ori::Quaternion{T},
-        grid::GridParam{I, T},
+        grid::GridParam{I,T},
         bucket::BucketParam{T}
-) where {I <: Int64, T <: Float64}
+) where {I<:Int64,T<:Float64}
     # Calculating new position of bucket corners
     j_r_pos_n, j_l_pos_n, b_r_pos_n, b_l_pos_n, t_r_pos_n, t_l_pos_n = (
         _calc_bucket_corner_pos(pos, ori, bucket)
@@ -212,9 +212,9 @@ function _calc_bucket_frame_pos(
         ii::I,
         jj::I,
         z::T,
-        grid::GridParam{I, T},
+        grid::GridParam{I,T},
         bucket::BucketParam{T}
-) where {I <: Int64, T <: Float64}
+) where {I<:Int64,T<:Float64}
     # Calculating cell's position in bucket frame
     cell_pos = [
         grid.vect_x[ii] - bucket.pos[1], grid.vect_y[jj] - bucket.pos[2], z - bucket.pos[3]
@@ -257,9 +257,9 @@ This function reinitializes `sparse_array`.
     _init_sparse_array!(out.body, grid)
 """
 function _init_sparse_array!(
-        sparse_array::Vector{SparseMatrixCSC{T, I}},
-        grid::GridParam{I, T}
-) where {I <: Int64, T <: Float64}
+        sparse_array::Vector{SparseMatrixCSC{T,I}},
+        grid::GridParam{I,T}
+) where {I<:Int64,T<:Float64}
     for ii in 1:length(sparse_array)
         droptol!(sparse_array[ii], 2 * grid.half_length_z + 1)
     end
@@ -293,8 +293,8 @@ This function returns the indices of all non-zero values in `sparse_array`.
     body_soil_pos = _locate_all_non_zeros(out.body_soil)
 """
 function _locate_all_non_zeros(
-        sparse_array::Vector{SparseMatrixCSC{T, I}}
-) where {I <: Int64, T <: Float64}
+        sparse_array::Vector{SparseMatrixCSC{T,I}}
+) where {I<:Int64,T<:Float64}
 
     # Locating all XY positions where sparse_array is nonzero
     non_zeros_1 = _locate_non_zeros(sparse_array[1])
@@ -360,8 +360,8 @@ This function returns the indices of all non-zero values in a sparse Matrix.
     non_zeros = _locate_non_zeros(out.body[1])
 """
 function _locate_non_zeros(
-        sparse_matrix::SparseMatrixCSC{T, I}
-) where {I <: Int64, T <: Float64}
+        sparse_matrix::SparseMatrixCSC{T,I}
+) where {I<:Int64,T<:Float64}
 
     # Intializing
     non_zeros = Vector{Vector{Int64}}()
@@ -408,7 +408,7 @@ function calc_normal(
         a::Vector{T},
         b::Vector{T},
         c::Vector{T}
-) where {T <: Float64}
+) where {T<:Float64}
     return cross(b - a, c - a) / norm(cross(b - a, c - a))
 end
 
@@ -431,7 +431,7 @@ This function sets the used RNG seed.
 """
 function set_RNG_seed!(
         seed::I=1234
-) where {I <: Int64}
+) where {I<:Int64}
     seed!(seed)
 end
 
@@ -464,11 +464,11 @@ The initial volume of soil (`init_volume`) has to be provided.
     check_volume(out, init_volume, grid)
 """
 function check_volume(
-        out::SimOut{B, I, T},
+        out::SimOut{B,I,T},
         init_volume::T,
-        grid::GridParam{I, T},
+        grid::GridParam{I,T},
         tol::T=1e-8
-) where {B <: Bool, I <: Int64, T <: Float64}
+) where {B<:Bool,I<:Int64,T<:Float64}
 
     # Calculating volume of soil in the terrain
     terrain_volume = grid.cell_area * sum(out.terrain)
@@ -485,7 +485,7 @@ function check_volume(
         ii = cell[2]
         jj = cell[3]
         ind = cell[1]
-        body_soil_volume += out.body_soil[ind + 1][ii, jj] - out.body_soil[ind][ii, jj]
+        body_soil_volume += out.body_soil[ind+1][ii, jj] - out.body_soil[ind][ii, jj]
     end
     body_soil_volume *= grid.cell_area
 
@@ -495,7 +495,7 @@ function check_volume(
         jj = cell.jj[1]
         ind = cell.ind[1]
         h_soil = cell.h_soil[1]
-        old_body_soil[ind + 1][ii, jj] -= h_soil
+        old_body_soil[ind+1][ii, jj] -= h_soil
     end
 
     # Calculating total volume of soil
@@ -559,9 +559,9 @@ The conventions that are checked include:
     check_soil(out)
 """
 function check_soil(
-        out::SimOut{B, I, T},
+        out::SimOut{B,I,T},
         tol::T=1e-8
-) where {B <: Bool, I <: Int64, T <: Float64}
+) where {B<:Bool,I<:Int64,T<:Float64}
 
     # Collecting all cells where the bucket is located
     bucket_pos = _locate_all_non_zeros(out.body)
@@ -580,11 +580,11 @@ function check_soil(
             return false
         end
 
-        if (out.body[ind][ii, jj] > out.body[ind + 1][ii, jj] + tol)
+        if (out.body[ind][ii, jj] > out.body[ind+1][ii, jj] + tol)
             @warn "Minimum height of the bucket is above its maximum height\n" *
                   "Location: (" * string(ii) * ", " * string(jj) * ")\n" *
                   "Bucket minimum height: " * string(out.body[ind][ii, jj]) * "\n" *
-                  "Bucket maximum height: " * string(out.body[ind + 1][ii, jj])
+                  "Bucket maximum height: " * string(out.body[ind+1][ii, jj])
             return false
         end
 
@@ -633,32 +633,32 @@ function check_soil(
             return false
         end
 
-        if ((out.body_soil[ind][ii, jj] == 0.0) && (out.body_soil[ind + 1][ii, jj] == 0.0))
+        if ((out.body_soil[ind][ii, jj] == 0.0) && (out.body_soil[ind+1][ii, jj] == 0.0))
             ### Bucket soil is not present ###
             # Stopping the check
             continue
         end
 
-        if (out.body_soil[ind][ii, jj] > out.body_soil[ind + 1][ii, jj] + tol)
+        if (out.body_soil[ind][ii, jj] > out.body_soil[ind+1][ii, jj] + tol)
             @warn "Minimum height of the bucket soil is above its maximum height\n" *
                   "Location: (" * string(ii) * ", " * string(jj) * ")\n" *
                   "Bucket soil minimum height: " * string(out.body_soil[ind][ii, jj]) * "\n" *
-                  "Bucket soil maximum height: " * string(out.body_soil[ind + 1][ii, jj])
+                  "Bucket soil maximum height: " * string(out.body_soil[ind+1][ii, jj])
             return false
         end
 
-        if (out.body[ind + 1][ii, jj] > out.body_soil[ind][ii, jj] + tol)
+        if (out.body[ind+1][ii, jj] > out.body_soil[ind][ii, jj] + tol)
             @warn "Bucket is above the bucket soil\n" *
                   "Location: (" * string(ii) * ", " * string(jj) * ")\n" *
-                  "Bucket maximum height: " * string(out.body[ind + 1][ii, jj]) * "\n" *
+                  "Bucket maximum height: " * string(out.body[ind+1][ii, jj]) * "\n" *
                   "Bucket soil minimum height: " * string(out.body_soil[ind][ii, jj])
             return false
         end
 
-        if (out.body_soil[ind][ii, jj] != out.body[ind + 1][ii, jj])
+        if (out.body_soil[ind][ii, jj] != out.body[ind+1][ii, jj])
             @warn "Bucket soil is not above the bucket\n" *
                   "Location: (" * string(ii) * ", " * string(jj) * ")\n" *
-                  "Bucket maximum height: " * string(out.body[ind + 1][ii, jj]) * "\n" *
+                  "Bucket maximum height: " * string(out.body[ind+1][ii, jj]) * "\n" *
                   "Bucket soil minimum height: " * string(out.body_soil[ind][ii, jj])
             return false
         end
@@ -673,12 +673,12 @@ function check_soil(
         jj = cell[3]
         ind = cell[1]
 
-        if ((out.body[ind][ii, jj] == 0.0) && (out.body[ind + 1][ii, jj] == 0.0))
+        if ((out.body[ind][ii, jj] == 0.0) && (out.body[ind+1][ii, jj] == 0.0))
             ### Bucket is not present ###
             @warn "Bucket soil is present but there is no bucket\n" *
                   "Location: (" * string(ii) * ", " * string(jj) * ")\n" *
                   "Bucket soil minimum height: " * string(out.body_soil[ind][ii, jj]) * "\n" *
-                  "Bucket soil maximum height: " * string(out.body_soil[ind + 1][ii, jj])
+                  "Bucket soil maximum height: " * string(out.body_soil[ind+1][ii, jj])
             return false
         end
     end
@@ -711,9 +711,9 @@ respectively, followed by the file number.
     write_soil(out, grid)
 """
 function write_soil(
-        out::SimOut{B, I, T},
-        grid::GridParam{I, T}
-) where {B <: Bool, I <: Int64, T <: Float64}
+        out::SimOut{B,I,T},
+        grid::GridParam{I,T}
+) where {B<:Bool,I<:Int64,T<:Float64}
 
     # Finding next filename for the terrain file
     step = 1
@@ -757,7 +757,7 @@ function write_soil(
             ind = cell[1]
 
             _write_vector(
-                io, grid.vect_x[ii], grid.vect_y[jj], out.body_soil[ind + 1][ii, jj]
+                io, grid.vect_x[ii], grid.vect_y[jj], out.body_soil[ind+1][ii, jj]
             )
         end
     end
@@ -790,7 +790,7 @@ This function writes the position of all bucket faces into a csv located in the
 """
 function write_bucket(
         bucket::BucketParam{T}
-) where {T <: Float64}
+) where {T<:Float64}
 
     # Transforming vector to Quaternion
     ori = Quaternion(bucket.ori)
@@ -874,6 +874,6 @@ function _write_vector(
         x::T,
         y::T,
         z::T
-) where {T <: Float64}
+) where {T<:Float64}
     writedlm(io, [string(x, ", ", y, ", ", z)])
 end

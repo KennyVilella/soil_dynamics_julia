@@ -55,7 +55,7 @@ function soil_evolution(
         random_trajectory::B=false,
         set_RNG::B=false,
         tol::T=1e-8
-) where {B <: Bool, T <: Float64}
+) where {B<:Bool,T<:Float64}
     if (set_RNG)
         ### RNG seed is set ###
         set_RNG_seed!()
@@ -279,7 +279,7 @@ function _calc_vel(
         pos_1::Vector{T},
         pos_2::Vector{T},
         dt::T
-) where {T <: Float64}
+) where {T<:Float64}
     return (pos_2 - pos_1) / dt
 end
 
@@ -336,7 +336,7 @@ function _calc_trajectory(
         z_min::T,
         origin_angle::T,
         nn::I
-) where {I <: Int64, T <: Float64}
+) where {I<:Int64,T<:Float64}
 
     # Calculating X vector of the trajectory
     x_vec = range(x_i, x_i + 2 * (x_min - x_i), nn)
