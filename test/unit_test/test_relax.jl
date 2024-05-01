@@ -32,7 +32,6 @@ sim = SimParam(repose_angle, max_iterations, cell_buffer)
 terrain = zeros(2 * grid.half_length_x + 1, 2 * grid.half_length_y + 1)
 out = SimOut(terrain, grid)
 
-
 #==========================================================================================#
 #                                                                                          #
 #                                         Testing                                          #
@@ -500,7 +499,8 @@ end
     @test (out.terrain[10, 14] ≈ 0.3)
     @test (out.terrain[10, 15] ≈ 0.2)
     @test (length(out.body_soil_pos) == 0)
-    reset_value_and_test(out, [[10, 14], [10, 15]], Vector{Vector{Int64}}(), Vector{Vector{Int64}}())
+    reset_value_and_test(
+        out, [[10, 14], [10, 15]], Vector{Vector{Int64}}(), Vector{Vector{Int64}}())
 
     # Test: RE-RUT-2
     set_height(out, 10, 15, -0.8, -0.3, -0.1, NaN, NaN, NaN, NaN, NaN, NaN)
@@ -890,7 +890,8 @@ end
     @test (out.terrain[10, 15] ≈ -0.1)
     @test (out.terrain[10, 16] ≈ 0.0)
     @test (length(out.body_soil_pos) == 0)
-    reset_value_and_test(out, [[10, 15], [10, 16]], Vector{Vector{Int64}}(), Vector{Vector{Int64}}())
+    reset_value_and_test(
+        out, [[10, 15], [10, 16]], Vector{Vector{Int64}}(), Vector{Vector{Int64}}())
 
     # Test: RE-RT-2
     set_RNG_seed!(18)
@@ -901,7 +902,8 @@ end
     @test (out.terrain[10, 15] ≈ -0.1)
     @test (out.terrain[10, 16] ≈ -0.1)
     @test (length(out.body_soil_pos) == 0)
-    reset_value_and_test(out, [[10, 15], [10, 16]], Vector{Vector{Int64}}(), Vector{Vector{Int64}}())
+    reset_value_and_test(
+        out, [[10, 15], [10, 16]], Vector{Vector{Int64}}(), Vector{Vector{Int64}}())
 
     # Test: RE-RT-3
     set_RNG_seed!(18)
@@ -1506,7 +1508,8 @@ end
     @test (out.terrain[10, 16] ≈ -0.2)
     @test (out.terrain[9, 15] ≈ -0.1)
     @test (length(out.body_soil_pos) == 0)
-    reset_value_and_test(out, [[9, 15], [10, 15], [10, 16]], Vector{Vector{Int64}}(), Vector{Vector{Int64}}())
+    reset_value_and_test(
+        out, [[9, 15], [10, 15], [10, 16]], Vector{Vector{Int64}}(), Vector{Vector{Int64}}())
 
     # Test: RE-RT-41
     set_RNG_seed!(18)
@@ -1523,7 +1526,8 @@ end
     @test (out.terrain[10, 15] ≈ -0.1)
     @test (out.terrain[11, 15] ≈ -0.1)
     @test (length(out.body_soil_pos) == 0)
-    reset_value_and_test(out, [[10, 15], [11, 15]], Vector{Vector{Int64}}(), Vector{Vector{Int64}}())
+    reset_value_and_test(
+        out, [[10, 15], [11, 15]], Vector{Vector{Int64}}(), Vector{Vector{Int64}}())
 
     # Resetting impact_area
     out.impact_area[:, :] .= Int64[[0, 0] [0, 0]]
@@ -2377,7 +2381,7 @@ end
 
 @testset "_relax_unstable_body_cell!" begin
     # Test: RE-RUB-1
-    body_soil_pos = Vector{BodySoil{Int64, Float64}}()
+    body_soil_pos = Vector{BodySoil{Int64,Float64}}()
     set_height(out, 10, 14, -0.2, -0.2, 0.0, 0.0, 0.2, NaN, NaN, NaN, NaN)
     out.terrain[10, 15] = 0.0
     pos0 = _calc_bucket_frame_pos(10, 14, 0.0, grid, bucket)
@@ -2393,7 +2397,7 @@ end
         out, [[10, 14], [10, 15]], [[1, 10, 14]], [[1, 10, 14]])
 
     # Test: RE-RUB-2
-    body_soil_pos = Vector{BodySoil{Int64, Float64}}()
+    body_soil_pos = Vector{BodySoil{Int64,Float64}}()
     set_height(out, 10, 14, -0.2, -0.2, 0.0, 0.0, 0.2, NaN, NaN, NaN, NaN)
     out.terrain[10, 15] = -0.2
     pos0 = _calc_bucket_frame_pos(10, 14, 0.0, grid, bucket)
@@ -2409,7 +2413,7 @@ end
         out, [[10, 14], [10, 15]], [[1, 10, 14]], [[1, 10, 14]])
 
     # Test: RE-RUB-3
-    body_soil_pos = Vector{BodySoil{Int64, Float64}}() 
+    body_soil_pos = Vector{BodySoil{Int64,Float64}}()
     set_height(out, 10, 14, -0.2, -0.2, 0.0, 0.0, 0.4, NaN, NaN, NaN, NaN)
     out.terrain[10, 15] = 0.0
     pos0 = _calc_bucket_frame_pos(10, 14, 0.0, grid, bucket)
@@ -2427,7 +2431,7 @@ end
         out, [[10, 14], [10, 15]], [[1, 10, 14]], [[1, 10, 14]])
 
     # Test: RE-RUB-4
-    body_soil_pos = Vector{BodySoil{Int64, Float64}}() 
+    body_soil_pos = Vector{BodySoil{Int64,Float64}}()
     set_height(out, 10, 14, -0.2, -0.2, 0.0, 0.0, 0.2, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, 0.0, 0.3, 0.4, NaN, NaN, NaN, NaN, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.0, grid, bucket)
@@ -2444,7 +2448,7 @@ end
         [[1, 10, 14]])
 
     # Test: RE-RUB-5
-    body_soil_pos = Vector{BodySoil{Int64, Float64}}() 
+    body_soil_pos = Vector{BodySoil{Int64,Float64}}()
     set_height(out, 10, 14, -0.2, -0.2, 0.0, 0.0, 0.2, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.4, 0.1, 0.4, NaN, NaN, NaN, NaN, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.0, grid, bucket)
@@ -2461,7 +2465,7 @@ end
         [[1, 10, 14], [1, 10, 15]])
 
     # Test: RE-RUB-6
-    body_soil_pos = Vector{BodySoil{Int64, Float64}}() 
+    body_soil_pos = Vector{BodySoil{Int64,Float64}}()
     set_height(out, 10, 14, -0.2, -0.2, 0.0, 0.0, 0.4, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, 0.0, 0.1, 0.2, NaN, NaN, NaN, NaN, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.0, grid, bucket)
@@ -2478,7 +2482,7 @@ end
         [[1, 10, 14]])
 
     # Test: RE-RUB-7
-    body_soil_pos = Vector{BodySoil{Int64, Float64}}() 
+    body_soil_pos = Vector{BodySoil{Int64,Float64}}()
     set_height(out, 10, 14, -0.2, -0.2, 0.0, 0.0, 0.4, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, 0.0, 0.3, 0.4, NaN, NaN, NaN, NaN, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.0, grid, bucket)
@@ -2497,7 +2501,7 @@ end
         [[1, 10, 14]])
 
     # Test: RE-RUB-8
-    body_soil_pos = Vector{BodySoil{Int64, Float64}}() 
+    body_soil_pos = Vector{BodySoil{Int64,Float64}}()
     set_height(out, 10, 14, -0.2, -0.2, 0.0, 0.0, 0.6, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, 0.0, 0.1, 0.4, NaN, NaN, NaN, NaN, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.0, grid, bucket)
@@ -2516,7 +2520,7 @@ end
         [[1, 10, 14]])
 
     # Test: RE-RUB-9
-    body_soil_pos = Vector{BodySoil{Int64, Float64}}() 
+    body_soil_pos = Vector{BodySoil{Int64,Float64}}()
     set_height(out, 10, 14, -0.2, -0.2, 0.0, 0.0, 0.2, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.2, -0.2, 0.0, NaN, NaN, NaN, NaN, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.0, grid, bucket)
@@ -2535,7 +2539,7 @@ end
         [[1, 10, 14], [1, 10, 15]])
 
     # Test: RE-RUB-10
-    body_soil_pos = Vector{BodySoil{Int64, Float64}}() 
+    body_soil_pos = Vector{BodySoil{Int64,Float64}}()
     set_height(out, 10, 14, -0.2, -0.2, 0.0, 0.0, 0.2, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.3, -0.3, -0.2, NaN, NaN, NaN, NaN, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.0, grid, bucket)
@@ -2554,7 +2558,7 @@ end
         [[1, 10, 14], [1, 10, 15]])
 
     # Test: RE-RUB-11
-    body_soil_pos = Vector{BodySoil{Int64, Float64}}() 
+    body_soil_pos = Vector{BodySoil{Int64,Float64}}()
     set_height(out, 10, 14, -0.2, -0.2, 0.0, 0.0, 0.2, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.3, -0.3, -0.2, NaN, NaN, NaN, NaN, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.0, grid, bucket)
@@ -2575,7 +2579,7 @@ end
         [[1, 10, 14], [1, 10, 15]])
 
     # Test: RE-RUB-12
-    body_soil_pos = Vector{BodySoil{Int64, Float64}}() 
+    body_soil_pos = Vector{BodySoil{Int64,Float64}}()
     set_height(out, 10, 14, -0.2, -0.2, 0.0, 0.0, 0.2, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.3, -0.3, -0.2, -0.2, 0.0, NaN, NaN, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.0, grid, bucket)
@@ -2596,7 +2600,7 @@ end
         [[1, 10, 14], [1, 10, 15]])
 
     # Test: RE-RUB-13
-    body_soil_pos = Vector{BodySoil{Int64, Float64}}() 
+    body_soil_pos = Vector{BodySoil{Int64,Float64}}()
     set_height(out, 10, 14, -0.2, -0.2, 0.1, 0.1, 0.2, NaN, NaN, NaN, NaN)
     set_height(
         out, 10, 15, -0.3, -0.3, -0.2, -0.2, -0.1, NaN, NaN, NaN, NaN)
@@ -2618,7 +2622,7 @@ end
         [[1, 10, 14], [1, 10, 15]])
 
     # Test: RE-RUB-14
-    body_soil_pos = Vector{BodySoil{Int64, Float64}}() 
+    body_soil_pos = Vector{BodySoil{Int64,Float64}}()
     set_height(out, 10, 14, -0.2, -0.2, 0.2, 0.2, 0.4, NaN, NaN, NaN, NaN)
     set_height(
         out, 10, 15, -0.3, -0.3, -0.2, -0.2, -0.1, NaN, NaN, NaN, NaN)
@@ -2642,7 +2646,7 @@ end
         [[1, 10, 14], [1, 10, 15]])
 
     # Test: RE-RUB-15
-    body_soil_pos = Vector{BodySoil{Int64, Float64}}() 
+    body_soil_pos = Vector{BodySoil{Int64,Float64}}()
     set_height(out, 10, 14, -0.2, -0.2, 0.0, 0.0, 0.2, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, 0.0, NaN, NaN, NaN, NaN, 0.5, 0.6, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.1, grid, bucket)
@@ -2659,7 +2663,7 @@ end
         [[1, 10, 14], [3, 10, 15]])
 
     # Test: RE-RUB-16
-    body_soil_pos = Vector{BodySoil{Int64, Float64}}() 
+    body_soil_pos = Vector{BodySoil{Int64,Float64}}()
     set_height(out, 10, 14, -0.2, -0.2, 0.0, 0.0, 0.2, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.4, NaN, NaN, NaN, NaN, 0.5, 0.6, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.0, grid, bucket)
@@ -2676,7 +2680,7 @@ end
         [[1, 10, 14]])
 
     # Test: RE-RUB-17
-    body_soil_pos = Vector{BodySoil{Int64, Float64}}() 
+    body_soil_pos = Vector{BodySoil{Int64,Float64}}()
     set_height(out, 10, 14, -0.2, -0.2, 0.0, 0.0, 0.4, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, 0.0, NaN, NaN, NaN, NaN, 0.1, 0.6, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.0, grid, bucket)
@@ -2693,7 +2697,7 @@ end
         [[1, 10, 14], [3, 10, 15]])
 
     # Test: RE-RUB-18
-    body_soil_pos = Vector{BodySoil{Int64, Float64}}() 
+    body_soil_pos = Vector{BodySoil{Int64,Float64}}()
     set_height(out, 10, 14, -0.2, -0.2, 0.0, 0.0, 0.2, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.4, NaN, NaN, NaN, NaN, 0.5, 0.6, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.0, grid, bucket)
@@ -2712,7 +2716,7 @@ end
         [[1, 10, 14]])
 
     # Test: RE-RUB-19
-    body_soil_pos = Vector{BodySoil{Int64, Float64}}() 
+    body_soil_pos = Vector{BodySoil{Int64,Float64}}()
     set_height(out, 10, 14, -0.2, -0.2, 0.0, 0.0, 0.6, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, 0.0, NaN, NaN, NaN, NaN, 0.1, 0.6, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.0, grid, bucket)
@@ -2731,7 +2735,7 @@ end
         [[1, 10, 14]])
 
     # Test: RE-RUB-20
-    body_soil_pos = Vector{BodySoil{Int64, Float64}}() 
+    body_soil_pos = Vector{BodySoil{Int64,Float64}}()
     set_height(out, 10, 14, -0.2, -0.2, 0.0, 0.0, 0.2, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.2, NaN, NaN, NaN, NaN, -0.2, 0.0, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.0, grid, bucket)
@@ -2750,7 +2754,7 @@ end
         [[1, 10, 14], [3, 10, 15]])
 
     # Test: RE-RUB-21
-    body_soil_pos = Vector{BodySoil{Int64, Float64}}() 
+    body_soil_pos = Vector{BodySoil{Int64,Float64}}()
     set_height(out, 10, 14, -0.2, -0.2, 0.1, 0.1, 0.2, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.2, NaN, NaN, NaN, NaN, -0.2, -0.1, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.1, grid, bucket)
@@ -2769,7 +2773,7 @@ end
         [[1, 10, 14], [3, 10, 15]])
 
     # Test: RE-RUB-22
-    body_soil_pos = Vector{BodySoil{Int64, Float64}}() 
+    body_soil_pos = Vector{BodySoil{Int64,Float64}}()
     set_height(out, 10, 14, -0.2, -0.2, 0.1, 0.1, 0.3, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.3, NaN, NaN, NaN, NaN, -0.3, -0.2, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.1, grid, bucket)
@@ -2790,7 +2794,7 @@ end
         [[1, 10, 14], [3, 10, 15]])
 
     # Test: RE-RUB-23
-    body_soil_pos = Vector{BodySoil{Int64, Float64}}() 
+    body_soil_pos = Vector{BodySoil{Int64,Float64}}()
     set_height(out, 10, 14, -0.2, -0.2, 0.0, 0.0, 0.2, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.2, NaN, NaN, NaN, NaN, -0.2, -0.1, -0.1, 0.0)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.0, grid, bucket)
@@ -2811,7 +2815,7 @@ end
         [[1, 10, 14], [3, 10, 15]])
 
     # Test: RE-RUB-24
-    body_soil_pos = Vector{BodySoil{Int64, Float64}}() 
+    body_soil_pos = Vector{BodySoil{Int64,Float64}}()
     set_height(out, 10, 14, -0.2, -0.2, 0.1, 0.1, 0.2, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.2, NaN, NaN, NaN, NaN, -0.2, -0.1, -0.1, 0.0)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.1, grid, bucket)
@@ -2832,7 +2836,7 @@ end
         [[1, 10, 14], [3, 10, 15]])
 
     # Test: RE-RUB-25
-    body_soil_pos = Vector{BodySoil{Int64, Float64}}() 
+    body_soil_pos = Vector{BodySoil{Int64,Float64}}()
     set_height(out, 10, 14, -0.2, -0.2, 0.1, 0.1, 0.3, NaN, NaN, NaN, NaN)
     set_height(
         out, 10, 15, -0.3, NaN, NaN, NaN, NaN, -0.3, -0.2, -0.2, -0.1)
@@ -2856,7 +2860,7 @@ end
         [[1, 10, 14], [3, 10, 15]])
 
     # Test: RE-RUB-26
-    body_soil_pos = Vector{BodySoil{Int64, Float64}}() 
+    body_soil_pos = Vector{BodySoil{Int64,Float64}}()
     set_height(out, 10, 14, -0.2, -0.2, 0.0, 0.0, 0.3, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.2, -0.2, -0.1, NaN, NaN, 0.1, 0.3, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.0, grid, bucket)
@@ -2875,7 +2879,7 @@ end
         [[1, 10, 14], [1, 10, 15]])
 
     # Test: RE-RUB-27
-    body_soil_pos = Vector{BodySoil{Int64, Float64}}() 
+    body_soil_pos = Vector{BodySoil{Int64,Float64}}()
     set_height(out, 10, 14, -0.2, -0.2, 0.0, 0.0, 0.1, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.2, -0.2, -0.1, NaN, NaN, 0.1, 0.3, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.0, grid, bucket)
@@ -2894,7 +2898,7 @@ end
         [[1, 10, 14], [1, 10, 15]])
 
     # Test: RE-RUB-28
-    body_soil_pos = Vector{BodySoil{Int64, Float64}}() 
+    body_soil_pos = Vector{BodySoil{Int64,Float64}}()
     set_height(out, 10, 14, -0.2, -0.2, 0.0, 0.0, 0.2, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.3, -0.3, -0.2, NaN, NaN, 0.1, 0.3, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.0, grid, bucket)
@@ -2915,7 +2919,7 @@ end
         [[1, 10, 14], [1, 10, 15]])
 
     # Test: RE-RUB-29
-    body_soil_pos = Vector{BodySoil{Int64, Float64}}() 
+    body_soil_pos = Vector{BodySoil{Int64,Float64}}()
     set_height(out, 10, 14, -0.2, -0.2, 0.0, 0.0, 0.5, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.2, -0.2, -0.1, NaN, NaN, 0.1, 0.3, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.0, grid, bucket)
@@ -2934,7 +2938,7 @@ end
         [[1, 10, 14], [1, 10, 15]])
 
     # Test: RE-RUB-30
-    body_soil_pos = Vector{BodySoil{Int64, Float64}}() 
+    body_soil_pos = Vector{BodySoil{Int64,Float64}}()
     set_height(out, 10, 14, -0.2, -0.2, 0.0, 0.0, 0.9, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.2, -0.2, -0.1, NaN, NaN, 0.0, 0.3, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.0, grid, bucket)
@@ -2955,7 +2959,7 @@ end
         [[1, 10, 14], [1, 10, 15]])
 
     # Test: RE-RUB-31
-    body_soil_pos = Vector{BodySoil{Int64, Float64}}() 
+    body_soil_pos = Vector{BodySoil{Int64,Float64}}()
     set_height(out, 10, 14, -0.2, -0.2, 0.0, 0.0, 0.5, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.2, -0.2, -0.1, NaN, NaN, 0.0, 0.3, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.0, grid, bucket)
@@ -2974,7 +2978,7 @@ end
         [[1, 10, 14], [3, 10, 15]])
 
     # Test: RE-RUB-32
-    body_soil_pos = Vector{BodySoil{Int64, Float64}}() 
+    body_soil_pos = Vector{BodySoil{Int64,Float64}}()
     set_height(out, 10, 14, -0.2, -0.2, 0.5, 0.5, 0.8, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.2, -0.2, -0.1, NaN, NaN, 0.0, 0.2, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.5, grid, bucket)
@@ -2993,7 +2997,7 @@ end
         [[1, 10, 14], [3, 10, 15]])
 
     # Test: RE-RUB-33
-    body_soil_pos = Vector{BodySoil{Int64, Float64}}() 
+    body_soil_pos = Vector{BodySoil{Int64,Float64}}()
     set_height(out, 10, 14, -0.2, -0.2, 0.5, 0.5, 0.8, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.2, -0.2, -0.1, NaN, NaN, 0.0, 0.2, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.5, grid, bucket)
@@ -3014,7 +3018,7 @@ end
         [[1, 10, 14], [3, 10, 15]])
 
     # Test: RE-RUB-34
-    body_soil_pos = Vector{BodySoil{Int64, Float64}}() 
+    body_soil_pos = Vector{BodySoil{Int64,Float64}}()
     set_height(out, 10, 14, -0.2, -0.2, 0.0, 0.0, 0.3, NaN, NaN, NaN, NaN)
     set_height(
         out, 10, 15, -0.3, -0.3, -0.2, -0.2, -0.1, 0.1, 0.3, 0.3, 0.5)
@@ -3037,7 +3041,7 @@ end
         [[1, 10, 14], [1, 10, 15], [3, 10, 15]])
 
     # Test: RE-RUB-35
-    body_soil_pos = Vector{BodySoil{Int64, Float64}}() 
+    body_soil_pos = Vector{BodySoil{Int64,Float64}}()
     set_height(out, 10, 14, -0.2, -0.2, 0.1, 0.1, 0.3, NaN, NaN, NaN, NaN)
     set_height(
         out, 10, 15, -0.3, -0.3, -0.2, -0.2, -0.1, 0.2, 0.3, 0.3, 0.5)
@@ -3060,7 +3064,7 @@ end
         [[1, 10, 14], [1, 10, 15], [3, 10, 15]])
 
     # Test: RE-RUB-36
-    body_soil_pos = Vector{BodySoil{Int64, Float64}}() 
+    body_soil_pos = Vector{BodySoil{Int64,Float64}}()
     set_height(out, 10, 14, -0.2, -0.2, 0.1, 0.1, 0.3, NaN, NaN, NaN, NaN)
     set_height(
         out, 10, 15, -0.3, -0.3, -0.2, -0.2, -0.1, 0.2, 0.3, 0.3, 0.5)
@@ -3085,7 +3089,7 @@ end
         [[1, 10, 14], [1, 10, 15], [3, 10, 15]])
 
     # Test: RE-RUB-37
-    body_soil_pos = Vector{BodySoil{Int64, Float64}}() 
+    body_soil_pos = Vector{BodySoil{Int64,Float64}}()
     set_height(out, 10, 14, -0.2, -0.2, 0.1, 0.1, 0.9, NaN, NaN, NaN, NaN)
     set_height(
         out, 10, 15, -0.3, -0.3, -0.2, -0.2, -0.1, 0.2, 0.3, 0.3, 0.5)
@@ -3108,7 +3112,7 @@ end
         [[1, 10, 14], [1, 10, 15], [3, 10, 15]])
 
     # Test: RE-RUB-38
-    body_soil_pos = Vector{BodySoil{Int64, Float64}}() 
+    body_soil_pos = Vector{BodySoil{Int64,Float64}}()
     set_height(out, 10, 14, -0.2, -0.2, 0.1, 0.1, 0.9, NaN, NaN, NaN, NaN)
     set_height(
         out, 10, 15, -0.3, -0.3, -0.2, -0.2, -0.1, 0.0, 0.3, 0.3, 0.5)
@@ -3133,7 +3137,7 @@ end
         [[1, 10, 14], [1, 10, 15], [3, 10, 15]])
 
     # Test: RE-RUB-39
-    body_soil_pos = Vector{BodySoil{Int64, Float64}}() 
+    body_soil_pos = Vector{BodySoil{Int64,Float64}}()
     set_height(out, 10, 14, -0.2, -0.2, 0.1, 0.1, 0.9, NaN, NaN, NaN, NaN)
     set_height(
         out, 10, 15, -0.3, -0.3, -0.2, -0.2, -0.1, 0.1, 0.3, 0.3, 0.5)
@@ -3156,7 +3160,7 @@ end
         [[1, 10, 14], [1, 10, 15], [3, 10, 15]])
 
     # Test: RE-RUB-40
-    body_soil_pos = Vector{BodySoil{Int64, Float64}}() 
+    body_soil_pos = Vector{BodySoil{Int64,Float64}}()
     set_height(out, 10, 14, -0.2, -0.2, 0.7, 0.7, 0.9, NaN, NaN, NaN, NaN)
     set_height(
         out, 10, 15, -0.3, -0.3, -0.2, -0.2, -0.1, 0.1, 0.3, 0.3, 0.5)
@@ -3179,7 +3183,7 @@ end
         [[1, 10, 14], [1, 10, 15], [3, 10, 15]])
 
     # Test: RE-RUB-41
-    body_soil_pos = Vector{BodySoil{Int64, Float64}}() 
+    body_soil_pos = Vector{BodySoil{Int64,Float64}}()
     set_height(out, 10, 14, -0.2, -0.2, 0.1, 0.1, 0.9, NaN, NaN, NaN, NaN)
     set_height(
         out, 10, 15, -0.3, -0.3, -0.2, -0.2, -0.1, 0.1, 0.3, 0.3, 0.5)
@@ -3204,7 +3208,7 @@ end
         [[1, 10, 14], [1, 10, 15], [3, 10, 15]])
 
     # Test: RE-RUB-42
-    body_soil_pos = Vector{BodySoil{Int64, Float64}}() 
+    body_soil_pos = Vector{BodySoil{Int64,Float64}}()
     set_height(out, 10, 14, -0.2, -0.2, 0.0, 0.0, 0.8, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.3, -0.3, -0.2, -0.2, 0.1, 0.1, 0.2, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.0, grid, bucket)
@@ -3225,7 +3229,7 @@ end
         [[1, 10, 14], [1, 10, 15], [3, 10, 15]])
 
     # Test: RE-RUB-43
-    body_soil_pos = Vector{BodySoil{Int64, Float64}}() 
+    body_soil_pos = Vector{BodySoil{Int64,Float64}}()
     set_height(out, 10, 14, -0.2, -0.2, 0.6, 0.6, 0.8, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.3, -0.3, -0.2, -0.2, 0.1, 0.1, 0.2, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.6, grid, bucket)
@@ -3246,7 +3250,7 @@ end
         [[1, 10, 14], [1, 10, 15], [3, 10, 15]])
 
     # Test: RE-RUB-44
-    body_soil_pos = Vector{BodySoil{Int64, Float64}}() 
+    body_soil_pos = Vector{BodySoil{Int64,Float64}}()
     set_height(out, 10, 14, -0.2, -0.2, 0.0, 0.0, 0.8, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.3, -0.3, -0.2, -0.2, 0.1, 0.1, 0.2, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.0, grid, bucket)
@@ -3269,7 +3273,7 @@ end
         [[1, 10, 14], [1, 10, 15], [3, 10, 15]])
 
     # Test: RE-RUB-45
-    body_soil_pos = Vector{BodySoil{Int64, Float64}}() 
+    body_soil_pos = Vector{BodySoil{Int64,Float64}}()
     set_height(out, 10, 14, -0.2, -0.2, 0.0, 0.0, 0.8, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.3, -0.3, -0.2, -0.2, 0.1, 0.1, 0.2, 0.2, 0.4)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.0, grid, bucket)
@@ -3291,7 +3295,7 @@ end
         [[1, 10, 14], [1, 10, 15], [3, 10, 15]])
 
     # Test: RE-RUB-46
-    body_soil_pos = Vector{BodySoil{Int64, Float64}}() 
+    body_soil_pos = Vector{BodySoil{Int64,Float64}}()
     set_height(out, 10, 14, -0.2, -0.2, 0.7, 0.7, 0.8, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.3, -0.3, -0.2, -0.2, 0.1, 0.1, 0.2, 0.2, 0.4)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.7, grid, bucket)
@@ -3313,7 +3317,7 @@ end
         [[1, 10, 14], [1, 10, 15], [3, 10, 15]])
 
     # Test: RE-RUB-47
-    body_soil_pos = Vector{BodySoil{Int64, Float64}}() 
+    body_soil_pos = Vector{BodySoil{Int64,Float64}}()
     set_height(out, 10, 14, -0.2, -0.2, 0.0, 0.0, 0.8, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.3, -0.3, -0.2, -0.2, 0.1, 0.1, 0.2, 0.2, 0.4)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.0, grid, bucket)
@@ -3337,7 +3341,7 @@ end
         [[1, 10, 14], [1, 10, 15], [3, 10, 15]])
 
     # Test: RE-RUB-48
-    body_soil_pos = Vector{BodySoil{Int64, Float64}}() 
+    body_soil_pos = Vector{BodySoil{Int64,Float64}}()
     set_height(out, 10, 14, -0.2, -0.2, 0.0, 0.0, 0.3, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.2, 0.1, 0.3, NaN, NaN, -0.2, -0.1, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.0, grid, bucket)
@@ -3356,7 +3360,7 @@ end
         [[1, 10, 14], [3, 10, 15]])
 
     # Test: RE-RUB-49
-    body_soil_pos = Vector{BodySoil{Int64, Float64}}() 
+    body_soil_pos = Vector{BodySoil{Int64,Float64}}()
     set_height(out, 10, 14, -0.2, -0.2, 0.1, 0.1, 0.3, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.2, 0.2, 0.4, NaN, NaN, -0.2, 0.0, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.1, grid, bucket)
@@ -3375,7 +3379,7 @@ end
         [[1, 10, 14], [3, 10, 15]])
 
     # Test: RE-RUB-50
-    body_soil_pos = Vector{BodySoil{Int64, Float64}}() 
+    body_soil_pos = Vector{BodySoil{Int64,Float64}}()
     set_height(out, 10, 14, -0.2, -0.2, 0.1, 0.1, 0.3, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.2, 0.2, 0.4, NaN, NaN, -0.2, 0.0, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.1, grid, bucket)
@@ -3396,7 +3400,7 @@ end
         [[1, 10, 14], [3, 10, 15]])
 
     # Test: RE-RUB-51
-    body_soil_pos = Vector{BodySoil{Int64, Float64}}() 
+    body_soil_pos = Vector{BodySoil{Int64,Float64}}()
     set_height(out, 10, 14, -0.2, -0.2, 0.1, 0.1, 0.8, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.2, 0.2, 0.4, NaN, NaN, -0.2, 0.0, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.1, grid, bucket)
@@ -3415,7 +3419,7 @@ end
         [[1, 10, 14], [3, 10, 15]])
 
     # Test: RE-RUB-52
-    body_soil_pos = Vector{BodySoil{Int64, Float64}}() 
+    body_soil_pos = Vector{BodySoil{Int64,Float64}}()
     set_height(out, 10, 14, -0.2, -0.2, 0.1, 0.1, 1.0, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.2, 0.1, 0.4, NaN, NaN, -0.2, 0.0, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.1, grid, bucket)
@@ -3436,7 +3440,7 @@ end
         [[1, 10, 14], [3, 10, 15]])
 
     # Test: RE-RUB-53
-    body_soil_pos = Vector{BodySoil{Int64, Float64}}() 
+    body_soil_pos = Vector{BodySoil{Int64,Float64}}()
     set_height(out, 10, 14, -0.2, -0.2, 0.1, 0.1, 0.8, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.2, 0.1, 0.4, NaN, NaN, -0.2, 0.0, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.1, grid, bucket)
@@ -3455,7 +3459,7 @@ end
         [[1, 10, 14], [1, 10, 15]])
 
     # Test: RE-RUB-54
-    body_soil_pos = Vector{BodySoil{Int64, Float64}}() 
+    body_soil_pos = Vector{BodySoil{Int64,Float64}}()
     set_height(out, 10, 14, -0.2, -0.2, 0.6, 0.6, 0.8, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.2, 0.1, 0.2, NaN, NaN, -0.2, 0.0, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.6, grid, bucket)
@@ -3474,7 +3478,7 @@ end
         [[1, 10, 14], [1, 10, 15]])
 
     # Test: RE-RUB-55
-    body_soil_pos = Vector{BodySoil{Int64, Float64}}() 
+    body_soil_pos = Vector{BodySoil{Int64,Float64}}()
     set_height(out, 10, 14, -0.2, -0.2, 0.1, 0.1, 0.8, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.2, 0.1, 0.4, NaN, NaN, -0.2, 0.0, NaN, NaN)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.1, grid, bucket)
@@ -3495,7 +3499,7 @@ end
         [[1, 10, 14], [1, 10, 15]])
 
     # Test: RE-RUB-56
-    body_soil_pos = Vector{BodySoil{Int64, Float64}}() 
+    body_soil_pos = Vector{BodySoil{Int64,Float64}}()
     set_height(out, 10, 14, -0.2, -0.2, 0.0, 0.0, 0.3, NaN, NaN, NaN, NaN)
     set_height(
         out, 10, 15, -0.3, 0.1, 0.3, 0.3, 0.8, -0.3, -0.2, -0.2, -0.1)
@@ -3518,7 +3522,7 @@ end
         [[1, 10, 14], [1, 10, 15], [3, 10, 15]])
 
     # Test: RE-RUB-57
-    body_soil_pos = Vector{BodySoil{Int64, Float64}}() 
+    body_soil_pos = Vector{BodySoil{Int64,Float64}}()
     set_height(out, 10, 14, -0.2, -0.2, 0.0, 0.0, 0.1, NaN, NaN, NaN, NaN)
     set_height(
         out, 10, 15, -0.3, 0.1, 0.3, 0.3, 0.8, -0.3, -0.2, -0.2, -0.1)
@@ -3541,7 +3545,7 @@ end
         [[1, 10, 14], [1, 10, 15], [3, 10, 15]])
 
     # Test: RE-RUB-58
-    body_soil_pos = Vector{BodySoil{Int64, Float64}}() 
+    body_soil_pos = Vector{BodySoil{Int64,Float64}}()
     set_height(out, 10, 14, -0.2, -0.2, 0.0, 0.0, 0.2, NaN, NaN, NaN, NaN)
     set_height(
         out, 10, 15, -0.4, 0.1, 0.3, 0.3, 0.8, -0.4, -0.3, -0.3, -0.2)
@@ -3566,7 +3570,7 @@ end
         [[1, 10, 14], [1, 10, 15], [3, 10, 15]])
 
     # Test: RE-RUB-59
-    body_soil_pos = Vector{BodySoil{Int64, Float64}}() 
+    body_soil_pos = Vector{BodySoil{Int64,Float64}}()
     set_height(out, 10, 14, -0.2, -0.2, 0.0, 0.0, 0.8, NaN, NaN, NaN, NaN)
     set_height(
         out, 10, 15, -0.3, 0.1, 0.3, 0.3, 0.8, -0.3, -0.2, -0.2, -0.1)
@@ -3589,7 +3593,7 @@ end
         [[1, 10, 14], [1, 10, 15], [3, 10, 15]])
 
     # Test: RE-RUB-60
-    body_soil_pos = Vector{BodySoil{Int64, Float64}}() 
+    body_soil_pos = Vector{BodySoil{Int64,Float64}}()
     set_height(out, 10, 14, -0.2, -0.2, 0.0, 0.0, 1.0, NaN, NaN, NaN, NaN)
     set_height(
         out, 10, 15, -0.3, 0.0, 0.3, 0.3, 0.8, -0.3, -0.2, -0.2, -0.1)
@@ -3614,7 +3618,7 @@ end
         [[1, 10, 14], [1, 10, 15], [3, 10, 15]])
 
     # Test: RE-RUB-61
-    body_soil_pos = Vector{BodySoil{Int64, Float64}}() 
+    body_soil_pos = Vector{BodySoil{Int64,Float64}}()
     set_height(out, 10, 14, -0.2, -0.2, 0.1, 0.1, 0.8, NaN, NaN, NaN, NaN)
     set_height(
         out, 10, 15, -0.3, 0.1, 0.3, 0.3, 0.5, -0.3, -0.2, -0.2, -0.1)
@@ -3637,7 +3641,7 @@ end
         [[1, 10, 14], [1, 10, 15], [3, 10, 15]])
 
     # Test: RE-RUB-62
-    body_soil_pos = Vector{BodySoil{Int64, Float64}}() 
+    body_soil_pos = Vector{BodySoil{Int64,Float64}}()
     set_height(out, 10, 14, -0.2, -0.2, 0.6, 0.6, 0.8, NaN, NaN, NaN, NaN)
     set_height(
         out, 10, 15, -0.3, 0.1, 0.3, 0.3, 0.4, -0.3, -0.2, -0.2, -0.1)
@@ -3660,7 +3664,7 @@ end
         [[1, 10, 14], [1, 10, 15], [3, 10, 15]])
 
     # Test: RE-RUB-63
-    body_soil_pos = Vector{BodySoil{Int64, Float64}}() 
+    body_soil_pos = Vector{BodySoil{Int64,Float64}}()
     set_height(out, 10, 14, -0.2, -0.2, 0.1, 0.1, 0.8, NaN, NaN, NaN, NaN)
     set_height(
         out, 10, 15, -0.3, 0.1, 0.3, 0.3, 0.4, -0.3, -0.2, -0.2, -0.1)
@@ -3685,7 +3689,7 @@ end
         [[1, 10, 14], [1, 10, 15], [3, 10, 15]])
 
     # Test: RE-RUB-64
-    body_soil_pos = Vector{BodySoil{Int64, Float64}}() 
+    body_soil_pos = Vector{BodySoil{Int64,Float64}}()
     set_height(out, 10, 14, -0.2, -0.2, 0.0, 0.0, 0.8, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.3, 0.4, 0.5, NaN, NaN, -0.3, -0.2, -0.2, 0.4)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.0, grid, bucket)
@@ -3706,7 +3710,7 @@ end
         [[1, 10, 14], [1, 10, 15], [3, 10, 15]])
 
     # Test: RE-RUB-65
-    body_soil_pos = Vector{BodySoil{Int64, Float64}}() 
+    body_soil_pos = Vector{BodySoil{Int64,Float64}}()
     set_height(out, 10, 14, -0.2, -0.2, 0.7, 0.7, 0.8, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.3, 0.4, 0.5, NaN, NaN, -0.3, -0.2, -0.2, 0.4)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.7, grid, bucket)
@@ -3727,7 +3731,7 @@ end
         [[1, 10, 14], [1, 10, 15], [3, 10, 15]])
 
     # Test: RE-RUB-66
-    body_soil_pos = Vector{BodySoil{Int64, Float64}}() 
+    body_soil_pos = Vector{BodySoil{Int64,Float64}}()
     set_height(out, 10, 14, -0.2, -0.2, 0.0, 0.0, 0.9, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.3, 0.4, 0.5, NaN, NaN, -0.3, -0.2, -0.2, 0.4)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.0, grid, bucket)
@@ -3750,7 +3754,7 @@ end
         [[1, 10, 14], [1, 10, 15], [3, 10, 15]])
 
     # Test: RE-RUB-67
-    body_soil_pos = Vector{BodySoil{Int64, Float64}}() 
+    body_soil_pos = Vector{BodySoil{Int64,Float64}}()
     set_height(out, 10, 14, -0.2, -0.2, 0.0, 0.0, 0.8, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.3, 0.4, 0.5, 0.5, 0.6, -0.3, -0.2, -0.2, 0.4)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.0, grid, bucket)
@@ -3772,7 +3776,7 @@ end
         [[1, 10, 14], [1, 10, 15], [3, 10, 15]])
 
     # Test: RE-RUB-68
-    body_soil_pos = Vector{BodySoil{Int64, Float64}}() 
+    body_soil_pos = Vector{BodySoil{Int64,Float64}}()
     set_height(out, 10, 14, -0.2, -0.2, 0.7, 0.7, 0.8, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.3, 0.4, 0.5, 0.5, 0.6, -0.3, -0.2, -0.2, 0.4)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.0, grid, bucket)
@@ -3794,7 +3798,7 @@ end
         [[1, 10, 14], [1, 10, 15], [3, 10, 15]])
 
     # Test: RE-RUB-69
-    body_soil_pos = Vector{BodySoil{Int64, Float64}}() 
+    body_soil_pos = Vector{BodySoil{Int64,Float64}}()
     set_height(out, 10, 14, -0.2, -0.2, 0.0, 0.0, 1.0, NaN, NaN, NaN, NaN)
     set_height(out, 10, 15, -0.3, 0.4, 0.5, 0.5, 0.6, -0.3, -0.2, -0.2, 0.4)
     pos0 = _calc_bucket_frame_pos(10, 14, 0.0, grid, bucket)
@@ -5635,8 +5639,8 @@ end
 
     # Test: RE-RBS-94
     set_RNG_seed!(2)
-    for ii in 9:11  
-        for jj in 13:15  
+    for ii in 9:11
+        for jj in 13:15
             out.terrain[ii, jj] = 0.2
         end
     end

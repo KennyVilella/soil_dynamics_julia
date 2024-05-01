@@ -44,10 +44,10 @@ bucket or with another soil cell.
     _move_intersecting_cells!(out, grid, bucket)
 """
 function _move_intersecting_cells!(
-    out::SimOut{B,I,T},
-    grid::GridParam{I,T},
-    bucket::BucketParam{T},
-    tol::T=1e-8
+        out::SimOut{B,I,T},
+        grid::GridParam{I,T},
+        bucket::BucketParam{T},
+        tol::T=1e-8
 ) where {B<:Bool,I<:Int64,T<:Float64}
 
     # Moving bucket soil intersecting with the bucket
@@ -110,10 +110,10 @@ negligible.
     _move_intersecting_body_soil!(out, grid, bucket)
 """
 function _move_intersecting_body_soil!(
-    out::SimOut{B,I,T},
-    grid::GridParam{I,T},
-    bucket::BucketParam{T},
-    tol::T=1e-8
+        out::SimOut{B,I,T},
+        grid::GridParam{I,T},
+        bucket::BucketParam{T},
+        tol::T=1e-8
 ) where {B<:Bool,I<:Int64,T<:Float64}
 
     # Storing all possible directions
@@ -208,7 +208,7 @@ function _move_intersecting_body_soil!(
             # underground with soil trapped inside.
             # This should not happen when soil reaction force is considered.
             @warn "Not all soil intersecting with a bucket layer could be moved\n" *
-                "The extra soil has been arbitrarily removed"
+                  "The extra soil has been arbitrarily removed"
         end
     end
 end
@@ -251,8 +251,8 @@ all the soil has been moved. The process can be illustrated as follows
     _move_intersecting_body!(out)
 """
 function _move_intersecting_body!(
-    out::SimOut{B,I,T},
-    tol::T=1e-8
+        out::SimOut{B,I,T},
+        tol::T=1e-8
 ) where {B<:Bool,I<:Int64,T<:Float64}
 
     # Locating soil cells intersecting with the bucket
@@ -413,18 +413,18 @@ all intersecting soil cells are moved.
      )
 """
 function _move_body_soil!(
-    out::SimOut{B,I,T},
-    ind_p::I,
-    ii_p::I,
-    jj_p::I,
-    max_h::T,
-    ii_n::I,
-    jj_n::I,
-    h_soil::T,
-    wall_presence::B,
-    grid::GridParam{I,T},
-    bucket::BucketParam{T},
-    tol::T=1e-8
+        out::SimOut{B,I,T},
+        ind_p::I,
+        ii_p::I,
+        jj_p::I,
+        max_h::T,
+        ii_n::I,
+        jj_n::I,
+        h_soil::T,
+        wall_presence::B,
+        grid::GridParam{I,T},
+        bucket::BucketParam{T},
+        tol::T=1e-8
 ) where {B<:Bool,I<:Int64,T<:Float64}
 
     # Determining presence of bucket
@@ -616,7 +616,7 @@ function _move_body_soil!(
         end
     end
 
-    return  ind_p, ii_p, jj_p, h_soil, wall_presence
+    return ind_p, ii_p, jj_p, h_soil, wall_presence
 end
 
 """
@@ -646,8 +646,8 @@ This function identifies all the soil cells in the `terrain` that intersect with
     _locate_intersecting_cells(out)
 """
 function _locate_intersecting_cells(
-    out::SimOut{B,I,T},
-    tol::T=1e-8
+        out::SimOut{B,I,T},
+        tol::T=1e-8
 ) where {B<:Bool,I<:Int64,T<:Float64}
 
     # Initializing

@@ -68,11 +68,11 @@ avalanche on the bucket.
     _relax_terrain!(out, grid, bucket, sim)
 """
 function _relax_terrain!(
-    out::SimOut{B,I,T},
-    grid::GridParam{I,T},
-    bucket::BucketParam{T},
-    sim::SimParam{I,T},
-    tol::T=1e-8
+        out::SimOut{B,I,T},
+        grid::GridParam{I,T},
+        bucket::BucketParam{T},
+        sim::SimParam{I,T},
+        tol::T=1e-8
 ) where {B<:Bool,I<:Int64,T<:Float64}
 
     # Assuming that the terrain is at equilibrium
@@ -206,11 +206,11 @@ This function only moves the soil when the following conditions are met:
     _relax_body_soil!(out, grid, bucket, sim)
 """
 function _relax_body_soil!(
-    out::SimOut{B,I,T},
-    grid::GridParam{I,T},
-    bucket::BucketParam{T},
-    sim::SimParam{I,T},
-    tol::T=1e-8
+        out::SimOut{B,I,T},
+        grid::GridParam{I,T},
+        bucket::BucketParam{T},
+        sim::SimParam{I,T},
+        tol::T=1e-8
 ) where {B<:Bool,I<:Int64,T<:Float64}
 
     # Calculating the maximum slope allowed by the repose angle
@@ -310,9 +310,9 @@ could be supporting the soil column.
     unstable_cells = _locate_unstable_terrain_cell(out, 0.1)
 """
 function _locate_unstable_terrain_cell(
-    out::SimOut{B,I,T},
-    dh_max::T,
-    tol::T=1e-8
+        out::SimOut{B,I,T},
+        dh_max::T,
+        tol::T=1e-8
 ) where {B<:Bool,I<:Int64,T<:Float64}
 
     # Initializing
@@ -325,10 +325,10 @@ function _locate_unstable_terrain_cell(
             h_min = out.terrain[ii, jj] - dh_max - tol
 
             if (
-                (out.terrain[ii - 1, jj] < h_min) ||
-                (out.terrain[ii + 1, jj] < h_min) ||
-                (out.terrain[ii, jj - 1] < h_min) ||
-                (out.terrain[ii, jj + 1] < h_min)
+                (out.terrain[ii-1, jj] < h_min) ||
+                (out.terrain[ii+1, jj] < h_min) ||
+                (out.terrain[ii, jj-1] < h_min) ||
+                (out.terrain[ii, jj+1] < h_min)
             )
                 ### Soil cell is requiring relaxation ###
                 push!(unstable_cells, [ii, jj])
@@ -391,13 +391,12 @@ should avalanche in different scenarios.
     status = _check_unstable_terrain_cell(out, 10, 15, -0.1)
 """
 function _check_unstable_terrain_cell(
-    out::SimOut{B,I,T},
-    ii_c::I,
-    jj_c::I,
-    h_min::T,
-    tol::T=1e-8
+        out::SimOut{B,I,T},
+        ii_c::I,
+        jj_c::I,
+        h_min::T,
+        tol::T=1e-8
 ) where {B<:Bool,I<:Int64,T<:Float64}
-
     if (out.terrain[ii_c, jj_c] + tol < h_min)
         ### Adjacent terrain is low enough ###
         bucket_absence_1 = (
@@ -575,14 +574,14 @@ should avalanche in different scenarios.
     status = _check_unstable_body_cell(out, 10, 14, 1, 10, 15, -0.1)
 """
 function _check_unstable_body_cell(
-    out::SimOut{B,I,T},
-    ii::I,
-    jj::I,
-    ind::I,
-    ii_c::I,
-    jj_c::I,
-    h_min::T,
-    tol::T=1e-8
+        out::SimOut{B,I,T},
+        ii::I,
+        jj::I,
+        ind::I,
+        ii_c::I,
+        jj_c::I,
+        h_min::T,
+        tol::T=1e-8
 ) where {B<:Bool,I<:Int64,T<:Float64}
 
     # Determining presence of bucket
@@ -603,8 +602,8 @@ function _check_unstable_body_cell(
         status = 20
 
         if (out.body[ind+1][ii, jj] + tol < out.body[3][ii_c, jj_c])
-           ### Soil should avalanche to the terrain ###
-           column_top = out.terrain[ii_c, jj_c]
+            ### Soil should avalanche to the terrain ###
+            column_top = out.terrain[ii_c, jj_c]
         elseif (
             (out.body_soil[3][ii_c, jj_c] != 0.0) ||
             (out.body_soil[4][ii_c, jj_c] != 0.0)
@@ -627,8 +626,8 @@ function _check_unstable_body_cell(
         status = 10
 
         if (out.body[ind+1][ii, jj] + tol < out.body[1][ii_c, jj_c])
-           ### Soil should avalanche to the terrain ###
-           column_top = out.terrain[ii_c, jj_c]
+            ### Soil should avalanche to the terrain ###
+            column_top = out.terrain[ii_c, jj_c]
         elseif (
             (out.body_soil[1][ii_c, jj_c] != 0.0) ||
             (out.body_soil[2][ii_c, jj_c] != 0.0)
@@ -759,16 +758,16 @@ below the bucket to fill the space under it.
     _relax_unstable_terrain_cell!(out, 131, 0.1, 10, 15, 10, 14, grid, bucket)
 """
 function _relax_unstable_terrain_cell!(
-    out::SimOut{B,I,T},
-    status::I,
-    dh_max::T,
-    ii::I,
-    jj::I,
-    ii_c::I,
-    jj_c::I,
-    grid::GridParam{I,T},
-    bucket::BucketParam{T},
-    tol::T=1e-8
+        out::SimOut{B,I,T},
+        status::I,
+        dh_max::T,
+        ii::I,
+        jj::I,
+        ii_c::I,
+        jj_c::I,
+        grid::GridParam{I,T},
+        bucket::BucketParam{T},
+        tol::T=1e-8
 ) where {B<:Bool,I<:Int64,T<:Float64}
 
     # Converting status into a string for convenience
@@ -867,7 +866,7 @@ function _relax_unstable_terrain_cell!(
             ii_c, jj_c, out.body[4][ii_c, jj_c], grid, bucket)
 
         # Adding new bucket soil position to body_soil_pos
-        h_soil = h_new_c - out.body[4][ii_c, jj_c];
+        h_soil = h_new_c - out.body[4][ii_c, jj_c]
         push!(out.body_soil_pos, BodySoil(3, ii_c, jj_c, pos[1], pos[2], pos[3], h_soil))
     elseif (st[2] == '3')
         ### Soil avalanche on the first bucket soil layer ###
@@ -930,7 +929,7 @@ function _relax_unstable_terrain_cell!(
             ii_c, jj_c, out.body[2][ii_c, jj_c], grid, bucket)
 
         # Adding new bucket soil position to body_soil_pos
-        h_soil = h_new_c - out.body[2][ii_c, jj_c];
+        h_soil = h_new_c - out.body[2][ii_c, jj_c]
         push!(out.body_soil_pos, BodySoil(1, ii_c, jj_c, pos[1], pos[2], pos[3], h_soil))
     end
 end
@@ -990,19 +989,19 @@ the `repose_angle`, provided that the bucket is not preventing this configuratio
     )
 """
 function _relax_unstable_body_cell!(
-    out::SimOut{B,I,T},
-    status::I,
-    new_body_soil_pos::Vector{BodySoil{I,T}},
-    dh_max::T,
-    nn::I,
-    ii::I,
-    jj::I,
-    ind::I,
-    ii_c::I,
-    jj_c::I,
-    grid::GridParam{I,T},
-    bucket::BucketParam{T},
-    tol::T=1e-8
+        out::SimOut{B,I,T},
+        status::I,
+        new_body_soil_pos::Vector{BodySoil{I,T}},
+        dh_max::T,
+        nn::I,
+        ii::I,
+        jj::I,
+        ind::I,
+        ii_c::I,
+        jj_c::I,
+        grid::GridParam{I,T},
+        bucket::BucketParam{T},
+        tol::T=1e-8
 ) where {B<:Bool,I<:Int64,T<:Float64}
 
     # Converting status into a string for convenience

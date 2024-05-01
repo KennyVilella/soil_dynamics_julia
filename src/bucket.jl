@@ -54,13 +54,13 @@ origin. The orientation is provided using the quaternion definition.
     _calc_bucket_pos!(out, pos, ori, grid, bucket, sim)
 """
 function _calc_bucket_pos!(
-    out::SimOut{B,I,T},
-    pos::Vector{T},
-    ori::Quaternion{T},
-    grid::GridParam{I,T},
-    bucket::BucketParam{T},
-    sim::SimParam{I,T},
-    tol::T=1e-8
+        out::SimOut{B,I,T},
+        pos::Vector{T},
+        ori::Quaternion{T},
+        grid::GridParam{I,T},
+        bucket::BucketParam{T},
+        sim::SimParam{I,T},
+        tol::T=1e-8
 ) where {B<:Bool,I<:Int64,T<:Float64}
 
     # Reinitializing bucket position
@@ -193,12 +193,12 @@ that lie on the four edges of the rectangle.
     rect_pos = _calc_rectangle_pos(a, b, c, d, grid)
 """
 function _calc_rectangle_pos(
-    a::Vector{T},
-    b::Vector{T},
-    c::Vector{T},
-    d::Vector{T},
-    grid::GridParam{I,T},
-    tol::T=1e-8
+        a::Vector{T},
+        b::Vector{T},
+        c::Vector{T},
+        d::Vector{T},
+        grid::GridParam{I,T},
+        tol::T=1e-8
 ) where {I<:Int64,T<:Float64}
 
     # Converting the four rectangle vertices from position to indices
@@ -233,12 +233,12 @@ function _calc_rectangle_pos(
     )
 
     # Allocating memory
-    rect_pos = [Vector{Int64}(undef,3) for _ in 1:n_cell]
+    rect_pos = [Vector{Int64}(undef, 3) for _ in 1:n_cell]
 
     nn_cell = 1
     # Determining all cells where the inner portion of the rectangle area is located
-    for ii in area_min_x:area_max_x-1
-        for jj in area_min_y:area_max_y-1
+    for ii in area_min_x:(area_max_x-1)
+        for jj in area_min_y:(area_max_y-1)
             # Calculating the indices corresponding to the previously calculated matrix
             ii_s = ii - area_min_x + 1
             jj_s = jj - area_min_y + 1
@@ -254,15 +254,15 @@ function _calc_rectangle_pos(
                 rect_pos[nn_cell][1] = ii
                 rect_pos[nn_cell][2] = jj
                 rect_pos[nn_cell][3] = kk
-                rect_pos[nn_cell + 1][1] = ii + 1
-                rect_pos[nn_cell + 1][2] = jj
-                rect_pos[nn_cell + 1][3] = kk
-                rect_pos[nn_cell + 2][1] = ii
-                rect_pos[nn_cell + 2][2] = jj + 1
-                rect_pos[nn_cell + 2][3] = kk
-                rect_pos[nn_cell + 3][1] = ii + 1
-                rect_pos[nn_cell + 3][2] = jj + 1
-                rect_pos[nn_cell + 3][3] = kk
+                rect_pos[nn_cell+1][1] = ii + 1
+                rect_pos[nn_cell+1][2] = jj
+                rect_pos[nn_cell+1][3] = kk
+                rect_pos[nn_cell+2][1] = ii
+                rect_pos[nn_cell+2][2] = jj + 1
+                rect_pos[nn_cell+2][3] = kk
+                rect_pos[nn_cell+3][1] = ii + 1
+                rect_pos[nn_cell+3][2] = jj + 1
+                rect_pos[nn_cell+3][3] = kk
 
                 # Incrementing the index
                 nn_cell += 4
@@ -346,14 +346,14 @@ since this requires c_ab and c_ad to be between 0 and 1.
     )
 """
 function _decompose_vector_rectangle(
-    ab_ind::Vector{T},
-    ad_ind::Vector{T},
-    a_ind::Vector{T},
-    area_min_x::I,
-    area_min_y::I,
-    area_length_x::I,
-    area_length_y::I,
-    tol::T=1e-8
+        ab_ind::Vector{T},
+        ad_ind::Vector{T},
+        a_ind::Vector{T},
+        area_min_x::I,
+        area_min_y::I,
+        area_length_x::I,
+        area_length_y::I,
+        tol::T=1e-8
 ) where {I<:Int64,T<:Float64}
 
     # Allocating memory
@@ -451,11 +451,11 @@ that lie on the three edges of the triangle.
     tri_pos = _calc_triangle_pos(a, b, c, grid)
 """
 function _calc_triangle_pos(
-    a::Vector{T},
-    b::Vector{T},
-    c::Vector{T},
-    grid::GridParam{I,T},
-    tol::T=1e-8
+        a::Vector{T},
+        b::Vector{T},
+        c::Vector{T},
+        grid::GridParam{I,T},
+        tol::T=1e-8
 ) where {I<:Int64,T<:Float64}
 
     # Converting the three triangle vertices from position to indices
@@ -489,12 +489,12 @@ function _calc_triangle_pos(
     )
 
     # Allocating memory
-    tri_pos = [Vector{Int64}(undef,3) for _ in 1:n_cell]
+    tri_pos = [Vector{Int64}(undef, 3) for _ in 1:n_cell]
 
     nn_cell = 1
     # Determining all cells where the inner portion of the triangle area is located
-    for ii in area_min_x:area_max_x-1
-        for jj in area_min_y:area_max_y-1
+    for ii in area_min_x:(area_max_x-1)
+        for jj in area_min_y:(area_max_y-1)
             # Calculating the indices corresponding to the previously calculated matrix
             ii_s = ii - area_min_x + 1
             jj_s = jj - area_min_y + 1
@@ -510,15 +510,15 @@ function _calc_triangle_pos(
                 tri_pos[nn_cell][1] = ii
                 tri_pos[nn_cell][2] = jj
                 tri_pos[nn_cell][3] = kk
-                tri_pos[nn_cell + 1][1] = ii + 1
-                tri_pos[nn_cell + 1][2] = jj
-                tri_pos[nn_cell + 1][3] = kk
-                tri_pos[nn_cell + 2][1] = ii
-                tri_pos[nn_cell + 2][2] = jj + 1
-                tri_pos[nn_cell + 2][3] = kk
-                tri_pos[nn_cell + 3][1] = ii + 1
-                tri_pos[nn_cell + 3][2] = jj + 1
-                tri_pos[nn_cell + 3][3] = kk
+                tri_pos[nn_cell+1][1] = ii + 1
+                tri_pos[nn_cell+1][2] = jj
+                tri_pos[nn_cell+1][3] = kk
+                tri_pos[nn_cell+2][1] = ii
+                tri_pos[nn_cell+2][2] = jj + 1
+                tri_pos[nn_cell+2][3] = kk
+                tri_pos[nn_cell+3][1] = ii + 1
+                tri_pos[nn_cell+3][2] = jj + 1
+                tri_pos[nn_cell+3][3] = kk
 
                 # Incrementing the index
                 nn_cell += 4
@@ -602,14 +602,14 @@ lower than 1.
     )
 """
 function _decompose_vector_triangle(
-    ab_ind::Vector{T},
-    ac_ind::Vector{T},
-    a_ind::Vector{T},
-    area_min_x::I,
-    area_min_y::I,
-    area_length_x::I,
-    area_length_y::I,
-    tol::T=1e-8
+        ab_ind::Vector{T},
+        ac_ind::Vector{T},
+        a_ind::Vector{T},
+        area_min_x::I,
+        area_min_y::I,
+        area_length_x::I,
+        area_length_y::I,
+        tol::T=1e-8
 ) where {I<:Int64,T<:Float64}
 
     # Allocating memory
@@ -693,9 +693,9 @@ should be used for the Z direction.
     line_pos = _calc_line_pos(a, b, grid)
 """
 function _calc_line_pos(
-    a::Vector{T},
-    b::Vector{T},
-    grid::GridParam{I,T}
+        a::Vector{T},
+        b::Vector{T},
+        grid::GridParam{I,T}
 ) where {I<:Int64,T<:Float64}
 
     # Converting to indices
@@ -824,10 +824,10 @@ As a result, this function must be called separately for each bucket wall.
     _update_body!(tri_pos, out, grid)
 """
 function _update_body!(
-    area_pos::Vector{Vector{I}},
-    out::SimOut{B,I,T},
-    grid::GridParam{I,T},
-    tol::T=1e-8
+        area_pos::Vector{Vector{I}},
+        out::SimOut{B,I,T},
+        grid::GridParam{I,T},
+        tol::T=1e-8
 ) where {B<:Bool,I<:Int64,T<:Float64}
 
     # Initializing cell position and height
@@ -896,14 +896,13 @@ occur.
     _include_new_body_pos!(out, 10, 15, 0.5, 0.6)
 """
 function _include_new_body_pos!(
-    out::SimOut{B,I,T},
-    ii::I,
-    jj::I,
-    min_h::T,
-    max_h::T,
-    tol::T=1e-8
+        out::SimOut{B,I,T},
+        ii::I,
+        jj::I,
+        min_h::T,
+        max_h::T,
+        tol::T=1e-8
 ) where {B<:Bool,I<:Int64,T<:Float64}
-
     status = Vector{Int64}()
     # Iterating over the two bucket layers and storing their status
     for ind in [1, 3]

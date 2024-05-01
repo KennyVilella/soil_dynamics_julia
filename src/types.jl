@@ -91,15 +91,14 @@ struct GridParam{I<:Int64,T<:Float64}
     vect_y::StepRangeLen{T}
     vect_z::StepRangeLen{T}
     function GridParam(
-        grid_size_x::T,
-        grid_size_y::T,
-        grid_size_z::T,
-        cell_size_xy::T,
-        cell_size_z::T=cell_size_xy
+            grid_size_x::T,
+            grid_size_y::T,
+            grid_size_z::T,
+            cell_size_xy::T,
+            cell_size_z::T=cell_size_xy
     ) where {T<:Float64}
-
         if ((cell_size_z < 0.0) || (cell_size_z ≈ 0.0))
-            throw(DomainError(cell_size_z , "cell_size_z should be greater than zero"))
+            throw(DomainError(cell_size_z, "cell_size_z should be greater than zero"))
         end
         if ((cell_size_xy < 0.0) || ((cell_size_xy ≈ 0.0)))
             throw(DomainError(cell_size_xy, "cell_size_xy should be greater than zero"))
@@ -244,13 +243,12 @@ struct BucketParam{T<:Float64}
     pos::Vector{T}
     ori::Vector{T}
     function BucketParam(
-        o_pos_init::Vector{T},
-        j_pos_init::Vector{T},
-        b_pos_init::Vector{T},
-        t_pos_init::Vector{T},
-        width::T
+            o_pos_init::Vector{T},
+            j_pos_init::Vector{T},
+            b_pos_init::Vector{T},
+            t_pos_init::Vector{T},
+            width::T
     ) where {T<:Float64}
-
         if (length(o_pos_init) != 3)
             throw(DimensionMismatch("o_pos_init should be a vector of size 3"))
         end
@@ -264,7 +262,7 @@ struct BucketParam{T<:Float64}
             throw(DimensionMismatch("t_pos_init should be a vector of size 3"))
         end
         if (j_pos_init ≈ b_pos_init)
-                throw(ErrorException("j_pos_init should not be equal to b_pos_init"))
+            throw(ErrorException("j_pos_init should not be equal to b_pos_init"))
         end
         if (j_pos_init ≈ t_pos_init)
             throw(ErrorException("j_pos_init should not be equal to t_pos_init"))
@@ -325,11 +323,10 @@ struct SimParam{I<:Int64,T<:Float64}
     max_iterations::I
     cell_buffer::I
     function SimParam(
-        repose_angle::T,
-        max_iterations::I,
-        cell_buffer::I
+            repose_angle::T,
+            max_iterations::I,
+            cell_buffer::I
     ) where {I<:Int64,T<:Float64}
-
         if (
             ((repose_angle > pi / 2) && (repose_angle != pi / 2)) ||
             ((repose_angle < 0.0) && (repose_angle != 0.0))
@@ -337,8 +334,9 @@ struct SimParam{I<:Int64,T<:Float64}
             throw(DomainError(repose_angle, "repose_angle should be betweem 0.0 and pi/2"))
         end
         if ((max_iterations < 0.0) && (max_iterations != 0.0))
-            throw(DomainError(max_iterations, "max_iterations should be greater or equal" *
-            " to zero"))
+            throw(DomainError(
+                max_iterations, "max_iterations should be greater or equal" *
+                                " to zero"))
         end
         if ((cell_buffer < 2.0) && (cell_buffer != 2.0))
             @warn "cell_buffer too low, setting to 2"
@@ -386,13 +384,13 @@ struct BodySoil{I<:Int64,T<:Float64}
     z_b::Vector{T}
     h_soil::Vector{T}
     function BodySoil(
-        ind::I,
-        ii::I,
-        jj::I,
-        x_b::T,
-        y_b::T,
-        z_b::T,
-        h_soil::T
+            ind::I,
+            ii::I,
+            jj::I,
+            x_b::T,
+            y_b::T,
+            z_b::T,
+            h_soil::T
     ) where {I<:Int64,T<:Float64}
         new{I,T}([ind], [ii], [jj], [x_b], [y_b], [z_b], [h_soil])
     end
@@ -483,33 +481,32 @@ struct SimOut{B<:Bool,I<:Int64,T<:Float64}
     relax_area::Matrix{Int64}
     impact_area::Matrix{Int64}
     function SimOut(
-        terrain::Matrix{T},
-        grid::GridParam{I,T}
+            terrain::Matrix{T},
+            grid::GridParam{I,T}
     ) where {I<:Int64,T<:Float64}
-
         if (size(terrain, 1) != 2 * grid.half_length_x + 1)
-            throw(DimensionMismatch("Dimension of terrain in x ("* string(size(terrain, 1))
-                * ") does not match with the grid size ("
-                * string(2 * grid.half_length_x + 1) * ")"
+            throw(DimensionMismatch("Dimension of terrain in x (" * string(size(terrain, 1))
+                                    * ") does not match with the grid size ("
+                                    * string(2 * grid.half_length_x + 1) * ")"
             ))
         end
         if (size(terrain, 2) != 2 * grid.half_length_y + 1)
-            throw(DimensionMismatch("Dimension of terrain in y ("* string(size(terrain, 2))
-                * ") does not match with the grid size ("
-                * string(2 * grid.half_length_y + 1) * ")"
+            throw(DimensionMismatch("Dimension of terrain in y (" * string(size(terrain, 2))
+                                    * ") does not match with the grid size ("
+                                    * string(2 * grid.half_length_y + 1) * ")"
             ))
         end
 
         # Initializing the bucket position array
-        body = [spzeros(2*grid.half_length_x+1, 2*grid.half_length_y+1)]
+        body = [spzeros(2 * grid.half_length_x + 1, 2 * grid.half_length_y + 1)]
         for ii in 2:4
-            push!(body, spzeros(2*grid.half_length_x+1, 2*grid.half_length_y+1))
+            push!(body, spzeros(2 * grid.half_length_x + 1, 2 * grid.half_length_y + 1))
         end
 
         # Initializing the bucket soil array
-        body_soil = [spzeros(2*grid.half_length_x+1, 2*grid.half_length_y+1)]
+        body_soil = [spzeros(2 * grid.half_length_x + 1, 2 * grid.half_length_y + 1)]
         for ii in 2:4
-            push!(body_soil, spzeros(2*grid.half_length_x+1, 2*grid.half_length_y+1))
+            push!(body_soil, spzeros(2 * grid.half_length_x + 1, 2 * grid.half_length_y + 1))
         end
 
         # Initalizing body_soil_pos

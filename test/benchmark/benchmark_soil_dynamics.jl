@@ -32,7 +32,6 @@ sim = SimParam(repose_angle, max_iterations, cell_buffer)
 terrain = zeros(2 * grid.half_length_x + 1, 2 * grid.half_length_y + 1)
 out = SimOut(terrain, grid)
 
-
 #==========================================================================================#
 #                                                                                          #
 #                                       Benchmarking                                       #

@@ -12,9 +12,9 @@ grid_size_y = 0.2
 grid_size_z = 1.0
 cell_size_xy = 0.1
 cell_size_z = 0.1
-grid_half_length_x =  round(Int64, grid_size_x / cell_size_xy)
-grid_half_length_y =  round(Int64, grid_size_y / cell_size_xy)
-grid_half_length_z =  round(Int64, grid_size_z / cell_size_z)
+grid_half_length_x = round(Int64, grid_size_x / cell_size_xy)
+grid_half_length_y = round(Int64, grid_size_y / cell_size_xy)
+grid_half_length_z = round(Int64, grid_size_z / cell_size_z)
 cell_area = cell_size_xy * cell_size_xy
 cell_volume = cell_area * cell_size_z
 grid_vect_x = cell_size_xy .* range(-grid_half_length_x, grid_half_length_x, step=1)
@@ -36,7 +36,6 @@ cell_buffer = 4
 # Terrain properties
 terrain = zeros(2 * grid_half_length_x + 1, 2 * grid_half_length_y + 1)
 area = Int64[[2, 2] [4, 4]]
-
 
 #==========================================================================================#
 #                                                                                          #
@@ -61,43 +60,43 @@ area = Int64[[2, 2] [4, 4]]
 
     # Test: TY-G-2
     @test_throws DomainError GridParam(
-            grid_size_x, grid_size_y, grid_size_z, cell_size_xy, 0.0
-        )
+        grid_size_x, grid_size_y, grid_size_z, cell_size_xy, 0.0
+    )
     @test_throws DomainError GridParam(
-            grid_size_x, grid_size_y, grid_size_z, cell_size_xy, -0.31
-        )
+        grid_size_x, grid_size_y, grid_size_z, cell_size_xy, -0.31
+    )
 
     # Test: TY-G-3
     @test_throws DomainError GridParam(
-            grid_size_x, grid_size_y, grid_size_z, 0.0, cell_size_z
-        )
+        grid_size_x, grid_size_y, grid_size_z, 0.0, cell_size_z
+    )
     @test_throws DomainError GridParam(
-            grid_size_x, grid_size_y, grid_size_z, -0.2, cell_size_z
-        )
+        grid_size_x, grid_size_y, grid_size_z, -0.2, cell_size_z
+    )
 
     # Test: TY-G-4
     @test_throws DomainError GridParam(
-            0.0, grid_size_y, grid_size_z, cell_size_xy, cell_size_z
-        )
+        0.0, grid_size_y, grid_size_z, cell_size_xy, cell_size_z
+    )
     @test_throws DomainError GridParam(
-            -0.25, grid_size_y, grid_size_z, cell_size_xy, cell_size_z
-        )
+        -0.25, grid_size_y, grid_size_z, cell_size_xy, cell_size_z
+    )
 
     # Test: TY-G-5
     @test_throws DomainError GridParam(
-            grid_size_x, 0.0, grid_size_z, cell_size_xy, cell_size_z
-        )
+        grid_size_x, 0.0, grid_size_z, cell_size_xy, cell_size_z
+    )
     @test_throws DomainError GridParam(
-            grid_size_x, -0.06, grid_size_z, cell_size_xy, cell_size_z
-        )
+        grid_size_x, -0.06, grid_size_z, cell_size_xy, cell_size_z
+    )
 
     # Test: TY-G-6
     @test_throws DomainError GridParam(
-            grid_size_x, grid_size_y, 0.0, cell_size_xy, cell_size_z
-        )
+        grid_size_x, grid_size_y, 0.0, cell_size_xy, cell_size_z
+    )
     @test_throws DomainError GridParam(
-            grid_size_x, grid_size_y, -0.14, cell_size_xy, cell_size_z
-        )
+        grid_size_x, grid_size_y, -0.14, cell_size_xy, cell_size_z
+    )
 
     # Test: TY-G-7
     @test_throws ErrorException GridParam(grid_size_x, grid_size_y, grid_size_z, 0.09, 0.1)
@@ -105,20 +104,20 @@ area = Int64[[2, 2] [4, 4]]
 
     # Test: TY-G-8
     @test_throws ErrorException GridParam(
-            0.5*cell_size_xy, grid_size_y, grid_size_z, cell_size_xy, cell_size_z
-        )
+        0.5 * cell_size_xy, grid_size_y, grid_size_z, cell_size_xy, cell_size_z
+    )
     @test_nowarn GridParam(cell_size_xy, grid_size_y, grid_size_z, cell_size_xy, cell_size_z)
 
     # Test: TY-G-9
     @test_throws ErrorException GridParam(
-            grid_size_x, 0.5*cell_size_xy, grid_size_z, cell_size_xy, cell_size_z
-        )
+        grid_size_x, 0.5 * cell_size_xy, grid_size_z, cell_size_xy, cell_size_z
+    )
     @test_nowarn GridParam(grid_size_x, cell_size_xy, grid_size_z, cell_size_xy, cell_size_z)
 
     # Test: TY-G-10
     @test_throws ErrorException GridParam(
-            grid_size_x, grid_size_y, 0.5*cell_size_z, cell_size_xy, cell_size_z
-        )
+        grid_size_x, grid_size_y, 0.5 * cell_size_z, cell_size_xy, cell_size_z
+    )
     @test_nowarn GridParam(grid_size_x, grid_size_y, cell_size_xy, cell_size_xy, cell_size_z)
 end
 
@@ -136,46 +135,46 @@ end
 
     # Test: TY-Bu-2
     @test_throws DimensionMismatch BucketParam(
-            [1.0, 2.0, 3.1, 531], j_pos_init, b_pos_init, t_pos_init, bucket_width
-        )
+        [1.0, 2.0, 3.1, 531], j_pos_init, b_pos_init, t_pos_init, bucket_width
+    )
 
     # Test: TY-Bu-3
     @test_throws DimensionMismatch BucketParam(
-            o_pos_init, [2.0, 4.5], b_pos_init, t_pos_init, bucket_width
-        )
+        o_pos_init, [2.0, 4.5], b_pos_init, t_pos_init, bucket_width
+    )
 
     # Test: TY-Bu-4
     @test_throws DimensionMismatch BucketParam(
-            o_pos_init, j_pos_init, [1.0], t_pos_init, bucket_width
-        )
+        o_pos_init, j_pos_init, [1.0], t_pos_init, bucket_width
+    )
 
     # Test: TY-Bu-5
     @test_throws DimensionMismatch BucketParam(
-            o_pos_init, j_pos_init, b_pos_init, [1.0, 2.0, 3.0, 4.0], bucket_width
-        )
+        o_pos_init, j_pos_init, b_pos_init, [1.0, 2.0, 3.0, 4.0], bucket_width
+    )
 
     # Test: TY-Bu-6
     @test_throws ErrorException BucketParam(
-            o_pos_init, j_pos_init, j_pos_init, t_pos_init, bucket_width
-        )
+        o_pos_init, j_pos_init, j_pos_init, t_pos_init, bucket_width
+    )
 
     # Test: TY-Bu-7
     @test_throws ErrorException BucketParam(
-            o_pos_init, j_pos_init, b_pos_init, j_pos_init, bucket_width
-        )
+        o_pos_init, j_pos_init, b_pos_init, j_pos_init, bucket_width
+    )
 
     # Test: TY-Bu-8
     @test_throws ErrorException BucketParam(
-            o_pos_init, j_pos_init, b_pos_init, b_pos_init, bucket_width
-        )
+        o_pos_init, j_pos_init, b_pos_init, b_pos_init, bucket_width
+    )
 
     # Test: TY-Bu-9
     @test_throws DomainError BucketParam(
-            o_pos_init, j_pos_init, b_pos_init, t_pos_init, 0.0
-        )
+        o_pos_init, j_pos_init, b_pos_init, t_pos_init, 0.0
+    )
     @test_throws DomainError BucketParam(
-            o_pos_init, j_pos_init, b_pos_init, t_pos_init, -0.1
-        )
+        o_pos_init, j_pos_init, b_pos_init, t_pos_init, -0.1
+    )
 end
 
 @testset "SimParam struct" begin
@@ -216,7 +215,7 @@ end
     @test out.terrain == terrain
     @test out.body isa Vector{SparseMatrixCSC{Float64,Int64}}
     @test out.body_soil isa Vector{SparseMatrixCSC{Float64,Int64}}
-    @test out.body_soil_pos isa Vector{BodySoil{Int64, Float64}}
+    @test out.body_soil_pos isa Vector{BodySoil{Int64,Float64}}
     @test out.bucket_area == area
     @test out.relax_area == area
     @test out.impact_area == area

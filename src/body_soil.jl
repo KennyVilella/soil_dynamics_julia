@@ -56,12 +56,12 @@ and duplicates are removed.
     _update_body_soil!(out, pos, ori, grid, bucket)
 """
 function _update_body_soil!(
-    out::SimOut{B,I,T},
-    pos::Vector{T},
-    ori::Quaternion{T},
-    grid::GridParam{I,T},
-    bucket::BucketParam{T},
-    tol::T=1e-8
+        out::SimOut{B,I,T},
+        pos::Vector{T},
+        ori::Quaternion{T},
+        grid::GridParam{I,T},
+        bucket::BucketParam{T},
+        tol::T=1e-8
 ) where {B<:Bool,I<:Int64,T<:Float64}
 
     # Copying previous body_soil locations
@@ -114,7 +114,7 @@ function _update_body_soil!(
             # Main direction follows Y
             directions = [
                 [0, 0], [0, sy], [sx, sy], [sx, 0], [-sx, sy],
-                [-sx, 0], [sx, -sy], [0, -sy], [-sx, -sy]];
+                [-sx, 0], [sx, -sy], [0, -sy], [-sx, -sy]]
         end
 
         # Calculating new cell indices
@@ -200,14 +200,14 @@ function _update_body_soil!(
                 out.body_soil[ind_s-1][ii_s, jj_s] = out.body[ind_s][ii_s, jj_s]
 
                 # Adding position to body_soil_pos
-                push!(out.body_soil_pos, BodySoil(ind_s-1, ii_s, jj_s, x_b, y_b, z_b, h_soil))
+                push!(out.body_soil_pos, BodySoil(ind_s - 1, ii_s, jj_s, x_b, y_b, z_b, h_soil))
             else
                 # This should normally not happen, it is only for safety
                 # Moving body_soil to terrain
                 out.terrain[ii_n, jj_n] += h_soil
                 @warn "WARNING\nBody soil could not be updated.\n" *
-                    "Soil is moved to the terrain to maintain mass " *
-                    "conservation."
+                      "Soil is moved to the terrain to maintain mass " *
+                      "conservation."
             end
         end
     end

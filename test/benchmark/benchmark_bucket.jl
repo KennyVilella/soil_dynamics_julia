@@ -32,7 +32,6 @@ sim = SimParam(repose_angle, max_iterations, cell_buffer)
 terrain = zeros(2 * grid.half_length_x + 1, 2 * grid.half_length_y + 1)
 out = SimOut(terrain, grid)
 
-
 #==========================================================================================#
 #                                                                                          #
 #                                       Benchmarking                                       #
@@ -75,8 +74,8 @@ area_length_y = 25
 println("_decompose_vector_rectangle")
 display(
     @benchmark c_ab, c_ad, in_rectangle, n_cell = _decompose_vector_rectangle(
-            ab_ind, ad_ind, a_ind, area_min_x, area_min_y, area_length_x, area_length_y
-        )
+    ab_ind, ad_ind, a_ind, area_min_x, area_min_y, area_length_x, area_length_y
+)
 )
 println("")
 
@@ -101,8 +100,8 @@ area_length_y = 25
 println("_decompose_vector_triangle")
 display(
     @benchmark c_ab, c_ac, in_triangle, n_cell = _decompose_vector_triangle(
-            ab_ind, ac_ind, a_ind, area_min_x, area_min_y, area_length_x, area_length_y
-        )
+    ab_ind, ac_ind, a_ind, area_min_x, area_min_y, area_length_x, area_length_y
+)
 )
 println("")
 

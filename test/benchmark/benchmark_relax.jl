@@ -32,7 +32,6 @@ sim = SimParam(repose_angle, max_iterations, cell_buffer)
 terrain = zeros(2 * grid.half_length_x + 1, 2 * grid.half_length_y + 1)
 out = SimOut(terrain, grid)
 
-
 #==========================================================================================#
 #                                                                                          #
 #                                       Benchmarking                                       #
@@ -104,10 +103,10 @@ println("")
 
 # Benchmarking for _relax_unstable_body_cell! function
 println("_relax_unstable_body_cell!")
-new_body_soil_pos = Vector{BodySoil{Int64, Float64}}()
+new_body_soil_pos = Vector{BodySoil{Int64,Float64}}()
 display(
     @benchmark _relax_unstable_body_cell!(
-        out, 13, new_body_soil_pos, 0.1, 1, 50, 55, 1, 49, 55, grid, bucket
-    )
+    out, 13, new_body_soil_pos, 0.1, 1, 50, 55, 1, 49, 55, grid, bucket
+)
 )
 println("")
