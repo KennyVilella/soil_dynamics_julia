@@ -15,7 +15,6 @@ The primary objective of the simulator is to provide terrain updates in less tha
 There are several important features that are yet to be implemented.
 These include, in order of priority:
 
-- Documentation: Provide comprehensive and user-friendly documentation for the simulator.
 - Integration testing: Conduct thorough integration tests to ensure the functionality of the simulator.
 - Multiple digging buckets: Add support for simulating the behavior of multiple digging buckets simultaneously.
 - Force calculation: Incorporate force calculation methods for better integration with rigid body engines.
